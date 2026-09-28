@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.0/phpunit.xsd"
+    bootstrap="vendor/autoload.php"
+    cacheDirectory="tests/.cache/phpunit"
+    colors="true"
+    backupGlobals="false"
+    backupStaticProperties="false"
+    processIsolation="false"
+    failOnWarning="true"
+    failOnRisky="true"
+>
+    <testsuites>
+        <!-- The package's pure logic — the endpoint table, the page defaults,
+             the exception — run without booting an application. Every method
+             carries #[UnitTest], so anything that reaches for a facade or the
+             container fails here rather than quietly leaning on a framework the
+             unit under test does not need. -->
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <!-- Everything that needs the Testbench application: the container
+             binding, the config merge, request construction (which reads the
+             retry config), and every faked send. -->
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <!-- The package only. `workbench/` is the throwaway host application
+                 the suite runs against, not shipped code. -->
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+
+    <extensions>
+        <!-- Runs the framework's static-state flush after every test — the same
+             path consuming applications get. This package declares no
+             `extra.hypervel.test-state` registrar of its own because it holds no
+             static state: Cin7Connector is readonly scalars, PageDefaults and
+             Endpoint are constants and a pure enum. The extension is still wired
+             so that stops being true loudly rather than silently. -->
+        <bootstrap class="Hypervel\Testing\PHPUnit\AfterEachTestExtension"/>
+    </extensions>
+
+    <php>
+        <!-- Mirrors testbench.yaml's `env` block. Testbench applies that block to
+             its own CLI (`composer test`) but explicitly not to PHPUnit test
+             methods, so without these a `vendor/bin/phpunit` run would boot a
+             differently-configured application than `composer test` does.
+             Keep the two lists in step. -->
+        <env name="APP_NAME" value="Hypervel Cin7 Workbench"/>
+        <env name="APP_ENV" value="testing"/>
+        <!-- Fake on purpose: every send in the suite is faked, and a run that
+             somehow reaches Cin7 should be rejected rather than authenticated. -->
+        <env name="CIN7_ACCOUNT_ID" value="acct-test"/>
+        <env name="CIN7_APPLICATION_KEY" value="key-test"/>
+        <env name="CIN7_RATE_MAX" value="60"/>
+        <env name="CIN7_RATE_PERIOD" value="60"/>
+        <env name="CIN7_RETRY_TIMES" value="4"/>
+        <env name="CIN7_RETRY_DELAY_MS" value="5000"/>
+
+        <ini name="error_reporting" value="-1"/>
+        <ini name="display_errors" value="on"/>
+        <ini name="display_startup_errors" value="on"/>
+        <ini name="memory_limit" value="1024M"/>
+    </php>
+</phpunit>

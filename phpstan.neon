@@ -1,0 +1,41 @@
+# Static analysis for this package.
+#
+# Level 5 is not an arbitrary pick: it is what `hypervel/components` runs on its own
+# source. Matching it means a finding here is a finding there, and that a fix carried
+# upstream lands clean.
+parameters:
+    level: 5
+
+    # Result cache. PHPStan defaults it to the system temp dir, which a CI runner throws
+    # away with the runner and a local `docker compose run --rm` with its container, so
+    # every run would pay for a full analysis. It sits in tests/.cache/ instead, beside
+    # PHPUnit's and php-cs-fixer's caches: gitignored, and kept in the checkout, so it
+    # persists across local runs. PHPStan resolves the path against this file. It has to
+    # be set here rather than on the command line: there is no --tmp-dir option (only the
+    # unrelated editor-mode --tmp-file). The cache step in .github/workflows/tests.yml
+    # caches the whole of tests/.cache/, so this path and that step have to agree.
+    tmpDir: tests/.cache/phpstan
+
+    # src/ only. tests/ and workbench/ are fixtures — the Workbench application exists to be
+    # a deliberately shaped host app, not to be type-correct — and analysing them would
+    # report on scaffolding rather than on shipped code.
+    paths:
+        - src
+
+    # An ignore whose pattern stops matching is reported as an error rather than left to
+    # rot, so a suppression disappears with the code it was covering.
+    reportUnmatchedIgnoredErrors: true
+
+    # Components leaves this off. Here an inline ignore names the error it ignores and says
+    # why, as `@phpstan-ignore method.notFound (the reason)`, so the next reader can tell
+    # whether it still has to be there. An ignore that covers everything on its line
+    # (@phpstan-ignore-line, @phpstan-ignore-next-line) is reported outright.
+    reportIgnoresWithoutComments: true
+
+    ignoreErrors:
+        # resolveRateLimitStore() overrides the framework's HasRateLimits accessor and keeps its
+        # wider `UnitEnum|string|null` signature. This package only ever stores a string or null,
+        # so PHPStan calls the UnitEnum arm unused — but narrowing the override would stop it
+        # matching the contract it implements. The wider type is deliberate.
+        - identifier: return.unusedType
+          path: src/Cin7Connector.php
