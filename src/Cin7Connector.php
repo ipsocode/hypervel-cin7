@@ -11,9 +11,9 @@ use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\HasPagination;
-use Hypervel\Saloon\Pagination\Paginator;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
+use Ipsocode\Cin7\Resources\CustomerResource;
 use UnitEnum;
 
 /**
@@ -41,9 +41,17 @@ final class Cin7Connector extends Connector implements HasPagination
         return 'https://inventory.dearsystems.com/ExternalApi/v2/';
     }
 
-    public function paginate(Request $request): Paginator
+    public function paginate(Request $request): Cin7Paginator
     {
         return new Cin7Paginator($this, $request);
+    }
+
+    /**
+     * The `customer` resource.
+     */
+    public function customer(): CustomerResource
+    {
+        return new CustomerResource($this);
     }
 
     /**

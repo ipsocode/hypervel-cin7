@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Pagination;
 
+use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Response;
-use Ipsocode\Cin7\Endpoint;
+use Hypervel\Saloon\Pagination\Contracts\Paginatable;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
-use Ipsocode\Cin7\Requests\ListRecords;
+use Ipsocode\Cin7\Requests\Cin7Request;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -26,7 +28,7 @@ class Cin7PaginatorTest extends TestCase
     {
         Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
 
-        $paginator = $this->connector()->paginate(new ListRecords(Endpoint::Customer));
+        $paginator = $this->connector()->paginate(new GetCustomer);
 
         $this->assertInstanceOf(Cin7Paginator::class, $paginator);
     }
@@ -41,7 +43,7 @@ class Cin7PaginatorTest extends TestCase
         ]);
 
         $items = iterator_to_array(
-            $this->connector()->paginate(new ListRecords(Endpoint::Customer))->items(),
+            $this->connector()->paginate(new GetCustomer)->items(),
             false,
         );
 
@@ -57,7 +59,7 @@ class Cin7PaginatorTest extends TestCase
             MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('c', 'Initech')], page: 3, total: 3)),
         ]);
 
-        $paginator = $this->connector()->paginate(new ListRecords(Endpoint::Customer))->perPageLimit(1);
+        $paginator = $this->connector()->paginate(new GetCustomer)->perPageLimit(1);
 
         $items = iterator_to_array($paginator->items(), false);
 
@@ -74,7 +76,7 @@ class Cin7PaginatorTest extends TestCase
         ]);
 
         iterator_to_array(
-            $this->connector()->paginate(new ListRecords(Endpoint::Customer))->perPageLimit(1)->items(),
+            $this->connector()->paginate(new GetCustomer)->perPageLimit(1)->items(),
             false,
         );
 
@@ -92,7 +94,7 @@ class Cin7PaginatorTest extends TestCase
     {
         $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
 
-        $this->connector()->paginate(new ListRecords(Endpoint::Customer))->current();
+        $this->connector()->paginate(new GetCustomer)->current();
 
         $this->assertSame(['page' => 1, 'limit' => 100], $mock->lastPendingRequest()->queryParameters());
     }
@@ -102,7 +104,7 @@ class Cin7PaginatorTest extends TestCase
         Saloon::fake([MockResponse::make(['Total' => 0, 'Page' => 1])]);
 
         $items = iterator_to_array(
-            $this->connector()->paginate(new ListRecords(Endpoint::Customer))->items(),
+            $this->connector()->paginate(new GetCustomer)->items(),
             false,
         );
 
@@ -122,7 +124,7 @@ class Cin7PaginatorTest extends TestCase
         ])]);
 
         $items = iterator_to_array(
-            $this->connector()->paginate(new ListRecords(Endpoint::Customer))->items(),
+            $this->connector()->paginate(new GetCustomer)->items(),
             false,
         );
 
@@ -141,7 +143,7 @@ class Cin7PaginatorTest extends TestCase
         ]);
 
         $items = iterator_to_array(
-            $this->connector()->paginate(new ListRecords(Endpoint::Customer, ['limit' => 5]))->items(),
+            $this->connector()->paginate(new GetCustomer(['limit' => 5]))->items(),
             false,
         );
 
@@ -152,7 +154,7 @@ class Cin7PaginatorTest extends TestCase
     public function testPooledFetchGathersEveryPageRegardlessOfCompletionOrder(): void
     {
         Saloon::fake([
-            ListRecords::class => function (PendingRequest $pendingRequest): MockResponse {
+            GetCustomer::class => function (PendingRequest $pendingRequest): MockResponse {
                 $page = (int) $pendingRequest->queryParameters()['page'];
 
                 return MockResponse::make(Cin7Payloads::customerList(
@@ -163,7 +165,7 @@ class Cin7PaginatorTest extends TestCase
             },
         ]);
 
-        $paginator = $this->connector()->paginate(new ListRecords(Endpoint::Customer))->perPageLimit(1);
+        $paginator = $this->connector()->paginate(new GetCustomer)->perPageLimit(1);
 
         $responses = $paginator->pool(concurrency: 2);
 
@@ -175,5 +177,49 @@ class Cin7PaginatorTest extends TestCase
                 array_values($responses),
             ),
         );
+    }
+
+    /**
+     * Every shipped request implements `MapPaginatedResponseItems`, so the suffix lookup in
+     * `getPageItems()` is only reachable through a request that does not.
+     */
+    public function testTheSuffixFallbackIsUsedWhenTheRequestDoesNotMapItsOwnItems(): void
+    {
+        Saloon::fake([MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a', 'ACME')]))]);
+
+        $request = new class extends Cin7Request implements Paginatable {
+            protected Method $method = Method::GET;
+
+            public function resolveEndpoint(): string
+            {
+                return 'customer';
+            }
+        };
+
+        $items = iterator_to_array($this->connector()->paginate($request)->items(), false);
+
+        $this->assertSame(['ACME'], array_column($items, 'Name'));
+    }
+
+    /**
+     * The suffix fallback's empty path, only reachable by a request that does not map its
+     * own items against a body with no `…List` key.
+     */
+    public function testTheSuffixFallbackYieldsNoItemsWhenTheEnvelopeHasNoListKey(): void
+    {
+        Saloon::fake([MockResponse::make(['Total' => 0, 'Page' => 1])]);
+
+        $request = new class extends Cin7Request implements Paginatable {
+            protected Method $method = Method::GET;
+
+            public function resolveEndpoint(): string
+            {
+                return 'customer';
+            }
+        };
+
+        $items = iterator_to_array($this->connector()->paginate($request)->items(), false);
+
+        $this->assertSame([], $items);
     }
 }
