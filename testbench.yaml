@@ -1,0 +1,48 @@
+# Testbench configuration: workbench/ is the host application the package is tested against.
+
+providers:
+  # Saloon first: testbench does not auto-discover it, and it registers the `saloon`
+  # HTTP connection the connector sends over.
+  - Hypervel\Saloon\SaloonServiceProvider
+  - Ipsocode\Cin7\Cin7ServiceProvider
+  - Workbench\App\Providers\WorkbenchServiceProvider
+
+# Applies to the Testbench CLI, not to PHPUnit test methods. phpunit.xml's <env> block
+# mirrors it: keep the two in step.
+env:
+  APP_NAME: "Hypervel Cin7 Workbench"
+  APP_ENV: testing
+  # Spelled out so config/cin7.php's env() calls are under test. The credentials are
+  # fake on purpose, so a run that reaches Cin7 is rejected.
+  CIN7_ACCOUNT_ID: acct-test
+  CIN7_APPLICATION_KEY: key-test
+  # The packaged defaults; tests override them through config().
+  CIN7_RATE_MAX: 60
+  CIN7_RATE_PERIOD: 60
+  CIN7_RETRY_TIMES: 4
+  CIN7_RETRY_DELAY_MS: 5000
+
+workbench:
+  # An outbound API client: nothing to authenticate, no HTTP surface to health-check.
+  auth: false
+  health: false
+  discovers:
+    # workbench/config is empty; this stays on so an app-level override can be dropped in.
+    config: true
+    # No Eloquent models, so no factories.
+    factories: false
+    web: false
+    api: false
+    # Loads workbench/routes/console.php and the cin7:customers command class.
+    commands: true
+    components: false
+    views: false
+
+purge:
+  # Resolved against the runtime skeleton; these are extras beyond what
+  # package:purge-skeleton removes on its own.
+  files:
+    - .env
+  directories:
+    # Hyperf's AOP proxy cache; stale proxies survive a config:clear.
+    - storage/framework/aop

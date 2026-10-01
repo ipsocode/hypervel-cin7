@@ -1,0 +1,11 @@
+/vendor
+.DS_Store
+
+composer.lock
+
+# The PHPUnit, php-cs-fixer and PHPStan caches, and `composer test:coverage`'s report.
+/tests/.cache/
+/tests/coverage/
+
+# Claude Code's local state; the automated review's skill and brief live in .github/claude/.
+/.claude

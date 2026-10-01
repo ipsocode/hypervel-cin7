@@ -1,0 +1,13 @@
+# A Composer install of a release leaves out every export-ignore path. An application
+# gets src/, config/, docs/, composer.json, README.md and LICENSE.
+/.github export-ignore
+/.claude export-ignore
+/tests export-ignore
+/workbench export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/CONTRIBUTING.md export-ignore
+/phpstan.neon export-ignore
+/phpunit.xml export-ignore
+/testbench.yaml export-ignore

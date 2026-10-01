@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/13.0/phpunit.xsd"
+    bootstrap="vendor/autoload.php"
+    cacheDirectory="tests/.cache/phpunit"
+    colors="true"
+    backupGlobals="false"
+    backupStaticProperties="false"
+    processIsolation="false"
+    failOnWarning="true"
+    failOnRisky="true"
+>
+    <testsuites>
+        <!-- Pure logic, no application booted. Every method carries #[UnitTest],
+             so reaching for a facade or the container fails. -->
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <!-- Everything that boots the Testbench application, including request
+             construction, which reads the retry config. -->
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <!-- The package only; workbench/ is not shipped. -->
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+
+    <extensions>
+        <!-- Flushes framework static state after every test. Wired although the
+             package holds no static state and registers no test-state registrar. -->
+        <bootstrap class="Hypervel\Testing\PHPUnit\AfterEachTestExtension"/>
+    </extensions>
+
+    <php>
+        <!-- Mirrors testbench.yaml's env block, which Testbench does not apply to
+             PHPUnit test methods. Keep the two in step. -->
+        <env name="APP_NAME" value="Hypervel Cin7 Workbench"/>
+        <env name="APP_ENV" value="testing"/>
+        <!-- Fake on purpose, so a run that reaches Cin7 is rejected. -->
+        <env name="CIN7_ACCOUNT_ID" value="acct-test"/>
+        <env name="CIN7_APPLICATION_KEY" value="key-test"/>
+        <env name="CIN7_RATE_MAX" value="60"/>
+        <env name="CIN7_RATE_PERIOD" value="60"/>
+        <env name="CIN7_RETRY_TIMES" value="4"/>
+        <env name="CIN7_RETRY_DELAY_MS" value="5000"/>
+
+        <ini name="error_reporting" value="-1"/>
+        <ini name="display_errors" value="on"/>
+        <ini name="display_startup_errors" value="on"/>
+        <ini name="memory_limit" value="1024M"/>
+    </php>
+</phpunit>

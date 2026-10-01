@@ -1,0 +1,26 @@
+# Level 5, the level hypervel/components runs on its own source.
+parameters:
+    level: 5
+
+    # In tests/.cache/ (gitignored) rather than the system temp dir, so the cache persists
+    # between runs. .github/workflows/tests.yml caches tests/.cache/, so the two must agree.
+    # Set here because PHPStan has no --tmp-dir option.
+    tmpDir: tests/.cache/phpstan
+
+    # Shipped code only; tests/ and workbench/ are fixtures.
+    paths:
+        - src
+
+    # An ignore whose pattern stops matching is an error.
+    reportUnmatchedIgnoredErrors: true
+
+    # Off in hypervel/components. Inline ignores name the error and give a reason:
+    # `@phpstan-ignore method.notFound (reason)`; line-wide @phpstan-ignore-line /
+    # @phpstan-ignore-next-line cannot carry one, so they are reported.
+    reportIgnoresWithoutComments: true
+
+    ignoreErrors:
+        # resolveRateLimitStore() keeps HasRateLimits' wider UnitEnum|string|null signature on
+        # purpose, so PHPStan reports the unused UnitEnum arm.
+        - identifier: return.unusedType
+          path: src/Cin7Connector.php
