@@ -54,7 +54,7 @@ which is evaluated when the configuration loads. Everything else goes through
 | Values | Read when | Effect of a later config change |
 |---|---|---|
 | `account_id`, `application_key`, `rate_limit.*` | The first time the container resolves `Cin7Connector` | None for that worker: the connector is a singleton built once per worker |
-| `retry.*` | Each time a request is constructed (`new ListRecords(...)` and the rest) | Applies to requests constructed after the change |
+| `retry.*` | Each time a request is constructed (`new GetCustomer(...)` and the rest) | Applies to requests constructed after the change |
 
 So set any runtime override of `retry.*` before the `new`, not just before
 `send()`.

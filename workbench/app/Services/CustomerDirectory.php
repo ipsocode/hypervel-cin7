@@ -5,11 +5,6 @@ declare(strict_types=1);
 namespace Workbench\App\Services;
 
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\CreateRecord;
-use Ipsocode\Cin7\Requests\FindRecord;
-use Ipsocode\Cin7\Requests\ListRecords;
-use Ipsocode\Cin7\Requests\UpdateRecord;
 
 /**
  * A consuming application's customer service, built on the connector.
@@ -33,7 +28,7 @@ final class CustomerDirectory
      */
     public function all(array $filters = []): array
     {
-        $paginator = $this->connector->paginate(new ListRecords(Endpoint::Customer, $filters));
+        $paginator = $this->connector->customer()->paginate($filters);
 
         return iterator_to_array($paginator->items(), false);
     }
@@ -43,7 +38,7 @@ final class CustomerDirectory
      */
     public function find(string $guid): ?array
     {
-        $response = $this->connector->send(new FindRecord(Endpoint::Customer, $guid));
+        $response = $this->connector->customer()->get(['ID' => $guid]);
 
         return $response->json('CustomerList')[0] ?? null;
     }
@@ -54,7 +49,7 @@ final class CustomerDirectory
      */
     public function create(array $attributes): array
     {
-        return $this->connector->send(new CreateRecord(Endpoint::Customer, $attributes))->json();
+        return $this->connector->customer()->post($attributes)->json();
     }
 
     /**
@@ -63,6 +58,9 @@ final class CustomerDirectory
      */
     public function update(string $guid, array $attributes): array
     {
-        return $this->connector->send(new UpdateRecord(Endpoint::Customer, $guid, $attributes))->json();
+        // Assigned last so the GUID wins over a caller-supplied value under the same key.
+        $attributes['ID'] = $guid;
+
+        return $this->connector->customer()->put($attributes)->json();
     }
 }

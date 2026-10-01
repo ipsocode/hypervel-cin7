@@ -50,10 +50,10 @@ response from the `PendingRequest`:
 
 ```php
 use Hypervel\Saloon\Http\PendingRequest;
-use Ipsocode\Cin7\Requests\ListRecords;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 
 Saloon::fake([
-    ListRecords::class => fn (PendingRequest $request): MockResponse => MockResponse::make([
+    GetCustomer::class => fn (PendingRequest $request): MockResponse => MockResponse::make([
         'Total' => 3,
         'Page' => (int) $request->queryParameters()['page'],
         'CustomerList' => [/* … */],
@@ -69,8 +69,8 @@ The split is enforced rather than conventional.
 
 | Suite | Covers | Boots the application |
 |---|---|---|
-| `tests/Unit` | `Endpoint`, `PageDefaults`, `MethodNotAllowedException` | No |
-| `tests/Feature` | the container binding, the config merge, request construction, every faked send, the Workbench application | Yes |
+| `tests/Unit` | `PageDefaults` | No |
+| `tests/Feature` | the container binding, the config merge, request and resource construction, every faked send, the Workbench application | Yes |
 
 Every Unit test method carries `#[UnitTest]`
 (`Hypervel\Foundation\Testing\Attributes\UnitTest`), so the framework never
@@ -82,9 +82,9 @@ constructor, so their tests are Feature tests.
 Feature tests extend [`tests/TestCase.php`](../tests/TestCase.php), which
 provides `connector()` (the connector as the container resolves it, built from
 config) and `pendingRequestFor()` (a `PendingRequest` assembled the way Saloon
-assembles one, for the rate-limit hooks). A test that calls
-`new Cin7Connector(...)` itself does so to pin a constructor argument the
-config path cannot reach.
+assembles one, for the rate-limit hooks, defaulting to a `GetCustomer`
+request). A test that calls `new Cin7Connector(...)` itself does so to pin a
+constructor argument the config path cannot reach.
 
 ### Every send is faked
 
@@ -155,7 +155,7 @@ Sleep::assertSequence([
 ```
 
 The retry policy is read when the request is constructed, so a test that
-changes `cin7.retry.*` does so before `new ListRecords(...)`, not just before
+changes `cin7.retry.*` does so before `new GetCustomer(...)`, not just before
 `send()`.
 
 ### The Workbench application

@@ -11,8 +11,9 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\ListRecords;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -46,16 +47,16 @@ class RateLimitTest extends TestCase
         $this->assertSame('cin7:api:acct', $policy->key);
     }
 
-    public function testEveryEndpointSharesTheSameLimiterKey(): void
+    public function testEveryRequestSharesTheSameLimiterKey(): void
     {
         $connector = new Cin7Connector('acct', 'key', 60, 60);
 
-        foreach (Endpoint::cases() as $endpoint) {
+        foreach ([new GetCustomer, new PostCustomer, new PutCustomer] as $request) {
             $policies = $connector->resolveRateLimitPolicies(
-                $this->pendingRequestFor($connector, new ListRecords($endpoint)),
+                $this->pendingRequestFor($connector, $request),
             );
 
-            $this->assertSame('cin7:api:acct', $policies[0]->key, $endpoint->value);
+            $this->assertSame('cin7:api:acct', $policies[0]->key, $request::class);
         }
     }
 
@@ -179,7 +180,7 @@ class RateLimitTest extends TestCase
         $connector = $this->connector();
 
         try {
-            return $connector->send(new ListRecords(Endpoint::Customer));
+            return $connector->send(new GetCustomer);
         } catch (RequestException $exception) {
             return $exception->response();
         } finally {

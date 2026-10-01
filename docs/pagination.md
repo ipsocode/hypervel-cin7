@@ -1,12 +1,15 @@
 # Pagination
 
-`ListRecords` is the one paginatable request. `Cin7Connector` implements
-Saloon's `HasPagination`, and its `paginate()` returns a
-[`Cin7Paginator`](../src/Pagination/Cin7Paginator.php) that reads Cin7's list
-envelope and works out the last page from it, so a listing can walk every page
-or send them all at once through the framework's coroutine pool. The requests
-themselves are described in [requests](requests.md), and the `page`/`limit`
-defaults every list carries under [page defaults](requests.md#page-defaults).
+A [`ListRequest`](requests.md#the-three-bases) is the only paginatable
+request. `Cin7Connector` implements Saloon's `HasPagination`, and its
+`paginate()` returns a [`Cin7Paginator`](../src/Pagination/Cin7Paginator.php)
+that reads Cin7's list envelope and works out the last page from it, so a
+listing can walk every page or send them all at once through the framework's
+coroutine pool. A resource's own `paginate()` method, such as
+`CustomerResource::paginate()`, is the usual way to reach it; see
+[resources](resources.md). The requests themselves are described in
+[requests](requests.md), and the `page`/`limit` defaults every list carries
+under [page defaults](requests.md#page-defaults).
 
 ## Walking every item
 
@@ -14,18 +17,15 @@ defaults every list carries under [page defaults](requests.md#page-defaults).
 page's list:
 
 ```php
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\ListRecords;
-
-foreach ($this->cin7->paginate(new ListRecords(Endpoint::Customer))->items() as $customer) {
+foreach ($this->cin7->customer()->paginate()->items() as $customer) {
     // $customer is one entry of CustomerList
 }
 ```
 
-Filters go in the request's parameters, and every page carries them:
+Filters go in the resource method's parameters, and every page carries them:
 
 ```php
-$paginator = $this->cin7->paginate(new ListRecords(Endpoint::Customer, ['Name' => 'ACME']));
+$paginator = $this->cin7->customer()->paginate(['Name' => 'ACME']);
 ```
 
 ## Page size
@@ -34,7 +34,7 @@ $paginator = $this->cin7->paginate(new ListRecords(Endpoint::Customer, ['Name' =
 page, and takes precedence over a `limit` passed in the request's parameters:
 
 ```php
-$paginator = $this->cin7->paginate(new ListRecords(Endpoint::Customer))->perPageLimit(250);
+$paginator = $this->cin7->customer()->paginate()->perPageLimit(250);
 ```
 
 Without `perPageLimit()`, `applyPagination()` sets only `page` and leaves
@@ -52,7 +52,7 @@ is the first page):
 use Hypervel\Saloon\Http\Response;
 
 /** @var array<int, Response> $responses */
-$responses = $this->cin7->paginate(new ListRecords(Endpoint::Customer))
+$responses = $this->cin7->customer()->paginate()
     ->perPageLimit(100)
     ->pool(concurrency: 5);
 ```
@@ -105,9 +105,9 @@ Reading the limit off the sent request matters: a caller can set `limit` as a
 request parameter without ever calling `perPageLimit()`, and dividing by the
 default of 100 in that case would undercount the pages and stop early.
 
-## Only `ListRecords` paginates
+## Only a `ListRequest` paginates
 
-`ListRecords` is the only request that implements `Paginatable`. Saloon's
+`ListRequest` is the only request base that implements `Paginatable`. Saloon's
 paginator rejects any other request with an `InvalidArgumentException`, and no
 request declares `HasRequestPagination`, so `Cin7Paginator` is the only
 paginator the connector needs.
