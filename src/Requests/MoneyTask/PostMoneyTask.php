@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `POST moneyOperation`, body is a Money Task; the response is the saved Money Task.
+ * `POST moneyOperation`, body is a `MoneyTaskPostData`; the response is the saved Money Task.
  *
  * @extends WriteRequest<MoneyTaskData>
  */

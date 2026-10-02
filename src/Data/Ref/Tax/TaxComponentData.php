@@ -18,13 +18,13 @@ use Hypervel\Data\Data;
 final class TaxComponentData extends Data
 {
     public function __construct(
-        public ?string $ID = null,
         #[Max(50)]
-        public ?string $Name = null,
-        public float|string|null $Percent = null,
-        public ?string $AccountCode = null,
+        public string $Name,
+        public float|string $Percent,
+        public string $AccountCode,
+        public int|string $ComponentOrder,
+        public ?string $ID = null,
         public string|int|null $Compound = null,
-        public int|string|null $ComponentOrder = null,
     ) {
     }
 }

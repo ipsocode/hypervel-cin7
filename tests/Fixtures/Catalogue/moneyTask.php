@@ -3,8 +3,12 @@
 declare(strict_types=1);
 
 use Hypervel\Saloon\Enums\Method;
+use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskLineData;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskPostData;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskPutData;
 use Ipsocode\Cin7\Requests\MoneyTask\DeleteMoneyTask;
 use Ipsocode\Cin7\Requests\MoneyTask\GetMoneyTask;
 use Ipsocode\Cin7\Requests\MoneyTask\PostMoneyTask;
@@ -13,6 +17,10 @@ use Workbench\App\Support\Cin7Payloads;
 
 // The catalogue rows for `moneyOperation`, the Money Task resource; tests/Catalogue.php merges every
 // file's rows by kind.
+
+// The fields every money task requires, and every money task line.
+$fields = ['TaskType' => 'Receive Money', 'Status' => 'DRAFT', 'BankAccount' => '198489', 'Date' => '2018-01-17T00:00:00'];
+$line = ['Name' => 'Bread', 'Quantity' => 3, 'TaxRuleName' => 'Tax Exempt', 'AccountCode' => '800', 'Total' => 6];
 
 return [
     'requests' => [
@@ -50,19 +58,19 @@ return [
         ],
         PostMoneyTask::class . ' with data' => [
             PostMoneyTask::class,
-            [fn (): MoneyTaskData => MoneyTaskData::from(['TaskType' => 'Receive Money', 'Lines' => [['Name' => 'Bread', 'Quantity' => 3]]])],
+            [fn (): MoneyTaskPostData => MoneyTaskPostData::from([...$fields, 'Lines' => [$line]])],
             Method::POST,
             '/ExternalApi/v2/moneyOperation',
             [],
-            ['TaskType' => 'Receive Money', 'Lines' => [['Name' => 'Bread', 'Quantity' => 3.0]]],
+            ['Lines' => [['Name' => 'Bread', 'Quantity' => 3.0, 'TaxRuleName' => 'Tax Exempt', 'AccountCode' => '800', 'Total' => 6.0]], ...$fields],
         ],
         PutMoneyTask::class . ' with data' => [
             PutMoneyTask::class,
-            [fn (): MoneyTaskData => MoneyTaskData::from(['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED'])],
+            [fn (): MoneyTaskPutData => MoneyTaskPutData::from([...$fields, 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED'])],
             Method::PUT,
             '/ExternalApi/v2/moneyOperation',
             [],
-            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED'],
+            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', ...$fields, 'Status' => 'COMPLETED'],
         ],
     ],
     'resources' => [
@@ -107,21 +115,36 @@ return [
             null,
         ],
         'moneyTask post with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->post(MoneyTaskData::from(['TaskType' => 'Spend Money', 'Note' => null])),
+            fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->post(MoneyTaskPostData::from([...$fields, 'TaskType' => 'Spend Money', 'Note' => null])),
             PostMoneyTask::class,
             Method::POST,
             '/ExternalApi/v2/moneyOperation',
             [],
-            ['TaskType' => 'Spend Money'],
+            [...$fields, 'TaskType' => 'Spend Money'],
         ],
         'moneyTask put with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->put(MoneyTaskData::from(['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'VOIDED'])),
+            fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->put(MoneyTaskPutData::from([...$fields, 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'VOIDED'])),
             PutMoneyTask::class,
             Method::PUT,
             '/ExternalApi/v2/moneyOperation',
             [],
-            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'VOIDED'],
+            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', ...$fields, 'Status' => 'VOIDED'],
         ],
+    ],
+    'bodies' => [
+        MoneyTaskPostData::class => [MoneyTaskPostData::class, Cin7Payloads::load('moneyTask', 'post.request')],
+        MoneyTaskPutData::class => [MoneyTaskPutData::class, Cin7Payloads::load('moneyTask', 'put.request')],
+    ],
+    'missing' => [
+        'money task PUT without TaskID' => [MoneyTaskPutData::class, Arr::except(Cin7Payloads::load('moneyTask', 'put.request'), 'TaskID')],
+        'money task without BankAccount' => [MoneyTaskData::class, Arr::except(Cin7Payloads::moneyTask(), 'BankAccount')],
+        'money task line without Total' => [MoneyTaskLineData::class, Arr::except($line, 'Total')],
+    ],
+    'required' => [
+        MoneyTaskData::class => ['TaskType', 'Status', 'BankAccount', 'Date'],
+        MoneyTaskPostData::class => ['TaskType', 'Status', 'BankAccount', 'Date'],
+        MoneyTaskPutData::class => ['TaskType', 'Status', 'BankAccount', 'Date', 'TaskID'],
+        MoneyTaskLineData::class => ['Name', 'Quantity', 'TaxRuleName', 'AccountCode', 'Total'],
     ],
     'dtos' => [
         GetMoneyTask::class => [GetMoneyTask::class, ['task-1'], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],

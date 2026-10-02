@@ -61,7 +61,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
-| `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskData $body)`, `put(array\|MoneyTaskData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -169,16 +169,16 @@ foreach ($this->cin7->ref()->customer()->credits()->paginate(customerId: $guid)-
 `status`, a `CompletionStatus`, `search` and `taskType`, a `MoneyTaskType`, and answering a
 `list<MoneyTaskListData>`). `delete($id, void: true)` sends `moneyOperation?ID=…&Void=true` and
 voids the task, and `void: false` undoes a void. Without `void` no `Void` is sent, and the
-reference defaults it to `false`. Every action answers with the Money Task, so `dto()` is a `MoneyTaskData` for `get()`,
-`post()`, `put()` and `delete()`, with `Lines` (`MoneyTaskLineData`), `Transactions`
-(`TransactionStockLineData`) and `Attachments` (`AttachmentLineData`). `post()` and `put()`
-accept a `MoneyTaskData` as well as an array (see [data](data.md)); a PUT body carries
-`TaskID`.
+reference defaults it to `false`. Every action answers with the Money Task, so `dto()` is a
+`MoneyTaskData` for `get()`, `post()`, `put()` and `delete()`, with `Lines` (`MoneyTaskLineData`),
+`Transactions` (`TransactionStockLineData`) and `Attachments` (`AttachmentLineData`). `post()`
+takes a `MoneyTaskPostData` and `put()` a `MoneyTaskPutData`, which requires `TaskID`, as well as
+an array (see [data](data.md)).
 
 ```php
 $task = $this->cin7->moneyTask()->get($taskId)->dto(); // MoneyTaskData
 
-$this->cin7->moneyTask()->post(MoneyTaskData::from([
+$this->cin7->moneyTask()->post(MoneyTaskPostData::from([
     'TaskType' => 'Receive Money',
     'Status' => 'DRAFT',
     'BankAccount' => '198489',

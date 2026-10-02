@@ -36,6 +36,13 @@ use Workbench\App\Support\Cin7Payloads;
  */
 class RequestBuildingTest extends TestCase
 {
+    /**
+     * The fields every tax rule requires.
+     *
+     * @var array<string, bool|string>
+     */
+    private const array TAX = ['Name' => 'VAT', 'Account' => '820', 'IsActive' => true, 'TaxInclusive' => false];
+
     private MockClient $mock;
 
     protected function setUp(): void
@@ -187,10 +194,10 @@ class RequestBuildingTest extends TestCase
      */
     public function testADataObjectSendsOnlyTheKeysThatWereSet(): void
     {
-        $pending = $this->send(new PutTax(TaxData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT'])));
+        $pending = $this->send(new PutTax(TaxData::from([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])));
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT'], $pending->body());
+        $this->assertSame([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $pending->body());
         $this->assertArrayNotHasKey('Components', $pending->body());
     }
 
@@ -211,27 +218,26 @@ class RequestBuildingTest extends TestCase
      */
     public function testNestedNullsAreLeftOutAndListsKeepTheirShape(): void
     {
+        $gst = ['Name' => 'GST', 'Percent' => '5.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '1'];
+        $pst = ['Name' => 'PST', 'Percent' => '7.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '2'];
+
         $body = $this->send(new PutTax(TaxData::from([
+            ...self::TAX,
             'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1',
-            'Components' => [['Name' => 'GST', 'AccountCode' => null], ['Name' => 'PST']],
+            'Components' => [[...$gst, 'Compound' => null], [...$pst, 'ID' => null]],
         ])))->body();
 
-        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Components' => [['Name' => 'GST'], ['Name' => 'PST']]], $body);
-        $this->assertSame('{"ID":"0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1","Components":[{"Name":"GST"},{"Name":"PST"}]}', json_encode($body));
+        $this->assertSame([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Components' => [$gst, $pst]], $body);
+        $this->assertStringContainsString('"Components":[{"Name":"GST"', (string) json_encode($body));
     }
 
     public function testASetCollectionIsSentAndAnUnsetOneIsLeftOut(): void
     {
-        $withComponents = TaxData::from([
-            'Name' => 'VAT',
-            'Components' => [['Name' => 'Tax', 'Percent' => '20.0000000000', 'ComponentOrder' => '1']],
-        ]);
+        $component = ['Name' => 'Tax', 'Percent' => '20.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '1'];
+        $withComponents = TaxData::from([...self::TAX, 'Components' => [$component]]);
 
         $this->assertInstanceOf(TaxComponentData::class, $withComponents->Components[0]);
-        $this->assertSame(
-            ['Name' => 'VAT', 'Components' => [['Name' => 'Tax', 'Percent' => '20.0000000000', 'ComponentOrder' => '1']]],
-            $this->send(new PutTax($withComponents))->body(),
-        );
+        $this->assertSame([...self::TAX, 'Components' => [$component]], $this->send(new PutTax($withComponents))->body());
     }
 
     public function testTheDecodedBodyIsReturnedAsAnArray(): void
