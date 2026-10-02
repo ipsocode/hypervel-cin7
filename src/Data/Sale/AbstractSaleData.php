@@ -10,6 +10,8 @@ use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Data\Other\AdditionalAttributeData;
+use Ipsocode\Cin7\Data\Other\AddressData;
 
 /**
  * The fields the Sale Model and the Sale POST/PUT Attributes share: the response of `sale` and

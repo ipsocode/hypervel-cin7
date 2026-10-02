@@ -30,8 +30,10 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   their common folder (`SaleAdditionalChargeData` in `src/Data/Sale/`), and one shared
   across families in `src/Data/Other/`, after the reference's Other Models
   (`ProductPriceData`, `CustomerAddressData`, `CustomerContactData`, `AttachmentLineData`,
-  `ErrorData`). An abstract parent whose children
-  span families stays in `src/Data/` itself (`AbstractLineData`). The Money Task's classes are in
+  `ErrorData`, and the `AddressData`, `AdditionalAttributeData`, `SalePaymentLineData` and
+  `InventoryMovementLineData` a sale and a purchase both carry). An abstract parent whose
+  children span families stays in `src/Data/` itself (`AbstractLineData`,
+  `AbstractAddressData`, `AbstractSalePaymentLineData`). The Money Task's classes are in
   `src/Data/MoneyTask/`, like its requests (see [resources](resources.md#conventions)).
   `src/Data/` holds nothing else: the traits the models share are in `src/Concerns/` and the
   validation attribute in `src/Attributes/`.
@@ -194,7 +196,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 
 | Key | Class (reference model) | Folder |
 |---|---|---|
-| `BillingAddress`, `ShippingAddress`, `AdditionalAttributes` | `AddressData`, `SaleShippingAddressData`, `AdditionalAttributeData` | `src/Data/Sale/` |
+| `BillingAddress`, `AdditionalAttributes` | `AddressData`, `AdditionalAttributeData`, shared with the purchase | `src/Data/Other/` |
+| `ShippingAddress` | `SaleShippingAddressData` | `src/Data/Sale/` |
 | `Quote` | `SaleQuoteData`, with `Prepayments` (`SalePaymentLineData`), `Lines` (`SaleQuoteLineData`) and `AdditionalCharges` (`SaleAdditionalChargeData`) | `src/Data/Sale/Quote/` |
 | `Order` | `SaleOrderData`, with `Lines` (`SaleOrderLineData`) and `AdditionalCharges` (`SaleAdditionalChargeData`) | `src/Data/Sale/Order/` |
 | `Fulfilments` | `SaleFulfilmentData`: `Pick` and `Pack` are `SaleFulfilmentPickPackData` (`Lines`: `SaleFulfilmentPickPackLineData`), `Ship` is `SaleFulfilmentShipData` (`Lines`: `SaleFulfilmentShipLineData`) | `src/Data/Sale/Fulfilment/`, the ship models in `Ship/` |
@@ -202,10 +205,13 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `CreditNotes` | `SaleCreditNoteData`, with the invoice's lines plus `Refunds` (`SalePaymentLineData`) and `Restock` (`SaleFulfilmentPickPackLineData`) | `src/Data/Sale/CreditNote/` |
 | `ManualJournals` | `SaleManualJournalData`, with `Lines` (`SaleManualJournalLineData`) | `src/Data/Sale/ManualJournal/` |
 | `Attachments` | `AttachmentLineData`, shared across families | `src/Data/Other/` |
-| `InventoryMovements`, `Transactions` | `InventoryMovementLineData`, `SaleTransactionLineData` | `src/Data/Sale/` |
+| `InventoryMovements` | `InventoryMovementLineData`, shared with the purchase | `src/Data/Other/` |
+| `Transactions` | `SaleTransactionLineData` | `src/Data/Sale/` |
 
-The payment line, additional charge and address classes stay in `src/Data/Sale/` because
-several sale paths share them.
+The additional charge and shipping address classes stay in `src/Data/Sale/` because several
+sale paths share them. The billing address, additional attributes, payment line
+(`SalePaymentLineData`, a quote's `Prepayments`) and inventory movement line are in
+`src/Data/Other/` because the purchase family carries them too.
 
 ## Typed pages
 
@@ -242,6 +248,10 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   fields": `ProductLength`, `ProductWidth`, `ProductHeight`, `ProductWeight`, `WeightUnits`,
   `DimensionsUnits` and `ProductCustomField1`–`10`. The sale line, pick and pack line and
   inventory movement classes take them from the `HasProductFields` trait.
+- **Weight and dimension units.** The Dimension Unit Available Values list `WeightUnits` (`oz`,
+  `mg`, `kg`, `lb`, `g`) and `DimensionsUnits` (`m`, `cm`, `mi`, `mm`, `in`, `ft`, `yd`, `km`)
+  by abbreviation, but most examples send `""`, and some `null`. The `HasProductFields` fields
+  stay strings of up to 10 characters, with no enum.
 - **Nulls.** `ExternalID`, `SourceChannel`, `Ship.RequireBy` and the invoice, due and ship
   dates and numbers of a Sale List row are `null` in the examples, so those properties admit
   `null`.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Sale;
+namespace Ipsocode\Cin7\Data\Other;
 
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;

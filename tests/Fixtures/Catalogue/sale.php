@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Hypervel\Saloon\Enums\Method;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Sale\AddressData;
+use Ipsocode\Cin7\Data\Other\AddressData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentPickPackData;
