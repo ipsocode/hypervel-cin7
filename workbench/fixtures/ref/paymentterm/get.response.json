@@ -1,0 +1,30 @@
+{
+    "Total": 3,
+    "Page": 1,
+    "PaymentTermList": [
+        {
+            "ID": "e6c25fa9-bb14-45b2-afe7-428e454663ef",
+            "Name": "10 days since end of month",
+            "Duration": 10,
+            "Method": "days since the end of the month",
+            "IsActive": true,
+            "IsDefault": false
+        },
+        {
+            "ID": "927a7013-e1d9-4194-a547-28b1b4c6b413",
+            "Name": "30 days",
+            "Duration": 30,
+            "Method": "number of days",
+            "IsActive": true,
+            "IsDefault": false
+        },
+        {
+            "ID": "1845c010-e8a3-4c51-a0be-a1211f406442",
+            "Name": "Last day of the month",
+            "Duration": 10,
+            "Method": "last day of next month",
+            "IsActive": true,
+            "IsDefault": false
+        }
+    ]
+}

@@ -65,6 +65,9 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->me()->addresses()` | `Me\AddressesResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeAddressPostData $body)`, `put(array\|MeAddressPutData $body)`, `delete(string $id)` |
 | `$cin7->me()->contacts()` | `Me\ContactsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeContactPostData $body)`, `put(array\|MeContactPutData $body)`, `delete(string $id)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
+| `$cin7->bankTransfer()` | `BankTransferResource` | `get(string $taskId)`, `post(array\|BankTransferPostData $body)`, `put(array\|BankTransferPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->sale()->fulfilment()` | `Sale\FulfilmentResource` | `get(string $saleId, …)`, `post(array\|SaleFulfilmentsData $body)`, `delete(string $taskId, ?bool $void = null)`; `pick()`, `pack()`, `ship()` |
@@ -91,12 +94,19 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseList()` | `PurchaseListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseCreditNoteList()` | `PurchaseCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
-| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`; a pure grouping, as V2 has no action on `/ref` |
+| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `brand()`, `category()`, `unit()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()->supplier()` | `Ref\SupplierResource` | `deposits()`; also a pure grouping |
 | `$cin7->ref()->supplier()->deposits()` | `Ref\Supplier\DepositsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->ref()->account()` | `Ref\AccountResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|AccountPostData $body)`, `put(array\|AccountPutData $body)`, `delete(string $code)`; `bank()` |
+| `$cin7->ref()->account()->bank()` | `Ref\Account\BankResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->ref()->brand()` | `Ref\BrandResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|BrandPostData $body)`, `put(array\|BrandPutData $body)`, `delete(string $id)` |
+| `$cin7->ref()->category()` | `Ref\CategoryResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductCategoryPostData $body)`, `put(array\|ProductCategoryPutData $body)`, `delete(string $id)` |
+| `$cin7->ref()->unit()` | `Ref\UnitResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|UnitOfMeasurePostData $body)`, `put(array\|UnitOfMeasurePutData $body)`, `delete(string $id)` |
+| `$cin7->ref()->fixedAssetType()` | `Ref\FixedAssetTypeResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|FixedAssetTypePostData $body)`, `put(array\|FixedAssetTypePutData $body)` |
+| `$cin7->ref()->paymentTerm()` | `Ref\PaymentTermResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|PaymentTermPostData $body)`, `put(array\|PaymentTermPutData $body)`, `delete(string $id)` |
 
 `…` stands for the optional query parameters, listed per request in
 [query parameters](requests.md#query-parameters).
@@ -246,8 +256,9 @@ $saved = $this->cin7->product()->put(ProductPutData::from([
 ## Ref
 
 The reference data lives under `ref/…`, so the chain spells the path:
-`$cin7->ref()->tax()`, `$cin7->ref()->customer()->credits()` and
-`$cin7->ref()->supplier()->deposits()`.
+`$cin7->ref()->tax()`, `$cin7->ref()->customer()->credits()`,
+`$cin7->ref()->supplier()->deposits()`, `$cin7->ref()->account()` and
+`$cin7->ref()->account()->bank()`.
 
 `ref/tax` lists under `TaxRuleList` (`{Total, Page, TaxRuleList}`). Its data classes are
 `TaxData` and `TaxComponentData`; `get()->dto()` is a `list<TaxData>`. `post()` takes a
@@ -272,6 +283,116 @@ foreach ($this->cin7->ref()->customer()->credits()->paginate(customerId: $guid)-
 
 foreach ($this->cin7->ref()->supplier()->deposits()->paginate(supplierId: $guid)->items() as $deposit) {
     // $deposit is one entry of SupplierDeposits
+}
+```
+
+`ref/account` is the chart of accounts. It lists under `AccountsList`
+(`{Total, Page, AccountsList}`), filtered by `code`, `name` (accounts whose name starts with it),
+`type` and `status`, and `get()->dto()` is a `list<AccountData>`. `post()` takes an
+`AccountPostData` and `put()` an `AccountPutData` as well as an array; the account's `Code` names
+it, and both answer with the saved `AccountData`. Cin7 refuses a PUT while the Xero or QuickBooks
+integration is on. `delete($code)` sends `ref/account?Code=…` and answers `{Success}`.
+
+```php
+use Ipsocode\Cin7\Data\Ref\Account\AccountPostData;
+
+$banks = $this->cin7->ref()->account()->get(type: 'BANK')->dto(); // list<AccountData>
+
+$saved = $this->cin7->ref()->account()->post(AccountPostData::from([
+    'Code' => '091',
+    'Name' => 'Savings Account',
+    'Type' => 'BANK',
+    'Status' => 'ACTIVE',
+    'Bank' => 'Bank of Example',
+    'BankAccountNumber' => '12345678',
+]))->dto(); // AccountData
+
+$this->cin7->ref()->account()->delete('091'); // DELETE ref/account?Code=091
+```
+
+`ref/account/bank` lists the bank accounts under `BankAccountsList`, filtered by `id`, `name`
+(bank accounts whose name starts with it) and `bank`; `get()->dto()` is a
+`list<BankAccountData>`. It is read-only.
+
+```php
+foreach ($this->cin7->ref()->account()->bank()->paginate()->items() as $bankAccount) {
+    // $bankAccount is one entry of BankAccountsList
+}
+```
+
+`ref/brand`, `ref/category` (the product categories) and `ref/unit` (the units of measure) are the
+same simple resource three times: they list under `BrandList`, `CategoryList` and `UnitList`,
+filtered by `name`, and `post()` and `put()` take a `…PostData` or `…PutData` (which requires `ID`)
+or an array. Unlike `ref/tax`, a POST or PUT answers with the saved record, not a list, so its
+`dto()` is a `BrandData`, `ProductCategoryData` or `UnitOfMeasureData`; `delete($id)` sends `?ID=…`.
+
+```php
+$brand = $this->cin7->ref()->brand()->post(['Name' => 'Acme'])->dto(); // BrandData
+
+$this->cin7->ref()->unit()->delete($unitId);
+```
+
+`ref/fixedassettype` lists under `FixedAssetTypeList`, filtered by `fixedAssetTypeId` and `name`;
+`post()` takes a `FixedAssetTypePostData` and `put()` a `FixedAssetTypePutData`, which requires
+`FixedAssetTypeID`, as well as an array, and `get()->dto()` is a `list<FixedAssetTypeData>`. Set
+`Rate` or `EffectiveLife`, not both.
+
+`ref/paymentterm` lists under `PaymentTermList`, filtered by `id`, `name`, `method` (a
+`PaymentTermMethod`), `isActive` and `isDefault`; `post()` takes a `PaymentTermPostData` and `put()`
+a `PaymentTermPutData`, which requires `ID`; `delete($id)` sends `ref/paymentterm?ID=…`.
+
+```php
+use Ipsocode\Cin7\Enums\PaymentTermMethod;
+
+$terms = $this->cin7->ref()->paymentTerm()->get(method: PaymentTermMethod::NumberOfDays, isActive: true)->dto(); // list<PaymentTermData>
+```
+
+## Bank transfer
+
+`$cin7->bankTransfer()` is `bankTransfer`, a transfer between two bank accounts, and the Money
+Task's twin: keyed by `TaskID` (`get($taskId)`), with no list action, since `moneyTaskList` lists
+the transfers. `post()` takes a `BankTransferPostData` and `put()` a `BankTransferPutData`, which
+requires `TaskID`, as well as an array. Every action answers with the transfer, so `dto()` is a
+`BankTransferData`, with `Transactions` (`TransactionStockLineData`) and `Attachments`
+(`AttachmentLineData`). `delete($id, void: true)` voids it. Cin7 works out the
+`CurrencyConversionRate` itself.
+
+```php
+$transfer = $this->cin7->bankTransfer()->post(BankTransferPostData::from([
+    'Status' => 'DRAFT',
+    'FromAccount' => '198489',
+    'ToAccount' => '713',
+    'FromAmount' => 3,
+    'ToAmount' => 6,
+    'Date' => '2018-01-17T00:00:00',
+]))->dto(); // BankTransferData
+```
+
+## Journal and transactions
+
+`$cin7->journal()` is `journal`, the manual journals. It lists under `Journals`, filtered by
+`taskId`, `status` (a `CompletionStatus`) and `search`, and `get()->dto()` is a `list<JournalData>`
+with `Lines` (`JournalLineData`) and `Attachments` (`AttachmentLineData`). `post()` takes a
+`JournalPostData` and `put()` a `JournalPutData`, which requires `TaskID`, as well as an array;
+both, and `delete()`, answer with the journal, so their `dto()` is a `JournalData`.
+`delete($id, void: true)` voids the journal and `void: false` undoes the void.
+
+`$cin7->transactions()` is read-only: it lists the ledger's transactions under `Transactions`,
+filtered by `fromDate`, `toDate` and the debit or credit `account` code, as `TransactionData`.
+
+```php
+$journal = $this->cin7->journal()->post(JournalPostData::from([
+    'Status' => 'DRAFT',
+    'Currency' => 'USD',
+    'CurrencyConversionRate' => 50,
+    'EffectiveDate' => '2018-01-20T00:00:00',
+    'Lines' => [['Debit' => '260', 'Credit' => '270', 'Amount' => 2, 'BaseAmount' => 100]],
+]))->dto(); // JournalData
+
+$this->cin7->journal()->delete($journal->TaskID, void: true);
+
+foreach ($this->cin7->transactions()->paginate(account: '610')->items() as $transaction) {
+    // $transaction is one entry of Transactions
 }
 ```
 

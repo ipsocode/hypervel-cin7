@@ -14,7 +14,7 @@ def case_name(value):
 
 
 def write(name, summary, values):
-    cases = '\n'.join(f"    case {case_name(v)} = '{v}';" for v in values)
+    cases = '\n'.join(f"    case {case_name(v)} = '{v.replace(chr(39), chr(92) + chr(39))}';" for v in values)
     doc = '\n'.join(' * ' + l for l in textwrap.wrap(summary, 96, break_on_hyphens=False))
     target = bp.REPO / 'src/Enums' / f'{name}.php'
     target.write_text(f"""<?php

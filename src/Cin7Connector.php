@@ -14,7 +14,9 @@ use Hypervel\Saloon\Pagination\Contracts\HasPagination;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
+use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
@@ -27,6 +29,7 @@ use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
+use Ipsocode\Cin7\Resources\TransactionsResource;
 use UnitEnum;
 
 /**
@@ -183,8 +186,8 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * The `ref` grouping: `ref()->tax()`, `ref()->customer()->credits()` and
-     * `ref()->supplier()->deposits()`.
+     * The `ref` grouping: `ref()->tax()`, `ref()->account()`, `ref()->paymentTerm()` and the
+     * other `ref/…` resources.
      */
     public function ref(): RefResource
     {
@@ -213,6 +216,30 @@ final class Cin7Connector extends Connector implements HasPagination
     public function saleList(): SaleListResource
     {
         return new SaleListResource($this);
+    }
+
+    /**
+     * The `bankTransfer` resource.
+     */
+    public function bankTransfer(): BankTransferResource
+    {
+        return new BankTransferResource($this);
+    }
+
+    /**
+     * The `journal` resource.
+     */
+    public function journal(): JournalResource
+    {
+        return new JournalResource($this);
+    }
+
+    /**
+     * The `transactions` resource.
+     */
+    public function transactions(): TransactionsResource
+    {
+        return new TransactionsResource($this);
     }
 
     /**

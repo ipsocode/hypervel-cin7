@@ -12,7 +12,7 @@ import blueprint as bp, names
 
 # The maintainer's ranking, by reference group name.
 HIGH = ['Purchase', 'Supplier', 'Me']
-LOW = ['CRM', 'Disassembly', 'Finished Goods', 'Production']
+LOW = ['Bank Accounts', 'Carrier', 'CRM', 'Disassembly', 'Finished Goods', 'Fixed Asset Type', 'Production', 'Reference Books', 'Templates', 'Unit of Measure']
 WRONG_HEADING = {'moneyOperation': 'Money Task', 'bankTransfer': 'Bank Transfer'}
 
 

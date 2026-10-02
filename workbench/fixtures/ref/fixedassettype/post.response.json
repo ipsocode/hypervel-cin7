@@ -1,0 +1,20 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "FixedAssetTypeList": [
+        {
+            "FixedAssetTypeID": "e410a45b-a4c1-47cb-aaad-a6714112ef56",
+            "Name": "Third FixedAssetType",
+            "DepreciationMethod": "No Depreciation",
+            "AveragingMethod": "Full Month",
+            "Rate": 10,
+            "EffectiveLife": null,
+            "AssetAccountCode": "710",
+            "AccumulatedDepreciationAccountCode": "710",
+            "DepreciationExpenseAccountCode": "400",
+            "AssetAccountName": "710: Office Equipment",
+            "AccumulatedDepreciationAccountName": "710: Office Equipment",
+            "DepreciationExpenseAccountName": "400: Advertising"
+        }
+    ]
+}

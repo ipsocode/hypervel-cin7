@@ -1,0 +1,26 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "Journals": [
+        {
+            "TaskID": "0f3dad04-55cc-437c-87fa-b3a99445ecd4",
+            "Status": "DRAFT",
+            "JournalNumber": "JR-00006",
+            "Currency": "USD",
+            "CurrencyConversionRate": 50,
+            "EffectiveDate": "2018-01-20T00:00:00",
+            "Narration": null,
+            "Notes": null,
+            "Lines": [
+                {
+                    "Debit": "260",
+                    "Credit": "270",
+                    "Reference": "3",
+                    "Amount": 2,
+                    "BaseAmount": 100
+                }
+            ],
+            "Attachments": []
+        }
+    ]
+}

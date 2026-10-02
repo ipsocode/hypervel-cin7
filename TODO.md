@@ -28,26 +28,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `attribute-set` · `ref/attributeset` · GET POST PUT DELETE
   - [ ] Attribute Set: `AttributeSetData`
 
-### `reference/bank-accounts/**` Bank Accounts (1 resource, 1 operation)
-
-- [ ] `bank-accounts` · `ref/account/bank` · GET
-  - [ ] Bank Accounts: `BankAccountData`
-
-### `reference/brand/**` Brand (1 resource, 4 operations)
-
-- [ ] `brand` · `ref/brand` · GET POST PUT DELETE
-  - [ ] Brand: `BrandData`
-
-### `reference/carrier/**` Carrier (1 resource, 4 operations)
-
-- [ ] `carrier` · `ref/carrier` · GET POST PUT DELETE
-  - [ ] Carrier: `CarrierData`
-
-### `reference/chart-of-accounts/**` Chart of Accounts (1 resource, 4 operations)
-
-- [ ] `chart-of-accounts` · `ref/account` · GET POST PUT DELETE
-  - [ ] Chart of Accounts: `AccountData`
-
 ### `reference/customer/**` Customer (3 resources, 7 operations, 1 left)
 
 - [x] `customer` · `customer` · GET POST PUT
@@ -56,11 +36,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [ ] Customer Default Template: `CustomerDefaultTemplateData`
 - [x] `customer-credits` · `ref/customer/credits` · GET
   - [x] Customer Credits: `CustomerCreditData`
-
-### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
-
-- [ ] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
-  - [ ] Fixed Asset Types: `FixedAssetTypeData`
 
 ### `reference/inventory-write-off/**` Inventory Write-Off (2 resources, 5 operations)
 
@@ -71,29 +46,10 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [ ] Inventory Write-Off POST/PUT body: `InventoryWriteOffPostData`
   - [ ] Inventory Write-Off POST/PUT body: `InventoryWriteOffPutData`
 
-### `reference/journal/**` Journal (1 resource, 4 operations)
-
-- [ ] `journal` · `journal` · GET POST PUT DELETE
-  - [ ] Journal: `JournalData`
-
 ### `reference/location/**` Location (1 resource, 4 operations)
 
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
-
-### `reference/money-task/**` Money Task (3 resources, 9 operations, 1 left)
-
-- [x] `money-task-list` · `moneyTaskList` · GET
-  - [x] Money Task List: `MoneyTaskListData`
-- [x] `money-operation` · `moneyOperation` · GET POST PUT DELETE
-  - [x] Money Task: `MoneyTaskData`
-- [ ] `bank-transfer` · `bankTransfer` · GET POST PUT DELETE
-  - [ ] Bank Transfer: `BankTransferData`
-
-### `reference/payment-term/**` Payment Term (1 resource, 4 operations)
-
-- [ ] `payment-term` · `ref/paymentterm` · GET POST PUT DELETE
-  - [ ] Payment Term: `PaymentTermData`
 
 ### `reference/price-tiers/**` Price Tiers (1 resource, 1 operation)
 
@@ -109,11 +65,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `product-availability` · `ref/productavailability` · GET
   - [ ] Product Availability: `ProductAvailabilityData`
 
-### `reference/product-categories/**` Product Categories (1 resource, 4 operations)
-
-- [ ] `product-category` · `ref/category` · GET POST PUT DELETE
-  - [ ] Product Category: `ProductCategoryData`
-
 ### `reference/product-family/**` Product Family (2 resources, 6 operations)
 
 - [ ] `product-family` · `productFamily` · GET POST PUT
@@ -126,30 +77,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `markup-prices` · `ref/markupprices` · GET PUT
   - [ ] Markup Prices: `MarkupPricesData`
   - [ ] MarkupPriceLineModel: `MarkupPriceLineData`
-
-### `reference/reference-books/**` Reference Books (6 resources, 19 operations)
-
-- [ ] `custom-prices` · `custom-prices` · POST PUT DELETE
-  - uses ProductPriceModel
-- [ ] `deals` · `reference/deals` · GET POST PUT
-  - [ ] ProductDeal: `ProductDealData`
-  - [ ] ProductDealCustomerModel: `ProductDealCustomerData`
-  - [ ] ProductDealTagModel: `ProductDealTagData`
-  - [ ] ProductDealDiscountModel: `ProductDealDiscountData`
-  - [ ] ProductDealDiscountBrandModel: `ProductDealDiscountBrandData`
-  - [ ] ProductDealDiscountProductModel: `ProductDealDiscountProductData`
-  - [ ] ProductDealDiscountTagModel: `ProductDealDiscountTagData`
-  - [ ] ProductDealDiscountCategoryModel: `ProductDealDiscountCategoryData`
-- [ ] `product-discounts` · `reference/discount` · GET POST PUT
-  - [ ] ProductDiscountRuleModel: `ProductDiscountRuleData`
-  - [ ] DiscountLineModel: `DiscountLineData`
-- [ ] `product-suppliers` · `product-suppliers` · GET POST PUT DELETE
-  - uses ProductSupplierModel, ProductSupplierOptionsModel, ProductSupplierOptionsIntervalModel
-- [ ] `ship-zones` · `reference/shipZones` · GET POST PUT DELETE
-  - [ ] ShippingZoneModel: `ShippingZoneData`
-  - [ ] ShipZoneAppliesToModel: `ShipZoneAppliesToData`
-  - [ ] ShipZoneConditionModel: `ShipZoneConditionData`
-- [ ] `ship-zones-enabled` · `reference/shipZonesEnabled` · GET PUT
 
 ### `reference/stock/**` Stock (7 resources, 17 operations)
 
@@ -170,21 +97,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [ ] Stock Transfer: `StockTransferData`
 - [ ] `stock-transfer-order` · `stockTransfer/order` · GET POST
   - [ ] Stock Transfer Order: `StockTransferOrderData`
-
-### `reference/templates/**` Templates (1 resource, 1 operation)
-
-- [ ] `templates` · `ref/templates` · GET
-  - [ ] Templates: `TemplateData`
-
-### `reference/transactions/**` Transactions (1 resource, 1 operation)
-
-- [ ] `transactions` · `transactions` · GET
-  - [ ] Transactions: `TransactionData`
-
-### `reference/unit-of-measure/**` Unit of Measure (1 resource, 4 operations)
-
-- [ ] `unit-of-measure` · `ref/unit` · GET POST PUT DELETE
-  - [ ] Unit of Measure: `UnitOfMeasureData`
 
 ### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
 
@@ -255,7 +167,7 @@ Built with the first resource that uses it.
 - [x] SupplierContactModel: `CustomerContactData` · used by customer, supplier, lead
 - [x] ChildCustomerModel: `ChildCustomerData` · used by customer
 - [x] ProductPriceModel: `ProductPriceData` · used by customer, product, custom-prices
-- [ ] JournalLineModel: `JournalLineData` · used by journal
+- [x] JournalLineModel: `JournalLineData` · used by journal
 - [x] PurchasePaymentLineModel: `PurchasePaymentLineData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseStockModel: `AdvancedPurchaseStockData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseStockLineModel: `AdvancedPurchaseStockLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-stock-received
@@ -271,6 +183,11 @@ Built with the first resource that uses it.
 ## Low
 
 CRM, disassembly, finished goods and production, the maintainer's choice.
+
+### `reference/carrier/**` Carrier (1 resource, 4 operations)
+
+- [ ] `carrier` · `ref/carrier` · GET POST PUT DELETE
+  - [ ] Carrier: `CarrierData`
 
 ### `reference/disassembly/**` Disassembly (3 resources, 6 operations)
 
@@ -357,6 +274,35 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] WorkCenterLocation: `WorkCenterLocationData`
   - [ ] WorkCenterSupplier: `WorkCenterSupplierData`
 
+### `reference/reference-books/**` Reference Books (6 resources, 19 operations)
+
+- [ ] `custom-prices` · `custom-prices` · POST PUT DELETE
+  - uses ProductPriceModel
+- [ ] `deals` · `reference/deals` · GET POST PUT
+  - [ ] ProductDeal: `ProductDealData`
+  - [ ] ProductDealCustomerModel: `ProductDealCustomerData`
+  - [ ] ProductDealTagModel: `ProductDealTagData`
+  - [ ] ProductDealDiscountModel: `ProductDealDiscountData`
+  - [ ] ProductDealDiscountBrandModel: `ProductDealDiscountBrandData`
+  - [ ] ProductDealDiscountProductModel: `ProductDealDiscountProductData`
+  - [ ] ProductDealDiscountTagModel: `ProductDealDiscountTagData`
+  - [ ] ProductDealDiscountCategoryModel: `ProductDealDiscountCategoryData`
+- [ ] `product-discounts` · `reference/discount` · GET POST PUT
+  - [ ] ProductDiscountRuleModel: `ProductDiscountRuleData`
+  - [ ] DiscountLineModel: `DiscountLineData`
+- [ ] `product-suppliers` · `product-suppliers` · GET POST PUT DELETE
+  - uses ProductSupplierModel, ProductSupplierOptionsModel, ProductSupplierOptionsIntervalModel
+- [ ] `ship-zones` · `reference/shipZones` · GET POST PUT DELETE
+  - [ ] ShippingZoneModel: `ShippingZoneData`
+  - [ ] ShipZoneAppliesToModel: `ShipZoneAppliesToData`
+  - [ ] ShipZoneConditionModel: `ShipZoneConditionData`
+- [ ] `ship-zones-enabled` · `reference/shipZonesEnabled` · GET PUT
+
+### `reference/templates/**` Templates (1 resource, 1 operation)
+
+- [ ] `templates` · `ref/templates` · GET
+  - [ ] Templates: `TemplateData`
+
 ### `reference/crm/**` CRM (6 resources, 16 operations)
 
 - [ ] `lead` · `crm/lead` · GET POST PUT
@@ -389,6 +335,31 @@ Built with the first resource that uses it.
 
 Every resource in these groups is in.
 
+### `reference/bank-accounts/**` Bank Accounts (1 resource, 1 operation)
+
+- [x] `bank-accounts` · `ref/account/bank` · GET
+  - [x] Bank Accounts: `BankAccountData`
+
+### `reference/brand/**` Brand (1 resource, 4 operations)
+
+- [x] `brand` · `ref/brand` · GET POST PUT DELETE
+  - [x] Brand: `BrandData`
+
+### `reference/chart-of-accounts/**` Chart of Accounts (1 resource, 4 operations)
+
+- [x] `chart-of-accounts` · `ref/account` · GET POST PUT DELETE
+  - [x] Chart of Accounts: `AccountData`
+
+### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
+
+- [x] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
+  - [x] Fixed Asset Types: `FixedAssetTypeData`
+
+### `reference/journal/**` Journal (1 resource, 4 operations)
+
+- [x] `journal` · `journal` · GET POST PUT DELETE
+  - [x] Journal: `JournalData`
+
 ### `reference/me/**` Me (3 resources, 9 operations)
 
 - [x] `me` · `me` · GET
@@ -398,6 +369,25 @@ Every resource in these groups is in.
   - [x] Me Address: `MeAddressData`
 - [x] `me-contact` · `me/contacts` · GET POST PUT DELETE
   - [x] Me Contact: `MeContactData`
+
+### `reference/money-task/**` Money Task (3 resources, 9 operations)
+
+- [x] `money-task-list` · `moneyTaskList` · GET
+  - [x] Money Task List: `MoneyTaskListData`
+- [x] `money-operation` · `moneyOperation` · GET POST PUT DELETE
+  - [x] Money Task: `MoneyTaskData`
+- [x] `bank-transfer` · `bankTransfer` · GET POST PUT DELETE
+  - [x] Bank Transfer: `BankTransferData`
+
+### `reference/payment-term/**` Payment Term (1 resource, 4 operations)
+
+- [x] `payment-term` · `ref/paymentterm` · GET POST PUT DELETE
+  - [x] Payment Term: `PaymentTermData`
+
+### `reference/product-categories/**` Product Categories (1 resource, 4 operations)
+
+- [x] `product-category` · `ref/category` · GET POST PUT DELETE
+  - [x] Product Category: `ProductCategoryData`
 
 ### `reference/purchase/**` Purchase (17 resources, 45 operations)
 
@@ -496,3 +486,13 @@ Every resource in these groups is in.
 
 - [x] `tax` · `ref/tax` · GET POST PUT
   - [x] Tax: `TaxData`
+
+### `reference/transactions/**` Transactions (1 resource, 1 operation)
+
+- [x] `transactions` · `transactions` · GET
+  - [x] Transactions: `TransactionData`
+
+### `reference/unit-of-measure/**` Unit of Measure (1 resource, 4 operations)
+
+- [x] `unit-of-measure` · `ref/unit` · GET POST PUT DELETE
+  - [x] Unit of Measure: `UnitOfMeasureData`
