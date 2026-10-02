@@ -52,6 +52,7 @@ use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource as RefSupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\Ref\UnitResource;
+use Ipsocode\Cin7\Resources\Reference\DealsResource;
 use Ipsocode\Cin7\Resources\Reference\DiscountResource;
 use Ipsocode\Cin7\Resources\Reference\ShipZonesEnabledResource;
 use Ipsocode\Cin7\Resources\Reference\ShipZonesResource;
@@ -299,6 +300,7 @@ class ConnectorResourcesTest extends TestCase
 
         $this->assertInstanceOf(ReferenceResource::class, $connector->reference());
         $this->assertNotSame($connector->reference(), $connector->reference());
+        $this->assertInstanceOf(DealsResource::class, $connector->reference()->deals());
         $this->assertInstanceOf(DiscountResource::class, $connector->reference()->discount());
         $this->assertInstanceOf(ShipZonesResource::class, $connector->reference()->shipZones());
         $this->assertInstanceOf(ShipZonesEnabledResource::class, $connector->reference()->shipZonesEnabled());

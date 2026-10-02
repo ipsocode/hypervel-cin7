@@ -67,9 +67,10 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)`; `attachments()`, `markupPrices()` |
 | `$cin7->customPrices()` | `CustomPricesResource` | `post(array\|CustomPricesData $body)`, `put(array\|CustomPricesData $body)`, `delete(string $productId, string $customerId)` |
 | `$cin7->productSuppliers()` | `ProductSuppliersResource` | `get(string $productId)`, `post(array\|ProductSuppliersData $body)`, `put(array\|ProductSuppliersData $body)`, `delete(string $productId, string $supplierId)` |
-| `$cin7->reference()` | `ReferenceResource` | `discount()`, `shipZones()`, `shipZonesEnabled()` |
+| `$cin7->reference()` | `ReferenceResource` | `deals()`, `discount()`, `shipZones()`, `shipZonesEnabled()` |
 | `$cin7->reference()->shipZones()` | `Reference\ShipZonesResource` | `get($page, $limit, $id, $search)`, `paginate($limit, $id, $search): Cin7Paginator`, `post(array\|ShippingZonePostData $body)`, `put(array\|ShippingZonePutData $body)`, `delete(string $shipZoneId)` |
 | `$cin7->reference()->discount()` | `Reference\DiscountResource` | `get($page, $limit, $id, $search)`, `paginate($limit, $id, $search): Cin7Paginator`, `post(array\|ProductDiscountRulesPostData $body)`, `put(array\|ProductDiscountRulePutData $body)` |
+| `$cin7->reference()->deals()` | `Reference\DealsResource` | `get($page, $limit, $id, $search)`, `paginate($limit, $id, $search): Cin7Paginator`, `post(array\|ProductDealPostData $body)`, `put(array\|ProductDealPutData $body)` |
 | `$cin7->reference()->shipZonesEnabled()` | `Reference\ShipZonesEnabledResource` | `get()`, `put(array\|ShipZonesEnabledData $body)` |
 | `$cin7->bankTransfer()` | `BankTransferResource` | `get(string $taskId)`, `post(array\|BankTransferPostData $body)`, `put(array\|BankTransferPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
@@ -882,6 +883,13 @@ $suppliers = $this->cin7->productSuppliers()->get($productId)->dto()->ProductSup
 
 `$cin7->reference()` holds the `reference/…` resources, apart from `ref()`, whose paths are
 `ref/…`.
+
+`$cin7->reference()->deals()` is `reference/deals`, the product deals, with no DELETE: `get()` and
+`paginate()` filter by `id` and `search`, and `dto()` is a `list<ProductDealData>`. A deal applies
+discount rules, in `DealDiscounts` (`ProductDealDiscountData`), to the customers in `DealCustomers` and
+`DealCustomerTags`, or to a `CustomersGroup`; each discount names the brands, categories, tags and
+products it covers. `post()` takes a `ProductDealPostData` (a `Name`) and `put()` a `ProductDealPutData`
+(an `ID` and `Name`) as well as an array, and both answer the saved deal.
 
 `$cin7->reference()->discount()` is `reference/discount`, the product discount rules, with no DELETE:
 `get()` and `paginate()` filter by `id` and `search`, and `dto()` is a `list<ProductDiscountRuleData>`

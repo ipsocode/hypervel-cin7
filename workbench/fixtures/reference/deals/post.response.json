@@ -1,0 +1,108 @@
+{
+    "Deals": [
+        {
+            "ID": "8b89117b-e73c-4ccd-9bbc-8e7c95bfaa6c",
+            "Name": "Product Deal 1",
+            "DateFrom": null,
+            "DateTo": null,
+            "IsActive": false,
+            "AllowCoupons": false,
+            "SingleCouponCodeUsage": false,
+            "CustomersGroup": "POS",
+            "CouponCodes": null,
+            "DealCustomers": [],
+            "DealCustomerTags": [],
+            "DealDiscounts": [
+                {
+                    "ID": "f2b3e4ee-ddca-466c-8ba2-b4a8ea98a81a",
+                    "DiscountName": "Test 12",
+                    "DiscountType": "Simple",
+                    "DiscountID": "da9bdb07-484e-4a1b-bfdb-5ab49c252d8b",
+                    "Sequence": 2,
+                    "IsOrderLevel": false,
+                    "BuyType": "",
+                    "BuyValue": null,
+                    "BuyValueType": "",
+                    "BuyMore": false,
+                    "GetType": "",
+                    "GetValue": null,
+                    "GetValueType": "",
+                    "DealDiscountBrands": [],
+                    "DealDiscountCategories": [],
+                    "DealDiscountTags": [],
+                    "DealDiscountProducts": [
+                        {
+                            "ID": "a674841d-d142-4d71-a42d-5db43416e550",
+                            "ProductID": "1cd995b0-a8f1-456c-9784-ecf3a8fc2804",
+                            "ProductName": "Screws Drive Cross",
+                            "ProductSKU": "Screws-SKU - 002",
+                            "IsFamily": false
+                        },
+                        {
+                            "ID": "a6ae2d5b-62af-4413-be21-7632ec579737",
+                            "ProductID": "931bdf92-20c9-4d93-bc43-7cfa0665f419",
+                            "ProductName": "Screws Phillips Drive Flat",
+                            "ProductSKU": "Screws-SKU - 001",
+                            "IsFamily": false
+                        }
+                    ]
+                },
+                {
+                    "ID": "38ced00a-6ca3-4ef7-953b-3f8fcf0d2f90",
+                    "DiscountName": "Alles fur Freunde",
+                    "DiscountType": "Simple",
+                    "DiscountID": "98fcb436-988d-437c-b135-7dcf19c94719",
+                    "Sequence": 1,
+                    "IsOrderLevel": false,
+                    "BuyType": "",
+                    "BuyValue": null,
+                    "BuyValueType": "",
+                    "BuyMore": false,
+                    "GetType": "",
+                    "GetValue": null,
+                    "GetValueType": "",
+                    "DealDiscountBrands": [
+                        {
+                            "ID": "7d49c88c-f29d-41a2-a722-3e374ca006b7",
+                            "BrandID": "9a04feb2-fee6-48de-9cbb-fbd4679adb8f",
+                            "BrandName": "Microsoft"
+                        }
+                    ],
+                    "DealDiscountCategories": [
+                        {
+                            "ID": "2ccac251-3771-4b4a-9b90-a6cb5224e553",
+                            "CategoryID": "b749d1be-01e6-49ee-8a3e-5bc75d9fea93",
+                            "CategoryName": "Other"
+                        }
+                    ],
+                    "DealDiscountTags": [
+                        {
+                            "ID": "875145c2-fef4-4d47-ac83-d43acac1e517",
+                            "TagName": "Kuku1"
+                        }
+                    ],
+                    "DealDiscountProducts": []
+                },
+                {
+                    "ID": "2105615b-f561-4af2-bc53-933153fadc49",
+                    "DiscountName": "Free shiping",
+                    "DiscountType": "FreeShipping",
+                    "DiscountID": "7ba8cd3f-db4a-4a28-8f79-9246a027ef0a",
+                    "Sequence": 0,
+                    "IsOrderLevel": true,
+                    "BuyType": "brand",
+                    "BuyValue": null,
+                    "BuyValueType": "",
+                    "BuyMore": false,
+                    "GetType": "brand",
+                    "GetValue": null,
+                    "GetValueType": "",
+                    "DealDiscountBrands": [],
+                    "DealDiscountCategories": [],
+                    "DealDiscountTags": [],
+                    "DealDiscountProducts": []
+                }
+            ]
+        }
+    ]
+}
