@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Workbench\App\Services;
 
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
 
 /**
  * A consuming application's customer service, built on the connector.
@@ -33,34 +34,21 @@ final class CustomerDirectory
         return iterator_to_array($paginator->items(), false);
     }
 
-    /**
-     * @return null|array<string, mixed>
-     */
-    public function find(string $guid): ?array
+    public function find(string $guid): ?CustomerData
     {
-        $response = $this->connector->customer()->get(['ID' => $guid]);
+        return $this->connector->customer()->get(['ID' => $guid])->dto()[0] ?? null;
+    }
 
-        return $response->json('CustomerList')[0] ?? null;
+    public function create(CustomerData $customer): CustomerData
+    {
+        return $this->connector->customer()->post($customer)->dto();
     }
 
     /**
-     * @param array<string, mixed> $attributes
-     * @return array<string, mixed>
+     * The GUID is applied to the body, so it wins over an `ID` already set on `$customer`.
      */
-    public function create(array $attributes): array
+    public function update(string $guid, CustomerData $customer): CustomerData
     {
-        return $this->connector->customer()->post($attributes)->json();
-    }
-
-    /**
-     * @param array<string, mixed> $attributes
-     * @return array<string, mixed>
-     */
-    public function update(string $guid, array $attributes): array
-    {
-        // Assigned last so the GUID wins over a caller-supplied value under the same key.
-        $attributes['ID'] = $guid;
-
-        return $this->connector->customer()->put($attributes)->json();
+        return $this->connector->customer()->put([...$customer->toArray(), 'ID' => $guid])->dto();
     }
 }

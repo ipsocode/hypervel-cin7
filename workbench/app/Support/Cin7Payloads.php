@@ -77,6 +77,342 @@ final class Cin7Payloads
     }
 
     /**
+     * The `customer` GET example from the V2 reference, whole: one customer with an address,
+     * a contact and a child customer, and one with a parent, a contact and a product price.
+     *
+     * @return array<string, mixed>
+     */
+    public static function customerExample(): array
+    {
+        return [
+            'Total' => 2,
+            'Page' => 1,
+            'CustomerList' => [
+                [
+                    'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1',
+                    'Name' => 'Human Test',
+                    'DisplayName' => 'Mary Jane',
+                    'Currency' => 'AUD',
+                    'PaymentTerm' => '30 days',
+                    'Discount' => 0,
+                    'TaxRule' => 'BAS Excluded',
+                    'Carrier' => 'DEFAULT Carrier',
+                    'SalesRepresentative' => null,
+                    'Location' => 'Main Warehouse',
+                    'Comments' => '',
+                    'AccountReceivable' => '610',
+                    'RevenueAccount' => '200',
+                    'PriceTier' => 'Tier 1',
+                    'TaxNumber' => '',
+                    'AdditionalAttribute1' => '',
+                    'AdditionalAttribute2' => '',
+                    'AdditionalAttribute3' => '',
+                    'AdditionalAttribute4' => '',
+                    'AdditionalAttribute5' => '',
+                    'AdditionalAttribute6' => '',
+                    'AdditionalAttribute7' => '',
+                    'AdditionalAttribute8' => '',
+                    'AdditionalAttribute9' => '',
+                    'AdditionalAttribute10' => '',
+                    'AttributeSet' => null,
+                    'Tags' => '',
+                    'Status' => 'Active',
+                    'CreditLimit' => 0,
+                    'IsOnCreditHold' => false,
+                    'IsLegalEntity' => false,
+                    'CustomerParentID' => null,
+                    'CustomerParentName' => null,
+                    'IsBillParent' => false,
+                    'LastModifiedOn' => '2018-01-24T05:07:23.917Z',
+                    'Addresses' => [
+                        [
+                            'Line1' => 'P O Box 456',
+                            'Line2' => 'Southbank',
+                            'City' => 'Melbourne GPO',
+                            'State' => 'VIC',
+                            'Postcode' => '3331',
+                            'Country' => 'Uruguay',
+                            'Type' => 'Billing',
+                            'DefaultForType' => true,
+                            'ID' => 'fc8ca28e-7f91-4ac3-8fff-deb86395b494',
+                        ],
+                    ],
+                    'Contacts' => [
+                        [
+                            'Name' => 'Nick Wakefield',
+                            'JobTitle' => null,
+                            'Phone' => '03 3014556',
+                            'MobilePhone' => null,
+                            'Fax' => null,
+                            'Email' => null,
+                            'Website' => null,
+                            'Default' => true,
+                            'Comment' => null,
+                            'IncludeInEmail' => false,
+                            'MarketingConsent' => 1,
+                            'ID' => 'c650db26-2fca-4fe4-837d-ffd0f4d97200',
+                        ],
+                    ],
+                    'ChildCustomers' => [
+                        [
+                            'CustomerID' => '4f36c2a6-f736-450f-be41-28372bde80f6',
+                            'CustomerName' => 'Child Customer',
+                        ],
+                    ],
+                ],
+                [
+                    'ID' => '861918cc-81f9-4701-9639-864c796561cf',
+                    'Name' => 'Customer Test',
+                    'DisplayName' => 'John Doe',
+                    'Currency' => 'AUD',
+                    'PaymentTerm' => '30 days',
+                    'Discount' => 0,
+                    'TaxRule' => 'GST Free Exports',
+                    'Carrier' => null,
+                    'SalesRepresentative' => null,
+                    'Location' => 'Main Warehouse',
+                    'Comments' => null,
+                    'AccountReceivable' => '610',
+                    'RevenueAccount' => '200',
+                    'PriceTier' => 'Tier 1',
+                    'TaxNumber' => null,
+                    'AdditionalAttribute1' => null,
+                    'AdditionalAttribute2' => null,
+                    'AdditionalAttribute3' => null,
+                    'AdditionalAttribute4' => null,
+                    'AdditionalAttribute5' => null,
+                    'AdditionalAttribute6' => null,
+                    'AdditionalAttribute7' => null,
+                    'AdditionalAttribute8' => null,
+                    'AdditionalAttribute9' => null,
+                    'AdditionalAttribute10' => null,
+                    'AttributeSet' => null,
+                    'Tags' => null,
+                    'Status' => 'Active',
+                    'CreditLimit' => 0,
+                    'IsOnCreditHold' => false,
+                    'IsLegalEntity' => true,
+                    'CustomerParentID' => 'ceb4ef7a-e23d-4730-8021-e807e5b76882',
+                    'CustomerParentName' => 'Parent customer test',
+                    'IsBillParent' => true,
+                    'LastModifiedOn' => '2018-01-30T06:07:43.46Z',
+                    'Addresses' => [],
+                    'Contacts' => [
+                        [
+                            'Name' => 'Customer Test',
+                            'JobTitle' => null,
+                            'Phone' => null,
+                            'MobilePhone' => null,
+                            'Fax' => null,
+                            'Email' => 'Customer@mail.ru',
+                            'Website' => null,
+                            'Default' => true,
+                            'Comment' => null,
+                            'IncludeInEmail' => false,
+                            'MarketingConsent' => 2,
+                            'ID' => '23ef723b-75b5-43b3-8ee7-56d193e53923',
+                        ],
+                    ],
+                    'ProductPrices' => [
+                        [
+                            'ProductID' => '1cd995b0-a8f1-456c-9784-ecf3a8fc2804',
+                            'ProductName' => 'Screws Drive Cross',
+                            'ProductSKU' => 'Screws-SKU - 002',
+                            'Price' => 1.1,
+                        ],
+                    ],
+                    'ChildCustomers' => [],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * The `product` GET example from the V2 reference, whole, with every nested list populated
+     * except `Suppliers`, which is empty in the reference. The reference's example has an
+     * unclosed quote on the movement's `Date`; it is closed here.
+     *
+     * @return array<string, mixed>
+     */
+    public static function productExample(): array
+    {
+        return [
+            'Total' => 1,
+            'Page' => 1,
+            'Products' => [
+                [
+                    'ID' => '524c20a3-a8ec-44f2-9685-311f1f7d1498',
+                    'SKU' => 'Bread',
+                    'Name' => 'Baked Bread',
+                    'Category' => 'Other',
+                    'Brand' => null,
+                    'Type' => 'Stock',
+                    'CostingMethod' => 'FEFO - Batch',
+                    'DropShipMode' => 'No Drop Ship',
+                    'DefaultLocation' => 'Main Warehouse',
+                    'Length' => 0,
+                    'Width' => 0,
+                    'Height' => 0,
+                    'Weight' => 0,
+                    'UOM' => 'Item',
+                    'WeightUnits' => 'oz',
+                    'DimensionsUnits' => null,
+                    'Barcode' => '',
+                    'MinimumBeforeReorder' => 0,
+                    'ReorderQuantity' => 0,
+                    'PriceTier1' => 8,
+                    'PriceTier2' => 0,
+                    'PriceTier3' => 0,
+                    'PriceTier4' => 0,
+                    'PriceTier5' => 0,
+                    'PriceTier6' => 0,
+                    'PriceTier7' => 0,
+                    'PriceTier8' => 0,
+                    'PriceTier9' => 0,
+                    'PriceTier10' => 0,
+                    'PriceTiers' => [
+                        'Tier 1' => 8,
+                        'Tier 2' => 0,
+                        'Tier 3' => 0,
+                        'Tier 4' => 0,
+                        'Tier 5' => 0,
+                        'Tier 6' => 0,
+                        'Tier 7' => 0,
+                        'Tier 8' => 0,
+                        'Tier 9' => 0,
+                        'Tier 10' => 0,
+                    ],
+                    'AverageCost' => 5,
+                    'ShortDescription' => '',
+                    'Description' => '',
+                    'InternalNote' => '',
+                    'AdditionalAttribute1' => '',
+                    'AdditionalAttribute2' => '',
+                    'AdditionalAttribute3' => '',
+                    'AdditionalAttribute4' => '',
+                    'AdditionalAttribute5' => '',
+                    'AdditionalAttribute6' => '',
+                    'AdditionalAttribute7' => '',
+                    'AdditionalAttribute8' => '',
+                    'AdditionalAttribute9' => '',
+                    'AdditionalAttribute10' => '',
+                    'AttributeSet' => null,
+                    'DiscountRule' => null,
+                    'Tags' => 'Bread',
+                    'Status' => 'Active',
+                    'StockLocator' => '',
+                    'COGSAccount' => null,
+                    'RevenueAccount' => null,
+                    'ExpenseAccount' => null,
+                    'InventoryAccount' => null,
+                    'PurchaseTaxRule' => null,
+                    'SaleTaxRule' => null,
+                    'LastModifiedOn' => '2017-12-26T07:19:37.937Z',
+                    'Sellable' => true,
+                    'PickZones' => 'test',
+                    'BillOfMaterial' => true,
+                    'AutoAssembly' => false,
+                    'AutoDisassembly' => false,
+                    'QuantityToProduce' => 1,
+                    'AssemblyInstructionURL' => '',
+                    'AssemblyCostEstimationMethod' => 'Average Cost',
+                    'Suppliers' => [],
+                    'ReorderLevels' => [
+                        [
+                            'LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb',
+                            'LocationName' => 'Main Warehouse',
+                            'MinimumBeforeReorder' => 1,
+                            'ReorderQuantity' => 1,
+                            'StockLocator' => '1',
+                            'PickZones' => 'test',
+                        ],
+                    ],
+                    'BillOfMaterialsProducts' => [
+                        [
+                            'ComponentProductID' => 'ce9a6504-4207-4001-b430-749bf11fdc4f',
+                            'ProductCode' => 'GB1-White',
+                            'Name' => 'Golf balls - white single',
+                            'Quantity' => 1,
+                            'WastagePercent' => 0,
+                            'WastageQuantity' => 1,
+                            'CostPercentage' => 100,
+                        ],
+                    ],
+                    'BillOfMaterialsServices' => [
+                        [
+                            'ComponentProductID' => '5c6a9204-275f-4a8b-8a90-317d674a4504',
+                            'Name' => 'Half day training - Microsoft Office',
+                            'Quantity' => 1,
+                            'ExpenseAccount' => '',
+                            'PriceTier' => 1,
+                        ],
+                    ],
+                    'Movements' => [
+                        [
+                            'TaskID' => '85585398-caba-4df6-99a2-1ff2cecf9306',
+                            'Type' => 'Adjustment',
+                            'Date' => '2017-12-25T00:00:00',
+                            'Number' => 'ST-00001',
+                            'Quantity' => 111,
+                            'Amount' => 555,
+                            'Location' => 'Main Warehouse',
+                            'BatchSN' => '1',
+                            'ExpiryDate' => '2017-12-07T00:00:00',
+                            'FromTo' => '',
+                        ],
+                    ],
+                    'Attachments' => [
+                        [
+                            'ID' => '3fd5df29-83d6-4576-9e81-27c3560dfc7c',
+                            'ContentType' => 'image/jpeg',
+                            'FileName' => '1471081716149.jpg',
+                            'DownloadUrl' => 'https://inventory.dearsystems.com/Attachment/Download?ID=3fd5df29-83d6-4576-9e81-27c3560dfc7c&ContentType=image/jpeg&FileName=1471081716149.jpg&isPublic=True',
+                        ],
+                    ],
+                    'CustomPrices' => [
+                        [
+                            'ProductID' => '1cd995b0-a8f1-456c-9784-ecf3a8fc2804',
+                            'ProductName' => 'Screws Drive Cross',
+                            'ProductSKU' => 'Screws-SKU - 002',
+                            'Price' => 1.1,
+                        ],
+                    ],
+                    'CartonHeight' => 10,
+                    'CartonWidth' => 10,
+                    'CartonLength' => 10,
+                    'CartonQuantity' => 2,
+                    'CartonInnerQuantity' => 1,
+                    'HSCode' => '654324',
+                    'CountryOfOrigin' => 'Algeria',
+                    'CountryOfOriginCode' => 'DZA',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * A POST or PUT `customer` response: the list envelope holding the one saved customer.
+     *
+     * @return array<string, mixed>
+     */
+    public static function customerSaved(): array
+    {
+        $example = self::customerExample();
+
+        return ['Total' => 1, 'Page' => 1, 'CustomerList' => [$example['CustomerList'][0]]];
+    }
+
+    /**
+     * A POST or PUT `product` response: the list envelope holding the one saved product.
+     *
+     * @return array<string, mixed>
+     */
+    public static function productSaved(): array
+    {
+        return self::productExample();
+    }
+
+    /**
      * The `ref/tax` GET example from the V2 reference: two rules, the first of which has a
      * component with no `Compound` key.
      *

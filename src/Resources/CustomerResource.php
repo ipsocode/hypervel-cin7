@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
@@ -34,17 +35,17 @@ final class CustomerResource extends BaseResource
     }
 
     /**
-     * @param array<string, mixed> $body
+     * @param array<string, mixed>|CustomerData $body
      */
-    public function post(array $body): Response
+    public function post(array|CustomerData $body): Response
     {
         return $this->connector->send(new PostCustomer($body));
     }
 
     /**
-     * @param array<string, mixed> $body
+     * @param array<string, mixed>|CustomerData $body
      */
-    public function put(array $body): Response
+    public function put(array|CustomerData $body): Response
     {
         return $this->connector->send(new PutCustomer($body));
     }
