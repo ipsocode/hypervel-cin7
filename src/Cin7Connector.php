@@ -28,6 +28,7 @@ use Ipsocode\Cin7\Resources\ProductSuppliersResource;
 use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
 use Ipsocode\Cin7\Resources\PurchaseListResource;
 use Ipsocode\Cin7\Resources\PurchaseResource;
+use Ipsocode\Cin7\Resources\ReferenceResource;
 use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
@@ -340,5 +341,13 @@ final class Cin7Connector extends Connector implements HasPagination
     public function productSuppliers(): ProductSuppliersResource
     {
         return new ProductSuppliersResource($this);
+    }
+
+    /**
+     * The `reference/…` resources, the reference books.
+     */
+    public function reference(): ReferenceResource
+    {
+        return new ReferenceResource($this);
     }
 }

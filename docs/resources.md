@@ -67,6 +67,9 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)`; `attachments()`, `markupPrices()` |
 | `$cin7->customPrices()` | `CustomPricesResource` | `post(array\|CustomPricesData $body)`, `put(array\|CustomPricesData $body)`, `delete(string $productId, string $customerId)` |
 | `$cin7->productSuppliers()` | `ProductSuppliersResource` | `get(string $productId)`, `post(array\|ProductSuppliersData $body)`, `put(array\|ProductSuppliersData $body)`, `delete(string $productId, string $supplierId)` |
+| `$cin7->reference()` | `ReferenceResource` | `shipZones()`, `shipZonesEnabled()` |
+| `$cin7->reference()->shipZones()` | `Reference\ShipZonesResource` | `get($page, $limit, $id, $search)`, `paginate($limit, $id, $search): Cin7Paginator`, `post(array\|ShippingZonePostData $body)`, `put(array\|ShippingZonePutData $body)`, `delete(string $shipZoneId)` |
+| `$cin7->reference()->shipZonesEnabled()` | `Reference\ShipZonesEnabledResource` | `get()`, `put(array\|ShipZonesEnabledData $body)` |
 | `$cin7->bankTransfer()` | `BankTransferResource` | `get(string $taskId)`, `post(array\|BankTransferPostData $body)`, `put(array\|BankTransferPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -873,6 +876,32 @@ $this->cin7->customPrices()->post(CustomPricesData::from([
 ]));
 
 $suppliers = $this->cin7->productSuppliers()->get($productId)->dto()->ProductSuppliers; // list<ProductSupplierData>
+```
+## Reference books
+
+`$cin7->reference()` holds the `reference/…` resources, apart from `ref()`, whose paths are
+`ref/…`.
+
+`$cin7->reference()->shipZones()` is `reference/shipZones`, the zones that set a customer's shipping
+fees: `get()` and `paginate()` filter by `id` and `search`, and `dto()` is a `list<ShippingZoneData>`
+with its `AppliesTo` (`ShipZoneAppliesToData`: a country, state or postcode range and its
+`ShippingRate`) and `Conditions` (`ShipZoneConditionData`: a `Price` or `Weight` range and its
+`ShippingCost`). `post()` takes a `ShippingZonePostData` (`Name`, `IsRestZone`, `PricesInclTax` and
+`Negative`) and `put()` a `ShippingZonePutData` (`ZoneID` and `Name`) as well as an array, and both
+answer the saved zone, so `dto()` is a `ShippingZoneData`. `delete($shipZoneId)` sends `ShipZoneID`,
+and answers `{Success}`.
+
+`$cin7->reference()->shipZonesEnabled()` reads and sets whether shipping zones are enabled: `get()`
+and `put(['IsEnabled' => true])` both answer a `ShipZonesEnabledData`.
+
+```php
+$zone = $this->cin7->reference()->shipZones()->post(ShippingZonePostData::from([
+    'Name' => 'Zone',
+    'IsRestZone' => false,
+    'PricesInclTax' => false,
+    'Negative' => false,
+    'AppliesTo' => [['Country2' => 'DZ', 'ShippingRate' => 7000]],
+]))->dto(); // ShippingZoneData
 ```
 ## Advanced sale
 

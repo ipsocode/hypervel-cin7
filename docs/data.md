@@ -206,6 +206,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/unit` | POST: `UnitOfMeasurePostData`; PUT: `UnitOfMeasurePutData`, which also requires `ID` (Unit of Measure) | GET: `list<UnitOfMeasureData>`; POST, PUT: `UnitOfMeasureData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `custom-prices` | POST, PUT: `CustomPricesData`, a list of `ProductPriceData` (Customer specific Product Price Model) | POST, PUT: `{Errors}`; DELETE: `{Success}`, left to `json()` |
 | `product-suppliers` | POST, PUT: `ProductSuppliersData`, a list of `ProductSupplierData` (Product Supplier Model, with `ProductSupplierOptions`: `ProductSupplierOptionData`, whose `SupplyIntervals` are `ProductSupplierOptionIntervalData`) | GET: `ProductSuppliersData`; POST, PUT, DELETE: `{Success}`, left to `json()` |
+| `reference/shipZones` | POST: `ShippingZonePostData`; PUT: `ShippingZonePutData`, which also requires `ZoneID` (Shipping Zone, with `AppliesTo`: `ShipZoneAppliesToData` and `Conditions`: `ShipZoneConditionData`) | GET: `list<ShippingZoneData>`; POST, PUT: `ShippingZoneData`, the saved zone, read from `ShipZones.0`; DELETE: `{Success}`, left to `json()` |
+| `reference/shipZonesEnabled` | PUT: `ShipZonesEnabledData` | GET, PUT: `ShipZonesEnabledData` |
 | `ref/priceTier` | none | GET: `list<PriceTierData>` (Price Tier), read from `PriceTiers` |
 | `ref/fixedassettype` | POST: `FixedAssetTypePostData`; PUT: `FixedAssetTypePutData`, which also requires `FixedAssetTypeID` (Fixed Asset Types) | GET: `list<FixedAssetTypeData>`; POST, PUT: `FixedAssetTypeData`, the saved type (`FixedAssetTypeList.0`) |
 | `ref/paymentterm` | POST: `PaymentTermPostData`; PUT: `PaymentTermPutData`, which also requires `ID` (Payment Term) | GET: `list<PaymentTermData>`; POST, PUT: `PaymentTermData`, the saved term (`PaymentTermList.0`); DELETE: `{Success}`, left to `json()` |
@@ -1119,6 +1121,28 @@ PUT bodies are the same, so one class serves both:
 - **Examples.** The custom prices examples need no correction. The product suppliers POST and PUT
   examples send `DeliveryMethod` as `"interval"` and `"fixed"`, where the table says `'Fixed'` and
   `'Interval'`: the fixtures capitalise them.
+`reference/shipZones` has a class per verb, because the table's required fields cannot all hold for
+every verb. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `ShippingZoneData` (response) | `src/Data/Reference/ShipZones/` | `ZoneID`, `Name`, `IsRestZone`, `PricesInclTax`, `Negative`, `DefaultShippingCost` |
+| `ShippingZonePostData` | `src/Data/Reference/ShipZones/` | `Name`, `IsRestZone`, `PricesInclTax`, `Negative` |
+| `ShippingZonePutData` | `src/Data/Reference/ShipZones/` | `Name`, `ZoneID` |
+| `ShipZoneAppliesToData` | `src/Data/Reference/ShipZones/` | `ShippingRate` |
+| `ShipZoneConditionData` | `src/Data/Reference/ShipZones/` | `ShippingCost`, `ConditionType` (`ShipZoneConditionType`: `Price` or `Weight`) |
+| `ShipZonesEnabledData` | `src/Data/Reference/ShipZonesEnabled/` | `IsEnabled` |
+
+- **What the examples drop.** The table requires `DefaultShippingCost`, but the POST example sends
+  none, and the PUT example sends only `ZoneID`, `Name` and `Conditions`: so POST makes
+  `DefaultShippingCost` optional, and PUT every field but `ZoneID` and `Name`.
+- **`ID` and `ZoneConditionID`** are required in the table, but the examples send none for an area or
+  a condition they add, so they are optional.
+- **`ShortDesc`** is a Bool in the table and a string in every example ("Andorra"): a string.
+- **`ShipZoneConditionsModel`.** The table's link names it so; the model is `ShipZoneConditionModel`,
+  which `ShipZoneConditionData` follows.
+- **`reference/shipZonesEnabled`** has no table, only examples.
+- **Examples.** The examples need no correction.
 ## Purchases
 
 `purchase` follows the Available Fields for Purchase table and the Purchase POST/PUT Attributes,

@@ -107,6 +107,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetProductSuppliers` | **`productId`** |
 | `DeleteCustomPrices` | **`productId`**, **`customerId`** |
 | `DeleteProductSuppliers` | **`productId`**, **`supplierId`** |
+| `GetShipZones` | `page`, `limit`, `id`, `search` |
+| `DeleteShipZones` | **`shipZoneId`** (sent as `ShipZoneID`) |
 | `GetBankTransfer` | **`taskId`** |
 | `DeleteBankTransfer` | **`id`**, `void` |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
@@ -257,6 +259,12 @@ The `custom-prices` actions live under `src/Requests/CustomPrices/`: `PostCustom
 `ProductSuppliersData`), `PostProductSuppliers` and `PutProductSuppliers` (the same body) and
 `DeleteProductSuppliers` (keyed `ProductID` and `SupplierID`). The reference answers a POST or PUT of
 custom prices `{Errors}`, and the others `{Success}`, so those have no `dto()`: read `json()`.
+The `reference/…` actions live under `src/Requests/Reference/`. `GetShipZones` (a `ListRequest` keyed
+`ShipZones`) lists the shipping zones, and `PostShipZones` and `PutShipZones` (bodies
+`ShippingZonePostData` and `ShippingZonePutData`) answer the saved zone, read from `ShipZones.0`;
+`DeleteShipZones` sends `ShipZoneID` (the reference documents the key with a trailing space).
+`GetShipZonesEnabled` and `PutShipZonesEnabled` (body `ShipZonesEnabledData`) read and set
+`IsEnabled`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed
