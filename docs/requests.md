@@ -41,6 +41,10 @@ never constructed directly by application code; go through the
 [resource](resources.md) accessor instead. Walking every page of a
 `ListRequest` is covered in [pagination](pagination.md).
 
+The `product` actions follow the same shape: `GetProduct` (a `ListRequest`
+keyed `Products`), `PostProduct` and `PutProduct` (`WriteRequest`s; the PUT body
+carries `ID`), all on `product`.
+
 ## Wire protocol
 
 These are the requests Cin7 receives.

@@ -68,6 +68,22 @@ class Cin7PaginatorTest extends TestCase
         $this->assertSame(3, $paginator->totalResults());
     }
 
+    public function testItWalksTwoPagesOfAProductsEnvelope(): void
+    {
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::products([['ID' => 'a', 'Name' => 'Widget']], page: 1, total: 2)),
+            MockResponse::make(Cin7Payloads::products([['ID' => 'b', 'Name' => 'Gadget']], page: 2, total: 2)),
+        ]);
+
+        $paginator = $this->connector()->product()->paginate()->perPageLimit(1);
+
+        $items = iterator_to_array($paginator->items(), false);
+
+        $this->assertSame(['Widget', 'Gadget'], array_column($items, 'Name'));
+        $mock->assertSentCount(2);
+        $this->assertSame(2, $paginator->totalResults());
+    }
+
     public function testEachPageRequestCarriesTheLowercasePageAndLimitParameters(): void
     {
         $mock = Saloon::fake([

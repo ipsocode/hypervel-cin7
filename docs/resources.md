@@ -53,6 +53,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | Accessor | Resource | Methods |
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
+| `$cin7->product()` | `ProductResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
 
 ## Customer
 
@@ -64,6 +65,21 @@ the same `{Total, Page, CustomerList}` envelope as an unfiltered list.
 $match = $this->cin7->customer()->get(['ID' => $guid])->json('CustomerList')[0] ?? null;
 ```
 
+## Product
+
+`product` lists under `Products`, not `ProductList`: its envelope is
+`{Total, Page, Products}`, and `GetProduct` declares that key, so
+`$cin7->product()->paginate()` yields every product. The V2 list filters
+(`Name`, `Sku`, `ModifiedSince`, `IncludeDeprecated`, `IncludeBOM`, …) go
+through `get()` and `paginate()` as ordinary filters; booleans go out as
+`true`/`false`.
+
+```php
+foreach ($this->cin7->product()->paginate(['IncludeDeprecated' => false])->items() as $product) {
+    // $product is one entry of Products
+}
+```
+
 ## PUT identifiers
 
 A PUT body carries the identifier V2 documents for that resource. The caller
@@ -73,6 +89,7 @@ key:
 | Resource | PUT body carries |
 |---|---|
 | `customer` | `ID` |
+| `product` | `ID` |
 
 ```php
 $attributes['ID'] = $guid;

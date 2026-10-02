@@ -78,7 +78,8 @@ Cin7 wraps a list in an envelope:
 - `Total` is the full number of matching records, across all pages.
 - `Page` is the page just served.
 - The list itself sits under a key that differs per endpoint (`CustomerList`
-  for `customer`), and not every endpoint's key ends in `List`.
+  for `customer`, `Products` for `product`), and not every endpoint's key ends
+  in `List`.
 
 Each `ListRequest` names that key in `$listKey`, and the paginator reads a
 page's items from it through the request's `mapPaginatedResponseItems()`. A

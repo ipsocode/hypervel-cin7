@@ -12,6 +12,9 @@ use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
+use Ipsocode\Cin7\Requests\Product\GetProduct;
+use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Product\PutProduct;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Workbench\App\Support\Cin7Payloads;
@@ -30,7 +33,7 @@ class ResourceCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock = Saloon::fake(array_fill(0, 4, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 8, MockResponse::make(Cin7Payloads::customerList())));
     }
 
     /**
@@ -96,6 +99,38 @@ class ResourceCatalogueTest extends TestCase
                 '/ExternalApi/v2/customer',
                 [],
                 ['ID' => 'guid-1', 'Name' => 'ACME'],
+            ],
+            'product get' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->product()->get(),
+                GetProduct::class,
+                Method::GET,
+                '/ExternalApi/v2/product',
+                ['page' => 1, 'limit' => 100],
+                null,
+            ],
+            'product paginate' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->product()->paginate()->current(),
+                GetProduct::class,
+                Method::GET,
+                '/ExternalApi/v2/product',
+                ['page' => 1, 'limit' => 100],
+                null,
+            ],
+            'product post' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->product()->post(['Name' => 'Widget']),
+                PostProduct::class,
+                Method::POST,
+                '/ExternalApi/v2/product',
+                [],
+                ['Name' => 'Widget'],
+            ],
+            'product put' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->product()->put(['ID' => 'guid-1', 'Name' => 'Widget']),
+                PutProduct::class,
+                Method::PUT,
+                '/ExternalApi/v2/product',
+                [],
+                ['ID' => 'guid-1', 'Name' => 'Widget'],
             ],
         ];
     }
