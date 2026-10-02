@@ -173,7 +173,7 @@ the seam a consuming application has:
 | Piece | Purpose |
 |---|---|
 | [`CustomerDirectory`](../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's singleton resolves as a dependency of an application's own service, not only through `$app->make()`. |
-| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Response fixtures keyed like real Cin7 bodies: `customerList()` (the `Total`/`Page`/`CustomerList` envelope), `customer()`, `sale()` (keyed by `SaleID`), `throttled()` (the 503 body, which comes with no `Retry-After`) and `error()`. A test asserting on `CustomerList` asserts on a key Cin7 actually sends. |
+| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Response fixtures keyed like real Cin7 bodies: `customerList()` (the `Total`/`Page`/`CustomerList` envelope), `customer()`, `sale()` (the V2 reference's Sale example, keyed by `ID`), `saleList()` (its Sale List example), `throttled()` (the 503 body, which comes with no `Retry-After`) and `error()`. A test asserting on `CustomerList` asserts on a key Cin7 actually sends. |
 | [`cin7:customers`](../workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for calling the live API by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
 
 `cin7:customers` lists customers through `CustomerDirectory::all()`, which
