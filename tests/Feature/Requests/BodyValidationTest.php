@@ -18,6 +18,7 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialMan
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
+use Ipsocode\Cin7\Data\Crm\Opportunity\OpportunityPostData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPostData;
 use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
@@ -58,6 +59,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAdvancedPurchase;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
+use Ipsocode\Cin7\Requests\Crm\Opportunity\PostCrmOpportunity;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\InventoryWriteOff\PostInventoryWriteOff;
 use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
@@ -750,6 +752,40 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PutProductMarkupPrices(MarkupPricesData::from(['ProductID' => '7c8795c2-1a6b-4318-ba72-291f61444906', 'MarkupPrices' => [['TierNumber' => 3, 'MarkupType' => 'D']]])));
 
         $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * An opportunity line needs its product, by `ProductID` or `ProductSku`; a body with a line that
+     * has neither is not sent, and one of each is enough.
+     */
+    public function testAnOpportunityLineNeedsItsProduct(): void
+    {
+        $body = [
+            'CustomerName' => 'ABC Furniture',
+            'BillingAddressLine1' => 'Cosmonauts Alley',
+            'Currency' => 'USD',
+            'TaxRule' => 'GST on Income',
+            'Terms' => '30 days',
+            'PriceTier' => 'Tier 1',
+            'OpportunityLocation' => 'Main Warehouse',
+            'CustomerCurrency' => 'AED',
+            'TermMethod' => 1,
+            'SalesRepresentative' => 'DEFAULT business contact',
+            'ShipToOther' => false,
+        ];
+        $line = ['Quantity' => 1, 'Price' => 2, 'Tax' => 0, 'Total' => 2];
+
+        try {
+            $this->connector()->send(new PostCrmOpportunity(OpportunityPostData::from($body + ['Lines' => [$line]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Lines.0.ProductID', 'Lines.0.ProductSku'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostCrmOpportunity(OpportunityPostData::from($body + ['Lines' => [$line + ['ProductSku' => '101-Gloves-016']]])));
+        $this->connector()->send(new PostCrmOpportunity(OpportunityPostData::from($body + ['Lines' => [$line + ['ProductID' => '87d7bc76-11d4-43e1-b022-488dae83868b']]])));
+
+        $this->mock->assertSentCount(2);
     }
 
     /**
