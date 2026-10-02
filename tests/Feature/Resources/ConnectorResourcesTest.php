@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\Me\AddressesResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
@@ -127,6 +128,14 @@ class ConnectorResourcesTest extends TestCase
 
         $this->assertInstanceOf(MeResource::class, $connector->me());
         $this->assertNotSame($connector->me(), $connector->me());
+    }
+
+    public function testMeReturnsItsNestedResources(): void
+    {
+        $me = $this->connector()->me();
+
+        $this->assertInstanceOf(AddressesResource::class, $me->addresses());
+        $this->assertNotSame($me->addresses(), $me->addresses());
     }
 
     public function testAFulfilmentReturnsItsPickPackAndShip(): void

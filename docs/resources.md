@@ -61,7 +61,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
 | `$cin7->supplier()` | `SupplierResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|SupplierPostData $body)`, `put(array\|SupplierPutData $body)` |
-| `$cin7->me()` | `MeResource` | `get()` |
+| `$cin7->me()` | `MeResource` | `get()`; `addresses()` |
+| `$cin7->me()->addresses()` | `Me\AddressesResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeAddressPostData $body)`, `put(array\|MeAddressPutData $body)`, `delete(string $id)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
@@ -151,6 +152,31 @@ use Ipsocode\Cin7\Enums\WeightUnit;
 $me = $this->cin7->me()->get()->dto(); // MeData
 
 $inGrams = $me->DefaultWeightUnits === WeightUnit::Gram;
+```
+
+`$cin7->me()->addresses()` is `me/addresses`, the company's addresses. It lists under
+`MeAddressesList` (`{Total, Page, MeAddressesList}`), filtered by `id`, `type` (an `AddressType`),
+`defaultForType`, `country`, `stateProvince` and `citySuburb`, and `get()->dto()` is a
+`list<MeAddressData>`. `post()` takes a `MeAddressPostData` and `put()` a `MeAddressPutData`,
+which requires `AddressID`, as well as an array, and both answer with the saved address: their
+`dto()` is a `MeAddressData`. `delete($id)` sends `me/addresses?ID=…` and answers `{Success}`.
+
+```php
+use Ipsocode\Cin7\Data\Me\Addresses\MeAddressPostData;
+use Ipsocode\Cin7\Enums\AddressType;
+
+$billing = $this->cin7->me()->addresses()->get(type: AddressType::Billing, defaultForType: true)->dto(); // list<MeAddressData>
+
+$saved = $this->cin7->me()->addresses()->post(MeAddressPostData::from([
+    'Line1' => '1 High St',
+    'CitySuburb' => 'London',
+    'StateProvince' => 'Greater London',
+    'ZipPostCode' => 'EC1A 1AA',
+    'Country' => 'United Kingdom',
+    'Type' => 'Business',
+]))->dto(); // MeAddressData
+
+$this->cin7->me()->addresses()->delete($addressId); // DELETE me/addresses?ID=…
 ```
 
 ## Product
@@ -353,6 +379,7 @@ key:
 |---|---|
 | `customer` | `ID` |
 | `supplier` | `ID` |
+| `me/addresses` | `AddressID` |
 | `product` | `ID` |
 | `ref/tax` | `ID` |
 | `sale` | `ID` |
