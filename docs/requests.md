@@ -82,6 +82,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetProduct` | `page`, `limit`, `id`, `name`, `sku`, `modifiedSince`, `includeDeprecated`, `includeBom`, `includeSuppliers`, `includeMovements`, `includeAttachments`, `includeReorderLevels`, `includeCustomPrices` |
 | `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
 | `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
+| `GetSupplierDeposits` | `page`, `limit`, `supplierId`, `showUsedDeposits` |
 | `GetMoneyTaskList` | `page`, `limit`, `status` (`CompletionStatus`), `search`, `taskType` (`MoneyTaskType`) |
 | `GetMoneyTask` | **`taskId`** |
 | `DeleteMoneyTask` | **`id`**, `void` |
@@ -126,8 +127,9 @@ body carries `ID`). `GetSupplier`'s `dto()` is a `list<SupplierData>`, and the P
 The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
 `TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are
 `TaxPostData` and `TaxPutData`; the PUT body carries `ID`), all
-on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
-`ref/customer/credits`.
+on `ref/tax`; `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
+`ref/customer/credits`; and `GetSupplierDeposits` (a `ListRequest` keyed `SupplierDeposits`) on
+`ref/supplier/deposits`.
 
 The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
 model they serve: `GetMoneyTask`

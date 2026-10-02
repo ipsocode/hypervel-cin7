@@ -138,7 +138,8 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * The `ref` grouping: `ref()->tax()` and `ref()->customer()->credits()`.
+     * The `ref` grouping: `ref()->tax()`, `ref()->customer()->credits()` and
+     * `ref()->supplier()->deposits()`.
      */
     public function ref(): RefResource
     {
