@@ -200,6 +200,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
 | `ref/account` | POST: `AccountPostData`, which also takes `SystemAccount` and `SystemAccountCode`; PUT: `AccountPutData` (Chart of Accounts) | GET: `list<AccountData>`; POST, PUT: `AccountData`, the saved account (`AccountsList.0`); DELETE: `{Success}`, left to `json()` |
 | `ref/account/bank` | none | GET: `list<BankAccountData>` (Bank Accounts) |
+| `ref/attributeset` | POST: `AttributeSetPostData`; PUT: `AttributeSetPutData`, which also requires `ID` (Attribute Set, with `Attributes`: `AttributeSetLineData`, Attribute Set Line Model) | GET: `list<AttributeSetData>`; POST, PUT: `AttributeSetData`, the saved set, a bare object; DELETE: `{Success}`, left to `json()` |
 | `ref/brand` | POST: `BrandPostData`; PUT: `BrandPutData`, which also requires `ID` (Brand) | GET: `list<BrandData>`; POST, PUT: `BrandData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/category` | POST: `ProductCategoryPostData`; PUT: `ProductCategoryPutData`, which also requires `ID` (Product Category) | GET: `list<ProductCategoryData>`; POST, PUT: `ProductCategoryData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/unit` | POST: `UnitOfMeasurePostData`; PUT: `UnitOfMeasurePutData`, which also requires `ID` (Unit of Measure) | GET: `list<UnitOfMeasureData>`; POST, PUT: `UnitOfMeasureData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
@@ -873,6 +874,13 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   "ignored in POST and PUT", yet the examples send them, so they are modelled and the requests leave
   them out of the body (`Products.*.SKU` and `Products.*.Name`). A PUT adds or updates the products
   it lists and never deletes one. `Option1Name` is required, the one option every family has.
+- **Attribute Set.** The table writes `Attribute#Name`, `Attribute#Type` and `Attribute#Values` for
+  # from 1 to 10, with the first required on POST and PUT: each write class takes
+  `Attribute1Name`, `Attribute1Type` and `Attribute1Values` as required arguments, the response
+  keeps them optional, and `Attribute2…` to `Attribute10…` are the `HasAttributeSetAttributes` trait's
+  optional fields. `Attribute#Type` is the `AttributeType` enum (`Not used`, `Text`, `Checkbox`,
+  `List`, `Date`, `Numeric`). Its POST and PUT answer with the saved set itself, not a list, and
+  the GET and DELETE parameter descriptions say "location", copied from the Location section.
 - **Product family attachments.** The same as the product's: the family's key is `FamilyID`, and the
   POST table marks `Content` required without the `Content`-or-`FileDownloadUrl` rule the product's
   has, which the examples and the notes both give, so it is `#[RequiredWithout]` here too.
@@ -1002,6 +1010,8 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
 
+`AttributeSetData` requires `Name`; `AttributeSetPostData` also `Attribute1Name`, `Attribute1Type`
+and `Attribute1Values`, and `AttributeSetPutData` `ID` as well (`src/Data/Ref/AttributeSet/`).
 `ProductFamilyData`, `ProductFamilyPostData` (`src/Data/ProductFamily/`) require `SKU`, `Name`,
 `Category`, `CostingMethod`, `DefaultLocation`, `UOM` and `Option1Name`; `ProductFamilyPutData` adds
 `ID`; `ProductFamilyProductLineData` requires `ID` and `Option1`. `ProductFamilyAttachmentPostData`

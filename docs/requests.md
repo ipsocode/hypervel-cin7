@@ -86,6 +86,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
 | `DeleteAccount` | **`code`** |
 | `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
+| `GetAttributeSet` | `page`, `limit`, `id`, `name` |
+| `DeleteAttributeSet` | **`id`** |
 | `GetProductFamily` | `page`, `limit`, `id`, `name`, `sku`, `modifiedSince` |
 | `GetProductFamilyAttachments` | **`familyId`** |
 | `DeleteProductFamilyAttachments` | **`id`** |
@@ -203,6 +205,10 @@ on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountDat
 and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
 to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
 `ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
+
+`ref/attributeset` (under `AttributeSet/`) has `GetAttributeSet` (a `ListRequest` keyed
+`AttributeSetList`), `PostAttributeSet` and `PutAttributeSet` (the PUT body carries `ID`) and
+`DeleteAttributeSet` (keyed `ID`); a POST or PUT answers one `AttributeSetData`, as the whole body.
 
 `productFamily` (under `ProductFamily/`) has `GetProductFamily` (a `ListRequest` keyed
 `ProductFamilies`) and `PostProductFamily` and `PutProductFamily` (`WriteRequest`s whose bodies are

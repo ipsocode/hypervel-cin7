@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\Ref\AccountResource;
+use Ipsocode\Cin7\Resources\Ref\AttributeSetResource;
 use Ipsocode\Cin7\Resources\Ref\BrandResource;
 use Ipsocode\Cin7\Resources\Ref\CategoryResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource;
@@ -111,5 +112,13 @@ final class RefResource extends BaseResource
     public function productAvailability(): ProductAvailabilityResource
     {
         return new ProductAvailabilityResource($this->connector);
+    }
+
+    /**
+     * The `ref/attributeset` resource.
+     */
+    public function attributeSet(): AttributeSetResource
+    {
+        return new AttributeSetResource($this->connector);
     }
 }

@@ -98,7 +98,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseList()` | `PurchaseListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseCreditNoteList()` | `PurchaseCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
-| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `priceTier()`, `productAvailability()`, `brand()`, `category()`, `unit()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
+| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `attributeSet()`, `priceTier()`, `productAvailability()`, `brand()`, `category()`, `unit()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -108,6 +108,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->ref()->account()->bank()` | `Ref\Account\BankResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()->productAvailability()` | `Ref\ProductAvailabilityResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()->priceTier()` | `Ref\PriceTierResource` | `get()` |
+| `$cin7->ref()->attributeSet()` | `Ref\AttributeSetResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|AttributeSetPostData $body)`, `put(array\|AttributeSetPutData $body)`, `delete(string $id)` |
 | `$cin7->ref()->brand()` | `Ref\BrandResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|BrandPostData $body)`, `put(array\|BrandPutData $body)`, `delete(string $id)` |
 | `$cin7->ref()->category()` | `Ref\CategoryResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductCategoryPostData $body)`, `put(array\|ProductCategoryPutData $body)`, `delete(string $id)` |
 | `$cin7->ref()->unit()` | `Ref\UnitResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|UnitOfMeasurePostData $body)`, `put(array\|UnitOfMeasurePutData $body)`, `delete(string $id)` |
@@ -424,6 +425,23 @@ $this->cin7->product()->attachments()->post([
 foreach ($this->cin7->ref()->productAvailability()->paginate(location: 'Main Warehouse')->items() as $stock) {
     // $stock is one entry of ProductAvailabilityList
 }
+```
+
+## Attribute sets
+
+`$cin7->ref()->attributeSet()` lists under `AttributeSetList`, filtered by `id` and `name`, as
+`AttributeSetData` with ten attributes (`Attribute1Name` to `Attribute10Values`, and the read-only
+`Attributes`). A write needs the first attribute: `post()` takes an `AttributeSetPostData` and
+`put()` an `AttributeSetPutData`, which also requires `ID`, or an array, and answers with the saved
+set itself; `delete($id)` sends `?ID=…`.
+
+```php
+$set = $this->cin7->ref()->attributeSet()->post(AttributeSetPostData::from([
+    'Name' => 'Clothing',
+    'Attribute1Name' => 'Colour',
+    'Attribute1Type' => 'List',
+    'Attribute1Values' => 'Red, Black, Blue',
+]))->dto(); // AttributeSetData
 ```
 
 ## Product family
