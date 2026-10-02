@@ -47,6 +47,8 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractProductData` | `ProductData`, `ProductPostData`, `ProductPutData` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`; and `QuantityToProduce` and `AssemblyCostEstimationMethod` on a write body with a bill of materials (see [products](#products)) |
   | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
+  | `AbstractSaleFulfilmentPickPackTaskData` | `SaleFulfilmentPickData`, `SaleFulfilmentPickPostData`, `SaleFulfilmentPickPutData`, `SaleFulfilmentPackData`, `SaleFulfilmentPackPostData` | `TaskID` |
+  | `AbstractSaleFulfilmentShipTaskData` | `SaleFulfilmentShipPostData`, `SaleFulfilmentShipPutData` | `TaskID`, `Status` (`DRAFT`, `PARTIALLY AUTHORISED` or `AUTHORISED`) |
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
   | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`; shaped to serve the purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`; shaped to serve the purchase charge models too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
@@ -163,6 +165,10 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
 | `saleList` | none | GET: `list<SaleListData>` (Sale List) |
 | `sale/order` | `SaleOrderData` (Sale Order, plus `AutoPickPackShipMode`, which the reference documents only in prose) | GET, POST: `SaleOrderData` |
+| `sale/fulfilment` | `SaleFulfilmentsData`, needing only `SaleID` | GET, POST, DELETE: `SaleFulfilmentsData` (`{SaleID, Fulfilments}`, with `Fulfilments`: `SaleFulfilmentData`, Sale Fulfilment Model) |
+| `sale/fulfilment/pick` | POST: `SaleFulfilmentPickPostData`; PUT: `SaleFulfilmentPickPutData` (Sale Fulfilment Pick, with `Lines`: `SaleFulfilmentPickPackLineData`, plus `AutoPickMode`, which the reference documents only in prose) | GET, POST, PUT: `SaleFulfilmentPickData` |
+| `sale/fulfilment/pack` | POST: `SaleFulfilmentPackPostData`; PUT: `SaleFulfilmentPackData` (Sale Fulfilment Pack, with `Lines`: `SaleFulfilmentPickPackLineData`) | GET, POST, PUT: `SaleFulfilmentPackData` |
+| `sale/fulfilment/ship` | POST: `SaleFulfilmentShipPostData`; PUT: `SaleFulfilmentShipPutData`, which adds `AddTrackingNumbers` (Sale Fulfilment Ship, with `ShippingAddress`: `SaleShippingAddressData` and `Lines`: `SaleFulfilmentShipLinePostPutData`) | GET, POST, PUT: `SaleFulfilmentShipData` (with `Lines`: `SaleFulfilmentShipLineData`) |
 | `sale/invoice` | POST: `SaleInvoicePostData` (Sale Invoice POST Model); PUT: `SaleInvoicePutData` (its fields, needing only `SaleID` and `TaskID`) | GET, POST, PUT, DELETE: `SaleInvoicesData` (`{SaleID, Invoices}`, with `Invoices`: `SaleInvoicePartialData`, Sale Invoice Partial Model) |
 | `sale/creditnote` | POST: `SaleCreditNotePostData` (Sale Credit Note POST Model) | GET, POST, DELETE: `SaleCreditNotesData` (`{SaleID, CreditNotes}`, with `CreditNotes`: `SaleCreditNotePartialData`, Sale Credit Note Invoice Partial Model, whose `Payments` are `SaleCreditNotePaymentData`) |
 | `sale/payment` | POST: `SalePaymentPostData`; PUT: `SalePaymentPutData` (the Sale Payment Line Partial Model's fields for each verb) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
@@ -312,6 +318,24 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   sends `"CreditID": null`; `SalePaymentPostData` has no `CreditID`.
 - **Auto-generated numbers.** The invoice and credit note POST tables have no `InvoiceNumber`
   or `CreditNoteNumber` (Cin7 generates them), so the POST classes leave them out.
+- **Fulfilment pick and pack.** The Sale Fulfilment Pick and Pack tables, `sale/fulfilment/pick`
+  and `/pack`, add the fulfilment's `TaskID` to the Pick Pack Model a fulfilment embeds;
+  `SaleFulfilmentPickData` and `SaleFulfilmentPackData` model them and require it, and
+  `SaleFulfilmentPickPackData` stays the embedded model. Only POST limits `Status` to `DRAFT`
+  and `AUTHORISED`, so the pack's PUT body is `SaleFulfilmentPackData` itself.
+- **Autopick.** The pick's POST and PUT notes say a body of `TaskID` and `AutoPickMode`
+  (`AUTOPICK`) picks the task and authorises it. The table requires `Status`, so the pick bodies
+  require it unless `AutoPickMode` is given (`#[RequiredWithout('AutoPickMode')]`), and model
+  `AutoPickMode` as a string.
+- **Fulfilment ship.** The Sale Fulfilment Ship Model a fulfilment embeds and the Sale
+  Fulfilment Ship table of `sale/fulfilment/ship` share a name, so `SaleFulfilmentShipData` is
+  both, with the table's `TaskID` optional. A body's line names its box `Box`, as the line table
+  says, where a response's says `Boxes`, so body lines are `SaleFulfilmentShipLinePostPutData`;
+  it models the read-only `TrackingURL` the examples send, which the requests leave out.
+  `AddTrackingNumbers`, in the PUT notes only, is on `SaleFulfilmentShipPutData`.
+- **`IncludeProductInfo`.** It adds "all used products in additional array" to a fulfilment,
+  pick or pack response; no example shows the array, so it is not modelled, and `json()` still
+  has it.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim.
 

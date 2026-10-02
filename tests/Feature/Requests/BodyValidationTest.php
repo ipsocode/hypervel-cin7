@@ -11,6 +11,11 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackPostData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickPostData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickPutData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipPostData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipPutData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
@@ -18,6 +23,11 @@ use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
+use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PostSaleFulfilmentPack;
+use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pick\PostSaleFulfilmentPick;
+use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pick\PutSaleFulfilmentPick;
+use Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship\PostSaleFulfilmentShip;
+use Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship\PutSaleFulfilmentShip;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
@@ -165,7 +175,29 @@ class BodyValidationTest extends TestCase
             'invoice PUT' => [fn (): WriteRequest => new PutSaleInvoice(SaleInvoicePutData::from(['Status' => 'PAID'] + Cin7Payloads::saleInvoicePut()))],
             'credit note POST' => [fn (): WriteRequest => new PostSaleCreditNote(SaleCreditNotePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::saleCreditNotePost()))],
             'order POST' => [fn (): WriteRequest => new PostSaleOrder(SaleOrderData::from(['Status' => 'CLOSED'] + Cin7Payloads::saleOrder()))],
+            'pick POST' => [fn (): WriteRequest => new PostSaleFulfilmentPick(SaleFulfilmentPickPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'VOIDED']))],
+            'pack POST' => [fn (): WriteRequest => new PostSaleFulfilmentPack(SaleFulfilmentPackPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'NOT AVAILABLE']))],
+            'ship POST' => [fn (): WriteRequest => new PostSaleFulfilmentShip(SaleFulfilmentShipPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'VOIDED']))],
+            'ship PUT' => [fn (): WriteRequest => new PutSaleFulfilmentShip(SaleFulfilmentShipPutData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'NOT AVAILABLE']))],
         ];
+    }
+
+    /**
+     * A pick needs its `Status`, unless `AutoPickMode` picks it automatically.
+     */
+    public function testAPickNeedsAStatusUnlessItIsAutoPicked(): void
+    {
+        try {
+            $this->connector()->send(new PostSaleFulfilmentPick(SaleFulfilmentPickPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Status'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostSaleFulfilmentPick(SaleFulfilmentPickPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'AutoPickMode' => 'AUTOPICK'])));
+        $this->connector()->send(new PutSaleFulfilmentPick(SaleFulfilmentPickPutData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'AutoPickMode' => 'AUTOPICK'])));
+
+        $this->mock->assertSentCount(2);
     }
 
     /**

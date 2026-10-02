@@ -88,6 +88,10 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetSale` | **`id`**, `combineAdditionalCharges`, `hideInventoryMovements`, `includeTransactions`, `countryFormat` (`CountryFormat`) |
 | `DeleteSale` | **`id`**, `void` |
 | `GetSaleOrder` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo` |
+| `GetSaleFulfilment` | **`saleId`**, `includeProductInfo` |
+| `DeleteSaleFulfilment` | **`taskId`**, `void` |
+| `GetSaleFulfilmentPick`, `GetSaleFulfilmentPack` | **`taskId`**, `includeProductInfo` |
+| `GetSaleFulfilmentShip` | **`taskId`** |
 | `GetSaleInvoice` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo` |
 | `DeleteSaleInvoice` | **`taskId`**, `void` |
 | `GetSaleCreditNote` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo`, `includePaymentInfo` |
@@ -129,19 +133,24 @@ DELETE takes `Void`) and `PostSale` and `PutSale`
 `GetSaleList` (a `ListRequest` keyed `SaleList`) is on `saleList`, under `src/Requests/SaleList/`.
 Every `sale` request's `dto()` is a `SaleData`; `GetSaleList`'s is a `list<SaleListData>`.
 
-The `sale/…` documents live under `src/Requests/Sale/`, one folder per path, 13 classes in all:
+The `sale/…` documents live under `src/Requests/Sale/`, one folder per path, 25 classes in all:
 
 | Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
 |---|---|---|
 | `Order/` | `GetSaleOrder` (`SaleID`), `PostSaleOrder` | `SaleOrderData` |
+| `Fulfilment/` | `GetSaleFulfilment` (`SaleID`), `PostSaleFulfilment`, `DeleteSaleFulfilment` (`TaskID`) | `SaleFulfilmentsData` |
+| `Fulfilment/Pick/` | `GetSaleFulfilmentPick` (`TaskID`), `PostSaleFulfilmentPick`, `PutSaleFulfilmentPick` | `SaleFulfilmentPickData` |
+| `Fulfilment/Pack/` | `GetSaleFulfilmentPack` (`TaskID`), `PostSaleFulfilmentPack`, `PutSaleFulfilmentPack` | `SaleFulfilmentPackData` |
+| `Fulfilment/Ship/` | `GetSaleFulfilmentShip` (`TaskID`), `PostSaleFulfilmentShip`, `PutSaleFulfilmentShip` | `SaleFulfilmentShipData` |
 | `Invoice/` | `GetSaleInvoice` (`SaleID`), `PostSaleInvoice`, `PutSaleInvoice`, `DeleteSaleInvoice` (`TaskID`) | `SaleInvoicesData` |
 | `CreditNote/` | `GetSaleCreditNote` (`SaleID`), `PostSaleCreditNote`, `DeleteSaleCreditNote` (`TaskID`) | `SaleCreditNotesData` |
 | `Payment/` | `GetSalePayment` (`SaleID`), `PostSalePayment`, `PutSalePayment`, `DeleteSalePayment` (`ID`) | `list<SalePaymentLinePartialData>` for the GET, `SalePaymentLinePartialData` for POST and PUT; none for the DELETE |
 
 The write bodies are per verb where the reference's fields differ: `SaleInvoicePostData` and
-`SaleInvoicePutData` for `sale/invoice`, `SaleCreditNotePostData` for `sale/creditnote`, and
-`SalePaymentPostData` and `SalePaymentPutData` for `sale/payment`. Each makes the fields the
-reference requires for that verb mandatory; see [data](data.md).
+`SaleInvoicePutData` for `sale/invoice`, `SaleCreditNotePostData` for `sale/creditnote`,
+`SalePaymentPostData` and `SalePaymentPutData` for `sale/payment`, and a POST and a PUT class for
+the fulfilment's pick, pack and ship. Each makes the fields the reference requires for that verb
+mandatory; see [data](data.md).
 
 ## Wire protocol
 

@@ -1,0 +1,29 @@
+{
+    "TaskID": "cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57",
+    "Status": "AUTHORISED",
+    "RequireBy": null,
+    "ShippingAddress": {
+        "DisplayAddressLine1": "Line 1 Lines 2",
+        "DisplayAddressLine2": "City State Code Russia",
+        "Line1": "Line 1",
+        "Line2": "Lines 2",
+        "City": "City",
+        "State": "State",
+        "Postcode": "Code",
+        "Country": "Russia",
+        "Company": "DIISR - Small Business Services",
+        "Contact": "Sheree Bond",
+        "ShipToOther": false
+    },
+    "ShippingNotes": "",
+    "Lines": [
+        {
+            "ShipmentDate": "2017-11-22T00:00:00",
+            "Carrier": "DEFAULT Carrier",
+            "Box": "Box 1",
+            "TrackingNumber": "",
+            "TrackingURL": "",
+            "IsShipped": true
+        }
+    ]
+}

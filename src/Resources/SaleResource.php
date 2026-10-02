@@ -15,6 +15,7 @@ use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
 use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
+use Ipsocode\Cin7\Resources\Sale\FulfilmentResource;
 use Ipsocode\Cin7\Resources\Sale\InvoiceResource;
 use Ipsocode\Cin7\Resources\Sale\OrderResource;
 use Ipsocode\Cin7\Resources\Sale\PaymentResource;
@@ -83,6 +84,11 @@ final class SaleResource extends BaseResource
     public function order(): OrderResource
     {
         return new OrderResource($this->connector);
+    }
+
+    public function fulfilment(): FulfilmentResource
+    {
+        return new FulfilmentResource($this->connector);
     }
 
     public function invoice(): InvoiceResource
