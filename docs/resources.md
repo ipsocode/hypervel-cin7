@@ -83,6 +83,9 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->stockTransfer()->order()` | `StockTransfer\OrderResource` | `get(string $taskId)`, `post(array\|StockTransferOrderPostData $body)` |
 | `$cin7->inventoryWriteOffList()` | `InventoryWriteOffListResource` | `get($page, $limit, ?CompletionStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->inventoryWriteOff()` | `InventoryWriteOffResource` | `get(string $taskId)`, `post(array\|InventoryWriteOffPostData $body)`, `put(array\|InventoryWriteOffPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->disassemblyList()` | `DisassemblyListResource` | `get($page, $limit, ?DisassemblyStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->disassembly()` | `DisassemblyResource` | `get(string $taskId)`, `post(array\|DisassemblyPostData $body)`, `delete(string $id, ?bool $void = null)`; `order()` |
+| `$cin7->disassembly()->order()` | `Disassembly\OrderResource` | `get(string $taskId)`, `post(array\|DisassemblyOrderData $body)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
@@ -1310,4 +1313,29 @@ $writeOff = $this->cin7->inventoryWriteOff()->post(InventoryWriteOffPostData::fr
     'Location' => 'Main Warehouse',
     'Lines' => [['ProductCode' => 'Bread', 'Quantity' => 2]],
 ]))->dto(); // InventoryWriteOffData
+```
+
+`$cin7->disassemblyList()` is `disassemblyList`, filtered by `status` (a `DisassemblyStatus`: `DRAFT`,
+`WORK IN PROGRESS`, `COMPLETED`, `VOIDED`) and `search`.
+
+`$cin7->disassembly()` is `disassembly`, keyed by `TaskID`. `post()` takes a `DisassemblyPostData`
+as well as an array: a `Status` (`DRAFT`, `AUTHORISED`, `IN PROGRESS` or `COMPLETED`), the
+`WIPAccount`, the `Quantity`, a product by `ProductID` or `ProductCode` and a location by `LocationID`
+or `Location`. Every action answers with the disassembly, so `dto()` is a `DisassemblyData`, with its
+`DisassemblyNumber`, its pick, order and service lines, its `Transactions` and the `Errors` of a POST
+that created the task despite them. `delete($id, void: true)` voids it.
+
+`$cin7->disassembly()->order()` is `disassembly/order`: `get($taskId)` reads the order of a
+disassembly, and `post()` takes a `DisassemblyOrderData` (a `Status` of `WORK IN PROGRESS` or
+`COMPLETED`, its `OrderLines` and `OrderServiceLines`) as well as an array; `dto()` is a
+`DisassemblyOrderData`.
+
+```php
+$disassembly = $this->cin7->disassembly()->post(DisassemblyPostData::from([
+    'Status' => 'DRAFT',
+    'ProductCode' => 'Bread',
+    'Location' => 'Main Warehouse',
+    'WIPAccount' => '715',
+    'Quantity' => 1,
+]))->dto(); // DisassemblyData
 ```

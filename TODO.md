@@ -85,6 +85,9 @@ Built with the first resource that uses it.
 - [x] ProductMovementModel: `ProductMovementData` · used by product
 - [x] ErrorModel: `ErrorData` · used by disassembly, finished-goods, inventory-write-off
 - [x] AttributeSetLineModel: `AttributeSetLineData` · used by attribute-set
+- [x] DisassemblyPickLineModel: `DisassemblyPickLineData` · used by disassembly
+- [x] DisassemblyOrderLineModel: `DisassemblyOrderLineData` · used by disassembly, disassembly-order
+- [x] DisassemblyOrderServiceLineModel: `DisassemblyOrderServiceLineData` · used by disassembly
 - [x] InventoryWriteOffLineModel: `InventoryWriteOffLineData` · used by inventory-write-off
 - [x] TaxComponentModel: `TaxComponentData` · used by tax
 - [x] MoneyTaskLineModel: `MoneyTaskLineData` · used by money-operation
@@ -108,16 +111,6 @@ Built with the first resource that uses it.
 ## Low
 
 CRM, disassembly, finished goods and production, the maintainer's choice.
-
-### `reference/disassembly/**` Disassembly (3 resources, 6 operations)
-
-- [ ] `disassembly-list` · `disassemblyList` · GET
-  - [ ] Disassembly List: `DisassemblyListData`
-- [ ] `disassembly` · `disassembly` · GET POST DELETE
-  - [ ] Disassembly: `DisassemblyData`
-  - [ ] Disassembly POST body: `DisassemblyPostData`
-- [ ] `disassembly-order` · `disassembly/order` · GET POST
-  - [ ] Disassembly Order: `DisassemblyOrderData`
 
 ### `reference/finished-goods/**` Finished Goods (4 resources, 9 operations)
 
@@ -218,9 +211,6 @@ Built with the first resource that uses it.
 
 - [ ] FinishedGoodsOrderLineModel: `FinishedGoodsOrderLineData` · used by finished-goods, finished-goods-order
 - [ ] FinishedGoodsPickLineModel: `FinishedGoodsPickLineData` · used by finished-goods, finished-goods-pick
-- [ ] DisassemblyPickLineModel: `DisassemblyPickLineData` · used by disassembly
-- [ ] DisassemblyOrderLineModel: `DisassemblyOrderLineData` · used by disassembly, disassembly-order
-- [ ] DisassemblyOrderServiceLineModel: `DisassemblyOrderServiceLineData` · used by disassembly
 
 ## Done
 
@@ -259,6 +249,16 @@ Every resource in these groups is in.
   - [x] Customer Default Template: `CustomerDefaultTemplateData`
 - [x] `customer-credits` · `ref/customer/credits` · GET
   - [x] Customer Credits: `CustomerCreditData`
+
+### `reference/disassembly/**` Disassembly (3 resources, 6 operations)
+
+- [x] `disassembly-list` · `disassemblyList` · GET
+  - [x] Disassembly List: `DisassemblyListData`
+- [x] `disassembly` · `disassembly` · GET POST DELETE
+  - [x] Disassembly: `DisassemblyData`
+  - [x] Disassembly POST body: `DisassemblyPostData`
+- [x] `disassembly-order` · `disassembly/order` · GET POST
+  - [x] Disassembly Order: `DisassemblyOrderData`
 
 ### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
 

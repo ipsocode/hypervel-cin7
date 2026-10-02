@@ -15,6 +15,9 @@ use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\CustomPricesResource;
+use Ipsocode\Cin7\Resources\Disassembly\OrderResource as DisassemblyOrderResource;
+use Ipsocode\Cin7\Resources\DisassemblyListResource;
+use Ipsocode\Cin7\Resources\DisassemblyResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -429,5 +432,17 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->ref()->account()->bank(), $connector->ref()->account()->bank());
         $this->assertNotSame($connector->ref()->fixedAssetType(), $connector->ref()->fixedAssetType());
         $this->assertNotSame($connector->ref()->paymentTerm(), $connector->ref()->paymentTerm());
+    }
+
+    public function testDisassemblyResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(DisassemblyResource::class, $connector->disassembly());
+        $this->assertNotSame($connector->disassembly(), $connector->disassembly());
+        $this->assertInstanceOf(DisassemblyListResource::class, $connector->disassemblyList());
+        $this->assertNotSame($connector->disassemblyList(), $connector->disassemblyList());
+        $this->assertInstanceOf(DisassemblyOrderResource::class, $connector->disassembly()->order());
+        $this->assertNotSame($connector->disassembly()->order(), $connector->disassembly()->order());
     }
 }

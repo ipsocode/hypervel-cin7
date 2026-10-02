@@ -126,6 +126,10 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetInventoryWriteOffList` | `page`, `limit`, `status` (`CompletionStatus`), `search` |
 | `GetInventoryWriteOff` | **`taskId`** |
 | `DeleteInventoryWriteOff` | **`id`**, `void` |
+| `GetDisassemblyList` | `page`, `limit`, `status` (`DisassemblyStatus`), `search` |
+| `GetDisassembly` | **`taskId`** |
+| `DeleteDisassembly` | **`id`**, `void` |
+| `GetDisassemblyOrder` | **`taskId`** |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
 | `DeleteJournal` | **`id`**, `void` |
 | `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
@@ -320,6 +324,13 @@ and `PutInventoryWriteOff`, whose bodies are `InventoryWriteOffPostData` and
 `InventoryWriteOffPutData`; every one's `dto()` is an `InventoryWriteOffData`.
 `GetInventoryWriteOffList` (`src/Requests/InventoryWriteOffList/`) lists them under
 `InventoryWriteOffs`, filtered by `status` and `search`.
+The `disassembly` actions live under `src/Requests/Disassembly/`: `GetDisassembly` (keyed `TaskID`),
+`DeleteDisassembly` (keyed `ID`, with `Void`) and `PostDisassembly`, whose body is
+`DisassemblyPostData`; every one's `dto()` is a `DisassemblyData`. Its order is
+`src/Requests/Disassembly/Order/`: `GetDisassemblyOrder` (keyed `TaskID`) and `PostDisassemblyOrder`
+(body `DisassemblyOrderData`), whose `dto()` is a `DisassemblyOrderData`. `GetDisassemblyList`
+(`src/Requests/DisassemblyList/`) lists disassemblies under `Disassemblies`, filtered by `status` and
+`search`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed

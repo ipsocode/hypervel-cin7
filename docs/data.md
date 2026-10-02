@@ -231,6 +231,9 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `stockTransfer/order` | POST: `StockTransferOrderPostData` (Stock Transfer Order) | GET, POST: `StockTransferOrderData` |
 | `inventoryWriteOffList` | none | GET: `list<InventoryWriteOffListData>` (Inventory Write-Off List), read from `InventoryWriteOffs` |
 | `inventoryWriteOff` | POST: `InventoryWriteOffPostData`; PUT: `InventoryWriteOffPutData`, which also requires `TaskID` (Inventory Write-Off POST/PUT, with `Lines`: `InventoryWriteOffLineData`, Inventory Write-Off Line Model) | GET, POST, PUT, DELETE: `InventoryWriteOffData` (Inventory Write-Off, with `Transactions`: `TransactionStockLineData` and `Errors`: `ErrorData`) |
+| `disassemblyList` | none | GET: `list<DisassemblyListData>` (Disassembly List), read from `Disassemblies` |
+| `disassembly` | POST: `DisassemblyPostData` (Available fields for POST method) | GET, POST, DELETE: `DisassemblyData` (Disassembly, with `PickLines`: `DisassemblyPickLineData`, `OrderLines`: `DisassemblyOrderLineData`, `OrderServiceLines`: `DisassemblyOrderServiceLineData`, `Transactions`: `TransactionStockLineData` and `Errors`: `ErrorData`) |
+| `disassembly/order` | POST: `DisassemblyOrderData` (Disassembly Order) | GET, POST: `DisassemblyOrderData` |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
 | `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
@@ -1552,3 +1555,33 @@ class requires:
   cannot tell, so they stay optional; `TotalCost` is read-only.
 - **Examples.** The examples send `""` and `null` for fields they leave out; the fixtures are the
   seven of them, unchanged.
+
+`disassembly` has a body of its own, `DisassemblyPostData`, because only POST requires fields; there
+is no PUT. `DisassemblyData` is the response of every action and the order has one class for its body
+and its response. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `DisassemblyData` (response) | `src/Data/Disassembly/` | nothing |
+| `DisassemblyPostData` | `src/Data/Disassembly/` | `Status`, `WIPAccount`, `Quantity`; and `ProductID` or `ProductCode`, `LocationID` or `Location` (`#[RequiredWithout]`) |
+| `DisassemblyPickLineData` | `src/Data/Disassembly/` | nothing |
+| `DisassemblyOrderData` | `src/Data/Disassembly/Order/` | nothing; POST takes `WORK IN PROGRESS` or `COMPLETED` as `Status` (`#[In]`) |
+| `DisassemblyOrderLineData` | `src/Data/Disassembly/Order/` | `Quantity`, `Cost`; and `ProductID` or `ProductCode` |
+| `DisassemblyOrderServiceLineData` | `src/Data/Disassembly/Order/` | `Account`, `Amount`; and `ProductID` or `Name` |
+| `DisassemblyListData` | `src/Data/DisassemblyList/` | nothing |
+
+- **Two status lists.** The response lists `DRAFT`, `WORK IN PROGRESS`, `COMPLETED` and `VOIDED`
+  (`DisassemblyStatus`), but the POST table lists `DRAFT`, `AUTHORISED`, `IN PROGRESS` and
+  `COMPLETED`: not a subset, so it is its own enum, `DisassemblyPostStatus`. The order's `Status`
+  is a `DisassemblyStatus`, and POST takes `WORK IN PROGRESS` or `COMPLETED` of it.
+- **`Location`** is typed Decimal in the POST table, copied from the field above it: it is the
+  location's name, a string.
+- **`CompletionDate`** is in the examples of the disassembly (response and POST) and of the order, in
+  no table, so it is modelled on `DisassemblyData`, `DisassemblyPostData` and `DisassemblyOrderData`.
+  The order's examples also send `OrderServiceLines`, which its table omits.
+  `DisassemblyPostData` models `ProductName`, which the POST example sends and its table omits.
+- **Read-only fields** (`Name`, `Unit`) are on the order lines, and the order examples send them, so
+  the classes model them and the requests send what the caller set.
+- **`DisassemblyOrderServiceLineData`** is documented as used by `disassembly` alone, but the order's
+  examples carry it, so it lives beside the order line in `Disassembly/Order/`.
+- **Examples.** The examples need no correction: the reference's eight are the fixtures, unchanged.

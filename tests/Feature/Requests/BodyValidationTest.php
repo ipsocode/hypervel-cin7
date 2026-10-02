@@ -19,6 +19,8 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+use Ipsocode\Cin7\Data\Disassembly\DisassemblyPostData;
+use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPostData;
 use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
@@ -59,6 +61,8 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\Disassembly\Order\PostDisassemblyOrder;
+use Ipsocode\Cin7\Requests\Disassembly\PostDisassembly;
 use Ipsocode\Cin7\Requests\InventoryWriteOff\PostInventoryWriteOff;
 use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
@@ -249,6 +253,7 @@ class BodyValidationTest extends TestCase
             'advanced purchase invoice POST' => [fn (): WriteRequest => new PostAdvancedPurchaseInvoice(AdvancedPurchasePartialInvoicePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/invoice', 'post.request')))],
             'advanced purchase put away POST' => [fn (): WriteRequest => new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/put-away', 'post.request')))],
             'advanced purchase credit note POST' => [fn (): WriteRequest => new PostAdvancedPurchaseCreditNote(AdvancedPurchasePartialCreditNotePostData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/creditnote', 'post.request')))],
+            'disassembly order POST' => [fn (): WriteRequest => new PostDisassemblyOrder(DisassemblyOrderData::from(['Status' => 'DRAFT'] + Cin7Payloads::load('disassembly/order', 'post.request')))],
         ];
     }
 
@@ -760,5 +765,43 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PostSalePayment(['TaskID' => 'task-1', 'DatePaid' => 'tomorrow']));
 
         $this->assertSame(['TaskID' => 'task-1', 'DatePaid' => 'tomorrow'], $this->mock->lastPendingRequest()?->body());
+    }
+
+    /**
+     * A disassembly needs a product and a location, each by ID or by name; a body with neither of
+     * a pair is not sent.
+     */
+    public function testADisassemblyNeedsItsProductAndItsLocation(): void
+    {
+        $body = ['Status' => 'DRAFT', 'WIPAccount' => '715', 'Quantity' => 1];
+
+        try {
+            $this->connector()->send(new PostDisassembly(DisassemblyPostData::from($body)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['ProductID', 'ProductCode', 'LocationID', 'Location'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostDisassembly(DisassemblyPostData::from([...$body, 'ProductCode' => 'Bread', 'Location' => 'Main Warehouse'])));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A disassembly order's component lines need a product by ID or code, and its service lines a
+     * product by ID or a name; a line with neither is not sent.
+     */
+    public function testADisassemblyOrderLineNeedsItsProduct(): void
+    {
+        $lines = ['OrderLines' => [['Quantity' => 1, 'Cost' => 5]], 'OrderServiceLines' => [['Account' => '416', 'Amount' => 600]]];
+
+        try {
+            $this->connector()->send(new PostDisassemblyOrder(DisassemblyOrderData::from(['Status' => 'COMPLETED', ...$lines])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['OrderLines.0.ProductID', 'OrderLines.0.ProductCode', 'OrderServiceLines.0.ProductID', 'OrderServiceLines.0.Name'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
     }
 }
