@@ -67,6 +67,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractSaleFulfilmentShipTaskData` | `SaleFulfilmentShipPostData`, `SaleFulfilmentShipPutData` | `TaskID`, `Status` (`DRAFT`, `PARTIALLY AUTHORISED` or `AUTHORISED`) |
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
   | `AbstractPurchaseOrderData` | `PurchaseOrderData`, `PurchaseOrderPostData` | `Memo`, `Status`, `Lines` |
+  | `AbstractPurchaseStockData` | `PurchaseStockData`, `PurchaseStockPostData` | `Status`, `Lines` |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
   | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`, `PurchaseOrderLineData`; shaped to serve the other purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`, `PurchaseAdditionalChargeData`; shaped to serve the purchase invoice charge model too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
@@ -206,6 +207,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `sale/attachment` | POST: `SaleAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `SaleAttachmentsData` (`{SaleID, Lines}`, with `Lines`: `AttachmentLineData`) |
 | `sale/payment` | POST: `SalePaymentPostData`; PUT: `SalePaymentPutData` (the Sale Payment Line Partial Model's fields for each verb) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
 | `purchase/order` | POST: `PurchaseOrderPostData` (Available Fields for Purchase Order, with `Lines`: `PurchaseOrderLineData` and `AdditionalCharges`: `PurchaseAdditionalChargeData`) | GET, POST: `PurchaseOrderData` |
+| `purchase/stock` | POST: `PurchaseStockPostData` (Available Fields for Purchase Stock Received, with `Lines`: `PurchaseStockLineData`) | GET, POST: `PurchaseStockData` |
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
@@ -265,6 +267,19 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   requires `TaskID` and `CombineAdditionalCharges`, limits `Status` to `DRAFT` and `AUTHORISED`,
   leaves the totals optional ("Not required for POST"; the POST example sends none), and takes no
   `Prepayments`, which the `purchase/order` table does not list.
+- **Purchase Stock Received.** The reference documents the model twice: the Purchase Stock Model a
+  purchase embeds as its `StockReceived`, and `purchase/stock`'s Available Fields for Purchase Stock
+  Received, which adds the purchase's `TaskID`. `PurchaseStockData` carries the union, with `TaskID`
+  optional, as only one table has it. The POST body is `PurchaseStockPostData`: it requires
+  `TaskID`, and limits `Status` to `DRAFT` and `AUTHORISED` ("For POST only"). `Lines` is required,
+  and `[]` passes, which is how a POST authorises the stock received.
+- **Purchase stock line.** Its `ProductID` and `SKU` are a bare `Yes*`, with no condition, unlike
+  the priced lines' (see below), so `PurchaseStockLineData` leaves both optional, as the supplier's
+  `Status`. `Location` and `LocationID` are each required if the other is empty
+  (`#[RequiredWithout]`). `Name` and `Received` are read-only, and the POST example sends both, so
+  the class models them and `PostPurchaseStock` leaves them out of the body. The POST response's
+  `CardID` (the stock batch) is not the one its request sent; the table does not mark it read-only,
+  so it is modelled and sent.
 - **Purchase charge `Total`.** The Purchase Additional Charge Model requires the charge's `Total`,
   which the sale and purchase invoice charge tables leave optional; `AbstractChargeData` no longer
   declares it, `PurchaseAdditionalChargeData` requires it, and the sale charge classes keep it
@@ -276,7 +291,8 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Product fields on lines.** "All objects that contain `ProductID` also contain additional
   fields": `ProductLength`, `ProductWidth`, `ProductHeight`, `ProductWeight`, `WeightUnits`,
   `DimensionsUnits` and `ProductCustomField1`–`10`. The sale and purchase order line, pick and
-  pack line and inventory movement classes take them from the `HasProductFields` trait.
+  pack line, purchase stock line and inventory movement classes take them from the
+  `HasProductFields` trait.
 - **Nulls.** `ExternalID`, `SourceChannel`, `Ship.RequireBy` and the invoice, due and ship
   dates and numbers of a Sale List row are `null` in the examples, so those properties admit
   `null`.
@@ -371,7 +387,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   and the totals and `Paid`, and its `CreditNotes` carry `Refunds` and the totals; the Partial
   tables and every `sale/invoice` and `sale/creditnote` example have none of them, so the
   partial classes leave them out.
-- **Line `ProductID` and `SKU`.** Every line table marks them `Yes*`, required when
+- **Line `ProductID` and `SKU`.** Every priced line table marks them `Yes*`, required when
   `CombineAdditionalCharges` is set; the line classes require them always, with `Name`,
   `Quantity`, `Price`, `Tax` and `TaxRule`, which every line table requires.
 - **Sale `Location`, `CurrencyRate` and customer.** The Sale POST/PUT table requires
@@ -615,6 +631,21 @@ purchase and the advanced purchase embed too.
 
 `Status` is a `TaskStatus`. A line also takes `SupplierSKU`, `Comment` and the product fields, and
 a charge a `Reference`.
+
+`purchase/stock` follows the Purchase Stock Model and the Available Fields for Purchase Stock
+Received table, with a POST class because POST requires `TaskID` and takes only two of the
+statuses (see [above](#where-the-references-tables-and-examples-disagree)). Its lines are the
+Purchase Stock Line Model, which a purchase's `StockReceived` embeds too.
+
+| Class | Folder | Required |
+|---|---|---|
+| `PurchaseStockData` (response) | `src/Data/Purchase/Stock/` | `Status`, `Lines` |
+| `PurchaseStockPostData` | `src/Data/Purchase/Stock/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `TaskID` |
+| `PurchaseStockLineData` | `src/Data/Purchase/Stock/` | `Date`, `Quantity`; and on a write body `Location` or `LocationID` (`#[RequiredWithout]`) |
+
+`Status` is a `TaskStatus`. A line also takes `ProductID`, `SKU`, `BatchSN`, `SupplierSKU`,
+`ExpiryDate`, `CardID` and the product fields, and, on a response, the read-only `Name` and
+`Received`.
 
 `purchase/payment` follows the Available Fields for Purchase Payments table, with a class per verb
 because `ID`, `Type`, `DepositID`, `Amount` and `Account` are taken by different verbs (see

@@ -108,6 +108,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `DeleteSaleAttachment` | **`id`** |
 | `GetSaleCreditNoteList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` (`SaleStatus`) |
 | `GetPurchaseOrder` | **`taskId`**, `combineAdditionalCharges` |
+| `GetPurchaseStock` | **`taskId`** |
 | `GetPurchasePayment` | **`taskId`** |
 | `DeletePurchasePayment` | **`id`**, `deleteAllocation` |
 
@@ -195,10 +196,12 @@ The `purchase/…` documents live under `src/Requests/Purchase/`, one folder per
 | Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
 |---|---|---|
 | `Order/` | `GetPurchaseOrder` (`TaskID`), `PostPurchaseOrder` | `PurchaseOrderData` |
+| `Stock/` | `GetPurchaseStock` (`TaskID`), `PostPurchaseStock` | `PurchaseStockData` |
 | `Payment/` | `GetPurchasePayment` (`TaskID`), `PostPurchasePayment`, `PutPurchasePayment`, `DeletePurchasePayment` (`ID`, with `DeleteAllocation`) | `list<PurchasePaymentData>` for the GET, a bare array, `PurchasePaymentData` for POST and PUT; none for the DELETE, whose `{Success}` is left to `json()` |
 
-The order's POST body is `PurchaseOrderPostData`, and the payment's write bodies are
-`PurchasePaymentPostData` and `PurchasePaymentPutData`, the PUT one carrying the payment's `ID`.
+The order's and the stock received's POST bodies are `PurchaseOrderPostData` and
+`PurchaseStockPostData`, and the payment's write bodies are `PurchasePaymentPostData` and
+`PurchasePaymentPutData`, the PUT one carrying the payment's `ID`.
 
 ## Wire protocol
 
@@ -253,6 +256,7 @@ data object's body is also stripped of nulls and validated after the omission; s
 | `PostSaleOrder` | `Lines.*.BackorderQuantity` |
 | `PostSalePayment` | `ID`, `CreditID` (PUT only) |
 | `PutSalePayment` | `TaskID`, `Type` (POST only) |
+| `PostPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` |
 | `PostPurchasePayment` | `ID` (PUT only), `DateCreated` |
 | `PutPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
 

@@ -19,7 +19,7 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations, 15 left)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 14 left)
 
 - [ ] `purchase-list` · `purchaseList` · GET
   - [ ] Purchase List: `PurchaseListData`
@@ -32,8 +32,8 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [ ] Purchase POST/PUT body: `PurchasePutData`
 - [x] `purchase-order` · `purchase/order` · GET POST
   - [x] Purchase Order: `PurchaseOrderData`
-- [ ] `purchase-stock-received` · `purchase/stock` · GET POST
-  - [ ] Purchase Stock Received: `PurchaseStockData`
+- [x] `purchase-stock-received` · `purchase/stock` · GET POST
+  - [x] Purchase Stock Received: `PurchaseStockData`
 - [ ] `purchase-invoice` · `purchase/invoice` · GET POST
   - [ ] Purchase Invoice: `PurchaseInvoiceData`
 - [ ] `purchase-credit-note` · `purchase/creditnote` · GET POST
@@ -83,8 +83,8 @@ Each is built with the first resource here that uses it; a ticked one is built, 
 - [x] PurchaseOrderModel: `PurchaseOrderData` · used by purchase, advanced-purchase
 - [x] PurchaseOrderLineModel: `PurchaseOrderLineData` · used by purchase, purchase-order, advanced-purchase
 - [x] PurchaseAdditionalChargeModel: `PurchaseAdditionalChargeData` · used by purchase, purchase-order, advanced-purchase
-- [ ] PurchaseStockModel: `PurchaseStockData` · used by purchase
-- [ ] PurchaseStockLineModel: `PurchaseStockLineData` · used by purchase, purchase-stock-received
+- [x] PurchaseStockModel: `PurchaseStockData` · used by purchase
+- [x] PurchaseStockLineModel: `PurchaseStockLineData` · used by purchase, purchase-stock-received
 - [ ] PurchaseUnStockLineModel: `PurchaseUnStockLineData` · used by purchase, purchase-credit-note, advanced-purchase, advanced-purchase-credit-note
 - [ ] PurchaseInvoiceModel: `PurchaseInvoiceData` · used by purchase
 - [ ] PurchaseCreditNoteModel: `PurchaseCreditNoteData` · used by purchase
