@@ -51,6 +51,7 @@ Send `[]` only to delete on purpose, by setting the property to an empty list.
 |---|---|---|
 | `ref/tax` | `TaxData` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
+| `moneyOperation` | `MoneyTaskData` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `sale` | `SalePostPutData` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
 | `saleList` | none | GET: `list<SaleListData>` (Sale List) |
 | `sale/order` | `SaleOrderData` (Sale Order, plus `AutoPickPackShipMode`, which the reference documents only in prose) | GET, POST: `SaleOrderData` |
@@ -114,6 +115,13 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Credit note `Restock`.** The reference types it as Sale Fulfilment Pick Pack Line, whose
   table includes the `Restock…` keys and `Box`; the example's restock line carries only the
   pick keys, and the others stay unset.
+- **Money Task `SupplierCustomerName`.** The table names the counterparty
+  `SupplierCustomerName`, but every example returns `SupplierCustomer`; `MoneyTaskData` models
+  the wire key, `SupplierCustomer`.
+- **Money Task Line `TaxRule` and `Account`.** The table names them so, but every example
+  sends `TaxRuleName` and `AccountCode`; `MoneyTaskLineData` models the example keys.
+- **Money Task nulls.** `SupplierID`, `CustomerID` and `Note` are `null` in the examples, so
+  those properties admit `null`.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim.
 

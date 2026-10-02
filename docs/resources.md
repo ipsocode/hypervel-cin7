@@ -54,6 +54,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
 | `$cin7->product()` | `ProductResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
+| `$cin7->moneyOperation()` | `MoneyOperationResource` | `get(string $taskId)`, `post(array|MoneyTaskData $body)`, `put(array|MoneyTaskData $body)`, `delete(string $id, bool $void = false)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, array $parameters = [])`, `post(array|SalePostPutData $body)`, `put(array|SalePostPutData $body)`, `delete(string $id, bool $void = false)` |
 | `$cin7->saleList()` | `SaleListResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
@@ -108,6 +109,30 @@ $vat = $this->cin7->ref()->tax()->get(['IsActive' => true])->json('TaxRuleList')
 foreach ($this->cin7->ref()->customer()->credits()->paginate(['CustomerID' => $guid])->items() as $credit) {
     // $credit is one entry of CustomerCredits
 }
+```
+
+## Money Operation
+
+`moneyOperation` is keyed by `TaskID`: `get($taskId)` sends `moneyOperation?TaskID=…`. V2 marks
+`TaskID` optional on GET, but the package requires it, because the list lives at
+`moneyTaskList`, which is out of scope. `delete($id, $void)` sends
+`moneyOperation?ID=…&Void=…`: `void: true` voids the task, and the default `false` undoes a
+void. Every action answers with the Money Task, so `dto()` is a `MoneyTaskData` for `get()`,
+`post()`, `put()` and `delete()`, with `Lines` (`MoneyTaskLineData`), `Transactions`
+(`TransactionStockLineData`) and `Attachments` (`AttachmentLineData`). `post()` and `put()`
+accept a `MoneyTaskData` as well as an array (see [data](data.md)); a PUT body carries
+`TaskID`.
+
+```php
+$task = $this->cin7->moneyOperation()->get($taskId)->dto(); // MoneyTaskData
+
+$this->cin7->moneyOperation()->post(MoneyTaskData::from([
+    'TaskType' => 'Receive Money',
+    'Status' => 'DRAFT',
+    'BankAccount' => '198489',
+    'Date' => '2018-01-17T00:00:00',
+]));
+$this->cin7->moneyOperation()->delete($taskId, void: true);
 ```
 
 ## Sale
@@ -172,6 +197,7 @@ key:
 | `sale` | `ID` |
 | `sale/invoice` | `SaleID` and `TaskID` |
 | `sale/payment` | `ID` |
+| `moneyOperation` | `TaskID` |
 
 ```php
 $attributes['ID'] = $guid;

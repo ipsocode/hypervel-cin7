@@ -52,6 +52,11 @@ The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keye
 on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
 `ref/customer/credits`.
 
+The `moneyOperation` actions live under `src/Requests/MoneyOperation/`: `GetMoneyOperation`
+(a `KeyedRequest` keyed `TaskID`), `DeleteMoneyOperation` (a `KeyedRequest` keyed `ID`; it takes
+`Void` as a parameter), and `PostMoneyOperation` and `PutMoneyOperation` (`WriteRequest`s; the
+PUT body carries `TaskID`), all on `moneyOperation`. Every one's `dto()` is a `MoneyTaskData`.
+
 The `sale` actions live under `src/Requests/Sale/`: `GetSale` and `DeleteSale` (`KeyedRequest`s
 keyed `ID`; the DELETE takes `Void` as a parameter) and `PostSale` and `PutSale`
 (`WriteRequest`s; the PUT body carries `ID`), all on `sale`. `sale` has no list action:

@@ -10,6 +10,7 @@ use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
+use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
@@ -22,6 +23,10 @@ use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
 use Ipsocode\Cin7\Data\Sale\SaleOrderData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
+use Ipsocode\Cin7\Requests\MoneyOperation\DeleteMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\GetMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
 use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
@@ -112,6 +117,10 @@ class DataCatalogueTest extends TestCase
                 CustomerCreditData::class,
                 'CustomerCredits',
             ],
+            GetMoneyOperation::class => [GetMoneyOperation::class, ['task-1'], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
+            PostMoneyOperation::class => [PostMoneyOperation::class, [[]], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
+            PutMoneyOperation::class => [PutMoneyOperation::class, [[]], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
+            DeleteMoneyOperation::class => [DeleteMoneyOperation::class, ['task-1'], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
             GetSale::class => [GetSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
             PostSale::class => [PostSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
             PutSale::class => [PutSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
