@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Resources;
 
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\CreditNoteResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\InvoiceResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\ManualJournalResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\PaymentResource;
@@ -13,10 +14,10 @@ use Ipsocode\Cin7\Resources\AdvancedPurchase\PutAwayResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource;
 
 /**
- * `advanced-purchase`, an advanced purchase; `stock()`, `putAway()`, `invoice()`, `payment()` and
- * `manualJournal()` are the `advanced-purchase/stock`, `advanced-purchase/put-away`,
- * `advanced-purchase/invoice`, `advanced-purchase/payment` and `advanced-purchase/manualJournal`
- * sub-resources.
+ * `advanced-purchase`, an advanced purchase; `stock()`, `putAway()`, `invoice()`, `creditNote()`,
+ * `payment()` and `manualJournal()` are the `advanced-purchase/stock`,
+ * `advanced-purchase/put-away`, `advanced-purchase/invoice`, `advanced-purchase/creditnote`,
+ * `advanced-purchase/payment` and `advanced-purchase/manualJournal` sub-resources.
  *
  * @extends BaseResource<Cin7Connector>
  */
@@ -31,11 +32,11 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * The `advanced-purchase/manualJournal` resource, an advanced purchase's manual journals.
+     * The `advanced-purchase/put-away` resource, an advanced purchase's put away.
      */
-    public function manualJournal(): ManualJournalResource
+    public function putAway(): PutAwayResource
     {
-        return new ManualJournalResource($this->connector);
+        return new PutAwayResource($this->connector);
     }
 
     /**
@@ -47,11 +48,11 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * The `advanced-purchase/put-away` resource, an advanced purchase's put away.
+     * The `advanced-purchase/creditnote` resource, an advanced purchase's credit notes.
      */
-    public function putAway(): PutAwayResource
+    public function creditNote(): CreditNoteResource
     {
-        return new PutAwayResource($this->connector);
+        return new CreditNoteResource($this->connector);
     }
 
     /**
@@ -60,5 +61,13 @@ final class AdvancedPurchaseResource extends BaseResource
     public function payment(): PaymentResource
     {
         return new PaymentResource($this->connector);
+    }
+
+    /**
+     * The `advanced-purchase/manualJournal` resource, an advanced purchase's manual journals.
+     */
+    public function manualJournal(): ManualJournalResource
+    {
+        return new ManualJournalResource($this->connector);
     }
 }

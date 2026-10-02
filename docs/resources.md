@@ -79,12 +79,13 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
-| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `putAway()`, `invoice()`, `payment()`, `manualJournal()` |
+| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `putAway()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()` |
 | `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->advancedPurchase()->manualJournal()` | `AdvancedPurchase\ManualJournalResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePartialManualJournalPostData $body)` |
 | `$cin7->advancedPurchase()->invoice()` | `AdvancedPurchase\InvoiceResource` | `get(string $purchaseId, ?bool $combineAdditionalCharges = null)`, `post(array\|AdvancedPurchasePartialInvoicePostData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->advancedPurchase()->putAway()` | `AdvancedPurchase\PutAwayResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePutAwayPostData $body)` |
 | `$cin7->advancedPurchase()->payment()` | `AdvancedPurchase\PaymentResource` | `get(?string $purchaseId = null, …)`, `post(array\|AdvancedPurchasePaymentPostData $body)`, `put(array\|AdvancedPurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
+| `$cin7->advancedPurchase()->creditNote()` | `AdvancedPurchase\CreditNoteResource` | `get(string $purchaseId, …)`, `post(array\|AdvancedPurchasePartialCreditNotePostData $body)`, `delete(string $taskId)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -753,6 +754,36 @@ $saved = $this->cin7->advancedPurchase()->payment()->post(AdvancedPurchasePaymen
 ]))->dto(); // AdvancedPurchasePaymentData
 
 $this->cin7->advancedPurchase()->payment()->delete($saved->ID); // DELETE purchase/payment?ID=…
+```
+
+`$cin7->advancedPurchase()->creditNote()` is `advanced-purchase/creditnote`, an advanced purchase's
+credit notes. Every method answers with the purchase's credit notes, the `{PurchaseID, CreditNotes}`
+envelope, so its `dto()` is an `AdvancedPurchaseCreditNotesData`, whose `CreditNotes` are
+`AdvancedPurchasePartialCreditNoteData`. `get($purchaseId)` sends
+`advanced-purchase/creditnote?PurchaseID=…`, and `combineAdditionalCharges: true` lists the
+additional charges in `Lines`. `post()` takes an `AdvancedPurchasePartialCreditNotePostData` as well
+as an array: one credit note, which needs the `PurchaseID`, its `TaskID` (the empty GUID creates a
+credit note), `CombineAdditionalCharges`, `CreditNoteNumber`, `CreditNoteInvoiceNumber`,
+`CreditNoteDate`, a `Status` of `DRAFT` or `AUTHORISED`, `Lines` and `Unstock`, but no totals; each
+line needs its `Account` and `Total`, each additional charge its `Account`, and each unstock line its
+stock batch's `CardID` and `Quantity`. An unstock line's product, location, batch and expiry are
+read-only and left out of the body. Cin7 rejects the POST unless the invoice is `AUTHORISED` or
+`PAID` and the credit note is `DRAFT` or `NOT AVAILABLE`. `delete($taskId)` sends
+`advanced-purchase/creditnote?TaskID=…` and voids that credit note; the reference documents no
+`Void` flag for it.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchasePartialCreditNotePostData;
+
+$creditNotes = $this->cin7->advancedPurchase()->creditNote()->get($purchaseId)->dto(); // AdvancedPurchaseCreditNotesData
+
+$saved = $this->cin7->advancedPurchase()->creditNote()->post(AdvancedPurchasePartialCreditNotePostData::from([
+    ...$creditNotes->CreditNotes[0]->toArray(),
+    'PurchaseID' => $purchaseId,
+    'Status' => 'AUTHORISED',
+]))->dto(); // AdvancedPurchaseCreditNotesData
+
+$this->cin7->advancedPurchase()->creditNote()->delete($saved->CreditNotes[0]->TaskID); // DELETE advanced-purchase/creditnote?TaskID=…
 ```
 
 ## PUT identifiers

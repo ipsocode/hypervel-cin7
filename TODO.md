@@ -19,7 +19,7 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations, 3 left)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 2 left)
 
 - [x] `purchase-list` · `purchaseList` · GET
   - [x] Purchase List: `PurchaseListData`
@@ -57,9 +57,9 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
 - [x] `advanced-purchase-invoice` · `advanced-purchase/invoice` · GET POST DELETE
   - [x] AdvancedPurchaseInvoice: `AdvancedPurchaseInvoicesData`
   - [x] AdvancedPurchasePartialInvoiceModel: `AdvancedPurchasePartialInvoiceData`
-- [ ] `advanced-purchase-credit-note` · `advanced-purchase/creditnote` · GET POST DELETE
-  - [ ] AdvancedPurchaseCreditNote: `AdvancedPurchaseCreditNotesData`
-  - [ ] AdvancedPurchasePartialCreditNoteModel: `AdvancedPurchasePartialCreditNoteData`
+- [x] `advanced-purchase-credit-note` · `advanced-purchase/creditnote` · GET POST DELETE
+  - [x] AdvancedPurchaseCreditNote: `AdvancedPurchaseCreditNotesData`
+  - [x] AdvancedPurchasePartialCreditNoteModel: `AdvancedPurchasePartialCreditNoteData`
 - [x] `advanced-purchase-payments` · `advanced-purchase/payment` · GET POST PUT DELETE
   - [x] AdvancedPurchasePayments: `AdvancedPurchasePaymentData`
 - [x] `advanced-purchase-manual-journals` · `advanced-purchase/manualJournal` · GET POST

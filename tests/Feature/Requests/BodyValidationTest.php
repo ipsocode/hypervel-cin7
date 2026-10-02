@@ -10,6 +10,7 @@ use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
+use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchasePartialCreditNotePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
@@ -37,6 +38,7 @@ use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
@@ -222,6 +224,7 @@ class BodyValidationTest extends TestCase
             'purchase credit note POST' => [fn (): WriteRequest => new PostPurchaseCreditNote(PurchaseCreditNotePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('purchase/creditnote', 'post.request')))],
             'advanced purchase invoice POST' => [fn (): WriteRequest => new PostAdvancedPurchaseInvoice(AdvancedPurchasePartialInvoicePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/invoice', 'post.request')))],
             'advanced purchase put away POST' => [fn (): WriteRequest => new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/put-away', 'post.request')))],
+            'advanced purchase credit note POST' => [fn (): WriteRequest => new PostAdvancedPurchaseCreditNote(AdvancedPurchasePartialCreditNotePostData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/creditnote', 'post.request')))],
         ];
     }
 
