@@ -35,7 +35,6 @@ use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
-use Ipsocode\Cin7\Requests\Sale\Payment\DeleteSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
