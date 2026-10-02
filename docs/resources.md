@@ -203,12 +203,17 @@ and `sale/payment`.
 | Resource | Methods | Body and `dto()` |
 |---|---|---|
 | `sale()->order()` (Sale Order Model) | `get(string $saleId, array $parameters = [])` (`CombineAdditionalCharges`, `IncludeProductInfo`), `post(array\|SaleOrderData $body)` | `SaleOrderData` |
-| `sale()->invoice()` (Sale Invoice Partial and POST Models) | `get($saleId, …)`, `post(array\|SaleInvoicePostData)`, `put(array\|SaleInvoicePostData)`, `delete(string $taskId, bool $void = false)` | `SaleInvoicesData`, the `{SaleID, Invoices}` envelope |
+| `sale()->invoice()` (Sale Invoice Partial and POST Models) | `get($saleId, …)`, `post(array\|SaleInvoicePostData)`, `put(array\|SaleInvoicePutData)`, `delete(string $taskId, bool $void = false)` | `SaleInvoicesData`, the `{SaleID, Invoices}` envelope |
 | `sale()->creditNote()` (Sale Credit Note Partial and POST Models) | `get($saleId, …)` (also `IncludePaymentInfo`), `post(array\|SaleCreditNotePostData)`, `delete(string $taskId, bool $void = false)` | `SaleCreditNotesData`, the `{SaleID, CreditNotes}` envelope |
-| `sale()->payment()` (Sale Payment Line Partial Model) | `get(string $saleId)`, `post(array\|SalePaymentLinePartialData)`, `put(array\|SalePaymentLinePartialData)`, `delete(string $id)` | `GET`: `list<SalePaymentLinePartialData>`; POST, PUT: one line; DELETE answers `{Success}` |
+| `sale()->payment()` (Sale Payment Line Partial Model) | `get(string $saleId)`, `post(array\|SalePaymentPostData)`, `put(array\|SalePaymentPutData)`, `delete(string $id)` | `GET`: `list<SalePaymentLinePartialData>`; POST, PUT: one line; DELETE answers `{Success}` |
 
 Invoice and credit note deletes go by `TaskID` and take `Void`; a payment delete goes by `ID`
-and has no `Void`. An invoice POST needs `SaleID` and an empty-GUID `TaskID`.
+and has no `Void`. An invoice or credit note POST with the empty GUID as `TaskID`
+(`00000000-0000-0000-0000-000000000000`) creates a new one. The POST and PUT bodies are per verb,
+each with the fields the reference requires for that verb mandatory: a payment POST needs
+`TaskID`, `Type`, `Amount`, `DatePaid`, `Account` and `CurrencyRate`, a payment PUT only `ID`, an
+invoice PUT only `SaleID` and `TaskID`. A payment read with `get()` becomes a PUT body with
+`SalePaymentPutData::from($payment->toArray())`, which keeps the fields PUT takes.
 
 ```php
 $this->cin7->sale()->invoice()->delete($taskId, void: true); // DELETE sale/invoice?TaskID=…&Void=true

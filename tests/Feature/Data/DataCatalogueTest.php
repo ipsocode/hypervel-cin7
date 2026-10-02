@@ -5,23 +5,32 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Data;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
+use Hypervel\Data\Exceptions\CannotCreateData;
+use Hypervel\Data\Support\Validation\ValidationPath;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
+use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
+use Ipsocode\Cin7\Data\ErrorData;
 use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
 use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
 use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePartialData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePaymentData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePartialData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPutData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
 use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
 use Ipsocode\Cin7\Data\Sale\SaleOrderData;
@@ -64,8 +73,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
-use ReflectionNamedType;
-use ReflectionUnionType;
 use SplFileInfo;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -77,6 +84,22 @@ use Workbench\App\Support\Cin7Payloads;
  */
 class DataCatalogueTest extends TestCase
 {
+    /**
+     * The properties the reference marks required, per class: not nullable, and with no default.
+     *
+     * @var array<class-string<Data>, list<string>>
+     */
+    private const array REQUIRED = [
+        SaleInvoicePartialData::class => ['TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
+        SaleInvoicePostData::class => ['SaleID', 'TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
+        SaleInvoicePutData::class => ['SaleID', 'TaskID'],
+        SaleCreditNotePartialData::class => ['TaskID', 'CombineAdditionalCharges', 'Status', 'CreditNoteDate'],
+        SaleCreditNotePostData::class => ['SaleID', 'TaskID', 'CombineAdditionalCharges', 'CreditNoteInvoiceNumber', 'Status', 'CreditNoteDate'],
+        SalePaymentLinePartialData::class => ['ID', 'TaskID', 'Type', 'Amount', 'DatePaid', 'Account', 'CurrencyRate'],
+        SalePaymentPostData::class => ['TaskID', 'Type', 'Amount', 'DatePaid', 'Account', 'CurrencyRate'],
+        SalePaymentPutData::class => ['ID'],
+    ];
+
     /**
      * @param class-string<Cin7Request> $class
      * @param list<mixed> $args
@@ -101,14 +124,14 @@ class DataCatalogueTest extends TestCase
         if (array_is_list($expected)) {
             $this->assertIsArray($dto);
             $this->assertContainsOnlyInstancesOf($dataClass, $dto);
-            $this->assertEquals($expected, array_map(static fn (Data $item): array => $item->toArray(), $dto));
+            $this->assertRoundTrips($expected, array_map(static fn (Data $item): array => $item->toArray(), $dto));
             $this->assertSame($response, $dto[0]->getResponse());
 
             return;
         }
 
         $this->assertInstanceOf($dataClass, $dto);
-        $this->assertEquals($expected, $dto->toArray());
+        $this->assertRoundTrips($expected, $dto->toArray());
         $this->assertSame($response, $dto->getResponse());
     }
 
@@ -151,7 +174,7 @@ class DataCatalogueTest extends TestCase
             GetSaleCreditNote::class => [GetSaleCreditNote::class, ['sale-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
             PostSaleCreditNote::class => [PostSaleCreditNote::class, [[]], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
             DeleteSaleCreditNote::class => [DeleteSaleCreditNote::class, ['task-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
-            GetSalePayment::class => [GetSalePayment::class, ['sale-1'], [Cin7Payloads::salePayment()], SalePaymentLinePartialData::class, ''],
+            GetSalePayment::class => [GetSalePayment::class, ['sale-1'], Cin7Payloads::salePayments(), SalePaymentLinePartialData::class, ''],
             PostSalePayment::class => [PostSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
             PutSalePayment::class => [PutSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
             GetMoneyTaskList::class => [
@@ -185,7 +208,7 @@ class DataCatalogueTest extends TestCase
         $dto = $this->connector()->send(new GetSale('guid-1'))->dto();
 
         $this->assertInstanceOf(SaleManualJournalLineData::class, $dto->ManualJournals->Lines[0]);
-        $this->assertEquals($sale, $dto->toArray());
+        $this->assertRoundTrips($sale, $dto->toArray());
     }
 
     /**
@@ -235,7 +258,7 @@ class DataCatalogueTest extends TestCase
         $dto = $this->connector()->send(new GetProduct)->dto();
 
         $this->assertInstanceOf(ProductSupplierOptionIntervalData::class, $dto[0]->Suppliers[0]->ProductSupplierOptions[0]->SupplyIntervals[0]);
-        $this->assertEquals($product['Products'], array_map(static fn (Data $item): array => $item->toArray(), $dto));
+        $this->assertRoundTrips($product['Products'], array_map(static fn (Data $item): array => $item->toArray(), $dto));
     }
 
     /**
@@ -253,15 +276,95 @@ class DataCatalogueTest extends TestCase
     }
 
     /**
-     * The POST models are bodies, not responses, so their fixtures round-trip through the class.
+     * The body models are not responses, so their fixtures, the reference's request examples,
+     * round-trip through the class.
+     *
+     * @param class-string<Data> $class
+     * @param array<string, mixed> $fixture
      */
-    public function testThePostModelsRoundTripTheirFixtures(): void
+    #[DataProvider('bodyProvider')]
+    public function testTheBodyModelsRoundTripTheirFixtures(string $class, array $fixture): void
     {
-        $invoice = Cin7Payloads::saleInvoicePost();
-        $creditNote = Cin7Payloads::saleCreditNotePost();
+        $this->assertRoundTrips($fixture, $class::from($fixture)->toArray());
+    }
 
-        $this->assertEquals($invoice, SaleInvoicePostData::from($invoice)->toArray());
-        $this->assertEquals($creditNote, SaleCreditNotePostData::from($creditNote)->toArray());
+    /**
+     * @return array<string, array{class-string<Data>, array<string, mixed>}>
+     */
+    public static function bodyProvider(): array
+    {
+        return [
+            SaleInvoicePostData::class => [SaleInvoicePostData::class, Cin7Payloads::saleInvoicePost()],
+            SaleInvoicePutData::class => [SaleInvoicePutData::class, Cin7Payloads::saleInvoicePut()],
+            SaleCreditNotePostData::class => [SaleCreditNotePostData::class, Cin7Payloads::saleCreditNotePost()],
+            SalePaymentPostData::class => [SalePaymentPostData::class, Cin7Payloads::salePaymentPost()],
+            SalePaymentPutData::class => [SalePaymentPutData::class, Cin7Payloads::salePaymentPut()],
+            ErrorData::class => [ErrorData::class, Cin7Payloads::error()],
+        ];
+    }
+
+    /**
+     * @param class-string<Data> $class
+     * @param array<string, mixed> $payload
+     */
+    #[DataProvider('missingRequiredFieldProvider')]
+    public function testAModelWithoutARequiredFieldCannotBeBuilt(string $class, array $payload): void
+    {
+        $this->expectException(CannotCreateData::class);
+
+        $class::from($payload);
+    }
+
+    /**
+     * @return array<string, array{class-string<Data>, array<string, mixed>}>
+     */
+    public static function missingRequiredFieldProvider(): array
+    {
+        return [
+            'invoice POST without Status' => [SaleInvoicePostData::class, Arr::except(Cin7Payloads::saleInvoicePost(), 'Status')],
+            'invoice PUT without TaskID' => [SaleInvoicePutData::class, Arr::except(Cin7Payloads::saleInvoicePut(), 'TaskID')],
+            'invoice without InvoiceDate' => [SaleInvoicePartialData::class, Arr::except(Cin7Payloads::saleInvoicePartial(), 'InvoiceDate')],
+            'credit note POST without CreditNoteInvoiceNumber' => [
+                SaleCreditNotePostData::class,
+                Arr::except(Cin7Payloads::saleCreditNotePost(), 'CreditNoteInvoiceNumber'),
+            ],
+            'credit note without CreditNoteDate' => [SaleCreditNotePartialData::class, Arr::except(Cin7Payloads::saleCreditNotePartial(), 'CreditNoteDate')],
+            'payment POST without Type' => [SalePaymentPostData::class, Arr::except(Cin7Payloads::salePaymentPost(), 'Type')],
+            'payment PUT without ID' => [SalePaymentPutData::class, Arr::except(Cin7Payloads::salePaymentPut(), 'ID')],
+            'payment without TaskID' => [SalePaymentLinePartialData::class, Arr::except(Cin7Payloads::salePayment(), 'TaskID')],
+        ];
+    }
+
+    /**
+     * The credit note's payments carry more than a Sale Payment Line; `Type` and the numbers survive `dto()`.
+     */
+    public function testACreditNotePaymentKeepsItsTypeAndNumbers(): void
+    {
+        Saloon::fake([MockResponse::make(Cin7Payloads::saleCreditNotes())]);
+
+        $payment = $this->connector()->send(new GetSaleCreditNote('sale-1', ['IncludePaymentInfo' => true]))->dto()->CreditNotes[0]->Payments[0];
+
+        $this->assertInstanceOf(SaleCreditNotePaymentData::class, $payment);
+        $this->assertSame('Refund', $payment->Type);
+        $this->assertSame('CR-00001', $payment->CreditNoteNumber);
+        $this->assertNull($payment->CreditID);
+    }
+
+    /**
+     * Cin7's DateTime: `yyyy-MM-ddTHH:mm:ss`, an optional fraction of up to seven digits and an
+     * optional `Z`; the `date` rule beside the pattern rejects an impossible date.
+     */
+    public function testTheDateTimeRuleMatchesCin7sFormat(): void
+    {
+        $this->assertSame(['regex:' . DateTime::PATTERN, 'date'], new DateTime()->getRules(ValidationPath::create()));
+
+        foreach (['2017-11-30T00:00:00', '2012-11-14T13:28:33.363', '2017-11-22T06:58:21.8882229Z'] as $date) {
+            $this->assertSame(1, preg_match(DateTime::PATTERN, $date), $date);
+        }
+
+        foreach (['2017-11-30', '2017-11-30T00:00', '2017-11-30T00:00:00+10:00', '2017-11-30 00:00:00', '2017-11-30T00:00:00.12345678'] as $date) {
+            $this->assertSame(0, preg_match(DateTime::PATTERN, $date), $date);
+        }
     }
 
     public function testEveryDataClassIsFinalAndExtendsData(): void
@@ -274,29 +377,71 @@ class DataCatalogueTest extends TestCase
         }
     }
 
-    public function testEveryConstructorPropertyAdmitsOptional(): void
+    /**
+     * A field the reference marks required is not nullable and has no default, so building the
+     * model without it fails; every other field is nullable and defaults to `null`, which a write
+     * leaves out of the body. The required fields come first, as PHP needs.
+     */
+    public function testOnlyTheRequiredFieldsHaveNoDefault(): void
     {
         foreach (self::dataClasses() as $class) {
-            foreach (new ReflectionClass($class)->getConstructor()->getParameters() as $parameter) {
-                $type = $parameter->getType();
-                $names = $type instanceof ReflectionUnionType
-                    ? array_map(static fn (ReflectionNamedType $named): string => $named->getName(), $type->getTypes())
-                    : [$type->getName()];
+            $required = self::REQUIRED[$class] ?? [];
+            $parameters = [];
 
-                $this->assertContains(Optional::class, $names, $class . '::$' . $parameter->getName());
+            foreach (new ReflectionClass($class)->getConstructor()->getParameters() as $parameter) {
+                $name = $class . '::$' . $parameter->getName();
+                $parameters[] = $parameter->getName();
+
+                if (in_array($parameter->getName(), $required, true)) {
+                    $this->assertFalse($parameter->allowsNull(), $name);
+                    $this->assertFalse($parameter->isDefaultValueAvailable(), $name);
+                } else {
+                    $this->assertTrue($parameter->allowsNull(), $name);
+                    $this->assertTrue($parameter->isDefaultValueAvailable(), $name);
+                    $this->assertNull($parameter->getDefaultValue(), $name);
+                }
             }
+
+            $this->assertSame($required, array_slice($parameters, 0, count($required)), $class);
         }
     }
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }
 
     /**
-     * Every class under `src/Data/`.
+     * Assert a model's `toArray()` holds the fixture: every fixture key is modelled under its
+     * wire name with an equal value, and every other key is null, the default of a field the
+     * fixture left out. Absent and `null` are the same to a model.
+     *
+     * @param array<array-key, mixed> $expected
+     * @param array<array-key, mixed> $actual
+     */
+    private function assertRoundTrips(array $expected, array $actual, string $path = ''): void
+    {
+        foreach ($expected as $key => $value) {
+            $at = $path === '' ? (string) $key : $path . '.' . $key;
+
+            $this->assertArrayHasKey($key, $actual, $at);
+
+            if (is_array($value) && is_array($actual[$key])) {
+                $this->assertRoundTrips($value, $actual[$key], $at);
+            } else {
+                $this->assertEquals($value, $actual[$key], $at);
+            }
+        }
+
+        foreach (array_diff_key($actual, $expected) as $key => $value) {
+            $this->assertNull($value, $path === '' ? (string) $key : $path . '.' . $key);
+        }
+    }
+
+    /**
+     * Every class under `src/Data/` but its validation attributes in `Attributes/`.
      *
      * @return list<class-string<Data>>
      */
@@ -307,11 +452,12 @@ class DataCatalogueTest extends TestCase
 
         /** @var SplFileInfo $file */
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root)) as $file) {
-            if ($file->getExtension() !== 'php') {
+            $relative = str_replace($root . '/', '', $file->getPathname());
+
+            if ($file->getExtension() !== 'php' || str_starts_with($relative, 'Attributes/')) {
                 continue;
             }
 
-            $relative = str_replace($root . '/', '', $file->getPathname());
             $classes[] = 'Ipsocode\Cin7\Data\\' . str_replace(['/', '.php'], ['\\', ''], $relative);
         }
 

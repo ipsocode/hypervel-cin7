@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Product;
 
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
 use InvalidArgumentException;
@@ -45,7 +44,7 @@ final class PutProduct extends WriteRequest
     {
         $id = $body instanceof ProductData ? $body->ID : ($body['ID'] ?? null);
 
-        if ($id instanceof Optional || ! is_string($id) || $id === '') {
+        if (! is_string($id) || $id === '') {
             throw new InvalidArgumentException('PUT product needs the Product ID.');
         }
 

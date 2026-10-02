@@ -8,6 +8,7 @@ use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
 use Ipsocode\Cin7\Requests\Sale\Invoice\DeleteSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Invoice\GetSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
@@ -35,9 +36,9 @@ final class InvoiceResource extends BaseResource
     }
 
     /**
-     * @param array<string, mixed>|SaleInvoicePostData $body
+     * @param array<string, mixed>|SaleInvoicePutData $body
      */
-    public function put(array|SaleInvoicePostData $body): Response
+    public function put(array|SaleInvoicePutData $body): Response
     {
         return $this->connector->send(new PutSaleInvoice($body));
     }

@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Sale Manual Journal Model.
@@ -16,12 +15,12 @@ use Hypervel\Data\Optional;
 final class SaleManualJournalData extends Data
 {
     /**
-     * @param list<SaleManualJournalLineData>|Optional $Lines
+     * @param null|list<SaleManualJournalLineData> $Lines
      */
     public function __construct(
-        public string|Optional $Status,
+        public ?string $Status = null,
         #[DataCollectionOf(SaleManualJournalLineData::class)]
-        public array|Optional $Lines,
+        public ?array $Lines = null,
     ) {
     }
 }

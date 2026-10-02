@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Product Supplier Options Interval Model, one entry of a supplier option's `SupplyIntervals`.
@@ -15,17 +14,17 @@ use Hypervel\Data\Optional;
 final class ProductSupplierOptionIntervalData extends Data
 {
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $DeliveryMethod,
-        public int|Optional $IntervalDays,
-        public string|Optional|null $IntervalStartDate,
-        public bool|Optional $IsMonday,
-        public bool|Optional $IsTuesday,
-        public bool|Optional $IsWednesday,
-        public bool|Optional $IsThursday,
-        public bool|Optional $IsFriday,
-        public bool|Optional $IsSaturday,
-        public bool|Optional $IsSunday,
+        public ?string $ID = null,
+        public ?string $DeliveryMethod = null,
+        public ?int $IntervalDays = null,
+        public ?string $IntervalStartDate = null,
+        public ?bool $IsMonday = null,
+        public ?bool $IsTuesday = null,
+        public ?bool $IsWednesday = null,
+        public ?bool $IsThursday = null,
+        public ?bool $IsFriday = null,
+        public ?bool $IsSaturday = null,
+        public ?bool $IsSunday = null,
     ) {
     }
 }

@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Sale Credit Note Model.
@@ -16,30 +15,30 @@ use Hypervel\Data\Optional;
 final class SaleCreditNoteData extends Data
 {
     /**
-     * @param list<SaleInvoiceLineData>|Optional $Lines
-     * @param list<SaleInvoiceAdditionalChargeData>|Optional $AdditionalCharges
-     * @param list<SalePaymentLineData>|Optional $Refunds
-     * @param list<SaleFulfilmentPickPackLineData>|Optional $Restock
+     * @param null|list<SaleInvoiceLineData> $Lines
+     * @param null|list<SaleInvoiceAdditionalChargeData> $AdditionalCharges
+     * @param null|list<SalePaymentLineData> $Refunds
+     * @param null|list<SaleFulfilmentPickPackLineData> $Restock
      */
     public function __construct(
-        public string|Optional $TaskID,
-        public string|Optional $CreditNoteInvoiceNumber,
-        public string|Optional $Memo,
-        public string|Optional $Status,
-        public string|Optional $CreditNoteDate,
-        public string|Optional $CreditNoteNumber,
-        public float|Optional $CreditNoteConversionRate,
+        public ?string $TaskID = null,
+        public ?string $CreditNoteInvoiceNumber = null,
+        public ?string $Memo = null,
+        public ?string $Status = null,
+        public ?string $CreditNoteDate = null,
+        public ?string $CreditNoteNumber = null,
+        public ?float $CreditNoteConversionRate = null,
         #[DataCollectionOf(SaleInvoiceLineData::class)]
-        public array|Optional $Lines,
+        public ?array $Lines = null,
         #[DataCollectionOf(SaleInvoiceAdditionalChargeData::class)]
-        public array|Optional $AdditionalCharges,
+        public ?array $AdditionalCharges = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
-        public array|Optional $Refunds,
+        public ?array $Refunds = null,
         #[DataCollectionOf(SaleFulfilmentPickPackLineData::class)]
-        public array|Optional $Restock,
-        public float|Optional $TotalBeforeTax,
-        public float|Optional $Tax,
-        public float|Optional $Total,
+        public ?array $Restock = null,
+        public ?float $TotalBeforeTax = null,
+        public ?float $Tax = null,
+        public ?float $Total = null,
     ) {
     }
 }

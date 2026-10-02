@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Sale Transaction Line Model.
@@ -15,13 +14,13 @@ use Hypervel\Data\Optional;
 final class SaleTransactionLineData extends Data
 {
     public function __construct(
-        public string|Optional $TaskID,
-        public string|Optional $TransactionID,
-        public string|Optional $Debit,
-        public string|Optional $Credit,
-        public string|Optional $Description,
-        public float|Optional $Amount,
-        public string|Optional $EffectiveDate,
+        public ?string $TaskID = null,
+        public ?string $TransactionID = null,
+        public ?string $Debit = null,
+        public ?string $Credit = null,
+        public ?string $Description = null,
+        public ?float $Amount = null,
+        public ?string $EffectiveDate = null,
     ) {
     }
 }

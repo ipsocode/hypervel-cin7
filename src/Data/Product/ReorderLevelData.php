@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Reorder Level Model, one entry of a product's `ReorderLevels`.
@@ -15,12 +14,12 @@ use Hypervel\Data\Optional;
 final class ReorderLevelData extends Data
 {
     public function __construct(
-        public string|Optional $LocationID,
-        public string|Optional $LocationName,
-        public float|Optional $MinimumBeforeReorder,
-        public float|Optional $ReorderQuantity,
-        public string|Optional|null $StockLocator,
-        public string|Optional $PickZones,
+        public ?string $LocationID = null,
+        public ?string $LocationName = null,
+        public ?float $MinimumBeforeReorder = null,
+        public ?float $ReorderQuantity = null,
+        public ?string $StockLocator = null,
+        public ?string $PickZones = null,
     ) {
     }
 }

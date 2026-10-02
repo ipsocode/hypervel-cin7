@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 
@@ -22,23 +21,23 @@ final class SaleOrderData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param list<SaleOrderLineData>|Optional $Lines
-     * @param list<SaleAdditionalChargeData>|Optional $AdditionalCharges
+     * @param null|list<SaleOrderLineData> $Lines
+     * @param null|list<SaleAdditionalChargeData> $AdditionalCharges
      */
     public function __construct(
-        public string|Optional $SaleID,
-        public string|Optional $SaleOrderNumber,
-        public bool|Optional $CombineAdditionalCharges,
-        public string|Optional $Memo,
-        public string|Optional $Status,
+        public ?string $SaleID = null,
+        public ?string $SaleOrderNumber = null,
+        public ?bool $CombineAdditionalCharges = null,
+        public ?string $Memo = null,
+        public ?string $Status = null,
         #[DataCollectionOf(SaleOrderLineData::class)]
-        public array|Optional $Lines,
+        public ?array $Lines = null,
         #[DataCollectionOf(SaleAdditionalChargeData::class)]
-        public array|Optional $AdditionalCharges,
-        public float|Optional $TotalBeforeTax,
-        public float|Optional $Tax,
-        public float|Optional $Total,
-        public string|Optional $AutoPickPackShipMode,
+        public ?array $AdditionalCharges = null,
+        public ?float $TotalBeforeTax = null,
+        public ?float $Tax = null,
+        public ?float $Total = null,
+        public ?string $AutoPickPackShipMode = null,
     ) {
     }
 }

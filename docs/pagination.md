@@ -31,7 +31,10 @@ $paginator = $this->cin7->customer()->paginate(['Name' => 'ACME']);
 ## Page size
 
 `perPageLimit()` sends `limit` (lowercase, the spelling Cin7 reads) on every
-page, and takes precedence over a `limit` passed in the request's parameters:
+page, and takes precedence over a `limit` passed in the request's parameters. It
+takes 1 to `PageDefaults::LIMIT_MAX` (1000), the largest page Cin7 serves, and
+`startPage()` a page of at least 1; anything else throws an
+`InvalidArgumentException` before the first page is sent:
 
 ```php
 $paginator = $this->cin7->customer()->paginate()->perPageLimit(250);

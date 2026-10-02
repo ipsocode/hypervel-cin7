@@ -90,14 +90,14 @@ class CustomerDirectoryTest extends TestCase
     public function testFindingOneCustomerSendsTheGuidAsAQueryParameter(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('guid-1', 'ACME')])),
+            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'ACME')])),
         ]);
 
-        $customer = $this->app->make(CustomerDirectory::class)->find('guid-1');
+        $customer = $this->app->make(CustomerDirectory::class)->find('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1');
 
         $this->assertInstanceOf(CustomerData::class, $customer);
         $this->assertSame('ACME', $customer->Name);
-        $this->assertSame('guid-1', $mock->lastPendingRequest()->queryParameters()['ID']);
+        $this->assertSame('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', $mock->lastPendingRequest()->queryParameters()['ID']);
     }
 
     public function testFindingAMissingCustomerReturnsNull(): void
@@ -127,12 +127,12 @@ class CustomerDirectoryTest extends TestCase
     public function testUpdatingACustomerPutsTheGuidInTheBody(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('guid-2', 'ACME Ltd')])),
+            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf2', 'ACME Ltd')])),
         ]);
 
         $updated = $this->app->make(CustomerDirectory::class)->update(
-            'guid-2',
-            CustomerData::from(['ID' => 'other', 'Name' => 'ACME Ltd']),
+            '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf2',
+            CustomerData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf9', 'Name' => 'ACME Ltd']),
         );
 
         $this->assertSame('ACME Ltd', $updated->Name);
@@ -140,6 +140,6 @@ class CustomerDirectoryTest extends TestCase
         $pending = $mock->lastPendingRequest();
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(['ID' => 'guid-2', 'Name' => 'ACME Ltd'], $pending->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf2', 'Name' => 'ACME Ltd'], $pending->body());
     }
 }

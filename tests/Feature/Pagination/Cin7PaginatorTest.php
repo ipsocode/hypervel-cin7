@@ -10,7 +10,9 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
+use InvalidArgumentException;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
+use Ipsocode\Cin7\PageDefaults;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
@@ -137,6 +139,54 @@ class Cin7PaginatorTest extends TestCase
             [['page' => 1, 'limit' => 5], ['page' => 2, 'limit' => 5]],
             array_values($mock->recorded()->map(fn (Response $response): array => $response->pendingRequest()->queryParameters())->all()),
         );
+    }
+
+    public function testTheLargestPageSizeIsSent(): void
+    {
+        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+
+        $this->connector()->paginate(new GetCustomer)->perPageLimit(PageDefaults::LIMIT_MAX)->current();
+
+        $this->assertSame(['page' => 1, 'limit' => 1000], $mock->lastPendingRequest()->queryParameters());
+    }
+
+    /**
+     * Cin7 serves no more than 1000 records a page; a larger limit would be cut short and the
+     * page count, worked out from the limit sent, would end the walk early.
+     */
+    public function testAPerPageLimitAboveTheMaximumThrowsBeforeAnythingIsSent(): void
+    {
+        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+
+        try {
+            $this->connector()->paginate(new GetCustomer)->perPageLimit(PageDefaults::LIMIT_MAX + 1)->current();
+            $this->fail('A limit above the maximum should have thrown.');
+        } catch (InvalidArgumentException $exception) {
+            $this->assertSame('The Cin7 limit must be a whole number from 1 to 1000, got 1001.', $exception->getMessage());
+        }
+
+        $mock->assertNothingSent();
+    }
+
+    public function testAStartPageBelowOneThrows(): void
+    {
+        Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        iterator_to_array($this->connector()->paginate(new GetCustomer)->startPage(0)->items());
+    }
+
+    public function testAFilterLimitAboveTheMaximumThrowsBeforeAnythingIsSent(): void
+    {
+        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+
+        try {
+            $this->connector()->customer()->get(['limit' => 5000]);
+            $this->fail('A limit above the maximum should have thrown.');
+        } catch (InvalidArgumentException) {
+            $mock->assertNothingSent();
+        }
     }
 
     public function testAnEnvelopeWithNoListArrayYieldsNoItems(): void

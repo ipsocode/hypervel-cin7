@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
@@ -26,103 +25,103 @@ final class ProductData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param array<string, float>|Optional $PriceTiers
-     * @param list<ProductSupplierData>|Optional $Suppliers
-     * @param list<ReorderLevelData>|Optional $ReorderLevels
-     * @param list<BillOfMaterialProductData>|Optional $BillOfMaterialsProducts
-     * @param list<BillOfMaterialServiceData>|Optional $BillOfMaterialsServices
-     * @param list<ProductMovementData>|Optional $Movements
-     * @param list<AttachmentLineData>|Optional $Attachments
-     * @param list<ProductPriceData>|Optional $CustomPrices
+     * @param null|array<string, float> $PriceTiers
+     * @param null|list<ProductSupplierData> $Suppliers
+     * @param null|list<ReorderLevelData> $ReorderLevels
+     * @param null|list<BillOfMaterialProductData> $BillOfMaterialsProducts
+     * @param null|list<BillOfMaterialServiceData> $BillOfMaterialsServices
+     * @param null|list<ProductMovementData> $Movements
+     * @param null|list<AttachmentLineData> $Attachments
+     * @param null|list<ProductPriceData> $CustomPrices
      */
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $SKU,
-        public string|Optional $Name,
-        public string|Optional $Category,
-        public string|Optional|null $Brand,
-        public string|Optional $Type,
-        public string|Optional $CostingMethod,
-        public string|Optional $DropShipMode,
-        public string|Optional|null $DefaultLocation,
-        public float|Optional $Length,
-        public float|Optional $Width,
-        public float|Optional $Height,
-        public float|Optional $Weight,
-        public float|Optional $CartonLength,
-        public float|Optional $CartonWidth,
-        public float|Optional $CartonHeight,
-        public float|Optional $CartonQuantity,
-        public float|Optional $CartonInnerQuantity,
-        public string|Optional $UOM,
-        public string|Optional|null $WeightUnits,
-        public string|Optional|null $DimensionsUnits,
-        public string|Optional|null $Barcode,
-        public float|Optional $MinimumBeforeReorder,
-        public float|Optional $ReorderQuantity,
-        public float|Optional $PriceTier1,
-        public float|Optional $PriceTier2,
-        public float|Optional $PriceTier3,
-        public float|Optional $PriceTier4,
-        public float|Optional $PriceTier5,
-        public float|Optional $PriceTier6,
-        public float|Optional $PriceTier7,
-        public float|Optional $PriceTier8,
-        public float|Optional $PriceTier9,
-        public float|Optional $PriceTier10,
-        public array|Optional $PriceTiers,
-        public float|Optional $AverageCost,
-        public string|Optional|null $ShortDescription,
-        public string|Optional|null $Description,
-        public string|Optional|null $InternalNote,
-        public string|Optional|null $AdditionalAttribute1,
-        public string|Optional|null $AdditionalAttribute2,
-        public string|Optional|null $AdditionalAttribute3,
-        public string|Optional|null $AdditionalAttribute4,
-        public string|Optional|null $AdditionalAttribute5,
-        public string|Optional|null $AdditionalAttribute6,
-        public string|Optional|null $AdditionalAttribute7,
-        public string|Optional|null $AdditionalAttribute8,
-        public string|Optional|null $AdditionalAttribute9,
-        public string|Optional|null $AdditionalAttribute10,
-        public string|Optional|null $AttributeSet,
-        public string|Optional|null $DiscountRule,
-        public string|Optional|null $Tags,
-        public string|Optional $Status,
-        public string|Optional|null $StockLocator,
-        public string|Optional|null $COGSAccount,
-        public string|Optional|null $RevenueAccount,
-        public string|Optional|null $ExpenseAccount,
-        public string|Optional|null $InventoryAccount,
-        public string|Optional|null $PurchaseTaxRule,
-        public string|Optional|null $SaleTaxRule,
-        public string|Optional $LastModifiedOn,
-        public bool|Optional $Sellable,
-        public string|Optional|null $PickZones,
-        public bool|Optional $BillOfMaterial,
-        public bool|Optional $AutoAssembly,
-        public bool|Optional $AutoDisassembly,
-        public float|Optional $QuantityToProduce,
-        public string|Optional|null $AssemblyInstructionURL,
-        public string|Optional|null $AssemblyCostEstimationMethod,
-        public string|Optional|null $BOMType,
-        public string|Optional|null $HSCode,
-        public string|Optional|null $CountryOfOrigin,
-        public string|Optional|null $CountryOfOriginCode,
+        public ?string $ID = null,
+        public ?string $SKU = null,
+        public ?string $Name = null,
+        public ?string $Category = null,
+        public ?string $Brand = null,
+        public ?string $Type = null,
+        public ?string $CostingMethod = null,
+        public ?string $DropShipMode = null,
+        public ?string $DefaultLocation = null,
+        public ?float $Length = null,
+        public ?float $Width = null,
+        public ?float $Height = null,
+        public ?float $Weight = null,
+        public ?float $CartonLength = null,
+        public ?float $CartonWidth = null,
+        public ?float $CartonHeight = null,
+        public ?float $CartonQuantity = null,
+        public ?float $CartonInnerQuantity = null,
+        public ?string $UOM = null,
+        public ?string $WeightUnits = null,
+        public ?string $DimensionsUnits = null,
+        public ?string $Barcode = null,
+        public ?float $MinimumBeforeReorder = null,
+        public ?float $ReorderQuantity = null,
+        public ?float $PriceTier1 = null,
+        public ?float $PriceTier2 = null,
+        public ?float $PriceTier3 = null,
+        public ?float $PriceTier4 = null,
+        public ?float $PriceTier5 = null,
+        public ?float $PriceTier6 = null,
+        public ?float $PriceTier7 = null,
+        public ?float $PriceTier8 = null,
+        public ?float $PriceTier9 = null,
+        public ?float $PriceTier10 = null,
+        public ?array $PriceTiers = null,
+        public ?float $AverageCost = null,
+        public ?string $ShortDescription = null,
+        public ?string $Description = null,
+        public ?string $InternalNote = null,
+        public ?string $AdditionalAttribute1 = null,
+        public ?string $AdditionalAttribute2 = null,
+        public ?string $AdditionalAttribute3 = null,
+        public ?string $AdditionalAttribute4 = null,
+        public ?string $AdditionalAttribute5 = null,
+        public ?string $AdditionalAttribute6 = null,
+        public ?string $AdditionalAttribute7 = null,
+        public ?string $AdditionalAttribute8 = null,
+        public ?string $AdditionalAttribute9 = null,
+        public ?string $AdditionalAttribute10 = null,
+        public ?string $AttributeSet = null,
+        public ?string $DiscountRule = null,
+        public ?string $Tags = null,
+        public ?string $Status = null,
+        public ?string $StockLocator = null,
+        public ?string $COGSAccount = null,
+        public ?string $RevenueAccount = null,
+        public ?string $ExpenseAccount = null,
+        public ?string $InventoryAccount = null,
+        public ?string $PurchaseTaxRule = null,
+        public ?string $SaleTaxRule = null,
+        public ?string $LastModifiedOn = null,
+        public ?bool $Sellable = null,
+        public ?string $PickZones = null,
+        public ?bool $BillOfMaterial = null,
+        public ?bool $AutoAssembly = null,
+        public ?bool $AutoDisassembly = null,
+        public ?float $QuantityToProduce = null,
+        public ?string $AssemblyInstructionURL = null,
+        public ?string $AssemblyCostEstimationMethod = null,
+        public ?string $BOMType = null,
+        public ?string $HSCode = null,
+        public ?string $CountryOfOrigin = null,
+        public ?string $CountryOfOriginCode = null,
         #[DataCollectionOf(ProductSupplierData::class)]
-        public array|Optional $Suppliers,
+        public ?array $Suppliers = null,
         #[DataCollectionOf(ReorderLevelData::class)]
-        public array|Optional $ReorderLevels,
+        public ?array $ReorderLevels = null,
         #[DataCollectionOf(BillOfMaterialProductData::class)]
-        public array|Optional $BillOfMaterialsProducts,
+        public ?array $BillOfMaterialsProducts = null,
         #[DataCollectionOf(BillOfMaterialServiceData::class)]
-        public array|Optional $BillOfMaterialsServices,
+        public ?array $BillOfMaterialsServices = null,
         #[DataCollectionOf(ProductMovementData::class)]
-        public array|Optional $Movements,
+        public ?array $Movements = null,
         #[DataCollectionOf(AttachmentLineData::class)]
-        public array|Optional $Attachments,
+        public ?array $Attachments = null,
         #[DataCollectionOf(ProductPriceData::class)]
-        public array|Optional $CustomPrices,
+        public ?array $CustomPrices = null,
     ) {
     }
 }

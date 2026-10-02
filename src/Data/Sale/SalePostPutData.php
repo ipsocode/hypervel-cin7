@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Sale POST/PUT Attributes, the body of `sale` POST and PUT.
@@ -17,34 +16,34 @@ use Hypervel\Data\Optional;
 final class SalePostPutData extends Data
 {
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $Customer,
-        public string|Optional $CustomerID,
-        public string|Optional $Contact,
-        public string|Optional $Phone,
-        public string|Optional $Email,
-        public string|Optional $DefaultAccount,
-        public bool|Optional $SkipQuote,
-        public AddressData|Optional $BillingAddress,
-        public SaleShippingAddressData|Optional $ShippingAddress,
-        public string|Optional $ShippingNotes,
-        public string|Optional $TaxRule,
-        public bool|Optional $TaxInclusive,
-        public string|Optional $Terms,
-        public string|Optional $PriceTier,
-        public string|Optional $ShipBy,
-        public string|Optional $Location,
-        public string|Optional $SaleOrderDate,
-        public string|Optional $LastModifiedOn,
-        public string|Optional $Note,
-        public string|Optional $CustomerReference,
-        public float|Optional $CurrencyRate,
-        public string|Optional $SalesRepresentative,
-        public string|Optional $Carrier,
-        public string|Optional|null $ExternalID,
-        public AdditionalAttributeData|Optional $AdditionalAttributes,
-        public string|Optional $SaleType,
-        public string|Optional $AutoPickPackShipMode,
+        public ?string $ID = null,
+        public ?string $Customer = null,
+        public ?string $CustomerID = null,
+        public ?string $Contact = null,
+        public ?string $Phone = null,
+        public ?string $Email = null,
+        public ?string $DefaultAccount = null,
+        public ?bool $SkipQuote = null,
+        public ?AddressData $BillingAddress = null,
+        public ?SaleShippingAddressData $ShippingAddress = null,
+        public ?string $ShippingNotes = null,
+        public ?string $TaxRule = null,
+        public ?bool $TaxInclusive = null,
+        public ?string $Terms = null,
+        public ?string $PriceTier = null,
+        public ?string $ShipBy = null,
+        public ?string $Location = null,
+        public ?string $SaleOrderDate = null,
+        public ?string $LastModifiedOn = null,
+        public ?string $Note = null,
+        public ?string $CustomerReference = null,
+        public ?float $CurrencyRate = null,
+        public ?string $SalesRepresentative = null,
+        public ?string $Carrier = null,
+        public ?string $ExternalID = null,
+        public ?AdditionalAttributeData $AdditionalAttributes = null,
+        public ?string $SaleType = null,
+        public ?string $AutoPickPackShipMode = null,
     ) {
     }
 }

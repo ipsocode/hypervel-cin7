@@ -49,6 +49,8 @@ final class CustomerDirectory
      */
     public function update(string $guid, CustomerData $customer): CustomerData
     {
-        return $this->connector->customer()->put([...$customer->toArray(), 'ID' => $guid])->dto();
+        // Rebuilt as a data object, not spread into an array: an array body is sent verbatim, so
+        // every field the caller left unset would go out as null.
+        return $this->connector->customer()->put(CustomerData::from([...$customer->toArray(), 'ID' => $guid]))->dto();
     }
 }

@@ -25,13 +25,37 @@ use UnitEnum;
 /**
  * The Cin7 Core connector.
  *
- * It holds only readonly scalars, so one singleton per worker is shared across coroutines.
+ * It holds only readonly values, all set in the constructor, so one singleton per worker is
+ * shared across coroutines.
  *
  * @see docs/connector.md
  */
 final class Cin7Connector extends Connector implements HasPagination
 {
-    use HasRateLimits;
+    use HasRateLimits {
+        resolveRateLimitCooldown as retryAfterCooldown;
+    }
+
+    /**
+     * The cooldown, in seconds, after a throttling response that names no `Retry-After`.
+     */
+    public const int THROTTLE_COOLDOWN = 5;
+
+    /**
+     * @var array<string, string>
+     */
+    private readonly array $headers;
+
+    /**
+     * Cin7 meters each API application, so the window and the cooldown are keyed by the account
+     * and a short digest of the application key, never the key itself.
+     */
+    private readonly string $rateLimitKey;
+
+    /**
+     * @var list<AdmissionPolicy>
+     */
+    private readonly array $rateLimitPolicies;
 
     public function __construct(
         private readonly string $accountId,
@@ -40,6 +64,16 @@ final class Cin7Connector extends Connector implements HasPagination
         private readonly int $rateLimitPeriod = 60,
         private readonly ?string $rateLimitStore = null,
     ) {
+        $this->headers = [
+            'Content-Type' => 'application/json',
+            'api-auth-accountid' => $this->accountId,
+            'api-auth-applicationkey' => $this->applicationKey,
+        ];
+        $this->rateLimitKey = 'cin7:api:' . $this->accountId . ':' . substr(hash('sha256', $this->applicationKey), 0, 16);
+        // A non-positive max or period disables the window.
+        $this->rateLimitPolicies = $this->rateLimitMax > 0 && $this->rateLimitPeriod > 0
+            ? [new Limit($this->rateLimitMax, $this->rateLimitPeriod)->by($this->rateLimitKey)]
+            : [];
     }
 
     public function resolveBaseUrl(): string
@@ -50,6 +84,23 @@ final class Cin7Connector extends Connector implements HasPagination
     public function paginate(Request $request): Cin7Paginator
     {
         return new Cin7Paginator($this, $request);
+    }
+
+    /**
+     * Fail a response whose body is Cin7's Error Model, `{ErrorCode, Exception}` or a list
+     * starting with one, whatever its status; anything else is left to the status code.
+     */
+    public function hasRequestFailed(Response $response): ?bool
+    {
+        $body = $response->json();
+
+        if (! is_array($body)) {
+            return null;
+        }
+
+        $error = array_is_list($body) ? ($body[0] ?? null) : $body;
+
+        return is_array($error) && array_key_exists('ErrorCode', $error) ? true : null;
     }
 
     /**
@@ -113,28 +164,17 @@ final class Cin7Connector extends Connector implements HasPagination
      */
     protected function defaultHeaders(): array
     {
-        return [
-            'Content-Type' => 'application/json',
-            'api-auth-accountid' => $this->accountId,
-            'api-auth-applicationkey' => $this->applicationKey,
-        ];
+        return $this->headers;
     }
 
     /**
-     * Throttle every call against one window per Cin7 account; a non-positive max or
-     * period disables it.
+     * Throttle every call against one window per Cin7 API application.
      *
      * @return list<AdmissionPolicy>
      */
     protected function resolveRateLimits(PendingRequest $pendingRequest): array
     {
-        if ($this->rateLimitMax <= 0 || $this->rateLimitPeriod <= 0) {
-            return [];
-        }
-
-        return [
-            new Limit($this->rateLimitMax, $this->rateLimitPeriod)->by('cin7:api:' . $this->accountId),
-        ];
+        return $this->rateLimitPolicies;
     }
 
     /**
@@ -154,21 +194,24 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * Keyed by account, so a 503 cooldown on one Cin7 account never throttles another.
+     * Keyed like the window, so throttling on one Cin7 application never cools down another.
      */
     protected function resolveRateLimitCooldownKey(PendingRequest $pendingRequest): string
     {
-        return self::class . ':' . $this->accountId;
+        return $this->rateLimitKey;
     }
 
     /**
-     * Cin7 throttles with a 503 and no `Retry-After`, which becomes a 5 second cooldown.
-     *
-     * This shadows the `HasRateLimits` trait method, so `parent::` is fatal;
-     * alias the trait method to reuse it.
+     * Cin7 throttles with a 429 (its documented limit response) or a 503. A 429 cools down for its
+     * `Retry-After`, parsed by the `HasRateLimits` method aliased as `retryAfterCooldown()`; a 429
+     * without one, and every 503, for `THROTTLE_COOLDOWN` seconds.
      */
     protected function resolveRateLimitCooldown(Response $response): ?int
     {
-        return $response->status() === 503 ? 5 : null;
+        return match ($response->status()) {
+            429 => $this->retryAfterCooldown($response) ?? self::THROTTLE_COOLDOWN,
+            503 => self::THROTTLE_COOLDOWN,
+            default => null,
+        };
     }
 }

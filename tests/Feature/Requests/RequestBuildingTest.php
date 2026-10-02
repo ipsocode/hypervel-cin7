@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Requests;
 
+use DateTimeImmutable;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
@@ -12,6 +13,7 @@ use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
 use InvalidArgumentException;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
@@ -94,6 +96,26 @@ class RequestBuildingTest extends TestCase
         );
     }
 
+    /**
+     * Cin7 reads dates as ISO 8601 in UTC with milliseconds, `yyyy-MM-ddTHH:mm:ss.fff`.
+     */
+    public function testDateFiltersAreSentInUtcWithMilliseconds(): void
+    {
+        $pending = $this->send(new GetCustomer(['ModifiedSince' => new DateTimeImmutable('2012-11-14T23:28:33.363+10:00')]));
+
+        $this->assertSame(
+            ['ModifiedSince' => '2012-11-14T13:28:33.363', 'page' => 1, 'limit' => 100],
+            $pending->queryParameters(),
+        );
+    }
+
+    public function testDateParametersOfAKeyedRequestAreSentTheSameWay(): void
+    {
+        $pending = $this->send($this->anonymousKeyedRequest('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['Since' => new DateTimeImmutable('2012-11-14T13:28:33Z')]));
+
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Since' => '2012-11-14T13:28:33.000'], $pending->queryParameters());
+    }
+
     public function testOnlyAListRequestIsPaginatable(): void
     {
         $this->assertInstanceOf(Paginatable::class, new GetCustomer);
@@ -105,21 +127,21 @@ class RequestBuildingTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->connector()->paginate($this->anonymousKeyedRequest('guid-1'));
+        $this->connector()->paginate($this->anonymousKeyedRequest('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'));
     }
 
     public function testPaginatingAGetSaleThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->connector()->paginate(new GetSale('guid-1'));
+        $this->connector()->paginate(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'));
     }
 
     public function testTheIdentifierIsPlacedFirstAndWinsOverACallerSuppliedValue(): void
     {
-        $pending = $this->send($this->anonymousKeyedRequest('guid-1', ['ID' => 'ignored', 'Extra' => 'kept']));
+        $pending = $this->send($this->anonymousKeyedRequest('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['ID' => 'ignored', 'Extra' => 'kept']));
 
-        $this->assertSame(['ID' => 'guid-1', 'Extra' => 'kept'], $pending->queryParameters());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Extra' => 'kept'], $pending->queryParameters());
     }
 
     public function testCreateSendsAnUntouchedJsonBodyAndNoQueryString(): void
@@ -143,10 +165,10 @@ class RequestBuildingTest extends TestCase
 
     public function testUpdateSendsTheBodyVerbatim(): void
     {
-        $pending = $this->send(new PutCustomer(['ID' => 'guid-4', 'Name' => 'ACME Ltd']));
+        $pending = $this->send(new PutCustomer(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf4', 'Name' => 'ACME Ltd']));
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(['ID' => 'guid-4', 'Name' => 'ACME Ltd'], $pending->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf4', 'Name' => 'ACME Ltd'], $pending->body());
         $this->assertSame([], $pending->queryParameters());
     }
 
@@ -156,11 +178,35 @@ class RequestBuildingTest extends TestCase
      */
     public function testADataObjectSendsOnlyTheKeysThatWereSet(): void
     {
-        $pending = $this->send(new PutTax(TaxData::from(['ID' => 'guid-1', 'Name' => 'VAT'])));
+        $pending = $this->send(new PutTax(TaxData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT'])));
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(['ID' => 'guid-1', 'Name' => 'VAT'], $pending->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT'], $pending->body());
         $this->assertArrayNotHasKey('Components', $pending->body());
+    }
+
+    /**
+     * A data object's null means not set, so it is never sent; an explicit null, to clear a
+     * field, goes in an array body, which is sent as given.
+     */
+    public function testANullIsSentOnlyFromAnArrayBody(): void
+    {
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $this->send(new PutCustomer(CustomerData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null])))->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null], $this->send(new PutCustomer(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null]))->body());
+    }
+
+    /**
+     * Nulls go at every depth, but a list keeps its items so it still encodes as a JSON array.
+     */
+    public function testNestedNullsAreLeftOutAndListsKeepTheirShape(): void
+    {
+        $body = $this->send(new PutTax(TaxData::from([
+            'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1',
+            'Components' => [['Name' => 'GST', 'AccountCode' => null], ['Name' => 'PST']],
+        ])))->body();
+
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Components' => [['Name' => 'GST'], ['Name' => 'PST']]], $body);
+        $this->assertSame('{"ID":"0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1","Components":[{"Name":"GST"},{"Name":"PST"}]}', json_encode($body));
     }
 
     public function testASetCollectionIsSentAndAnUnsetOneIsLeftOut(): void
