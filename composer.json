@@ -11,7 +11,6 @@
         "coroutine"
     ],
     "require": {
-        "ext-json": "*",
         "hypervel/components": "0.4.x-dev"
     },
     "require-dev": {
