@@ -114,6 +114,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetPurchasePayment` | **`taskId`** |
 | `DeletePurchasePayment` | **`id`**, `deleteAllocation` |
 | `GetPurchaseManualJournal` | **`taskId`** |
+| `GetPurchaseAttachment` | **`taskId`** |
+| `DeletePurchaseAttachment` | **`id`** |
 
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
@@ -214,12 +216,16 @@ The `purchase/…` documents live under `src/Requests/Purchase/`, one folder per
 | `Stock/` | `GetPurchaseStock` (`TaskID`), `PostPurchaseStock` | `PurchaseStockData` |
 | `Payment/` | `GetPurchasePayment` (`TaskID`), `PostPurchasePayment`, `PutPurchasePayment`, `DeletePurchasePayment` (`ID`, with `DeleteAllocation`) | `list<PurchasePaymentData>` for the GET, a bare array, `PurchasePaymentData` for POST and PUT; none for the DELETE, whose `{Success}` is left to `json()` |
 | `ManualJournal/` | `GetPurchaseManualJournal` (`TaskID`), `PostPurchaseManualJournal` | `PurchaseManualJournalData` |
+| `Attachment/` | `GetPurchaseAttachment` (`TaskID`), `PostPurchaseAttachment`, `DeletePurchaseAttachment` (`ID`) | `PurchaseAttachmentsData` |
 
 The order's and the stock received's POST bodies are `PurchaseOrderPostData` and
 `PurchaseStockPostData`, and the payment's write bodies are `PurchasePaymentPostData` and
 `PurchasePaymentPutData`, the PUT one carrying the payment's `ID`.
 
 The manual journal's POST body is `PurchaseManualJournalPostData`, which requires `TaskID`.
+
+The attachment's POST body is `PurchaseAttachmentPostData`, which names the purchase as
+`PurchaseID`, though the response keys it `TaskID`.
 
 ## Wire protocol
 

@@ -215,6 +215,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `purchase/stock` | POST: `PurchaseStockPostData` (Available Fields for Purchase Stock Received, with `Lines`: `PurchaseStockLineData`) | GET, POST: `PurchaseStockData` |
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
 | `purchase/manualJournal` | POST: `PurchaseManualJournalPostData` (Available field for Purchase Manual Journal, with `Lines`: `PurchaseManualJournalLineData`) | GET, POST: `PurchaseManualJournalData` |
+| `purchase/attachment` | POST: `PurchaseAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `PurchaseAttachmentsData` (`{TaskID, Lines}`, with `Lines`: `AttachmentLineData`) |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
 `SaleData` nests one class per model, each in the folder of the sale path it belongs to:
@@ -495,6 +496,12 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Sale attachment delete.** The reference marks the `ID` of `DELETE sale/attachment` optional;
   a delete names what it deletes, so `DeleteSaleAttachment` requires it. The POST example's base64
   `Content` is a 62 KB image; the fixture keeps its first 32 characters.
+- **Purchase attachment.** As with the sale's, `DeletePurchaseAttachment` requires the `ID` the
+  reference marks optional, and the POST example's `Content` (the sale's image) is cut to its first
+  32 characters in the fixture. The tables key the purchase as `PurchaseID` in the POST body and as
+  `TaskID` in the response, and the classes follow them. The note on the GET's `TaskID` says it
+  returns payment info, copied from `purchase/payment`; the examples return the attachments. The
+  POST example's unquoted keys are quoted in the fixture.
 - **ME value lists in the Required column.** The ME table writes the values of
   `TaxCalculationMethod` (`Row Total`, `Total`) and `DiscountRule` (`Discount`, `Price`) in its
   Required column, and the Rounding Table its `AdjustmentRule` letters (`N`, `S`, `A`). They are

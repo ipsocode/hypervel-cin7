@@ -71,11 +71,12 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
-| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `payment()`, `manualJournal()` |
+| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->purchase()->order()` | `Purchase\OrderResource` | `get(string $taskId, ?bool $combineAdditionalCharges = null)`, `post(array\|PurchaseOrderPostData $body)` |
 | `$cin7->purchase()->stock()` | `Purchase\StockResource` | `get(string $taskId)`, `post(array\|PurchaseStockPostData $body)` |
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
+| `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -533,6 +534,25 @@ $journal = $this->cin7->purchase()->manualJournal()->post(PurchaseManualJournalP
     'Status' => 'DRAFT',
     'Lines' => [['Reference' => 'Rounding', 'Amount' => 2.0, 'Date' => '2017-12-06T00:00:00', 'Debit' => '720', 'Credit' => '404']],
 ]))->dto(); // PurchaseManualJournalData
+```
+
+`$cin7->purchase()->attachment()` is `purchase/attachment`, a purchase's attachments, like the
+sale's. `get($taskId)` sends `purchase/attachment?TaskID=…`, `post()` takes a
+`PurchaseAttachmentPostData` as well as an array, and `delete($id)` sends
+`purchase/attachment?ID=…`; each answers with the purchase's attachments, a
+`PurchaseAttachmentsData` (`{TaskID, Lines}`, `Lines` being `AttachmentLineData`). A POST needs
+the purchase's `PurchaseID`, a `FileName`, and base64 `Content` or a `FileDownloadUrl`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
+
+$attachments = $this->cin7->purchase()->attachment()->post(PurchaseAttachmentPostData::from([
+    'PurchaseID' => $taskId,
+    'FileName' => 'invoice.pdf',
+    'FileDownloadUrl' => 'https://files.example/invoice.pdf',
+]))->dto(); // PurchaseAttachmentsData
+
+$this->cin7->purchase()->attachment()->delete($attachments->Lines[0]->ID); // DELETE purchase/attachment?ID=…
 ```
 
 ## PUT identifiers

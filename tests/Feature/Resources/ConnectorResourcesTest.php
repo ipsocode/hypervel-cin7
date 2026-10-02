@@ -11,6 +11,7 @@ use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\Purchase\AttachmentResource as PurchaseAttachmentResource;
 use Ipsocode\Cin7\Resources\Purchase\ManualJournalResource as PurchaseManualJournalResource;
 use Ipsocode\Cin7\Resources\Purchase\OrderResource as PurchaseOrderResource;
 use Ipsocode\Cin7\Resources\Purchase\PaymentResource as PurchasePaymentResource;
@@ -140,6 +141,7 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($purchase->stock(), $purchase->stock());
         $this->assertInstanceOf(PurchasePaymentResource::class, $purchase->payment());
         $this->assertInstanceOf(PurchaseManualJournalResource::class, $purchase->manualJournal());
+        $this->assertInstanceOf(PurchaseAttachmentResource::class, $purchase->attachment());
         $this->assertNotSame($purchase->payment(), $purchase->payment());
     }
 
