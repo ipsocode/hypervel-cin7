@@ -7,8 +7,7 @@ namespace Ipsocode\Cin7;
 /**
  * The `page`/`limit` defaults for list query strings, never keyed reads, deletes or write bodies.
  *
- * The defaults are lowercase, and a caller's `Page`/`Limit` in any case suppresses them, so
- * a request never carries both spellings.
+ * The keys are lowercase; a caller's `Page`/`Limit` in any case is sent under them.
  *
  * @see docs/requests.md
  */
@@ -21,31 +20,29 @@ final class PageDefaults
     /**
      * Add the page and limit defaults, leaving non-null caller values alone.
      *
+     * A caller's `Page`/`Limit` in any case is sent as lowercase `page`/`limit`, so a request
+     * never carries both spellings and the paginator reads the limit it sent.
+     *
      * @param array<string, mixed> $parameters
      * @return array<string, mixed>
      */
     public static function apply(array $parameters): array
     {
-        foreach (['page' => self::PAGE, 'limit' => self::LIMIT] as $key => $default) {
-            if (! self::isSet($parameters, $key)) {
-                $parameters[$key] = $default;
-            }
-        }
+        $applied = [];
 
-        return $parameters;
-    }
-
-    /**
-     * @param array<string, mixed> $parameters
-     */
-    private static function isSet(array $parameters, string $key): bool
-    {
         foreach ($parameters as $name => $value) {
-            if ($value !== null && strtolower((string) $name) === $key) {
-                return true;
+            $lower = strtolower((string) $name);
+
+            if ($lower !== 'page' && $lower !== 'limit') {
+                $applied[$name] = $value;
+            } elseif ($value !== null && ($name === $lower || ! isset($applied[$lower]))) {
+                $applied[$lower] = $value;
             }
         }
 
-        return false;
+        $applied['page'] ??= self::PAGE;
+        $applied['limit'] ??= self::LIMIT;
+
+        return $applied;
     }
 }
