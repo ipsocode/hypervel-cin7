@@ -90,6 +90,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
+| `$cin7->advancedSale()` | `AdvancedSaleResource` | `get(string $id, …)`, `post(array\|AdvancedSalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, which are `sale`'s |
 | `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `get(string $id, …)`, `post(array\|AdvancedPurchasePostData $body)`, `put(array\|AdvancedPurchasePutData $body)`, `delete(string $id, ?bool $void = null)`; `stock()`, `putAway()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()` |
 | `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->advancedPurchase()->putAway()` | `AdvancedPurchase\PutAwayResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePutAwayPostData $body)` |
@@ -851,6 +852,30 @@ $attachments = $this->cin7->purchase()->attachment()->post(PurchaseAttachmentPos
 ]))->dto(); // PurchaseAttachmentsData
 
 $this->cin7->purchase()->attachment()->delete($attachments->Lines[0]->ID); // DELETE purchase/attachment?ID=…
+```
+
+## Advanced sale
+
+`$cin7->advancedSale()` reads the advanced sale the way `advancedPurchase()` reads the advanced
+purchase, but the reference gives it no endpoint: it serves a sale with several fulfilments,
+invoices and credit notes through `sale`. So `advancedSale()` has no requests or response classes of
+its own. `get()`, `put()` and `delete()` send `GetSale`, `PutSale` and `DeleteSale`, and `dto()` is a
+`SaleData` whose `Type` says `Advanced Sale`. `post()` takes an `AdvancedSalePostData`, which sends
+`SaleType: Advanced` for you, or an array, which names `SaleType` itself. `fulfilment()`,
+`invoice()`, `creditNote()`, `payment()` and `manualJournal()` return the `sale/…` resources: the
+DELETE of a fulfilment, an invoice and a credit note works on advanced sales only, and a POST to
+`sale/fulfilment` on a simple sale turns it into an advanced one.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedSale\AdvancedSalePostData;
+
+$sale = $this->cin7->advancedSale()->post(AdvancedSalePostData::from([
+    'Customer' => 'ACME',
+    'Location' => 'Main Warehouse',
+    'CurrencyRate' => 1,
+]))->dto(); // SaleData
+
+$this->cin7->advancedSale()->fulfilment()->delete($taskId); // DELETE sale/fulfilment?TaskID=…
 ```
 
 ## Advanced purchase
