@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Data;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Concerns\HasProductFields;
+use Ipsocode\Cin7\Concerns\HasProductFields;
 
 /**
  * The fields the product line models of sale and purchase documents share, with the same types

@@ -8,7 +8,7 @@ use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Concerns\HasAdditionalAttributes;
+use Ipsocode\Cin7\Concerns\HasAdditionalAttributes;
 use Ipsocode\Cin7\Data\ProductPriceData;
 
 /**

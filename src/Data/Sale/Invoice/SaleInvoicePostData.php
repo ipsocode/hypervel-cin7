@@ -6,7 +6,7 @@ namespace Ipsocode\Cin7\Data\Sale\Invoice;
 
 use Hypervel\Data\Attributes\Validation\In;
 use Hypervel\Data\Attributes\Validation\Uuid;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Enums\InvoiceStatus;
 
 /**

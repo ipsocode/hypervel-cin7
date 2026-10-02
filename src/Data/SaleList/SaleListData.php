@@ -10,7 +10,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Enums\FulfilmentStatus;
 use Ipsocode\Cin7\Enums\OrderStatus;
 use Ipsocode\Cin7\Enums\PackingStatus;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Concerns\HasAdditionalAttributes;
+use Ipsocode\Cin7\Concerns\HasAdditionalAttributes;
 
 /**
  * Additional Attribute Model.

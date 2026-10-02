@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale\ManualJournal;
 
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * Sale Manual Journal Line Model.

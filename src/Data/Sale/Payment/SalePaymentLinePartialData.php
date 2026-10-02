@@ -8,7 +8,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * Sale Payment Line Partial Model, one payment of the `sale/payment` responses. The fields the

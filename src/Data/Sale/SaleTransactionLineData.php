@@ -6,7 +6,7 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * Sale Transaction Line Model.

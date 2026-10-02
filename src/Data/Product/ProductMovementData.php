@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Data\Product;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * Product Movement Model, one entry of a product's `Movements` (responses only).

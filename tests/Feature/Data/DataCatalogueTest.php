@@ -12,9 +12,9 @@ use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
+use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\AbstractChargeData;
 use Ipsocode\Cin7\Data\AbstractLineData;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\ErrorData;
@@ -483,8 +483,7 @@ class DataCatalogueTest extends TestCase
     }
 
     /**
-     * Every class under `src/Data/` but its validation attributes in `Attributes/` and its traits
-     * in `Concerns/`.
+     * Every class under `src/Data/`.
      *
      * @return list<class-string<Data>>
      */
@@ -497,7 +496,7 @@ class DataCatalogueTest extends TestCase
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root)) as $file) {
             $relative = str_replace($root . '/', '', $file->getPathname());
 
-            if ($file->getExtension() !== 'php' || str_starts_with($relative, 'Attributes/') || str_starts_with($relative, 'Concerns/')) {
+            if ($file->getExtension() !== 'php') {
                 continue;
             }
 

@@ -9,7 +9,7 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * Product Supplier Model, one entry of a product's `Suppliers`. A supplier is named by

@@ -6,7 +6,7 @@ namespace Ipsocode\Cin7\Data\Sale\Payment;
 
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * The body of `sale/payment` POST: the Sale Payment Line Partial Model's fields available for POST.
