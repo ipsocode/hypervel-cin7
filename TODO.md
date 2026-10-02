@@ -19,16 +19,6 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/me/**` Me (3 resources, 9 operations)
-
-- [ ] `me` · `me` · GET
-  - [ ] ME: `MeData`
-  - [ ] RoundingTableModel: `RoundingTableData`
-- [ ] `me-address` · `me/addresses` · GET POST PUT DELETE
-  - [ ] Me Address: `MeAddressData`
-- [ ] `me-contact` · `me/contacts` · GET POST PUT DELETE
-  - [ ] Me Contact: `MeContactData`
-
 ### `reference/purchase/**` Purchase (17 resources, 45 operations)
 
 - [ ] `purchase-list` · `purchaseList` · GET
@@ -81,7 +71,7 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
 Each is built with the first resource here that uses it; a ticked one is built, and moves to
 `src/Data/Other/` when a second family uses it.
 
-- [ ] DimensionUnitAvailableValues: `enum WeightUnit`, `enum DimensionUnit` · used by me, product, purchase, advanced-purchase, sale
+- [x] DimensionUnitAvailableValues: `enum WeightUnit`, `enum DimensionUnit` · used by me, product, purchase, advanced-purchase, sale
 - [x] AddressModel: `AddressData` · used by purchase, advanced-purchase, sale
 - [ ] PurchaseShippingAddressModel: `PurchaseShippingAddressData` · used by purchase, advanced-purchase
 - [x] AdditionalAttributeModel: `AdditionalAttributeData` · used by purchase, advanced-purchase, sale
@@ -451,6 +441,16 @@ Built with the first resource that uses it.
 ## Done
 
 Every resource in these groups is in.
+
+### `reference/me/**` Me (3 resources, 9 operations)
+
+- [x] `me` · `me` · GET
+  - [x] ME: `MeData`
+  - [x] RoundingTableModel: `RoundingTableData`
+- [x] `me-address` · `me/addresses` · GET POST PUT DELETE
+  - [x] Me Address: `MeAddressData`
+- [x] `me-contact` · `me/contacts` · GET POST PUT DELETE
+  - [x] Me Contact: `MeContactData`
 
 ### `reference/sale/**` Sale (14 resources, 38 operations)
 

@@ -1,0 +1,28 @@
+{
+    "Total": 2,
+    "Page": 1,
+    "MeAddressesList": [
+        {
+            "AddressID": "d8309201-3498-47a2-99cd-b14786e0753b",
+            "Line1": "DEFAULT billing address",
+            "Line2": null,
+            "CitySuburb": "DEFAULT City",
+            "StateProvince": "DEFAULT State",
+            "ZipPostCode": "DEFAULT Postcode",
+            "Country": "Australia",
+            "Type": "Billing",
+            "DefaultForType": true
+        },
+        {
+            "AddressID": "94147b9b-9320-4320-95c3-effe4c3ef5f5",
+            "Line1": "DEFAULT shipping address",
+            "Line2": null,
+            "CitySuburb": "DEFAULT City",
+            "StateProvince": "DEFAULT State",
+            "ZipPostCode": "DEFAULT Postcode",
+            "Country": "Australia",
+            "Type": "Shipping",
+            "DefaultForType": true
+        }
+    ]
+}

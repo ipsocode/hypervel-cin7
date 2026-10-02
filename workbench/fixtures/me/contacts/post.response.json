@@ -1,0 +1,17 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "MeContactsList": [
+        {
+            "ContactID": "62ba5a66-9c7e-44d1-b2b7-2eb72d946e18",
+            "Name": "DEFAULT Business contact",
+            "Phone": "12345678",
+            "Fax": null,
+            "Email": "test@example.com",
+            "Website": null,
+            "Comment": null,
+            "Type": "Business",
+            "DefaultForType": true
+        }
+    ]
+}
