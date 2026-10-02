@@ -19,20 +19,14 @@ final class PutSale extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    /**
+     * @var list<string>
+     */
+    protected array $omit = ['SaleType'];
+
     public function resolveEndpoint(): string
     {
         return 'sale';
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function defaultBody(): array
-    {
-        $body = parent::defaultBody();
-        unset($body['SaleType']);
-
-        return $body;
     }
 
     public function createDtoFromResponse(Response $response): SaleData

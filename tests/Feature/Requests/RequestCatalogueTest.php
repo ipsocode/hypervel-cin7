@@ -509,6 +509,70 @@ class RequestCatalogueTest extends TestCase
         ];
     }
 
+    /**
+     * @param class-string $class
+     * @param array<string, mixed> $body
+     * @param array<string, mixed> $sent
+     */
+    #[DataProvider('omittedFieldsProvider')]
+    public function testReadOnlyAndOtherMethodFieldsAreLeftOutOfTheBody(string $class, array $body, array $sent): void
+    {
+        $this->connector()->send(new $class($body));
+
+        $this->assertSame($sent, $this->mock->lastPendingRequest()?->body());
+    }
+
+    /**
+     * @return array<string, array{class-string, array<string, mixed>, array<string, mixed>}>
+     */
+    public static function omittedFieldsProvider(): array
+    {
+        $customer = ['Name' => 'ACME', 'LastModifiedOn' => '2020-01-01', 'ChildCustomers' => [['ID' => 'c']], 'ProductPrices' => [['Price' => 1, 'ProductName' => 'Bread'], 'raw']];
+        $customerSent = ['Name' => 'ACME', 'ProductPrices' => [['Price' => 1], 'raw']];
+        $product = [
+            'ID' => 'guid-1',
+            'Type' => 'Stock',
+            'SKU' => 'Bread',
+            'AverageCost' => 1.5,
+            'LastModifiedOn' => '2020-01-01',
+            'BOMType' => 'None',
+            'Suppliers' => [['SupplierName' => 'S', 'Currency' => 'USD']],
+            'BillOfMaterialsProducts' => [['Name' => 'Flour', 'Quantity' => 1]],
+            'CustomPrices' => [['Price' => 2, 'ProductName' => 'Bread']],
+        ];
+        $productSent = [
+            'SKU' => 'Bread',
+            'Suppliers' => [['SupplierName' => 'S']],
+            'BillOfMaterialsProducts' => [['Quantity' => 1]],
+            'CustomPrices' => [['Price' => 2]],
+        ];
+
+        return [
+            PostCustomer::class => [PostCustomer::class, $customer, $customerSent],
+            PutCustomer::class => [PutCustomer::class, $customer, $customerSent],
+            PostProduct::class => [PostProduct::class, $product, ['Type' => 'Stock'] + $productSent],
+            PutProduct::class => [PutProduct::class, $product, ['ID' => 'guid-1'] + $productSent],
+            PostTax::class => [PostTax::class, ['Name' => 'VAT', 'TaxPercent' => 20], ['Name' => 'VAT']],
+            PutTax::class => [PutTax::class, ['ID' => 'guid-1', 'TaxPercent' => 20], ['ID' => 'guid-1']],
+            PostSaleOrder::class => [
+                PostSaleOrder::class,
+                ['SaleID' => 's', 'Lines' => [['SKU' => 'A', 'BackorderQuantity' => 2]]],
+                ['SaleID' => 's', 'Lines' => [['SKU' => 'A']]],
+            ],
+            PostSalePayment::class => [
+                PostSalePayment::class,
+                ['ID' => 'p', 'TaskID' => 't', 'Type' => 'PAYMENT', 'CreditID' => 'c', 'Amount' => 1],
+                ['TaskID' => 't', 'Type' => 'PAYMENT', 'Amount' => 1],
+            ],
+            PutSalePayment::class => [
+                PutSalePayment::class,
+                ['ID' => 'p', 'TaskID' => 't', 'Type' => 'PAYMENT', 'CreditID' => 'c', 'Amount' => 1],
+                ['ID' => 'p', 'CreditID' => 'c', 'Amount' => 1],
+            ],
+            'a non-list value is left alone' => [PostProduct::class, ['Suppliers' => 'raw'], ['Suppliers' => 'raw']],
+        ];
+    }
+
     public function testPutSaleLeavesThePostOnlySaleTypeOutOfTheBody(): void
     {
         $this->connector()->send(new PutSale(['ID' => 'guid-1', 'SaleType' => 'Advanced']));

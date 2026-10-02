@@ -109,6 +109,23 @@ over a caller-supplied value under the same key. For example, a
 `KeyedRequest` constructed with `('guid', ['ID' => 'ignored', 'Force' => 'true'])`
 sends `ID=guid&Force=true`.
 
+## Fields left out of write bodies
+
+Cin7's reference marks some fields read-only, response-only, or available for one method only. A
+`WriteRequest` subclass lists those in `$omit`, and they never reach the body, whether the caller
+passed an array or a data object. A path is dot-separated and `*` stands for every list item.
+
+| Request | Left out |
+| --- | --- |
+| `PostCustomer`, `PutCustomer` | `LastModifiedOn`, `ChildCustomers`, `ProductPrices.*.ProductName` |
+| `PostProduct` | `ID`, `AverageCost`, `LastModifiedOn`, `BOMType`, `Suppliers.*.Currency`, `BillOfMaterialsProducts.*.Name`, `CustomPrices.*.ProductName` |
+| `PutProduct` | the same, with `Type` (read-only for PUT) in place of `ID`; `PutProduct` also needs an `ID` |
+| `PostTax`, `PutTax` | `TaxPercent` |
+| `PutSale` | `SaleType` (POST only) |
+| `PostSaleOrder` | `Lines.*.BackorderQuantity` |
+| `PostSalePayment` | `ID`, `CreditID` (PUT only) |
+| `PutSalePayment` | `TaskID`, `Type` (POST only) |
+
 ## Page defaults
 
 Cin7 expects `page` and `limit` on every list read, so `ListRequest` always
