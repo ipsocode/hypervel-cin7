@@ -13,6 +13,10 @@ use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
+use Ipsocode\Cin7\Resources\Sale\Fulfilment\PackResource;
+use Ipsocode\Cin7\Resources\Sale\Fulfilment\PickResource;
+use Ipsocode\Cin7\Resources\Sale\Fulfilment\ShipResource;
+use Ipsocode\Cin7\Resources\Sale\FulfilmentResource;
 use Ipsocode\Cin7\Resources\Sale\InvoiceResource;
 use Ipsocode\Cin7\Resources\Sale\OrderResource;
 use Ipsocode\Cin7\Resources\Sale\PaymentResource;
@@ -83,10 +87,21 @@ class ConnectorResourcesTest extends TestCase
         $sale = $this->connector()->sale();
 
         $this->assertInstanceOf(OrderResource::class, $sale->order());
+        $this->assertInstanceOf(FulfilmentResource::class, $sale->fulfilment());
         $this->assertInstanceOf(InvoiceResource::class, $sale->invoice());
         $this->assertInstanceOf(CreditNoteResource::class, $sale->creditNote());
         $this->assertInstanceOf(PaymentResource::class, $sale->payment());
         $this->assertNotSame($sale->order(), $sale->order());
+    }
+
+    public function testAFulfilmentReturnsItsPickPackAndShip(): void
+    {
+        $fulfilment = $this->connector()->sale()->fulfilment();
+
+        $this->assertInstanceOf(PickResource::class, $fulfilment->pick());
+        $this->assertInstanceOf(PackResource::class, $fulfilment->pack());
+        $this->assertInstanceOf(ShipResource::class, $fulfilment->ship());
+        $this->assertNotSame($fulfilment->pick(), $fulfilment->pick());
     }
 
     public function testRefReturnsARefResourceWithItsGroupings(): void

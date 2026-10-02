@@ -62,7 +62,11 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
-| `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()` |
+| `$cin7->sale()->fulfilment()` | `Sale\FulfilmentResource` | `get(string $saleId, …)`, `post(array\|SaleFulfilmentsData $body)`, `delete(string $taskId, ?bool $void = null)`; `pick()`, `pack()`, `ship()` |
+| `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
+| `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
+| `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
@@ -218,10 +222,11 @@ $this->cin7->sale()->delete($guid, void: true);
 
 ### Sale order, invoice, credit note and payment
 
-`sale` also has four sub-resources, mirroring the V2 paths: `$cin7->sale()->order()`,
-`->invoice()`, `->creditNote()` and `->payment()`. Their `get()` takes the sale's GUID
-(`SaleID`), then the optional parameters as named arguments; they send `sale/order`, `sale/invoice`, `sale/creditnote`
-and `sale/payment`.
+`sale` also has these sub-resources, mirroring the V2 paths: `$cin7->sale()->order()`,
+`->invoice()`, `->creditNote()` and `->payment()`, and `->fulfilment()` (see
+[sale fulfilment](#sale-fulfilment)). Their `get()` takes the sale's GUID (`SaleID`), then the
+optional parameters as named arguments; they send `sale/order`, `sale/invoice`,
+`sale/creditnote` and `sale/payment`.
 
 | Resource | Methods | Body and `dto()` |
 |---|---|---|
@@ -241,6 +246,39 @@ invoice PUT only `SaleID` and `TaskID`. A payment read with `get()` becomes a PU
 ```php
 $this->cin7->sale()->invoice()->delete($taskId, void: true); // DELETE sale/invoice?TaskID=…&Void=true
 $payments = $this->cin7->sale()->payment()->get($saleId)->dto(); // list<SalePaymentLinePartialData>
+```
+
+### Sale fulfilment
+
+`$cin7->sale()->fulfilment()` is `sale/fulfilment`, a sale's fulfilments, and each fulfilment's
+stages are its own resources below it, as the paths are: `->pick()`, `->pack()` and `->ship()`
+send `sale/fulfilment/pick`, `/pack` and `/ship`. A fulfilment is read by the sale's GUID, its
+stages by the fulfilment's `TaskID`.
+
+| Resource | Methods | Body and `dto()` |
+|---|---|---|
+| `sale()->fulfilment()` (Sale Fulfilment) | `get(string $saleId, ?bool $includeProductInfo = null)`, `post(array\|SaleFulfilmentsData)`, `delete(string $taskId, ?bool $void = null)` | `SaleFulfilmentsData`, the `{SaleID, Fulfilments}` envelope; POST needs only the `SaleID` |
+| `sale()->fulfilment()->pick()` (Sale Fulfilment Pick) | `get(string $taskId, ?bool $includeProductInfo = null)`, `post(array\|SaleFulfilmentPickPostData)`, `put(array\|SaleFulfilmentPickPutData)` | `SaleFulfilmentPickData`, `{TaskID, Status, Lines}` |
+| `sale()->fulfilment()->pack()` (Sale Fulfilment Pack) | `get(string $taskId, ?bool $includeProductInfo = null)`, `post(array\|SaleFulfilmentPackPostData)`, `put(array\|SaleFulfilmentPackData)` | `SaleFulfilmentPackData`, `{TaskID, Status, Lines}` |
+| `sale()->fulfilment()->ship()` (Sale Fulfilment Ship) | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData)`, `put(array\|SaleFulfilmentShipPutData)` | `SaleFulfilmentShipData`, the shipment with its `TaskID` |
+
+A POST creates a pick, pack or shipment or adds lines to it, and a PUT replaces one that is not
+authorised. `AutoPickMode: 'AUTOPICK'` in place of a `Status` picks the task automatically, and
+`AddTrackingNumbers: true` lets a shipment PUT change the tracking numbers or carrier of an
+authorised shipment; the reference documents both in prose only. A shipment line names its box
+`Box` in a body and `Boxes` in a response.
+
+```php
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickPostData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentsData;
+
+$fulfilments = $this->cin7->sale()->fulfilment()->post(SaleFulfilmentsData::from(['SaleID' => $saleId]))->dto();
+$taskId = $fulfilments->Fulfilments[0]->TaskID;
+
+$this->cin7->sale()->fulfilment()->pick()->post(SaleFulfilmentPickPostData::from([
+    'TaskID' => $taskId,
+    'AutoPickMode' => 'AUTOPICK',
+]));
 ```
 
 ## PUT identifiers
