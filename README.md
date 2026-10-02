@@ -130,16 +130,16 @@ worker's lifetime is safe.
   once a second consumer's needs are known.
 - **No mandatory DTOs.** Arrays work everywhere: a write takes an array body and
   `json()` returns the decoded array. Typed data objects are an additive layer on
-  top ([docs/data.md](docs/data.md)), shown here for a tax rule:
+  top ([docs/data.md](docs/data.md)), shown here for a customer:
 
   ```php
-  use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+  use Ipsocode\Cin7\Data\Customer\CustomerData;
 
   // Only the keys you set are sent.
-  $response = $cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT', 'Account' => '800']));
+  $response = $cin7->customer()->post(CustomerData::from(['Name' => 'ACME', 'Currency' => 'GBP']));
 
-  $tax = $response->dto();                  // TaxData
-  $rules = $cin7->ref()->tax()->get()->dto(); // list<TaxData>
+  $customer = $response->dto();                      // CustomerData
+  $customers = $cin7->customer()->get()->dto();      // list<CustomerData>
   ```
 - **No request logging.** Instrumentation writes consumer-owned models.
 
