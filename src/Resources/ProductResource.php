@@ -14,8 +14,11 @@ use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
+use Ipsocode\Cin7\Resources\Product\MarkupPricesResource;
 
 /**
+ * `product`; `markupPrices()` is the `product/markupprices` sub-resource.
+ *
  * @extends BaseResource<Cin7Connector>
  */
 final class ProductResource extends BaseResource
@@ -131,5 +134,13 @@ final class ProductResource extends BaseResource
     public function put(array|ProductPutData $body): Response
     {
         return $this->connector->send(new PutProduct($body));
+    }
+
+    /**
+     * The `product/markupprices` resource, a product's markup prices.
+     */
+    public function markupPrices(): MarkupPricesResource
+    {
+        return new MarkupPricesResource($this->connector);
     }
 }

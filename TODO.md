@@ -51,11 +51,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
 
-### `reference/price-tiers/**` Price Tiers (1 resource, 1 operation)
-
-- [ ] `price-tiers` · `ref/priceTier` · GET
-  - [ ] Price Tier: `PriceTierData`
-
 ### `reference/product/**` Product (3 resources, 7 operations, 2 left)
 
 - [x] `product` · `product` · GET POST PUT
@@ -71,12 +66,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [ ] Product Family: `ProductFamilyData`
 - [ ] `product-family-attachments` · `productFamily/attachments` · GET POST DELETE
   - [ ] Product Family Attachments POST body: `ProductFamilyAttachmentPostData`
-
-### `reference/product-markup-prices/**` Product Markup Prices (1 resource, 2 operations)
-
-- [ ] `markup-prices` · `ref/markupprices` · GET PUT
-  - [ ] Markup Prices: `MarkupPricesData`
-  - [ ] MarkupPriceLineModel: `MarkupPriceLineData`
 
 ### `reference/stock/**` Stock (7 resources, 17 operations)
 
@@ -384,10 +373,21 @@ Every resource in these groups is in.
 - [x] `payment-term` · `ref/paymentterm` · GET POST PUT DELETE
   - [x] Payment Term: `PaymentTermData`
 
+### `reference/price-tiers/**` Price Tiers (1 resource, 1 operation)
+
+- [x] `price-tiers` · `ref/priceTier` · GET
+  - [x] Price Tier: `PriceTierData`
+
 ### `reference/product-categories/**` Product Categories (1 resource, 4 operations)
 
 - [x] `product-category` · `ref/category` · GET POST PUT DELETE
   - [x] Product Category: `ProductCategoryData`
+
+### `reference/product-markup-prices/**` Product Markup Prices (1 resource, 2 operations)
+
+- [x] `markup-prices` · `ref/markupprices` · GET PUT
+  - [x] Markup Prices: `MarkupPricesData`
+  - [x] MarkupPriceLineModel: `MarkupPriceLineData`
 
 ### `reference/purchase/**` Purchase (17 resources, 45 operations)
 
