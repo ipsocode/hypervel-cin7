@@ -38,8 +38,7 @@ This is an independent package. It is not affiliated with or endorsed by Cin7.
 
 - PHP 8.4 or newer (CI runs 8.4 and 8.5)
 - Hypervel 0.4, which today means `hypervel/components` at `0.4.x-dev`. The
-  package requires `hypervel/contracts`, `hypervel/saloon` and
-  `hypervel/support` `^0.4`; `hypervel/components` provides all of them.
+  package requires `hypervel/components` itself rather than its split packages.
 - A Cin7 Core account with API access — its account ID and an application key
 
 ## Installation
