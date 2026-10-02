@@ -15,13 +15,14 @@ use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceLineData;
 use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
- * Purchase Credit Note Model, a purchase's `CreditNote`, and the Available Fields for Purchase
- * Credit Note table, the response of `purchase/creditnote`. One name, so one class carrying the
- * union: the table's `TaskID` and `CombineAdditionalCharges` and the model's `Refunds` are
- * optional, as only one of the two has them. The POST body is `PurchaseCreditNotePostData`.
+ * Purchase Credit Note Model and the Available Fields for Purchase Credit Note table, the response
+ * of `purchase/creditnote`. One name, so one class carrying the union: the table's `TaskID` and
+ * `CombineAdditionalCharges` and the model's `Refunds` are optional, as only one of the two has
+ * them. The POST body is `PurchaseCreditNotePostData`.
  *
  * It follows the tables, whose `Unstock` is a list of lines. The `purchase` examples embed the
- * credit note with `Unstock` as an object, `{Status, Lines}`, which this class does not read.
+ * credit note with `Unstock` as an object, `{Status, Lines}`, which this class does not read: a
+ * purchase's `CreditNote` is `SimplePurchaseCreditNoteData`.
  *
  * @see docs/data.md
  */

@@ -23,6 +23,8 @@ use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
 use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
 use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
+use Ipsocode\Cin7\Data\Purchase\PurchasePostData;
+use Ipsocode\Cin7\Data\Purchase\PurchasePutData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
@@ -51,6 +53,8 @@ use Ipsocode\Cin7\Requests\Purchase\CreditNote\PostPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\Purchase\Invoice\PostPurchaseInvoice;
 use Ipsocode\Cin7\Requests\Purchase\ManualJournal\PostPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\Purchase\Order\PostPurchaseOrder;
+use Ipsocode\Cin7\Requests\Purchase\PostPurchase;
+use Ipsocode\Cin7\Requests\Purchase\PutPurchase;
 use Ipsocode\Cin7\Requests\Purchase\Stock\PostPurchaseStock;
 use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
@@ -347,6 +351,29 @@ class BodyValidationTest extends TestCase
 
         $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['Location' => 'Main Warehouse']]])));
         $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['LocationID' => 'ccb7d97b-a638-4b34-833e-4c348b81f40d']]])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A purchase needs a supplier, by name or by ID; a body with neither is not sent.
+     */
+    public function testAPurchaseWithoutASupplierIsNotSent(): void
+    {
+        try {
+            $this->connector()->send(new PostPurchase(PurchasePostData::from(['Approach' => 'INVOICE', 'Location' => 'Main Warehouse'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['SupplierID', 'Supplier'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    public function testEitherSupplierFieldIsEnoughForAPurchase(): void
+    {
+        $this->connector()->send(new PostPurchase(PurchasePostData::from(['Supplier' => 'ABPA', 'Approach' => 'INVOICE', 'Location' => 'Main Warehouse'])));
+        $this->connector()->send(new PutPurchase(PurchasePutData::from(['ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092', 'SupplierID' => 'f1d1696b-8988-4ca0-8b9d-60317e463d07', 'Approach' => 'STOCK', 'Location' => 'Main Warehouse'])));
 
         $this->mock->assertSentCount(2);
     }

@@ -13,11 +13,15 @@ use Ipsocode\Cin7\Data\Other\SalePaymentLineData;
 use Ipsocode\Cin7\Enums\InvoiceStatus;
 
 /**
- * Purchase Invoice Model, a purchase's `Invoice`, and the Available Fields for Purchase Invoice
- * table, the response of `purchase/invoice`. One name, so one class carrying the union: the
- * table's `TaskID`, `CombineAdditionalCharges`, `InvoiceTotalAmount` and `InvoiceTotalTaxAmount`
- * and the model's `Payments` and `Paid` are optional, as only one of the two has them. The POST
- * body is `PurchaseInvoicePostData`.
+ * Purchase Invoice Model and the Available Fields for Purchase Invoice table, the response of
+ * `purchase/invoice`. One name, so one class carrying the union: the table's `TaskID`,
+ * `CombineAdditionalCharges`, `InvoiceTotalAmount` and `InvoiceTotalTaxAmount` and the model's
+ * `Payments` and `Paid` are optional, as only one of the two has them. The POST body is
+ * `PurchaseInvoicePostData`.
+ *
+ * It follows the tables, which require `InvoiceDueDate`. The `purchase` examples embed the invoice
+ * with a `null` `InvoiceDueDate` and its number under `InvocieNumber`, which this class does not
+ * read: a purchase's `Invoice` is `SimplePurchaseInvoiceData`.
  *
  * @see docs/data.md
  */

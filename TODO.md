@@ -19,17 +19,17 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations, 2 left)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 1 left)
 
 - [x] `purchase-list` · `purchaseList` · GET
   - [x] Purchase List: `PurchaseListData`
 - [x] `purchase-credit-note-list` · `purchaseCreditNoteList` · GET
   - [x] Purchase Credit Note List: `PurchaseCreditNoteListData`
-- [ ] `purchase` · `purchase` · GET POST PUT DELETE
-  - [ ] Purchase: `PurchaseData`
+- [x] `purchase` · `purchase` · GET POST PUT DELETE
+  - [x] Purchase: `PurchaseData`
   - [x] product fields: `trait HasProductFields`
-  - [ ] Purchase POST/PUT body: `PurchasePostData`
-  - [ ] Purchase POST/PUT body: `PurchasePutData`
+  - [x] Purchase POST/PUT body: `PurchasePostData`
+  - [x] Purchase POST/PUT body: `PurchasePutData`
 - [x] `purchase-order` · `purchase/order` · GET POST
   - [x] Purchase Order: `PurchaseOrderData`
 - [x] `purchase-stock-received` · `purchase/stock` · GET POST
@@ -73,7 +73,7 @@ Each is built with the first resource here that uses it; a ticked one is built, 
 
 - [x] DimensionUnitAvailableValues: `enum WeightUnit`, `enum DimensionUnit` · used by me, product, purchase, advanced-purchase, sale
 - [x] AddressModel: `AddressData` · used by purchase, advanced-purchase, sale
-- [ ] PurchaseShippingAddressModel: `PurchaseShippingAddressData` · used by purchase, advanced-purchase
+- [x] PurchaseShippingAddressModel: `PurchaseShippingAddressData` · used by purchase, advanced-purchase
 - [x] AdditionalAttributeModel: `AdditionalAttributeData` · used by purchase, advanced-purchase, sale
 - [x] SalePaymentLineModel: `SalePaymentLineData` · used by purchase, advanced-purchase, sale
 - [x] AttachmentLineModel: `AttachmentLineData` · used by journal, money-operation, bank-transfer, product, product-attachments, product-family, product-family-attachments, purchase, purchase-attachments, advanced-purchase, sale, sale-attachments, stock-adjustment, stock-take
