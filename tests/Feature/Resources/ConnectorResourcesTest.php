@@ -6,6 +6,10 @@ namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
+use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
+use Ipsocode\Cin7\Resources\Ref\TaxResource;
+use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Tests\TestCase;
 
 /**
@@ -38,5 +42,23 @@ class ConnectorResourcesTest extends TestCase
         $connector = $this->connector();
 
         $this->assertNotSame($connector->product(), $connector->product());
+    }
+
+    public function testRefReturnsARefResourceWithItsGroupings(): void
+    {
+        $ref = $this->connector()->ref();
+
+        $this->assertInstanceOf(RefResource::class, $ref);
+        $this->assertInstanceOf(TaxResource::class, $ref->tax());
+        $this->assertInstanceOf(RefCustomerResource::class, $ref->customer());
+        $this->assertInstanceOf(CreditsResource::class, $ref->customer()->credits());
+    }
+
+    public function testRefReturnsAFreshInstanceEveryCall(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertNotSame($connector->ref(), $connector->ref());
+        $this->assertNotSame($connector->ref()->customer(), $connector->ref()->customer());
     }
 }
