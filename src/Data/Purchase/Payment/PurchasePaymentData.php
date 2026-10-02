@@ -9,10 +9,13 @@ use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 
 /**
- * Purchase Payments, one payment of the `purchase/payment` responses. The fields the reference
- * marks required have no default; `ID` is a bare `Yes*`, so it is optional here. The examples
- * spell `Type` `Payment` and `Refund` where the table has `PAYMENT`, `REFUND` and `PREPAYMENT`,
- * so it is a string. The bodies are `PurchasePaymentPostData` and `PurchasePaymentPutData`.
+ * Purchase Payments, one payment of the `purchase/payment` responses: the Available Fields for
+ * Purchase Payments table with its `ID`, `Type` and `DepositID`. The bodies of POST and PUT are
+ * `PurchasePaymentPostData` and `PurchasePaymentPutData`.
+ *
+ * The fields the reference marks required have no default; `ID` is a bare `Yes*`, so it is
+ * optional here. The examples spell `Type` `Payment` and `Refund` where the table has `PAYMENT`,
+ * `REFUND` and `PREPAYMENT`, so it is a string.
  *
  * @see docs/data.md
  */

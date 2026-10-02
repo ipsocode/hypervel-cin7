@@ -18,6 +18,7 @@ use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\PurchaseResource;
 use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
@@ -144,6 +145,14 @@ final class Cin7Connector extends Connector implements HasPagination
     public function product(): ProductResource
     {
         return new ProductResource($this);
+    }
+
+    /**
+     * The `purchase` resource, the simple purchase.
+     */
+    public function purchase(): PurchaseResource
+    {
+        return new PurchaseResource($this);
     }
 
     /**

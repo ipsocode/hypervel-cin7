@@ -11,6 +11,8 @@ use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\Purchase\PaymentResource as PurchasePaymentResource;
+use Ipsocode\Cin7\Resources\PurchaseResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
 use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
@@ -113,6 +115,22 @@ class ConnectorResourcesTest extends TestCase
 
         $this->assertInstanceOf(SaleCreditNoteListResource::class, $connector->saleCreditNoteList());
         $this->assertNotSame($connector->saleCreditNoteList(), $connector->saleCreditNoteList());
+    }
+
+    public function testPurchaseReturnsAFreshPurchaseResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(PurchaseResource::class, $connector->purchase());
+        $this->assertNotSame($connector->purchase(), $connector->purchase());
+    }
+
+    public function testPurchaseReturnsItsNestedResources(): void
+    {
+        $purchase = $this->connector()->purchase();
+
+        $this->assertInstanceOf(PurchasePaymentResource::class, $purchase->payment());
+        $this->assertNotSame($purchase->payment(), $purchase->payment());
     }
 
     public function testSupplierReturnsAFreshSupplierResource(): void

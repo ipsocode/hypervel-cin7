@@ -19,7 +19,7 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 16 left)
 
 - [ ] `purchase-list` · `purchaseList` · GET
   - [ ] Purchase List: `PurchaseListData`
@@ -38,7 +38,7 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [ ] Purchase Invoice: `PurchaseInvoiceData`
 - [ ] `purchase-credit-note` · `purchase/creditnote` · GET POST
   - [ ] Purchase Credit Note: `PurchaseCreditNoteData`
-- [ ] `purchase-payments` · `purchase/payment` · GET POST PUT DELETE
+- [x] `purchase-payments` · `purchase/payment` · GET POST PUT DELETE
   - [x] Purchase Payments: `PurchasePaymentData`
 - [ ] `purchase-manual-journals` · `purchase/manualJournal` · GET POST
   - [ ] Purchase Manual Journal: `PurchaseManualJournalData`
