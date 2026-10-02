@@ -12,7 +12,9 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
@@ -151,6 +153,18 @@ class DataCatalogueTest extends TestCase
 
         $this->assertInstanceOf(SaleManualJournalLineData::class, $dto->ManualJournals->Lines[0]);
         $this->assertEquals($sale, $dto->toArray());
+    }
+
+    /**
+     * The POST models are bodies, not responses, so their fixtures round-trip through the class.
+     */
+    public function testThePostModelsRoundTripTheirFixtures(): void
+    {
+        $invoice = Cin7Payloads::saleInvoicePost();
+        $creditNote = Cin7Payloads::saleCreditNotePost();
+
+        $this->assertEquals($invoice, SaleInvoicePostData::from($invoice)->toArray());
+        $this->assertEquals($creditNote, SaleCreditNotePostData::from($creditNote)->toArray());
     }
 
     public function testEveryDataClassIsFinalAndExtendsData(): void
