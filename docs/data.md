@@ -208,6 +208,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `product-suppliers` | POST, PUT: `ProductSuppliersData`, a list of `ProductSupplierData` (Product Supplier Model, with `ProductSupplierOptions`: `ProductSupplierOptionData`, whose `SupplyIntervals` are `ProductSupplierOptionIntervalData`) | GET: `ProductSuppliersData`; POST, PUT, DELETE: `{Success}`, left to `json()` |
 | `reference/shipZones` | POST: `ShippingZonePostData`; PUT: `ShippingZonePutData`, which also requires `ZoneID` (Shipping Zone, with `AppliesTo`: `ShipZoneAppliesToData` and `Conditions`: `ShipZoneConditionData`) | GET: `list<ShippingZoneData>`; POST, PUT: `ShippingZoneData`, the saved zone, read from `ShipZones.0`; DELETE: `{Success}`, left to `json()` |
 | `reference/shipZonesEnabled` | PUT: `ShipZonesEnabledData` | GET, PUT: `ShipZonesEnabledData` |
+| `reference/discount` | POST: `ProductDiscountRulesPostData`, a list of `ProductDiscountRulePostData`; PUT: `ProductDiscountRulePutData`, one bare rule, which also requires `ID` (Product Discount Rule, with `DiscountLines`: `DiscountLineData`, Discount Line Model) | GET: `list<ProductDiscountRuleData>`; POST, PUT: `ProductDiscountRuleData`, the saved rule, read from `DiscountRules.0` |
 | `ref/priceTier` | none | GET: `list<PriceTierData>` (Price Tier), read from `PriceTiers` |
 | `ref/fixedassettype` | POST: `FixedAssetTypePostData`; PUT: `FixedAssetTypePutData`, which also requires `FixedAssetTypeID` (Fixed Asset Types) | GET: `list<FixedAssetTypeData>`; POST, PUT: `FixedAssetTypeData`, the saved type (`FixedAssetTypeList.0`) |
 | `ref/paymentterm` | POST: `PaymentTermPostData`; PUT: `PaymentTermPutData`, which also requires `ID` (Payment Term) | GET: `list<PaymentTermData>`; POST, PUT: `PaymentTermData`, the saved term (`PaymentTermList.0`); DELETE: `{Success}`, left to `json()` |
@@ -1142,6 +1143,23 @@ every verb. Each class requires:
 - **`ShipZoneConditionsModel`.** The table's link names it so; the model is `ShipZoneConditionModel`,
   which `ShipZoneConditionData` follows.
 - **`reference/shipZonesEnabled`** has no table, only examples.
+- **Examples.** The examples need no correction.
+`reference/discount` splits by verb the same way, and its POST body is a list while its PUT body is one
+bare rule. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `ProductDiscountRuleData` (response) | `src/Data/Reference/Discount/` | `ID`, `Name`, `IsActive`, `Type` |
+| `ProductDiscountRulesPostData` | `src/Data/Reference/Discount/` | `DiscountRules` |
+| `ProductDiscountRulePostData` | `src/Data/Reference/Discount/` | `Name`, `IsActive`, `Type` |
+| `ProductDiscountRulePutData` | `src/Data/Reference/Discount/` | `Name`, `ID` |
+| `DiscountLineData` | `src/Data/Reference/Discount/` | nothing; `OrderExceeds` when `DiscountType` is `FreeShipping` (`#[RequiredIf]`) |
+
+- **The PUT example** sends only the `ID`, `Name` and `DiscountLines`, so `IsActive` and `Type`, which
+  the table requires, are optional there. `ID` on a line is required in the table, but the POST
+  example sends none for a line it adds.
+- **`Type`** is a `DiscountRuleType` and a line's `DiscountType` a `DiscountLineType`, from the values
+  the table lists.
 - **Examples.** The examples need no correction.
 ## Purchases
 

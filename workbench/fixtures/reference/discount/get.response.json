@@ -1,0 +1,43 @@
+{
+    "DiscountRules": [
+        {
+            "ID": "98fcb436-988d-437c-b135-7dcf19c94719",
+            "Name": "Alles fur Freunds",
+            "IsActive": true,
+            "Type": "Simple",
+            "DiscountLines": [
+                {
+                    "ID": "6f32d19e-aaa1-4aa4-98ee-630303cee936",
+                    "MinValue": 0,
+                    "MaxValue": 0,
+                    "DiscountType": "DiscountPercent",
+                    "Amount": 5
+                }
+            ]
+        },
+        {
+            "ID": "d750a98e-ebf4-4635-9079-b1833be52c94",
+            "Name": "Third one",
+            "IsActive": true,
+            "Type": "QuantityBased",
+            "DiscountLines": [
+                {
+                    "ID": "1f1aa561-791e-42b4-a2b5-13efef7c8750",
+                    "MinValue": 50.0001,
+                    "MaxValue": 100000,
+                    "DiscountType": "DiscountPercent",
+                    "Amount": 7
+                },
+                {
+                    "ID": "af09aecc-ace8-4a29-bd72-16cccf6c5642",
+                    "MinValue": 0,
+                    "MaxValue": 50,
+                    "DiscountType": "DiscountAmount",
+                    "Amount": 5
+                }
+            ]
+        }
+    ],
+    "Total": 4,
+    "Page": 1
+}
