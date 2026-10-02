@@ -1,0 +1,34 @@
+{
+    "Total": 3,
+    "Page": 1,
+    "FixedAssetTypeList": [
+        {
+            "FixedAssetTypeID": "e0d0d393-dc70-422b-b4f9-d847562b09ef",
+            "Name": "First FixedAssetType",
+            "DepreciationMethod": "No Depreciation",
+            "AveragingMethod": "Full Month",
+            "Rate": 12,
+            "EffectiveLife": null,
+            "AssetAccountCode": "710",
+            "AccumulatedDepreciationAccountCode": "710",
+            "DepreciationExpenseAccountCode": "400",
+            "AssetAccountName": "710: Office Equipment",
+            "AccumulatedDepreciationAccountName": "710: Office Equipment",
+            "DepreciationExpenseAccountName": "400: Advertising"
+        },
+        {
+            "FixedAssetTypeID": "bfd1b611-c990-452d-bfc6-66635d794634",
+            "Name": "Second FixedAssetType",
+            "DepreciationMethod": "No Depreciation",
+            "AveragingMethod": "Full Month",
+            "Rate": null,
+            "EffectiveLife": 2,
+            "AssetAccountCode": "710",
+            "AccumulatedDepreciationAccountCode": "710",
+            "DepreciationExpenseAccountCode": "400",
+            "AssetAccountName": "710: Office Equipment",
+            "AccumulatedDepreciationAccountName": "710: Office Equipment",
+            "DepreciationExpenseAccountName": "400: Advertising"
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "Total": 3,
+    "Page": 1,
+    "BankAccountsList": [
+        {
+            "AccountID": "d5b0294d-e931-47d4-a58c-5c9e2d7d3090",
+            "Bank": "Unknown Bank",
+            "AccountName": "EFT bank account",
+            "AccountNumber": "No Number",
+            "AccountCode": "713",
+            "Currency": "AUD",
+            "StatementBalance": 0,
+            "BalanceInDear": 0,
+            "InitialBalance": 0
+        },
+        {
+            "AccountID": "7d236236-02fa-4a03-890e-865ad34ea94c",
+            "Bank": "Unknown Bank",
+            "AccountName": "PayPal account",
+            "AccountNumber": "No Number",
+            "AccountCode": "718",
+            "Currency": "AUD",
+            "StatementBalance": 0,
+            "BalanceInDear": 0,
+            "InitialBalance": 0
+        },
+        {
+            "AccountID": "ba4fbb6c-b31a-4ccb-a95f-d289ab92f7db",
+            "Bank": "Unknown Bank",
+            "AccountName": "Visa debit card",
+            "AccountNumber": "No Number",
+            "AccountCode": "712",
+            "Currency": "AUD",
+            "StatementBalance": 0,
+            "BalanceInDear": 0,
+            "InitialBalance": 0
+        }
+    ]
+}

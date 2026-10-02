@@ -83,9 +83,22 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
 | `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
 | `GetSupplierDeposits` | `page`, `limit`, `supplierId`, `showUsedDeposits` |
+| `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
+| `DeleteAccount` | **`code`** |
+| `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
+| `GetBrand`, `GetCategory`, `GetUnit` | `page`, `limit`, `name` |
+| `DeleteBrand`, `DeleteCategory`, `DeleteUnit` | **`id`** |
+| `GetFixedAssetType` | `page`, `limit`, `fixedAssetTypeId`, `name` |
+| `GetPaymentTerm` | `page`, `limit`, `id`, `name`, `termMethod` (`PaymentTermMethod`; `method` on the resource, since a request already has a `$method`), `isActive`, `isDefault` |
+| `DeletePaymentTerm` | **`id`** |
 | `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
 | `GetMeContacts` | `page`, `limit`, `id`, `name`, `type` (`ContactType`), `defaultForType`, `phone`, `fax`, `email` |
 | `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
+| `GetBankTransfer` | **`taskId`** |
+| `DeleteBankTransfer` | **`id`**, `void` |
+| `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
+| `DeleteJournal` | **`id`**, `void` |
+| `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
 | `GetMoneyTaskList` | `page`, `limit`, `status` (`CompletionStatus`), `search`, `taskType` (`MoneyTaskType`) |
 | `GetMoneyTask` | **`taskId`** |
 | `DeleteMoneyTask` | **`id`**, `void` |
@@ -174,8 +187,40 @@ The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keye
 `TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are
 `TaxPostData` and `TaxPutData`; the PUT body carries `ID`), all
 on `ref/tax`; `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
-`ref/customer/credits`; and `GetSupplierDeposits` (a `ListRequest` keyed `SupplierDeposits`) on
-`ref/supplier/deposits`.
+`ref/customer/credits`; `GetSupplierDeposits` (a `ListRequest` keyed `SupplierDeposits`) on
+`ref/supplier/deposits`; and `GetAccount` (a `ListRequest` keyed `AccountsList`), `PostAccount`
+and `PutAccount` (`WriteRequest`s, whose data object bodies are `AccountPostData` and
+`AccountPutData`; the PUT body's `Code` names the account) and `DeleteAccount` (keyed `Code`), all
+on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountData>`, the POST
+and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
+to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
+`ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
+
+`ref/brand`, `ref/category` and `ref/unit` (under `Brand/`, `Category/` and `Unit/`) each have a
+`Get…` (a `ListRequest` keyed `BrandList`, `CategoryList` and `UnitList`), a `Post…` and a `Put…`
+(the PUT body carries `ID`) and a `Delete…` (keyed `ID`). A GET's `dto()` is a list of `BrandData`,
+`ProductCategoryData` or `UnitOfMeasureData`, and the POST and PUT answer one of them, as the
+whole body.
+
+`ref/fixedassettype` (under `FixedAssetType/`) has `GetFixedAssetType` (a `ListRequest` keyed
+`FixedAssetTypeList`), `PostFixedAssetType` and `PutFixedAssetType` (the PUT body carries
+`FixedAssetTypeID`); `ref/paymentterm` (under `PaymentTerm/`) has `GetPaymentTerm` (keyed
+`PaymentTermList`), `PostPaymentTerm`, `PutPaymentTerm` (the PUT body carries `ID`) and
+`DeletePaymentTerm` (`ID`). Their GET `dto()` is a list of `FixedAssetTypeData` or
+`PaymentTermData`, and POST and PUT answer the saved record (`<list key>.0`).
+
+The `bankTransfer` actions live under `src/Requests/BankTransfer/`, and follow the Money Task's:
+`GetBankTransfer` (keyed `TaskID`), `DeleteBankTransfer` (keyed `ID`, with `Void`), and
+`PostBankTransfer` and `PutBankTransfer` (`WriteRequest`s, whose data object bodies are
+`BankTransferPostData` and `BankTransferPutData`; the PUT body carries `TaskID`). Every one's
+`dto()` is a `BankTransferData`.
+
+The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
+`Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
+`JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed
+`ID`, with `Void`). Every one's `dto()` is a `JournalData`, the first entry of `Journals`, and
+`GetJournal`'s a `list<JournalData>`. `GetTransactions` (a `ListRequest` keyed `Transactions`) is
+on `transactions`, under `src/Requests/Transactions/`; its `dto()` is a `list<TransactionData>`.
 
 The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
 model they serve: `GetMoneyTask`

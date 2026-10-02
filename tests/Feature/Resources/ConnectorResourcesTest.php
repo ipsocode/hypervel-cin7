@@ -11,7 +11,9 @@ use Ipsocode\Cin7\Resources\AdvancedPurchase\PaymentResource as AdvancedPurchase
 use Ipsocode\Cin7\Resources\AdvancedPurchase\PutAwayResource as AdvancedPurchasePutAwayResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource as AdvancedPurchaseStockResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
+use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
 use Ipsocode\Cin7\Resources\Me\ContactsResource;
 use Ipsocode\Cin7\Resources\MeResource;
@@ -28,11 +30,18 @@ use Ipsocode\Cin7\Resources\Purchase\StockResource as PurchaseStockResource;
 use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
 use Ipsocode\Cin7\Resources\PurchaseListResource;
 use Ipsocode\Cin7\Resources\PurchaseResource;
+use Ipsocode\Cin7\Resources\Ref\Account\BankResource;
+use Ipsocode\Cin7\Resources\Ref\AccountResource;
+use Ipsocode\Cin7\Resources\Ref\BrandResource;
+use Ipsocode\Cin7\Resources\Ref\CategoryResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
+use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
+use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
 use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource as RefSupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
+use Ipsocode\Cin7\Resources\Ref\UnitResource;
 use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\Sale\AttachmentResource;
 use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
@@ -49,6 +58,7 @@ use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
+use Ipsocode\Cin7\Resources\TransactionsResource;
 use Ipsocode\Cin7\Tests\TestCase;
 
 /**
@@ -204,6 +214,18 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->supplier(), $connector->supplier());
     }
 
+    public function testBankTransferJournalAndTransactionsReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(BankTransferResource::class, $connector->bankTransfer());
+        $this->assertNotSame($connector->bankTransfer(), $connector->bankTransfer());
+        $this->assertInstanceOf(JournalResource::class, $connector->journal());
+        $this->assertInstanceOf(TransactionsResource::class, $connector->transactions());
+        $this->assertNotSame($connector->journal(), $connector->journal());
+        $this->assertNotSame($connector->transactions(), $connector->transactions());
+    }
+
     public function testMeReturnsAFreshMeResource(): void
     {
         $connector = $this->connector();
@@ -242,6 +264,13 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(CreditsResource::class, $ref->customer()->credits());
         $this->assertInstanceOf(RefSupplierResource::class, $ref->supplier());
         $this->assertInstanceOf(DepositsResource::class, $ref->supplier()->deposits());
+        $this->assertInstanceOf(AccountResource::class, $ref->account());
+        $this->assertInstanceOf(UnitResource::class, $ref->unit());
+        $this->assertInstanceOf(CategoryResource::class, $ref->category());
+        $this->assertInstanceOf(BrandResource::class, $ref->brand());
+        $this->assertInstanceOf(BankResource::class, $ref->account()->bank());
+        $this->assertInstanceOf(FixedAssetTypeResource::class, $ref->fixedAssetType());
+        $this->assertInstanceOf(PaymentTermResource::class, $ref->paymentTerm());
     }
 
     public function testRefReturnsAFreshInstanceEveryCall(): void
@@ -251,5 +280,12 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->ref(), $connector->ref());
         $this->assertNotSame($connector->ref()->customer(), $connector->ref()->customer());
         $this->assertNotSame($connector->ref()->supplier(), $connector->ref()->supplier());
+        $this->assertNotSame($connector->ref()->account(), $connector->ref()->account());
+        $this->assertNotSame($connector->ref()->unit(), $connector->ref()->unit());
+        $this->assertNotSame($connector->ref()->category(), $connector->ref()->category());
+        $this->assertNotSame($connector->ref()->brand(), $connector->ref()->brand());
+        $this->assertNotSame($connector->ref()->account()->bank(), $connector->ref()->account()->bank());
+        $this->assertNotSame($connector->ref()->fixedAssetType(), $connector->ref()->fixedAssetType());
+        $this->assertNotSame($connector->ref()->paymentTerm(), $connector->ref()->paymentTerm());
     }
 }

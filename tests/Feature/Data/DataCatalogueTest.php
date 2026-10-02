@@ -35,8 +35,12 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AbstractAdvancedPurchasePutAwayD
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwaysData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AbstractAdvancedPurchaseStockData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStocksData;
+use Ipsocode\Cin7\Data\BankTransfer\AbstractBankTransferData;
+use Ipsocode\Cin7\Data\BankTransfer\BankTransferData;
 use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
+use Ipsocode\Cin7\Data\Journal\AbstractJournalData;
+use Ipsocode\Cin7\Data\Journal\JournalData;
 use Ipsocode\Cin7\Data\Me\Addresses\AbstractMeAddressData;
 use Ipsocode\Cin7\Data\Me\Addresses\MeAddressData;
 use Ipsocode\Cin7\Data\Me\Contacts\AbstractMeContactData;
@@ -61,10 +65,21 @@ use Ipsocode\Cin7\Data\Purchase\Stock\AbstractPurchaseStockData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
 use Ipsocode\Cin7\Data\PurchaseCreditNoteList\PurchaseCreditNoteListData;
 use Ipsocode\Cin7\Data\PurchaseList\PurchaseListData;
+use Ipsocode\Cin7\Data\Ref\Account\AbstractAccountData;
+use Ipsocode\Cin7\Data\Ref\Account\AccountData;
+use Ipsocode\Cin7\Data\Ref\Account\Bank\BankAccountData;
+use Ipsocode\Cin7\Data\Ref\Brand\AbstractBrandData;
+use Ipsocode\Cin7\Data\Ref\Brand\BrandData;
+use Ipsocode\Cin7\Data\Ref\Category\AbstractProductCategoryData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
+use Ipsocode\Cin7\Data\Ref\FixedAssetType\AbstractFixedAssetTypeData;
+use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypeData;
+use Ipsocode\Cin7\Data\Ref\PaymentTerm\AbstractPaymentTermData;
+use Ipsocode\Cin7\Data\Ref\PaymentTerm\PaymentTermData;
 use Ipsocode\Cin7\Data\Ref\Supplier\Deposits\SupplierDepositData;
 use Ipsocode\Cin7\Data\Ref\Tax\AbstractTaxData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Ref\Unit\AbstractUnitOfMeasureData;
 use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentsData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
@@ -90,6 +105,7 @@ use Ipsocode\Cin7\Data\SaleCreditNoteList\SaleCreditNoteListData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Data\Supplier\AbstractSupplierData;
 use Ipsocode\Cin7\Data\Supplier\SupplierData;
+use Ipsocode\Cin7\Data\Transactions\TransactionData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
@@ -451,14 +467,22 @@ class DataCatalogueTest extends TestCase
             AbstractSalePaymentLineData::class,
             AbstractAdvancedPurchasePutAwayData::class,
             AbstractAdvancedPurchaseStockData::class,
+            AbstractBankTransferData::class,
             AbstractCustomerData::class,
+            AbstractJournalData::class,
             AbstractMeAddressData::class,
             AbstractMeContactData::class,
             AbstractMoneyTaskData::class,
             AbstractProductData::class,
             AbstractPurchaseOrderData::class,
             AbstractPurchaseStockData::class,
+            AbstractAccountData::class,
+            AbstractBrandData::class,
+            AbstractProductCategoryData::class,
+            AbstractFixedAssetTypeData::class,
+            AbstractPaymentTermData::class,
             AbstractTaxData::class,
+            AbstractUnitOfMeasureData::class,
             AbstractSaleData::class,
             AbstractSaleCreditNoteData::class,
             AbstractSaleFulfilmentPickPackTaskData::class,
@@ -514,7 +538,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class, PurchaseAttachmentsData::class, AdvancedPurchaseStocksData::class, PurchaseInvoiceData::class, PurchaseCreditNoteData::class, AdvancedPurchaseManualJournalsData::class, AdvancedPurchaseInvoicesData::class, AdvancedPurchasePutAwaysData::class, AdvancedPurchasePaymentData::class, AdvancedPurchaseCreditNotesData::class, PurchaseData::class, AdvancedPurchaseData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class, PurchaseAttachmentsData::class, AdvancedPurchaseStocksData::class, PurchaseInvoiceData::class, PurchaseCreditNoteData::class, AdvancedPurchaseManualJournalsData::class, AdvancedPurchaseInvoicesData::class, AdvancedPurchasePutAwaysData::class, AdvancedPurchasePaymentData::class, AdvancedPurchaseCreditNotesData::class, PurchaseData::class, AdvancedPurchaseData::class, AccountData::class, BankAccountData::class, FixedAssetTypeData::class, PaymentTermData::class, JournalData::class, TransactionData::class, BankTransferData::class, BrandData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }
