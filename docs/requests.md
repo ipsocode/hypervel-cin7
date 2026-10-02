@@ -123,6 +123,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAdvancedPurchaseManualJournal` | **`purchaseId`** |
 | `GetAdvancedPurchaseInvoice` | **`purchaseId`**, `combineAdditionalCharges` |
 | `DeleteAdvancedPurchaseInvoice` | **`taskId`**, `void` |
+| `GetAdvancedPurchasePutAway` | **`purchaseId`** |
 
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
@@ -244,10 +245,12 @@ path:
 | `Stock/` | `GetAdvancedPurchaseStock` (`PurchaseID`), `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock`, `DeleteAdvancedPurchaseStock` (`TaskID`, with `Void`) | `AdvancedPurchaseStocksData`, the `{PurchaseID, StockReceiving}` envelope |
 | `ManualJournal/` | `GetAdvancedPurchaseManualJournal` (`PurchaseID`), `PostAdvancedPurchaseManualJournal` | `AdvancedPurchaseManualJournalsData`, the `{PurchaseID, ManualJournals}` envelope |
 | `Invoice/` | `GetAdvancedPurchaseInvoice` (`PurchaseID`, with `CombineAdditionalCharges`), `PostAdvancedPurchaseInvoice`, `DeleteAdvancedPurchaseInvoice` (`TaskID`, with `Void`) | `AdvancedPurchaseInvoicesData`, the `{PurchaseID, Invoices}` envelope |
+| `PutAway/` | `GetAdvancedPurchasePutAway` (`PurchaseID`), `PostAdvancedPurchasePutAway` | `AdvancedPurchasePutAwaysData`, the `{PurchaseID, PutAway}` envelope |
 
 The stock received's write bodies are `AdvancedPurchaseStockPostData` and
 `AdvancedPurchaseStockPutData`, the PUT one carrying the task's `TaskID` as well as the
 `PurchaseID`.
+The put away's write body is `AdvancedPurchasePutAwayPostData`; it has no PUT.
 
 The manual journals' POST body is `AdvancedPurchasePartialManualJournalPostData`, which carries
 the purchase's `PurchaseID` and the journal's `TaskID`.
@@ -319,6 +322,7 @@ data object's body is also stripped of nulls and validated after the omission; s
 | `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
 | `PostPurchaseCreditNote` | `Unstock.*.ProductID`, `Unstock.*.SKU`, `Unstock.*.Name`, `Unstock.*.Location`, `Unstock.*.BatchSN`, `Unstock.*.ExpiryDate` |
 | `PostAdvancedPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
+| `PostAdvancedPurchasePutAway` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
 
 ## Page defaults
 

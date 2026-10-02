@@ -12,6 +12,7 @@ use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
@@ -38,6 +39,7 @@ use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
@@ -219,6 +221,7 @@ class BodyValidationTest extends TestCase
             'purchase invoice POST' => [fn (): WriteRequest => new PostPurchaseInvoice(PurchaseInvoicePostData::from(['Status' => 'PAID'] + Cin7Payloads::load('purchase/invoice', 'post.request')))],
             'purchase credit note POST' => [fn (): WriteRequest => new PostPurchaseCreditNote(PurchaseCreditNotePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('purchase/creditnote', 'post.request')))],
             'advanced purchase invoice POST' => [fn (): WriteRequest => new PostAdvancedPurchaseInvoice(AdvancedPurchasePartialInvoicePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/invoice', 'post.request')))],
+            'advanced purchase put away POST' => [fn (): WriteRequest => new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/put-away', 'post.request')))],
         ];
     }
 
@@ -319,6 +322,28 @@ class BodyValidationTest extends TestCase
     {
         $this->connector()->send(new PostSale(SalePostData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
         $this->connector()->send(new PostSale(SalePostData::from(['CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A put away line needs its location, by name or by ID: a body with a line that has neither is
+     * not sent, and either one is enough.
+     */
+    public function testAPutAwayLineNeedsItsLocationOrLocationId(): void
+    {
+        $body = ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Status' => 'DRAFT'];
+        $line = ['Date' => '2018-04-20T00:00:00', 'Quantity' => 4, 'SKU' => 'Bread'];
+
+        try {
+            $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Lines.0.Location', 'Lines.0.LocationID'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['Location' => 'Main Warehouse']]])));
+        $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['LocationID' => 'ccb7d97b-a638-4b34-833e-4c348b81f40d']]])));
 
         $this->mock->assertSentCount(2);
     }
