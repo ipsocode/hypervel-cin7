@@ -10,6 +10,8 @@ use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
@@ -30,6 +32,8 @@ use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
@@ -201,6 +205,8 @@ class BodyValidationTest extends TestCase
             'purchase order POST' => [fn (): WriteRequest => new PostPurchaseOrder(PurchaseOrderPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'VOIDED', 'Lines' => []]))],
             'purchase stock POST' => [fn (): WriteRequest => new PostPurchaseStock(PurchaseStockPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'NOT AVAILABLE', 'Lines' => []]))],
             'purchase manual journal POST' => [fn (): WriteRequest => new PostPurchaseManualJournal(PurchaseManualJournalPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'VOIDED']))],
+            'advanced purchase stock POST' => [fn (): WriteRequest => new PostAdvancedPurchaseStock(AdvancedPurchaseStockPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/stock', 'post.request')))],
+            'advanced purchase stock PUT' => [fn (): WriteRequest => new PutAdvancedPurchaseStock(AdvancedPurchaseStockPutData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/stock', 'put.request')))],
         ];
     }
 

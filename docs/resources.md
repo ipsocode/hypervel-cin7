@@ -77,6 +77,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
+| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()` |
+| `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -555,6 +557,42 @@ $attachments = $this->cin7->purchase()->attachment()->post(PurchaseAttachmentPos
 $this->cin7->purchase()->attachment()->delete($attachments->Lines[0]->ID); // DELETE purchase/attachment?ID=…
 ```
 
+## Advanced purchase
+
+`$cin7->advancedPurchase()` is `advanced-purchase`, the advanced purchase, and its documents are
+sub-resources below it, as the paths are.
+
+`$cin7->advancedPurchase()->stock()` is `advanced-purchase/stock`, an advanced purchase's stock
+received. It is not available for a service purchase, and only when `Use Put Away` is set in the
+General Settings; a POST or PUT for a simple purchase converts it to an advanced one. Every method
+answers with the purchase's stock receiving tasks, the `{PurchaseID, StockReceiving}` envelope, so
+its `dto()` is an `AdvancedPurchaseStocksData`, whose `StockReceiving` are
+`AdvancedPurchaseStockData`. `get($purchaseId)` sends `advanced-purchase/stock?PurchaseID=…`.
+`post()` takes an `AdvancedPurchaseStockPostData` and `put()` an `AdvancedPurchaseStockPutData` as
+well as an array; both need the `PurchaseID`, a `Status` of `DRAFT` or `AUTHORISED` and `Lines`,
+and a PUT also the `TaskID` of the task it overwrites. A POST only adds lines: without a `TaskID`,
+or with the empty GUID, it creates a new task, and with `Status` `AUTHORISED` and empty `Lines` it
+authorises the task. Both fail unless the order is authorised, the stock received is `DRAFT`,
+`NOT AVAILABLE` or `PARTIALLY RECEIVED`, and, for an `INVOICE` approach, the invoice is authorised.
+`delete($taskId)` sends `advanced-purchase/stock?TaskID=…`; `void: true` voids the task, and
+`void: false` undoes a void; without `void` no `Void` is sent, and the reference defaults it to
+`false`. It is not available for a simple purchase.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
+
+$received = $this->cin7->advancedPurchase()->stock()->get($purchaseId)->dto(); // AdvancedPurchaseStocksData
+
+$saved = $this->cin7->advancedPurchase()->stock()->post(AdvancedPurchaseStockPostData::from([
+    'PurchaseID' => $purchaseId,
+    'Status' => 'AUTHORISED',
+    'Lines' => [['Date' => '2018-04-23T00:00:00', 'Quantity' => 6, 'SKU' => 'Bread']],
+]))->dto(); // AdvancedPurchaseStocksData
+$taskId = $saved->StockReceiving[0]->TaskID;
+
+$this->cin7->advancedPurchase()->stock()->delete($taskId, void: true); // DELETE advanced-purchase/stock?TaskID=…&Void=true
+```
+
 ## PUT identifiers
 
 A PUT body carries the identifier V2 documents for that resource. The caller
@@ -573,6 +611,7 @@ key:
 | `sale/invoice` | `SaleID` and `TaskID` |
 | `sale/payment` | `ID` |
 | `purchase/payment` | `TaskID` and `ID` |
+| `advanced-purchase/stock` | `PurchaseID` and `TaskID` |
 | `moneyOperation` | `TaskID` |
 
 ```php

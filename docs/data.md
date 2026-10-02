@@ -71,6 +71,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractPurchaseStockData` | `PurchaseStockData`, `PurchaseStockPostData` | `Status`, `Lines` |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
   | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData` | `Status` |
+  | `AbstractAdvancedPurchaseStockData` | `AdvancedPurchaseStockData`, `AdvancedPurchaseStockPostData`, `AdvancedPurchaseStockPutData` | `Status`, `Lines` |
   | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`, `PurchaseOrderLineData`; shaped to serve the other purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`, `PurchaseAdditionalChargeData`; shaped to serve the purchase invoice charge model too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` | none |
@@ -216,6 +217,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
 | `purchase/manualJournal` | POST: `PurchaseManualJournalPostData` (Available field for Purchase Manual Journal, with `Lines`: `PurchaseManualJournalLineData`) | GET, POST: `PurchaseManualJournalData` |
 | `purchase/attachment` | POST: `PurchaseAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `PurchaseAttachmentsData` (`{TaskID, Lines}`, with `Lines`: `AttachmentLineData`) |
+| `advanced-purchase/stock` | POST: `AdvancedPurchaseStockPostData`; PUT: `AdvancedPurchaseStockPutData`, which also requires `TaskID` (Available Fields for Purchase Stock Received, with `Lines`: `AdvancedPurchaseStockLineData`, Advanced Purchase Stock Line Model) | GET, POST, PUT, DELETE: `AdvancedPurchaseStocksData` (`{PurchaseID, StockReceiving}`, with `StockReceiving`: `AdvancedPurchaseStockData`, Advanced Purchase Stock Model) |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
 `SaleData` nests one class per model, each in the folder of the sale path it belongs to:
@@ -437,6 +439,25 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   line models, so they keep a parent per family. The POST example sends `IsSystem`, so
   `PurchaseManualJournalLineData` models it and `PostPurchaseManualJournal` leaves it out of the
   body. The reference marks the endpoint deprecated (simple purchases only).
+- **Advanced purchase stock received.** The Available Fields for Purchase Stock Received table of
+  `advanced-purchase/stock` is the body of its POST and PUT, `{PurchaseID, TaskID, Status, Lines}`,
+  and adds `PurchaseID` to the Advanced Purchase Stock Model; the two share a name, so
+  `AdvancedPurchaseStockData` is both, with `PurchaseID` optional and `TaskID` required, as the
+  model requires it. Every action answers with `{PurchaseID, StockReceiving}`, which only the
+  examples show: it is `AdvancedPurchaseStocksData`, a keyed envelope named in the plural, with
+  `StockReceiving` optional. The table and the model limit `Status` to `DRAFT` and `AUTHORISED` on
+  a write (the model says POST, the table POST and PUT), so both body classes carry
+  `#[In(TaskStatus::Draft, TaskStatus::Authorised)]`; the model's `Length` of 50 for `Status` does
+  not apply to the `TaskStatus` enum.
+- **Advanced purchase stock `TaskID` on PUT.** The table marks `TaskID` optional for every verb. A
+  POST without it, or with the empty GUID, creates a new stock receiving task, so
+  `AdvancedPurchaseStockPostData` leaves it optional; a PUT overwrites the task it names, so
+  `AdvancedPurchaseStockPutData` requires it, as every PUT body requires its identifier.
+- **Advanced purchase stock lines.** The Advanced Purchase Stock Line Model marks `ProductID` and
+  `SKU` `Yes*` with no condition, so `AdvancedPurchaseStockLineData` leaves both optional.
+  `Name` and `Received` are read-only, but the POST and PUT examples send them, so the class models
+  them and the write requests leave them out of the body. `Quantity`'s "minimal value is 1" is not
+  checked, as no other quantity is.
 - **Auto-generated numbers.** The invoice and credit note POST tables have no `InvoiceNumber`
   or `CreditNoteNumber` (Cin7 generates them), so the POST classes leave them out.
 - **Fulfilment pick and pack.** The Sale Fulfilment Pick and Pack tables, `sale/fulfilment/pick`
@@ -722,3 +743,20 @@ POST class because only POST requires `TaskID` and limits `Status` (see
 
 `PurchaseManualJournalLineData` is the advanced purchase's journal line too. Its `IsSystem` marks a
 line Cin7 posted, which cannot be changed or deleted, and is never sent.
+
+`advanced-purchase/stock` follows the Available Fields for Purchase Stock Received table and the
+Advanced Purchase Stock Model, with a class per verb because `PurchaseID`, `TaskID` and the
+`Status` values are taken differently (see
+[above](#where-the-references-tables-and-examples-disagree)). Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `AdvancedPurchaseStocksData` (response) | `src/Data/AdvancedPurchase/Stock/` | `PurchaseID` |
+| `AdvancedPurchaseStockData` | `src/Data/AdvancedPurchase/Stock/` | `Status`, `Lines`, `TaskID` |
+| `AdvancedPurchaseStockPostData` | `src/Data/AdvancedPurchase/Stock/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID` |
+| `AdvancedPurchaseStockPutData` | `src/Data/AdvancedPurchase/Stock/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID`, `TaskID` |
+| `AdvancedPurchaseStockLineData` | `src/Data/AdvancedPurchase/Stock/` | `Date`, `Quantity` |
+
+A required `Lines` may be empty: a POST with `Status` `AUTHORISED` and empty `Lines` authorises
+the task. The reference's examples need no correction; the fixtures are the six of them,
+unchanged.

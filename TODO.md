@@ -19,7 +19,7 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations, 10 left)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 9 left)
 
 - [x] `purchase-list` · `purchaseList` · GET
   - [x] Purchase List: `PurchaseListData`
@@ -50,8 +50,8 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [x] product fields: `trait HasProductFields`
   - [ ] Purchase POST/PUT body: `AdvancedPurchasePostData`
   - [ ] Purchase POST/PUT body: `AdvancedPurchasePutData`
-- [ ] `advanced-purchase-stock-received` · `advanced-purchase/stock` · GET POST PUT DELETE
-  - [ ] AdvancedPurchaseStock: `AdvancedPurchaseStockData`
+- [x] `advanced-purchase-stock-received` · `advanced-purchase/stock` · GET POST PUT DELETE
+  - [x] AdvancedPurchaseStock: `AdvancedPurchaseStockData`
 - [ ] `advanced-purchase-put-away` · `advanced-purchase/put-away` · GET POST
   - [ ] AdvancedPurchasePutAway: `AdvancedPurchasePutAwayData`
 - [ ] `advanced-purchase-invoice` · `advanced-purchase/invoice` · GET POST DELETE
@@ -91,8 +91,8 @@ Each is built with the first resource here that uses it; a ticked one is built, 
 - [ ] PurchaseInvoiceLineModel: `PurchaseInvoiceLineData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
 - [ ] PurchaseInvoiceAdditionalChargeModel: `PurchaseInvoiceAdditionalChargeData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
 - [ ] PurchasePaymentLineModel: `PurchasePaymentLineData` · used by purchase, advanced-purchase
-- [ ] AdvancedPurchaseStockModel: `AdvancedPurchaseStockData` · used by purchase, advanced-purchase
-- [ ] AdvancedPurchaseStockLineModel: `AdvancedPurchaseStockLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-stock-received
+- [x] AdvancedPurchaseStockModel: `AdvancedPurchaseStockData` · used by purchase, advanced-purchase
+- [x] AdvancedPurchaseStockLineModel: `AdvancedPurchaseStockLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-stock-received
 - [ ] AdvancedPurchasePutAwayModel: `AdvancedPurchasePutAwayData` · used by purchase, advanced-purchase
 - [ ] AdvancedPurchasePutAwayLineModel: `AdvancedPurchasePutAwayLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-put-away
 - [ ] AdvancedPurchaseInvoiceModel: `AdvancedPurchaseInvoiceData` · used by purchase, advanced-purchase

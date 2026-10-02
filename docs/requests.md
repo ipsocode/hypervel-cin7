@@ -116,6 +116,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetPurchaseManualJournal` | **`taskId`** |
 | `GetPurchaseAttachment` | **`taskId`** |
 | `DeletePurchaseAttachment` | **`id`** |
+| `GetAdvancedPurchaseStock` | **`purchaseId`** |
+| `DeleteAdvancedPurchaseStock` | **`taskId`**, `void` |
 
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
@@ -227,6 +229,17 @@ The manual journal's POST body is `PurchaseManualJournalPostData`, which require
 The attachment's POST body is `PurchaseAttachmentPostData`, which names the purchase as
 `PurchaseID`, though the response keys it `TaskID`.
 
+The `advanced-purchase/…` documents live under `src/Requests/AdvancedPurchase/`, one folder per
+path:
+
+| Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
+|---|---|---|
+| `Stock/` | `GetAdvancedPurchaseStock` (`PurchaseID`), `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock`, `DeleteAdvancedPurchaseStock` (`TaskID`, with `Void`) | `AdvancedPurchaseStocksData`, the `{PurchaseID, StockReceiving}` envelope |
+
+The stock received's write bodies are `AdvancedPurchaseStockPostData` and
+`AdvancedPurchaseStockPutData`, the PUT one carrying the task's `TaskID` as well as the
+`PurchaseID`.
+
 ## Wire protocol
 
 These are the requests Cin7 receives.
@@ -284,6 +297,7 @@ data object's body is also stripped of nulls and validated after the omission; s
 | `PostPurchasePayment` | `ID` (PUT only), `DateCreated` |
 | `PutPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
 | `PostPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
+| `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
 
 ## Page defaults
 
