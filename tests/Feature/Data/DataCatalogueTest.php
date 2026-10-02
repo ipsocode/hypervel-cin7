@@ -123,7 +123,7 @@ class DataCatalogueTest extends TestCase
             PutCustomer::class => [PutCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
             GetProduct::class => [GetProduct::class, [], Cin7Payloads::productExample(), ProductData::class, 'Products'],
             PostProduct::class => [PostProduct::class, [[]], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
-            PutProduct::class => [PutProduct::class, [[]], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
+            PutProduct::class => [PutProduct::class, [['ID' => 'guid-1']], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
             GetTax::class => [GetTax::class, [], Cin7Payloads::taxList(), TaxData::class, 'TaxRuleList'],
             PostTax::class => [PostTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
             PutTax::class => [PutTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],

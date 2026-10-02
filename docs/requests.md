@@ -45,7 +45,8 @@ never constructed directly by application code; go through the
 
 The `product` actions follow the same shape: `GetProduct` (a `ListRequest`
 keyed `Products`), `PostProduct` and `PutProduct` (`WriteRequest`s; the PUT body
-carries `ID`), all on `product`. The `customer` and `product` list requests' `dto()` is a
+must carry `ID`, and `PutProduct` throws an `InvalidArgumentException` without one, while
+`PostProduct` leaves `ID` out of its body because Cin7 ignores it on POST), all on `product`. The `customer` and `product` list requests' `dto()` is a
 `list<CustomerData>` or `list<ProductData>`, and their POST and PUT `dto()` is the saved
 record (`CustomerList.0`, `Products.0`).
 
