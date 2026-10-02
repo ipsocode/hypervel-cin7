@@ -120,6 +120,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `DeletePurchaseAttachment` | **`id`** |
 | `GetAdvancedPurchaseStock` | **`purchaseId`** |
 | `DeleteAdvancedPurchaseStock` | **`taskId`**, `void` |
+| `GetAdvancedPurchaseManualJournal` | **`purchaseId`** |
 
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
@@ -239,10 +240,14 @@ path:
 | Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
 |---|---|---|
 | `Stock/` | `GetAdvancedPurchaseStock` (`PurchaseID`), `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock`, `DeleteAdvancedPurchaseStock` (`TaskID`, with `Void`) | `AdvancedPurchaseStocksData`, the `{PurchaseID, StockReceiving}` envelope |
+| `ManualJournal/` | `GetAdvancedPurchaseManualJournal` (`PurchaseID`), `PostAdvancedPurchaseManualJournal` | `AdvancedPurchaseManualJournalsData`, the `{PurchaseID, ManualJournals}` envelope |
 
 The stock received's write bodies are `AdvancedPurchaseStockPostData` and
 `AdvancedPurchaseStockPutData`, the PUT one carrying the task's `TaskID` as well as the
 `PurchaseID`.
+
+The manual journals' POST body is `AdvancedPurchasePartialManualJournalPostData`, which carries
+the purchase's `PurchaseID` and the journal's `TaskID`.
 
 The invoice's write body is `PurchaseInvoicePostData`, which carries the purchase's `TaskID`.
 
@@ -307,6 +312,7 @@ data object's body is also stripped of nulls and validated after the omission; s
 | `PostPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
 | `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
 | `PostPurchaseCreditNote` | `Unstock.*.ProductID`, `Unstock.*.SKU`, `Unstock.*.Name`, `Unstock.*.Location`, `Unstock.*.BatchSN`, `Unstock.*.ExpiryDate` |
+| `PostAdvancedPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
 
 ## Page defaults
 

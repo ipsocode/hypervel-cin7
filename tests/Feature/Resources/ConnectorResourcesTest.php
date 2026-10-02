@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
+use Ipsocode\Cin7\Resources\AdvancedPurchase\ManualJournalResource as AdvancedPurchaseManualJournalResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource as AdvancedPurchaseStockResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
@@ -177,6 +178,8 @@ class ConnectorResourcesTest extends TestCase
 
         $this->assertInstanceOf(AdvancedPurchaseStockResource::class, $advancedPurchase->stock());
         $this->assertNotSame($advancedPurchase->stock(), $advancedPurchase->stock());
+        $this->assertInstanceOf(AdvancedPurchaseManualJournalResource::class, $advancedPurchase->manualJournal());
+        $this->assertNotSame($advancedPurchase->manualJournal(), $advancedPurchase->manualJournal());
     }
 
     public function testSupplierReturnsAFreshSupplierResource(): void

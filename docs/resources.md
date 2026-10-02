@@ -79,8 +79,9 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
-| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()` |
+| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `manualJournal()` |
 | `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
+| `$cin7->advancedPurchase()->manualJournal()` | `AdvancedPurchase\ManualJournalResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePartialManualJournalPostData $body)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -638,6 +639,28 @@ $saved = $this->cin7->advancedPurchase()->stock()->post(AdvancedPurchaseStockPos
 $taskId = $saved->StockReceiving[0]->TaskID;
 
 $this->cin7->advancedPurchase()->stock()->delete($taskId, void: true); // DELETE advanced-purchase/stock?TaskID=…&Void=true
+```
+
+`$cin7->advancedPurchase()->manualJournal()` is `advanced-purchase/manualJournal`, an advanced
+purchase's manual journals, each keyed by the `TaskID` of its purchase invoice task. Both methods
+answer with the `{PurchaseID, ManualJournals}` envelope, so the `dto()` is an
+`AdvancedPurchaseManualJournalsData`, whose `ManualJournals` are
+`AdvancedPurchasePartialManualJournalData`. `get($purchaseId)` sends
+`advanced-purchase/manualJournal?PurchaseID=…`. `post()` takes an
+`AdvancedPurchasePartialManualJournalPostData` as well as an array; it needs the `PurchaseID`, the
+journal's `TaskID` and a `Status` of `DRAFT` or `AUTHORISED`, and can be sent even when the journal
+is authorised. A line's `IsSystem` is read-only and never sent: a line Cin7 posted (`IsSystem`
+`true`) cannot be changed or deleted.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
+
+$journals = $this->cin7->advancedPurchase()->manualJournal()->post(AdvancedPurchasePartialManualJournalPostData::from([
+    'PurchaseID' => $purchaseId,
+    'TaskID' => $taskId,
+    'Status' => 'DRAFT',
+    'Lines' => [['Reference' => 'Freight', 'Amount' => 20.0, 'Date' => '2018-04-23T00:00:00', 'Debit' => '715', 'Credit' => '860']],
+]))->dto(); // AdvancedPurchaseManualJournalsData
 ```
 
 ## PUT identifiers

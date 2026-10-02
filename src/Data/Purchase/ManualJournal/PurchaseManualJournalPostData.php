@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Data\Purchase\ManualJournal;
 
 use Hypervel\Data\Attributes\Validation\In;
 use Hypervel\Data\Attributes\Validation\Uuid;
+use Ipsocode\Cin7\Data\AbstractPurchaseManualJournalData;
 use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
