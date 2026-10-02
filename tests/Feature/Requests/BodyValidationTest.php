@@ -12,6 +12,7 @@ use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
 use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
@@ -31,6 +32,7 @@ use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
 use Ipsocode\Cin7\Requests\Purchase\ManualJournal\PostPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\Purchase\Order\PostPurchaseOrder;
 use Ipsocode\Cin7\Requests\Purchase\Stock\PostPurchaseStock;
@@ -216,6 +218,23 @@ class BodyValidationTest extends TestCase
         }
 
         $this->connector()->send(new PostSaleAttachment(SaleAttachmentPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'])));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A purchase attachment, too, is sent as base64 `Content` or a `FileDownloadUrl`.
+     */
+    public function testAPurchaseAttachmentNeedsItsContentOrADownloadUrl(): void
+    {
+        try {
+            $this->connector()->send(new PostPurchaseAttachment(PurchaseAttachmentPostData::from(['PurchaseID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'FileName' => 'Test'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Content'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostPurchaseAttachment(PurchaseAttachmentPostData::from(['PurchaseID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'])));
 
         $this->mock->assertSentCount(1);
     }
