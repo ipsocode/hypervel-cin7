@@ -1,0 +1,12 @@
+{
+    "TaskID": "107e8ba9-418c-4233-bf80-369036867144",
+    "EffectiveDate": "2017-12-01T00:00:00",
+    "StocktakeNumber": "ST-00024",
+    "Status": "VOIDED",
+    "Account": "403",
+    "Reference": "",
+    "Comment": "Test Comment",
+    "ExistingStockLines": [],
+    "NewStockLines": [],
+    "Transactions": []
+}

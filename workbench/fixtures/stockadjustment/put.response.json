@@ -1,0 +1,50 @@
+{
+    "TaskID": "107e8ba9-418c-4233-bf80-369036867144",
+    "EffectiveDate": "2017-12-01T00:00:00",
+    "StocktakeNumber": "ST-00024",
+    "Status": "COMPLETED",
+    "Account": "403",
+    "Reference": "",
+    "Comment": "Test Comment",
+    "ExistingStockLines": [
+        {
+            "ProductID": "1845a9cd-e523-4a69-993b-d35f5ec31fb8",
+            "SKU": "AF308",
+            "ProductName": "AF308 Ombré Tide Pool to Navy",
+            "QuantityOnHand": 601,
+            "Available": 601,
+            "Adjustment": 600,
+            "LocationID": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+            "Location": "Main Warehouse",
+            "BatchSN": null,
+            "ExpiryDate": null,
+            "Comments": "",
+            "ProductLength": 4,
+            "ProductWidth": 4,
+            "ProductHeight": 0.75,
+            "ProductWeight": 2.128,
+            "WeightUnits": "",
+            "DimensionsUnits": "",
+            "ProductCustomField1": null,
+            "ProductCustomField2": null,
+            "ProductCustomField3": null,
+            "ProductCustomField4": null,
+            "ProductCustomField5": null,
+            "ProductCustomField6": null,
+            "ProductCustomField7": null,
+            "ProductCustomField8": null,
+            "ProductCustomField9": null,
+            "ProductCustomField10": null
+        }
+    ],
+    "NewStockLines": [],
+    "Transactions": [
+        {
+            "ID": "983e8bc3-b5d4-47ce-88df-fb0ebed6630b",
+            "Debit": "715: Inventory",
+            "Credit": "403: Cost Of Goods Sold",
+            "Amount": -1,
+            "EffectiveDate": "2017-12-01T00:00:00"
+        }
+    ]
+}

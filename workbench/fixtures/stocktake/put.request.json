@@ -1,0 +1,51 @@
+{
+    "TaskID": "328c0f87-d87f-4f87-b503-251e820f4b3c",
+    "EffectiveDate": "2018-04-27T00:00:00",
+    "Status": "COMPLETED",
+    "Account": "403",
+    "LocationID": "9558f49c-ba8c-484a-8a14-5e83048cce90",
+    "Location": "Main Warehouse",
+    "UseRelativeQuantity": true,
+    "Tags": [
+        "bread",
+        "AutoCost",
+        "beaded"
+    ],
+    "PickZones": [],
+    "StockLocators": [],
+    "Categories": [
+        {
+            "ID": "ae180bfb-802f-4d5a-9a04-af3aebfc3d4a",
+            "Name": "Other"
+        }
+    ],
+    "Brands": [],
+    "Bins": [],
+    "Reference": null,
+    "NonZeroStockOnHandProducts": [
+        {
+            "ProductID": "3bfdf57a-bbc7-4f09-ba28-9768a09e0a60",
+            "SKU": "Bread",
+            "Adjustment": 500,
+            "LocationID": "9558f49c-ba8c-484a-8a14-5e83048cce90",
+            "Location": "Main Warehouse",
+            "BatchSN": null,
+            "ExpiryDate": null
+        }
+    ],
+    "ZeroStockOnHandProducts": [
+        {
+            "ProductID": "e52e36d5-8aa5-4868-9226-106c617e1e32",
+            "SKU": "GB1-White",
+            "ProductName": "Golf balls - white single",
+            "Quantity": 15,
+            "UnitCost": 5,
+            "LocationID": "9558f49c-ba8c-484a-8a14-5e83048cce90",
+            "Location": "Main Warehouse",
+            "BatchSN": null,
+            "ExpiryDate": null,
+            "ReceivedDate": "2017-12-01T00:00:00",
+            "Comments": ""
+        }
+    ]
+}
