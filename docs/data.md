@@ -26,7 +26,26 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   paths use lives in `src/Data/` itself.
 - **One class per model name.** Where the reference documents one name twice with
   different fields, the class carries the union. A request body gets its own class
-  only where the reference documents one.
+  only where the reference documents one, or where the verbs need different fields.
+- **Models that share fields extend an abstract parent.** The shared fields are declared
+  once, as properties, in an `Abstract…Data` class, and each model is a final child that
+  adds its own; a field one model requires stays in that model's constructor, since PHP
+  does not let a child make an inherited field required. A field declared in a parent is
+  set through `from()`, like any other.
+
+  | Parent | Models |
+  |---|---|
+  | `AbstractSaleData` | `SaleData`, `SalePostPutData` |
+  | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` |
+  | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` |
+  | `AbstractSaleLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData` |
+  | `AbstractSaleChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData` |
+  | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` |
+  | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData` |
+
+  Two field sets several unrelated models carry are traits in `src/Data/Concerns/`:
+  `HasProductFields` (the product fields of every line with a `ProductID`) and
+  `HasAdditionalAttributes` (`AdditionalAttribute1` to `10`).
 - **Property names are the wire keys, verbatim** (`ID`, `TaxRuleList`), with no name
   mapper, so `toArray()` is the JSON Cin7 expects.
 - **A field the reference requires has no default.** It is not nullable, and the model
@@ -157,8 +176,8 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   and `float`, following the tables.
 - **Product fields on lines.** "All objects that contain `ProductID` also contain additional
   fields": `ProductLength`, `ProductWidth`, `ProductHeight`, `ProductWeight`, `WeightUnits`,
-  `DimensionsUnits` and `ProductCustomField1`–`10`. Every class with a `ProductID` models
-  them, and the custom fields admit `null`, as the examples send.
+  `DimensionsUnits` and `ProductCustomField1`–`10`. The sale line, pick and pack line and
+  inventory movement classes take them from the `HasProductFields` trait.
 - **Nulls.** `ExternalID`, `SourceChannel`, `Ship.RequireBy` and the invoice, due and ship
   dates and numbers of a Sale List row are `null` in the examples, so those properties admit
   `null`.
@@ -173,8 +192,8 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Money Task nulls.** `SupplierID`, `CustomerID` and `Note` are `null` in the examples, so
   those properties admit `null`.
 - **Customer `AdditionalAttribute#`.** The table lists one row, "# - int(1-10)". On the wire
-  these are ten keys, and `CustomerData` (like `ProductData`) has a property for each of
-  `AdditionalAttribute1` to `AdditionalAttribute10`.
+  these are ten keys, `AdditionalAttribute1` to `AdditionalAttribute10`, which `CustomerData`,
+  `ProductData` and `AdditionalAttributeData` take from the `HasAdditionalAttributes` trait.
 - **Customer `TaxNumber`.** The table types it `Int`, but every example has `""` or `null`, so
   it is a nullable string. `Discount` and `CreditLimit` are `float`, since a decimal is
   harmless where an integer is documented.

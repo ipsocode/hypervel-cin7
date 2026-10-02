@@ -20,10 +20,17 @@ use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Sale\AbstractAddressData;
+use Ipsocode\Cin7\Data\Sale\AbstractSaleChargeData;
+use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
+use Ipsocode\Cin7\Data\Sale\AbstractSaleLineData;
+use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePartialData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePaymentData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
+use Ipsocode\Cin7\Data\Sale\Invoice\AbstractSaleInvoiceData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePartialData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
@@ -73,6 +80,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use ReflectionProperty;
 use SplFileInfo;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -367,14 +375,34 @@ class DataCatalogueTest extends TestCase
         }
     }
 
-    public function testEveryDataClassIsFinalAndExtendsData(): void
+    /**
+     * Every model is a final class; an abstract class holds only the fields several models share
+     * (the `Abstract…Data` classes): a model is a final child that adds its own fields.
+     */
+    public function testEveryDataClassIsFinalOrAnAbstractParentAndExtendsData(): void
     {
+        $parents = [];
+
         foreach (self::dataClasses() as $class) {
             $reflection = new ReflectionClass($class);
 
-            $this->assertTrue($reflection->isFinal(), $class);
+            $this->assertTrue($reflection->isFinal() || $reflection->isAbstract(), $class);
             $this->assertTrue($reflection->isSubclassOf(Data::class), $class);
+
+            if ($reflection->isAbstract()) {
+                $parents[] = $class;
+            }
         }
+
+        $this->assertSame([
+            AbstractAddressData::class,
+            AbstractSaleChargeData::class,
+            AbstractSaleData::class,
+            AbstractSaleLineData::class,
+            AbstractSalePaymentLineData::class,
+            AbstractSaleCreditNoteData::class,
+            AbstractSaleInvoiceData::class,
+        ], $parents);
     }
 
     /**
@@ -385,24 +413,36 @@ class DataCatalogueTest extends TestCase
     public function testOnlyTheRequiredFieldsHaveNoDefault(): void
     {
         foreach (self::dataClasses() as $class) {
+            $reflection = new ReflectionClass($class);
+
+            if ($reflection->isAbstract()) {
+                continue;
+            }
+
             $required = self::REQUIRED[$class] ?? [];
             $parameters = [];
 
-            foreach (new ReflectionClass($class)->getConstructor()->getParameters() as $parameter) {
-                $name = $class . '::$' . $parameter->getName();
-                $parameters[] = $parameter->getName();
+            foreach ($reflection->getConstructor()?->getParameters() ?? [] as $parameter) {
+                $parameters[$parameter->getName()] = $parameter;
+            }
 
-                if (in_array($parameter->getName(), $required, true)) {
-                    $this->assertFalse($parameter->allowsNull(), $name);
-                    $this->assertFalse($parameter->isDefaultValueAvailable(), $name);
+            // Inherited and trait fields are properties with a default, not constructor parameters.
+            foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+                $name = $class . '::$' . $property->getName();
+                $parameter = $parameters[$property->getName()] ?? null;
+                $hasDefault = $parameter?->isDefaultValueAvailable() ?? $property->hasDefaultValue();
+
+                if (in_array($property->getName(), $required, true)) {
+                    $this->assertFalse($property->getType()->allowsNull(), $name);
+                    $this->assertFalse($hasDefault, $name);
                 } else {
-                    $this->assertTrue($parameter->allowsNull(), $name);
-                    $this->assertTrue($parameter->isDefaultValueAvailable(), $name);
-                    $this->assertNull($parameter->getDefaultValue(), $name);
+                    $this->assertTrue($property->getType()->allowsNull(), $name);
+                    $this->assertTrue($hasDefault, $name);
+                    $this->assertNull($parameter?->getDefaultValue() ?? $property->getDefaultValue(), $name);
                 }
             }
 
-            $this->assertSame($required, array_slice($parameters, 0, count($required)), $class);
+            $this->assertSame($required, array_slice(array_keys($parameters), 0, count($required)), $class);
         }
     }
 
@@ -441,7 +481,8 @@ class DataCatalogueTest extends TestCase
     }
 
     /**
-     * Every class under `src/Data/` but its validation attributes in `Attributes/`.
+     * Every class under `src/Data/` but its validation attributes in `Attributes/` and its traits
+     * in `Concerns/`.
      *
      * @return list<class-string<Data>>
      */
@@ -454,7 +495,7 @@ class DataCatalogueTest extends TestCase
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root)) as $file) {
             $relative = str_replace($root . '/', '', $file->getPathname());
 
-            if ($file->getExtension() !== 'php' || str_starts_with($relative, 'Attributes/')) {
+            if ($file->getExtension() !== 'php' || str_starts_with($relative, 'Attributes/') || str_starts_with($relative, 'Concerns/')) {
                 continue;
             }
 

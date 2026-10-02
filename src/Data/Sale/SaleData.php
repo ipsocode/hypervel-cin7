@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
-use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
@@ -15,7 +14,7 @@ use Ipsocode\Cin7\Data\AttachmentLineData;
  *
  * @see docs/data.md
  */
-final class SaleData extends Data implements WithResponse
+final class SaleData extends AbstractSaleData implements WithResponse
 {
     use HasResponse;
 
@@ -28,29 +27,9 @@ final class SaleData extends Data implements WithResponse
      * @param null|list<SaleTransactionLineData> $Transactions
      */
     public function __construct(
-        public ?string $ID = null,
-        public ?string $Customer = null,
-        public ?string $CustomerID = null,
-        public ?string $Contact = null,
-        public ?string $Phone = null,
-        public ?string $Email = null,
-        public ?string $DefaultAccount = null,
-        public ?bool $SkipQuote = null,
-        public ?AddressData $BillingAddress = null,
-        public ?SaleShippingAddressData $ShippingAddress = null,
-        public ?string $ShippingNotes = null,
         public ?string $BaseCurrency = null,
         public ?string $CustomerCurrency = null,
-        public ?string $TaxRule = null,
         public ?string $TaxCalculation = null,
-        public ?string $Terms = null,
-        public ?string $PriceTier = null,
-        public ?string $ShipBy = null,
-        public ?string $Location = null,
-        public ?string $SaleOrderDate = null,
-        public ?string $LastModifiedOn = null,
-        public ?string $Note = null,
-        public ?string $CustomerReference = null,
         public ?float $COGSAmount = null,
         public ?string $Status = null,
         public ?string $CombinedPickingStatus = null,
@@ -60,12 +39,8 @@ final class SaleData extends Data implements WithResponse
         public ?string $CombinedInvoiceStatus = null,
         public ?string $CombinedPaymentStatus = null,
         public ?string $CombinedTrackingNumbers = null,
-        public ?string $Carrier = null,
-        public ?float $CurrencyRate = null,
-        public ?string $SalesRepresentative = null,
         public ?string $Type = null,
         public ?string $SourceChannel = null,
-        public ?string $ExternalID = null,
         public ?bool $ServiceOnly = null,
         public ?SaleQuoteData $Quote = null,
         public ?SaleOrderData $Order = null,
@@ -76,7 +51,6 @@ final class SaleData extends Data implements WithResponse
         #[DataCollectionOf(SaleCreditNoteData::class)]
         public ?array $CreditNotes = null,
         public ?SaleManualJournalData $ManualJournals = null,
-        public ?AdditionalAttributeData $AdditionalAttributes = null,
         #[DataCollectionOf(AttachmentLineData::class)]
         public ?array $Attachments = null,
         #[DataCollectionOf(InventoryMovementLineData::class)]

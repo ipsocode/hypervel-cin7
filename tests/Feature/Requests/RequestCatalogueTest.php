@@ -450,7 +450,7 @@ class RequestCatalogueTest extends TestCase
                 Method::POST,
                 '/ExternalApi/v2/customer',
                 [],
-                ['Name' => 'ACME', 'AdditionalAttribute10' => 'x', 'Addresses' => [['Line1' => '1 High St', 'Country' => 'UK', 'Type' => 'Billing']]],
+                ['Name' => 'ACME', 'Addresses' => [['Line1' => '1 High St', 'Country' => 'UK', 'Type' => 'Billing']], 'AdditionalAttribute10' => 'x'],
             ],
             PutCustomer::class . ' with data' => [
                 PutCustomer::class,
