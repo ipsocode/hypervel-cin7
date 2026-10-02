@@ -1,0 +1,26 @@
+{
+    "Total": 5,
+    "Page": 1,
+    "CategoryList": [
+        {
+            "ID": "c783373b-67b1-496f-96d9-4b3ed76cb391",
+            "Name": "Angry and reactive"
+        },
+        {
+            "ID": "1f1c7865-0058-450c-8c6a-44180b8a9705",
+            "Name": "Apparel"
+        },
+        {
+            "ID": "a4d910fe-c961-4499-a93c-98134a12113d",
+            "Name": "ART"
+        },
+        {
+            "ID": "4ad69777-cf5b-4515-9d87-31953566c655",
+            "Name": "Art Study"
+        },
+        {
+            "ID": "4f6f9821-99c0-4827-964c-cdd1208273e5",
+            "Name": "Audiobooks"
+        }
+    ]
+}
