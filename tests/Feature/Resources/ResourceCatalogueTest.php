@@ -9,6 +9,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
@@ -18,6 +19,10 @@ use Ipsocode\Cin7\Data\Sale\SalePostPutData;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
+use Ipsocode\Cin7\Requests\MoneyOperation\DeleteMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\GetMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
@@ -207,6 +212,62 @@ class ResourceCatalogueTest extends TestCase
                 '/ExternalApi/v2/ref/customer/credits',
                 ['page' => 1, 'limit' => 100],
                 null,
+            ],
+            'moneyOperation get' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->get('task-1'),
+                GetMoneyOperation::class,
+                Method::GET,
+                '/ExternalApi/v2/moneyOperation',
+                ['TaskID' => 'task-1'],
+                null,
+            ],
+            'moneyOperation post' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->post(['TaskType' => 'Receive Money']),
+                PostMoneyOperation::class,
+                Method::POST,
+                '/ExternalApi/v2/moneyOperation',
+                [],
+                ['TaskType' => 'Receive Money'],
+            ],
+            'moneyOperation put' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->put(['TaskID' => 'task-1', 'Status' => 'COMPLETED']),
+                PutMoneyOperation::class,
+                Method::PUT,
+                '/ExternalApi/v2/moneyOperation',
+                [],
+                ['TaskID' => 'task-1', 'Status' => 'COMPLETED'],
+            ],
+            'moneyOperation delete' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->delete('task-1'),
+                DeleteMoneyOperation::class,
+                Method::DELETE,
+                '/ExternalApi/v2/moneyOperation',
+                ['ID' => 'task-1', 'Void' => 'false'],
+                null,
+            ],
+            'moneyOperation delete with void' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->delete('task-1', void: true),
+                DeleteMoneyOperation::class,
+                Method::DELETE,
+                '/ExternalApi/v2/moneyOperation',
+                ['ID' => 'task-1', 'Void' => 'true'],
+                null,
+            ],
+            'moneyOperation post with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->post(MoneyTaskData::from(['TaskType' => 'Spend Money', 'Note' => null])),
+                PostMoneyOperation::class,
+                Method::POST,
+                '/ExternalApi/v2/moneyOperation',
+                [],
+                ['TaskType' => 'Spend Money', 'Note' => null],
+            ],
+            'moneyOperation put with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->put(MoneyTaskData::from(['TaskID' => 'task-1', 'Status' => 'VOIDED'])),
+                PutMoneyOperation::class,
+                Method::PUT,
+                '/ExternalApi/v2/moneyOperation',
+                [],
+                ['TaskID' => 'task-1', 'Status' => 'VOIDED'],
             ],
             'sale get' => [
                 fn (Cin7Connector $cin7): mixed => $cin7->sale()->get('guid-1', ['CombineAdditionalCharges' => true]),
