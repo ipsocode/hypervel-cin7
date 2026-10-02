@@ -18,6 +18,8 @@ use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\CustomPricesResource;
+use Ipsocode\Cin7\Resources\DisassemblyListResource;
+use Ipsocode\Cin7\Resources\DisassemblyResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -421,5 +423,21 @@ final class Cin7Connector extends Connector implements HasPagination
     public function inventoryWriteOff(): InventoryWriteOffResource
     {
         return new InventoryWriteOffResource($this);
+    }
+
+    /**
+     * The `disassemblyList` resource.
+     */
+    public function disassemblyList(): DisassemblyListResource
+    {
+        return new DisassemblyListResource($this);
+    }
+
+    /**
+     * The `disassembly` resource.
+     */
+    public function disassembly(): DisassemblyResource
+    {
+        return new DisassemblyResource($this);
     }
 }

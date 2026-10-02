@@ -1,0 +1,18 @@
+{
+    "Total": 9,
+    "Page": 1,
+    "Disassemblies": [
+        {
+            "TaskID": "122df91c-1ce5-46e2-86f7-52cc14e7964b",
+            "DisassemblyNumber": "FG-00018",
+            "ProductID": "524c20a3-a8ec-44f2-9685-311f1f7d1498",
+            "ProductCode": "Bread",
+            "ProductName": "Baked Bread",
+            "Quantity": 1,
+            "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Location": "Main Warehouse",
+            "Date": "2018-01-09T00:00:00",
+            "Status": "DRAFT"
+        }
+    ]
+}
