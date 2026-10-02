@@ -9,6 +9,12 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNoteData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
+use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
 
 /**
  * Sale, the response of `sale` GET, POST, PUT and DELETE.

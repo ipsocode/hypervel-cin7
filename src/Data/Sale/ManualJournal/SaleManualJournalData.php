@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Sale;
+namespace Ipsocode\Cin7\Data\Sale\ManualJournal;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;

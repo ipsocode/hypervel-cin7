@@ -9,9 +9,9 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Data\Attributes\DateTime;
-use Ipsocode\Cin7\Data\Sale\SaleFulfilmentPickPackLineData;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceAdditionalChargeData;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceLineData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentPickPackLineData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceAdditionalChargeData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceLineData;
 
 /**
  * The fields every sale credit note model shares: the Sale Credit Note Model a Sale embeds, the

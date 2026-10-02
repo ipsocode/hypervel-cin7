@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Sale;
+namespace Ipsocode\Cin7\Data\Sale\Quote;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Data;
+use Ipsocode\Cin7\Data\Sale\SaleAdditionalChargeData;
+use Ipsocode\Cin7\Data\Sale\SalePaymentLineData;
 
 /**
  * Sale Quote Model.

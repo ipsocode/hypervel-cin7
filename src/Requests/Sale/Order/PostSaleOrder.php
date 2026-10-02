@@ -6,7 +6,7 @@ namespace Ipsocode\Cin7\Requests\Sale\Order;
 
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
-use Ipsocode\Cin7\Data\Sale\SaleOrderData;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**

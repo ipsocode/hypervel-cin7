@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Hypervel\Saloon\Enums\Method;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Sale\SaleOrderData;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 use Workbench\App\Support\Cin7Payloads;

@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Sale;
+namespace Ipsocode\Cin7\Data\Sale\Fulfilment\Ship;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Date;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Data;
+use Ipsocode\Cin7\Data\Sale\SaleShippingAddressData;
 
 /**
  * Sale Fulfilment Ship Model.

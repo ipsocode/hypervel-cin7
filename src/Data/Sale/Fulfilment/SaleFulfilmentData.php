@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Sale;
+namespace Ipsocode\Cin7\Data\Sale\Fulfilment;
 
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
 
 /**
  * Sale Fulfilment Model.

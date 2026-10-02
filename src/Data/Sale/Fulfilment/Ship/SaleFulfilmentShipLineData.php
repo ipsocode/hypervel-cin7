@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Sale;
+namespace Ipsocode\Cin7\Data\Sale\Fulfilment\Ship;
 
 use Hypervel\Data\Attributes\Validation\Date;
 use Hypervel\Data\Attributes\Validation\Max;
