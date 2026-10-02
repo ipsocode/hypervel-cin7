@@ -130,6 +130,11 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetDisassembly` | **`taskId`** |
 | `DeleteDisassembly` | **`id`**, `void` |
 | `GetDisassemblyOrder` | **`taskId`** |
+| `GetFinishedGoodsList` | `page`, `limit`, `status` (`FinishedGoodsStatus`), `search`, `saleId` |
+| `GetFinishedGoods` | **`taskId`** |
+| `DeleteFinishedGoods` | **`id`**, `void` |
+| `GetFinishedGoodsOrder` | **`taskId`** |
+| `GetFinishedGoodsPick` | **`taskId`** |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
 | `DeleteJournal` | **`id`**, `void` |
 | `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
@@ -331,6 +336,15 @@ The `disassembly` actions live under `src/Requests/Disassembly/`: `GetDisassembl
 (body `DisassemblyOrderData`), whose `dto()` is a `DisassemblyOrderData`. `GetDisassemblyList`
 (`src/Requests/DisassemblyList/`) lists disassemblies under `Disassemblies`, filtered by `status` and
 `search`.
+The `finishedGoods` actions live under `src/Requests/FinishedGoods/`: `GetFinishedGoods` (keyed
+`TaskID`), `DeleteFinishedGoods` (keyed `ID`, with `Void`), and `PostFinishedGoods` and
+`PutFinishedGoods`, whose bodies are `FinishedGoodsPostData` and `FinishedGoodsPutData`; every
+one's `dto()` is a `FinishedGoodsData`. Its order and pick are `src/Requests/FinishedGoods/Order/` and
+`src/Requests/FinishedGoods/Pick/`: `GetFinishedGoodsOrder` and `GetFinishedGoodsPick` (keyed
+`TaskID`), and `PostFinishedGoodsOrder` and `PostFinishedGoodsPick` (bodies `FinishedGoodsOrderData` and
+`FinishedGoodsPickData`), whose `dto()` is the same class. `GetFinishedGoodsList`
+(`src/Requests/FinishedGoodsList/`) lists tasks under `FinishedGoods`, filtered by `status`,
+`search` and `saleId`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed

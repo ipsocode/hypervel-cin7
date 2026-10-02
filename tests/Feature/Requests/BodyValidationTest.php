@@ -21,6 +21,9 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Disassembly\DisassemblyPostData;
 use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderData;
+use Ipsocode\Cin7\Data\FinishedGoods\FinishedGoodsPostData;
+use Ipsocode\Cin7\Data\FinishedGoods\Order\FinishedGoodsOrderData;
+use Ipsocode\Cin7\Data\FinishedGoods\Pick\FinishedGoodsPickData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPostData;
 use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
@@ -63,6 +66,9 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Disassembly\Order\PostDisassemblyOrder;
 use Ipsocode\Cin7\Requests\Disassembly\PostDisassembly;
+use Ipsocode\Cin7\Requests\FinishedGoods\Order\PostFinishedGoodsOrder;
+use Ipsocode\Cin7\Requests\FinishedGoods\Pick\PostFinishedGoodsPick;
+use Ipsocode\Cin7\Requests\FinishedGoods\PostFinishedGoods;
 use Ipsocode\Cin7\Requests\InventoryWriteOff\PostInventoryWriteOff;
 use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
@@ -254,6 +260,9 @@ class BodyValidationTest extends TestCase
             'advanced purchase put away POST' => [fn (): WriteRequest => new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/put-away', 'post.request')))],
             'advanced purchase credit note POST' => [fn (): WriteRequest => new PostAdvancedPurchaseCreditNote(AdvancedPurchasePartialCreditNotePostData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/creditnote', 'post.request')))],
             'disassembly order POST' => [fn (): WriteRequest => new PostDisassemblyOrder(DisassemblyOrderData::from(['Status' => 'DRAFT'] + Cin7Payloads::load('disassembly/order', 'post.request')))],
+            'finished goods POST' => [fn (): WriteRequest => new PostFinishedGoods(FinishedGoodsPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('finishedGoods', 'post.request')))],
+            'finished goods order POST' => [fn (): WriteRequest => new PostFinishedGoodsOrder(FinishedGoodsOrderData::from(['Status' => 'COMPLETED'] + Cin7Payloads::load('finishedGoods/order', 'post.request')))],
+            'finished goods pick POST' => [fn (): WriteRequest => new PostFinishedGoodsPick(FinishedGoodsPickData::from(['Status' => 'DRAFT'] + Cin7Payloads::load('finishedGoods/pick', 'post.request')))],
         ];
     }
 
@@ -800,6 +809,58 @@ class BodyValidationTest extends TestCase
             $this->fail('The body should have failed validation.');
         } catch (ValidationException $exception) {
             $this->assertEqualsCanonicalizing(['OrderLines.0.ProductID', 'OrderLines.0.ProductCode', 'OrderServiceLines.0.ProductID', 'OrderServiceLines.0.Name'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * A finished goods task needs a product and a location, each by ID or by name, and, once it
+     * is authorised, the date its work in progress began; a body without them is not sent.
+     */
+    public function testAFinishedGoodsTaskNeedsItsProductItsLocationAndItsWipDate(): void
+    {
+        $body = ['Status' => 'DRAFT', 'WIPAccount' => '715', 'Account' => '715', 'Quantity' => 1, 'CompletionDate' => '2018-01-03T00:00:00'];
+        $names = ['ProductCode' => 'Bread', 'Location' => 'Main Warehouse'];
+
+        try {
+            $this->connector()->send(new PostFinishedGoods(FinishedGoodsPostData::from($body)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['ProductID', 'ProductCode', 'LocationID', 'Location'], array_keys($exception->errors()));
+        }
+
+        try {
+            $this->connector()->send(new PostFinishedGoods(FinishedGoodsPostData::from([...$body, ...$names, 'Status' => 'AUTHORISED'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['WIPDate'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostFinishedGoods(FinishedGoodsPostData::from([...$body, ...$names])));
+        $this->connector()->send(new PostFinishedGoods(FinishedGoodsPostData::from([...$body, ...$names, 'Status' => 'COMPLETED', 'WIPDate' => '2018-01-03T00:00:00'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * The lines of an order and of a pick each need a product, by ID or by code; a line with
+     * neither is not sent.
+     */
+    public function testAFinishedGoodsLineNeedsItsProduct(): void
+    {
+        try {
+            $this->connector()->send(new PostFinishedGoodsOrder(FinishedGoodsOrderData::from(['Status' => 'DRAFT', 'OrderLines' => [['Quantity' => 1]]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['OrderLines.0.ProductID', 'OrderLines.0.ProductCode'], array_keys($exception->errors()));
+        }
+
+        try {
+            $this->connector()->send(new PostFinishedGoodsPick(FinishedGoodsPickData::from(['CompletionDate' => '2019-02-16T00:00:00', 'PickLines' => [['Quantity' => 1]]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['PickLines.0.ProductID', 'PickLines.0.ProductCode'], array_keys($exception->errors()));
         }
 
         $this->mock->assertNothingSent();
