@@ -32,6 +32,7 @@ use Ipsocode\Cin7\Data\Purchase\PurchasePutData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
 use Ipsocode\Cin7\Data\Ref\Account\AccountPostData;
 use Ipsocode\Cin7\Data\Ref\Account\AccountPutData;
+use Ipsocode\Cin7\Data\Reference\Discount\ProductDiscountRulePutData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackPostData;
@@ -71,6 +72,7 @@ use Ipsocode\Cin7\Requests\Purchase\PutPurchase;
 use Ipsocode\Cin7\Requests\Purchase\Stock\PostPurchaseStock;
 use Ipsocode\Cin7\Requests\Ref\Account\PostAccount;
 use Ipsocode\Cin7\Requests\Ref\Account\PutAccount;
+use Ipsocode\Cin7\Requests\Reference\Discount\PutDiscount;
 use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PostSaleFulfilmentPack;
@@ -371,6 +373,26 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['LocationID' => 'ccb7d97b-a638-4b34-833e-4c348b81f40d']]])));
 
         $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A free shipping discount line needs the order value it applies above; a body without it is
+     * not sent.
+     */
+    public function testAFreeShippingDiscountLineNeedsItsOrderExceeds(): void
+    {
+        $rule = ['ID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Name' => 'Free'];
+
+        try {
+            $this->connector()->send(new PutDiscount(ProductDiscountRulePutData::from($rule + ['DiscountLines' => [['DiscountType' => 'FreeShipping']]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['DiscountLines.0.OrderExceeds'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PutDiscount(ProductDiscountRulePutData::from($rule + ['DiscountLines' => [['DiscountType' => 'FreeShipping', 'OrderExceeds' => 100]]])));
+
+        $this->mock->assertSentCount(1);
     }
 
     /**

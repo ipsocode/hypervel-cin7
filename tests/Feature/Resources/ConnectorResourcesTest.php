@@ -14,6 +14,7 @@ use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\CustomPricesResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -27,6 +28,7 @@ use Ipsocode\Cin7\Resources\Product\MarkupPricesResource;
 use Ipsocode\Cin7\Resources\ProductFamily\AttachmentsResource as ProductFamilyAttachmentsResource;
 use Ipsocode\Cin7\Resources\ProductFamilyResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\ProductSuppliersResource;
 use Ipsocode\Cin7\Resources\Purchase\AttachmentResource as PurchaseAttachmentResource;
 use Ipsocode\Cin7\Resources\Purchase\CreditNoteResource as PurchaseCreditNoteResource;
 use Ipsocode\Cin7\Resources\Purchase\InvoiceResource as PurchaseInvoiceResource;
@@ -52,6 +54,11 @@ use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource as RefSupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\Ref\UnitResource;
+use Ipsocode\Cin7\Resources\Reference\DealsResource;
+use Ipsocode\Cin7\Resources\Reference\DiscountResource;
+use Ipsocode\Cin7\Resources\Reference\ShipZonesEnabledResource;
+use Ipsocode\Cin7\Resources\Reference\ShipZonesResource;
+use Ipsocode\Cin7\Resources\ReferenceResource;
 use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\Sale\AttachmentResource;
 use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
@@ -284,6 +291,29 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(TransactionsResource::class, $connector->transactions());
         $this->assertNotSame($connector->journal(), $connector->journal());
         $this->assertNotSame($connector->transactions(), $connector->transactions());
+    }
+
+    public function testCustomPricesAndProductSuppliersReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(CustomPricesResource::class, $connector->customPrices());
+        $this->assertNotSame($connector->customPrices(), $connector->customPrices());
+        $this->assertInstanceOf(ProductSuppliersResource::class, $connector->productSuppliers());
+        $this->assertNotSame($connector->productSuppliers(), $connector->productSuppliers());
+    }
+
+    public function testReferenceReturnsItsBooks(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(ReferenceResource::class, $connector->reference());
+        $this->assertNotSame($connector->reference(), $connector->reference());
+        $this->assertInstanceOf(DealsResource::class, $connector->reference()->deals());
+        $this->assertInstanceOf(DiscountResource::class, $connector->reference()->discount());
+        $this->assertInstanceOf(ShipZonesResource::class, $connector->reference()->shipZones());
+        $this->assertInstanceOf(ShipZonesEnabledResource::class, $connector->reference()->shipZonesEnabled());
+        $this->assertNotSame($connector->reference()->shipZones(), $connector->reference()->shipZones());
     }
 
     public function testStockAdjustmentResourcesReturnFreshResources(): void

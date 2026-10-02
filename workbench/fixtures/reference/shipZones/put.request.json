@@ -1,0 +1,29 @@
+{
+    "ZoneID": "b25830a0-3db8-4ea2-a6c3-25efe6381649",
+    "Name": "Shipping Zone test v2",
+    "Conditions": [
+        {
+            "ZoneConditionID": "20c6ecc4-10c6-4170-b3f1-a2d3255ff1c3",
+            "MinValue": 7,
+            "MaxValue": 0,
+            "ShippingCost": 7,
+            "ConditionType": "Price",
+            "ConditionDescription": "Rule 1"
+        },
+        {
+            "ZoneConditionID": "5f948569-8917-4293-8eb7-7e428e3a6cee",
+            "MinValue": 8,
+            "MaxValue": 0,
+            "ShippingCost": 8,
+            "ConditionType": "Weight",
+            "ConditionDescription": "Rule v"
+        },
+        {
+            "MinValue": 1000,
+            "MaxValue": 0,
+            "ShippingCost": 100,
+            "ConditionType": "Weight",
+            "ConditionDescription": "Rule v"
+        }
+    ]
+}
