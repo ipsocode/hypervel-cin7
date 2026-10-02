@@ -69,6 +69,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->stockAdjustmentList()` | `StockAdjustmentListResource` | `get($page, $limit, ?CompletionStatus $status)`, `paginate($limit, ?CompletionStatus $status): Cin7Paginator` |
 | `$cin7->stockAdjustment()` | `StockAdjustmentResource` | `get(string $taskId)`, `post(array\|StockAdjustmentPostData $body)`, `put(array\|StockAdjustmentPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->stockTakeList()` | `StockTakeListResource` | `get($page, $limit, ?StockTakeStatus $status)`, `paginate($limit, ?StockTakeStatus $status): Cin7Paginator` |
+| `$cin7->stockTake()` | `StockTakeResource` | `get(string $taskId)`, `post(array\|StockTakePostData $body)`, `put(array\|StockTakePutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
@@ -1129,4 +1131,26 @@ $adjustment = $this->cin7->stockAdjustment()->post(StockAdjustmentPostData::from
     'Status' => 'DRAFT',
     'Lines' => [['SKU' => 'AF308', 'Quantity' => 600, 'UnitCost' => 1, 'Location' => 'Main Warehouse']],
 ]))->dto(); // StockAdjustmentData
+```
+
+`$cin7->stockTakeList()` is `stockTakeList`, filtered by `status` (a `StockTakeStatus`: `DRAFT`,
+`IN PROGRESS`, `COMPLETED`, `VOIDED`); its `dto()` is a `list<StockTakeListData>`, read from
+`StockAdjustmentList`, the key the reference's example uses.
+
+`$cin7->stockTake()` is `stocktake`, keyed by `TaskID`. `post()` takes a `StockTakePostData` and
+`put()` a `StockTakePutData`, which requires `TaskID` and `Status`, as well as an array. A body
+needs its `EffectiveDate`, `Account` and a location, by `LocationID` or `Location`. The filters
+(`Tags`, `PickZones`, `StockLocators`, `Categories`, `Brands`, `Bins`) choose the products Cin7 puts
+in `NonZeroStockOnHandProducts` on a POST, or on a PUT that moves `Status` from `DRAFT` to
+`IN PROGRESS`; `ZeroStockOnHandProducts` are the `NewStockLineData` you add, and
+`UseRelativeQuantity` says whether zero-stock products are included. Every action answers with the
+stock take, so `dto()` is a `StockTakeData`. `delete($id, void: true)` voids it.
+
+```php
+$take = $this->cin7->stockTake()->post(StockTakePostData::from([
+    'EffectiveDate' => '2018-04-27T00:00:00',
+    'Account' => '403',
+    'Location' => 'Main Warehouse',
+    'Tags' => ['bread'],
+]))->dto(); // StockTakeData
 ```

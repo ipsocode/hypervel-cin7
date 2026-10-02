@@ -31,6 +31,8 @@ use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
 use Ipsocode\Cin7\Resources\StockAdjustmentListResource;
 use Ipsocode\Cin7\Resources\StockAdjustmentResource;
+use Ipsocode\Cin7\Resources\StockTakeListResource;
+use Ipsocode\Cin7\Resources\StockTakeResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use UnitEnum;
@@ -331,5 +333,21 @@ final class Cin7Connector extends Connector implements HasPagination
     public function stockAdjustment(): StockAdjustmentResource
     {
         return new StockAdjustmentResource($this);
+    }
+
+    /**
+     * The `stockTakeList` resource.
+     */
+    public function stockTakeList(): StockTakeListResource
+    {
+        return new StockTakeListResource($this);
+    }
+
+    /**
+     * The `stocktake` resource.
+     */
+    public function stockTake(): StockTakeResource
+    {
+        return new StockTakeResource($this);
     }
 }

@@ -46,7 +46,7 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
 
-### `reference/stock/**` Stock (7 resources, 17 operations, 5 left)
+### `reference/stock/**` Stock (7 resources, 17 operations, 3 left)
 
 - [x] `stock-adjustment-list` · `stockadjustmentList` · GET
   - [x] product fields: `trait HasProductFields`
@@ -55,10 +55,10 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [x] Stock Adjustment: `StockAdjustmentData`
   - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPostData`
   - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPutData`
-- [ ] `stock-take-list` · `stockTakeList` · GET
-  - [ ] Stock Take List: `StockTakeListData`
-- [ ] `stock-take` · `stocktake` · GET POST PUT DELETE
-  - [ ] Stock Take: `StockTakeData`
+- [x] `stock-take-list` · `stockTakeList` · GET
+  - [x] Stock Take List: `StockTakeListData`
+- [x] `stock-take` · `stocktake` · GET POST PUT DELETE
+  - [x] Stock Take: `StockTakeData`
 - [ ] `stock-transfer-list` · `stockTransferList` · GET
   - [ ] Stock Transfer List: `StockTransferListData`
 - [ ] `stock-transfer` · `stockTransfer` · GET POST PUT DELETE
@@ -144,7 +144,7 @@ Built with the first resource that uses it.
 - [x] AdvancedPurchaseInvoiceModel: `AdvancedPurchaseInvoiceData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseCreditNoteModel: `AdvancedPurchaseCreditNoteData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseManualJournalModel: `AdvancedPurchaseManualJournalData` · used by purchase, advanced-purchase
-- [ ] IDNameModel: `IdNameData` · used by stock-take
+- [x] IDNameModel: `IdNameData` · used by stock-take
 - [ ] StockTransferOrderModel: `StockTransferOrderData` · used by stock-transfer
 - [ ] StockTransferOrderLineModel: `StockTransferOrderLineData` · used by stock-transfer, stock-transfer-order
 
