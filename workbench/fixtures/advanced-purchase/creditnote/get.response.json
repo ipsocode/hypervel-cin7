@@ -1,0 +1,145 @@
+{
+    "PurchaseID": "5a7fb526-527a-4229-b331-90b6f5535aab",
+    "CreditNotes": [
+        {
+            "TaskID": "43ce7d3b-8c67-4aff-9224-b36b95811b08",
+            "CombineAdditionalCharges": false,
+            "CreditNoteNumber": "CR-00103/1",
+            "CreditNoteInvoiceNumber": "INV-00103/2",
+            "CreditNoteDate": "2018-04-15T00:00:00",
+            "Status": "AUTHORISED",
+            "Lines": [
+                {
+                    "ProductID": "11510572-0f9e-4d7c-a203-7e0563c3388f",
+                    "SKU": "Bread",
+                    "Name": "Baked Bread",
+                    "Quantity": 5,
+                    "Price": 15,
+                    "Discount": 0,
+                    "Tax": 0,
+                    "TaxRule": "Tax on Purchases",
+                    "Account": "715",
+                    "Comment": "",
+                    "Total": 75
+                },
+                {
+                    "ProductID": "34d4edc5-d366-4251-82b2-d75e27fe5e9d",
+                    "SKU": "GB3-White",
+                    "Name": "Golf balls white 3-pack",
+                    "Quantity": 5,
+                    "Price": 30,
+                    "Discount": 0,
+                    "Tax": 0,
+                    "TaxRule": "Tax on Purchases",
+                    "Account": "715",
+                    "Comment": "",
+                    "Total": 150
+                }
+            ],
+            "AdditionalCharges": [
+                {
+                    "Description": "Rounding",
+                    "Reference": "",
+                    "Quantity": 1,
+                    "Price": 0.5,
+                    "Discount": 0,
+                    "Tax": 0,
+                    "TaxRule": "Tax on Purchases",
+                    "Account": "715",
+                    "Total": 0.5
+                }
+            ],
+            "Unstock": [
+                {
+                    "CardID": "ebb1c602-d247-4ea2-a78d-6706f9e386a8",
+                    "Date": "2018-04-15T00:00:00",
+                    "Quantity": 5,
+                    "ProductID": "34d4edc5-d366-4251-82b2-d75e27fe5e9d",
+                    "SKU": "GB3-White",
+                    "Name": "Golf balls white 3-pack",
+                    "Location": "Main Warehouse",
+                    "BatchSN": null,
+                    "ExpiryDate": null
+                },
+                {
+                    "CardID": "0c6555ab-2cf1-4939-871d-8060b9bbfa38",
+                    "Date": "2018-04-15T00:00:00",
+                    "Quantity": 5,
+                    "ProductID": "11510572-0f9e-4d7c-a203-7e0563c3388f",
+                    "SKU": "Bread",
+                    "Name": "Baked Bread",
+                    "Location": "Main Warehouse",
+                    "BatchSN": "658487",
+                    "ExpiryDate": "2018-06-01T00:00:00"
+                }
+            ],
+            "TotalBeforeTax": 225.5,
+            "Tax": 0,
+            "Total": 225.5
+        },
+        {
+            "TaskID": "870fbdb2-bc0a-4993-82b8-e58f514dbe49",
+            "CombineAdditionalCharges": false,
+            "CreditNoteNumber": "CR-00103/2",
+            "CreditNoteInvoiceNumber": "INV-00103/2",
+            "CreditNoteDate": "2018-04-20T00:00:00",
+            "Status": "AUTHORISED",
+            "Lines": [
+                {
+                    "ProductID": "11510572-0f9e-4d7c-a203-7e0563c3388f",
+                    "SKU": "Bread",
+                    "Name": "Baked Bread",
+                    "Quantity": 5,
+                    "Price": 15,
+                    "Discount": 0,
+                    "Tax": 0,
+                    "TaxRule": "Tax on Purchases",
+                    "Account": "715",
+                    "Comment": "",
+                    "Total": 150
+                },
+                {
+                    "ProductID": "34d4edc5-d366-4251-82b2-d75e27fe5e9d",
+                    "SKU": "GB3-White",
+                    "Name": "Golf balls white 3-pack",
+                    "Quantity": 10,
+                    "Price": 30,
+                    "Discount": 0,
+                    "Tax": 0,
+                    "TaxRule": "Tax on Purchases",
+                    "Account": "715",
+                    "Comment": "",
+                    "Total": 300
+                }
+            ],
+            "AdditionalCharges": [],
+            "Unstock": [
+                {
+                    "CardID": "0c6555ab-2cf1-4939-871d-8060b9bbfa38",
+                    "Date": "2018-04-20T00:00:00",
+                    "Quantity": 5,
+                    "ProductID": "11510572-0f9e-4d7c-a203-7e0563c3388f",
+                    "SKU": "Bread",
+                    "Name": "Baked Bread",
+                    "Location": "Main Warehouse",
+                    "BatchSN": "658487",
+                    "ExpiryDate": "2018-06-01T00:00:00"
+                },
+                {
+                    "CardID": "ebb1c602-d247-4ea2-a78d-6706f9e386a8",
+                    "Date": "2018-04-20T00:00:00",
+                    "Quantity": 10,
+                    "ProductID": "34d4edc5-d366-4251-82b2-d75e27fe5e9d",
+                    "SKU": "GB3-White",
+                    "Name": "Golf balls white 3-pack",
+                    "Location": "Main Warehouse",
+                    "BatchSN": null,
+                    "ExpiryDate": null
+                }
+            ],
+            "TotalBeforeTax": 450,
+            "Tax": 0,
+            "Total": 450
+        }
+    ]
+}

@@ -12,7 +12,8 @@ use Hypervel\Data\Data;
  * types and lengths in every table: the Sale and Sale Invoice Additional Charge Models, and the
  * Purchase and Purchase Invoice Additional Charge Models. Each model is a final child that adds
  * its own fields (`Comment` on sale charges, `Reference` on purchase charges, `Account` on
- * invoice charges).
+ * invoice charges), and declares `Total` itself, since the Purchase Additional Charge Model
+ * requires it and the others do not.
  *
  * Every one of those tables marks the five constructor fields required, so each child takes them
  * through this constructor; the optional fields are set through `from()`.
@@ -22,8 +23,6 @@ use Hypervel\Data\Data;
 abstract class AbstractChargeData extends Data
 {
     public ?float $Discount = null;
-
-    public ?float $Total = null;
 
     public function __construct(
         #[Max(256)]

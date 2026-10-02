@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
 use Hypervel\Data\Attributes\Validation\Uuid;
-use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
+use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
 
 /**
  * One entry of a credit note's `Payments` in the `sale/creditnote` GET with `IncludePaymentInfo`.

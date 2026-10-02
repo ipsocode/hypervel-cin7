@@ -107,10 +107,41 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetSaleManualJournal`, `GetSaleAttachment` | **`saleId`** |
 | `DeleteSaleAttachment` | **`id`** |
 | `GetSaleCreditNoteList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` (`SaleStatus`) |
+| `GetPurchaseList` | `page`, `limit`, `search`, `requiredBy`, `updatedSince`, `updatedUntil`, `orderStatus` (`TaskStatus`), `restockReceivedStatus` (`TaskStatus`), `invoiceStatus` (`InvoiceStatus`), `creditNoteStatus` (`TaskStatus`), `unstockStatus` (`TaskStatus`), `status`, `dropShipTaskId` |
+| `GetPurchaseCreditNoteList` | `page`, `limit`, `search`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` |
+| `GetPurchase` | **`id`**, `combineAdditionalCharges` |
+| `DeletePurchase` | **`id`**, `void` |
+| `GetPurchaseOrder` | **`taskId`**, `combineAdditionalCharges` |
+| `GetPurchaseStock` | **`taskId`** |
+| `GetPurchaseInvoice` | **`taskId`**, `combineAdditionalCharges` |
+| `GetPurchaseCreditNote` | **`taskId`**, `combineAdditionalCharges` |
+| `GetPurchasePayment` | **`taskId`** |
+| `DeletePurchasePayment` | **`id`**, `deleteAllocation` |
+| `GetPurchaseManualJournal` | **`taskId`** |
+| `GetPurchaseAttachment` | **`taskId`** |
+| `DeletePurchaseAttachment` | **`id`** |
+| `GetAdvancedPurchase` | **`id`**, `combineAdditionalCharges` |
+| `DeleteAdvancedPurchase` | **`id`**, `void` |
+| `GetAdvancedPurchaseStock` | **`purchaseId`** |
+| `DeleteAdvancedPurchaseStock` | **`taskId`**, `void` |
+| `GetAdvancedPurchasePutAway` | **`purchaseId`** |
+| `GetAdvancedPurchaseInvoice` | **`purchaseId`**, `combineAdditionalCharges` |
+| `DeleteAdvancedPurchaseInvoice` | **`taskId`**, `void` |
+| `GetAdvancedPurchaseCreditNote` | **`purchaseId`**, `combineAdditionalCharges` |
+| `DeleteAdvancedPurchaseCreditNote` | **`taskId`** |
+| `GetAdvancedPurchasePayment` | `purchaseId`, `orderNumber`, `invoiceNumber`, `creditNoteNumber` |
+| `GetAdvancedPurchaseManualJournal` | **`purchaseId`** |
 
-`CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
-examples return (see
-[data](data.md#where-the-references-tables-and-examples-disagree)).
+The sale's `CombinedInvoiceStatus`, and so `GetSaleList`'s `combinedInvoiceStatus`, stays a
+string: the Sale tables' list for it does not match the values their examples return (see
+[data](data.md#where-the-references-tables-and-examples-disagree)). The purchase models, whose
+tables list the values their examples send, type theirs as `InvoicingStatus`.
+
+The purchase lists' `status` is a string as well, since the credit note list's example returns a
+purchase status the reference's list does not have (see
+[data](data.md#where-the-references-tables-and-examples-disagree)). Both lists' URI templates leave
+out `UpdatedUntil` and write `Status{Status}` without its `=`; the requests send every parameter the
+operations document, under its key.
 
 The `product` actions follow the same shape: `GetProduct` (a `ListRequest`
 keyed `Products`), `PostProduct` and `PutProduct` (`WriteRequest`s; the PUT body
@@ -187,6 +218,80 @@ The write bodies are per verb where the reference's fields differ: `SaleInvoiceP
 the fulfilment's pick, pack and ship. Each makes the fields the reference requires for that verb
 mandatory; see [data](data.md).
 
+The `purchase` actions live under `src/Requests/Purchase/`: `GetPurchase` and `DeletePurchase`
+(keyed `ID`; the DELETE takes `Void`) and `PostPurchase` and `PutPurchase` (`WriteRequest`s, whose
+data object bodies are `PurchasePostData` and `PurchasePutData`; the PUT body carries `ID`), all on
+`purchase`. Every `purchase` request's `dto()` is a `PurchaseData`. `purchase` has no list action.
+
+`GetPurchaseList` (a `ListRequest` keyed `PurchaseList`) is on `purchaseList`, under
+`src/Requests/PurchaseList/`, and `GetPurchaseCreditNoteList` (keyed `PurchaseList` too, as its
+example is) on `purchaseCreditNoteList`, under `src/Requests/PurchaseCreditNoteList/`.
+`GetPurchaseList`'s `dto()` is a `list<PurchaseListData>` and `GetPurchaseCreditNoteList`'s a
+`list<PurchaseCreditNoteListData>`.
+
+The `purchase/…` documents live under `src/Requests/Purchase/`, one folder per path:
+
+| Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
+|---|---|---|
+| `Order/` | `GetPurchaseOrder` (`TaskID`, with `CombineAdditionalCharges`), `PostPurchaseOrder` | `PurchaseOrderData` |
+| `Stock/` | `GetPurchaseStock` (`TaskID`), `PostPurchaseStock` | `PurchaseStockData` |
+| `Invoice/` | `GetPurchaseInvoice` (`TaskID`, with `CombineAdditionalCharges`), `PostPurchaseInvoice` | `PurchaseInvoiceData` |
+| `CreditNote/` | `GetPurchaseCreditNote` (`TaskID`, with `CombineAdditionalCharges`), `PostPurchaseCreditNote` | `PurchaseCreditNoteData` |
+| `Payment/` | `GetPurchasePayment` (`TaskID`), `PostPurchasePayment`, `PutPurchasePayment`, `DeletePurchasePayment` (`ID`, with `DeleteAllocation`) | `list<PurchasePaymentData>` for the GET, a bare array, `PurchasePaymentData` for POST and PUT; none for the DELETE, whose `{Success}` is left to `json()` |
+| `ManualJournal/` | `GetPurchaseManualJournal` (`TaskID`), `PostPurchaseManualJournal` | `PurchaseManualJournalData` |
+| `Attachment/` | `GetPurchaseAttachment` (`TaskID`), `PostPurchaseAttachment`, `DeletePurchaseAttachment` (`ID`) | `PurchaseAttachmentsData` |
+
+The order's and the stock received's POST bodies are `PurchaseOrderPostData` and
+`PurchaseStockPostData`, and the payment's write bodies are `PurchasePaymentPostData` and
+`PurchasePaymentPutData`, the PUT one carrying the payment's `ID`.
+
+The invoice's and the credit note's POST bodies are `PurchaseInvoicePostData` and
+`PurchaseCreditNotePostData`, each carrying the purchase's `TaskID`.
+
+The manual journal's POST body is `PurchaseManualJournalPostData`, which requires `TaskID`.
+
+The attachment's POST body is `PurchaseAttachmentPostData`, which names the purchase as
+`PurchaseID`, though the response keys it `TaskID`.
+
+The `advanced-purchase` actions live under `src/Requests/AdvancedPurchase/`: `GetAdvancedPurchase`
+and `DeleteAdvancedPurchase` (keyed `ID`; the DELETE takes `Void`) and `PostAdvancedPurchase` and
+`PutAdvancedPurchase` (`WriteRequest`s, whose data object bodies are `AdvancedPurchasePostData` and
+`AdvancedPurchasePutData`; the PUT body carries `ID`, and `PutAdvancedPurchase` leaves the POST-only
+`PurchaseType` out of it), all on `advanced-purchase`. Every `advanced-purchase` request's `dto()`
+is an `AdvancedPurchaseData`. `advanced-purchase` has no list action; `purchaseList` lists simple
+and advanced purchases alike.
+
+The `advanced-purchase/…` documents live under `src/Requests/AdvancedPurchase/`, one folder per
+path:
+
+| Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
+|---|---|---|
+| `Stock/` | `GetAdvancedPurchaseStock` (`PurchaseID`), `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock`, `DeleteAdvancedPurchaseStock` (`TaskID`, with `Void`) | `AdvancedPurchaseStocksData`, the `{PurchaseID, StockReceiving}` envelope |
+| `PutAway/` | `GetAdvancedPurchasePutAway` (`PurchaseID`), `PostAdvancedPurchasePutAway` | `AdvancedPurchasePutAwaysData`, the `{PurchaseID, PutAway}` envelope |
+| `Invoice/` | `GetAdvancedPurchaseInvoice` (`PurchaseID`, with `CombineAdditionalCharges`), `PostAdvancedPurchaseInvoice`, `DeleteAdvancedPurchaseInvoice` (`TaskID`, with `Void`) | `AdvancedPurchaseInvoicesData`, the `{PurchaseID, Invoices}` envelope |
+| `CreditNote/` | `GetAdvancedPurchaseCreditNote` (`PurchaseID`, with `CombineAdditionalCharges`), `PostAdvancedPurchaseCreditNote`, `DeleteAdvancedPurchaseCreditNote` (`TaskID`, with no `Void`: it only voids) | `AdvancedPurchaseCreditNotesData`, the `{PurchaseID, CreditNotes}` envelope |
+| `Payment/` | `GetAdvancedPurchasePayment` (`PurchaseID`, `OrderNumber`, `InvoiceNumber` or `CreditNoteNumber`), `PostAdvancedPurchasePayment`, `PutAdvancedPurchasePayment`; the DELETE is `Purchase/Payment/`'s `DeletePurchasePayment` | `list<AdvancedPurchasePaymentData>` for the GET, a bare array, `AdvancedPurchasePaymentData` for POST and PUT |
+| `ManualJournal/` | `GetAdvancedPurchaseManualJournal` (`PurchaseID`), `PostAdvancedPurchaseManualJournal` | `AdvancedPurchaseManualJournalsData`, the `{PurchaseID, ManualJournals}` envelope |
+
+The stock received's write bodies are `AdvancedPurchaseStockPostData` and
+`AdvancedPurchaseStockPutData`, the PUT one carrying the task's `TaskID` as well as the
+`PurchaseID`.
+The put away's write body is `AdvancedPurchasePutAwayPostData`; it has no PUT.
+
+The advanced purchase invoice's POST body is `AdvancedPurchasePartialInvoicePostData`, which
+carries the purchase's `PurchaseID` beside the invoice task's `TaskID`.
+
+The advanced purchase credit note's POST body is `AdvancedPurchasePartialCreditNotePostData`, one
+credit note carrying the purchase's `PurchaseID` as well as the credit note's `TaskID`.
+
+The payment's write bodies are `AdvancedPurchasePaymentPostData` and
+`AdvancedPurchasePaymentPutData`, the PUT one carrying the payment's `ID`; the reference documents
+its DELETE on `/purchase/payment`, so it has no DELETE class of its own and the resource sends
+`DeletePurchasePayment`.
+
+The manual journals' POST body is `AdvancedPurchasePartialManualJournalPostData`, which carries
+the purchase's `PurchaseID` and the journal's `TaskID`.
+
 ## Wire protocol
 
 These are the requests Cin7 receives.
@@ -215,9 +320,9 @@ These are the requests Cin7 receives.
   (`yyyy-MM-ddTHH:mm:ss.fff`, e.g. `2012-11-14T13:28:33.363`), through the same
   method. A date string is sent as given.
 - **Identifier placement.** A read or delete of one record sends its identifier first in the
-  query string, under the key the reference documents for it (`ID`, `SaleID` or `TaskID`). A
-  `WriteRequest` sends no identifier of its own; the caller merges it into the body, as in
-  [PUT identifiers](resources.md#put-identifiers).
+  query string, under the key the reference documents for it (`ID`, `SaleID`, `PurchaseID` or
+  `TaskID`). A `WriteRequest` sends no identifier of its own; the caller merges it into the body,
+  as in [PUT identifiers](resources.md#put-identifiers).
 - **Empty write.** `new PostCustomer()` with no body still sends a JSON body,
   the encoding of an empty array (`[]`), not a bodyless POST.
 
@@ -240,6 +345,18 @@ data object's body is also stripped of nulls and validated after the omission; s
 | `PostSaleOrder` | `Lines.*.BackorderQuantity` |
 | `PostSalePayment` | `ID`, `CreditID` (PUT only) |
 | `PutSalePayment` | `TaskID`, `Type` (POST only) |
+| `PostPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
+| `PostPurchaseCreditNote` | `Unstock.*.ProductID`, `Unstock.*.SKU`, `Unstock.*.Name`, `Unstock.*.Location`, `Unstock.*.BatchSN`, `Unstock.*.ExpiryDate` (read-only) |
+| `PostPurchasePayment` | `ID` (PUT only), `DateCreated` |
+| `PutPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
+| `PostPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
+| `PutAdvancedPurchase` | `PurchaseType` (POST only) |
+| `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
+| `PostAdvancedPurchasePutAway` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
+| `PostAdvancedPurchaseCreditNote` | `Unstock.*.ProductID`, `Unstock.*.SKU`, `Unstock.*.Name`, `Unstock.*.Location`, `Unstock.*.BatchSN`, `Unstock.*.ExpiryDate` (read-only) |
+| `PostAdvancedPurchasePayment` | `ID` (PUT only), `DateCreated` |
+| `PutAdvancedPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
+| `PostAdvancedPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
 
 ## Page defaults
 

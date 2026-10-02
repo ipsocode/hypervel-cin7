@@ -10,8 +10,24 @@ use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
+use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePutData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchasePartialCreditNotePostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
+use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
+use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
+use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
+use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
+use Ipsocode\Cin7\Data\Purchase\PurchasePostData;
+use Ipsocode\Cin7\Data\Purchase\PurchasePutData;
+use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackPostData;
@@ -26,8 +42,24 @@ use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\PostAdvancedPurchase;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAdvancedPurchase;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
+use Ipsocode\Cin7\Requests\Purchase\CreditNote\PostPurchaseCreditNote;
+use Ipsocode\Cin7\Requests\Purchase\Invoice\PostPurchaseInvoice;
+use Ipsocode\Cin7\Requests\Purchase\ManualJournal\PostPurchaseManualJournal;
+use Ipsocode\Cin7\Requests\Purchase\Order\PostPurchaseOrder;
+use Ipsocode\Cin7\Requests\Purchase\PostPurchase;
+use Ipsocode\Cin7\Requests\Purchase\PutPurchase;
+use Ipsocode\Cin7\Requests\Purchase\Stock\PostPurchaseStock;
 use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PostSaleFulfilmentPack;
@@ -190,6 +222,17 @@ class BodyValidationTest extends TestCase
             'ship PUT' => [fn (): WriteRequest => new PutSaleFulfilmentShip(SaleFulfilmentShipPutData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'NOT AVAILABLE']))],
             'quote POST' => [fn (): WriteRequest => new PostSaleQuote(SaleQuotePostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'VOIDED', 'Lines' => []]))],
             'manual journal POST' => [fn (): WriteRequest => new PostSaleManualJournal(SaleManualJournalPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Status' => 'NOT AVAILABLE']))],
+            'purchase order POST' => [fn (): WriteRequest => new PostPurchaseOrder(PurchaseOrderPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'VOIDED', 'Lines' => []]))],
+            'purchase stock POST' => [fn (): WriteRequest => new PostPurchaseStock(PurchaseStockPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'NOT AVAILABLE', 'Lines' => []]))],
+            'purchase manual journal POST' => [fn (): WriteRequest => new PostPurchaseManualJournal(PurchaseManualJournalPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'VOIDED']))],
+            'advanced purchase stock POST' => [fn (): WriteRequest => new PostAdvancedPurchaseStock(AdvancedPurchaseStockPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/stock', 'post.request')))],
+            'advanced purchase stock PUT' => [fn (): WriteRequest => new PutAdvancedPurchaseStock(AdvancedPurchaseStockPutData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/stock', 'put.request')))],
+            'advanced purchase manual journal POST' => [fn (): WriteRequest => new PostAdvancedPurchaseManualJournal(AdvancedPurchasePartialManualJournalPostData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/manualJournal', 'post.request')))],
+            'purchase invoice POST' => [fn (): WriteRequest => new PostPurchaseInvoice(PurchaseInvoicePostData::from(['Status' => 'PAID'] + Cin7Payloads::load('purchase/invoice', 'post.request')))],
+            'purchase credit note POST' => [fn (): WriteRequest => new PostPurchaseCreditNote(PurchaseCreditNotePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('purchase/creditnote', 'post.request')))],
+            'advanced purchase invoice POST' => [fn (): WriteRequest => new PostAdvancedPurchaseInvoice(AdvancedPurchasePartialInvoicePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/invoice', 'post.request')))],
+            'advanced purchase put away POST' => [fn (): WriteRequest => new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/put-away', 'post.request')))],
+            'advanced purchase credit note POST' => [fn (): WriteRequest => new PostAdvancedPurchaseCreditNote(AdvancedPurchasePartialCreditNotePostData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/creditnote', 'post.request')))],
         ];
     }
 
@@ -207,6 +250,23 @@ class BodyValidationTest extends TestCase
         }
 
         $this->connector()->send(new PostSaleAttachment(SaleAttachmentPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'])));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A purchase attachment, too, is sent as base64 `Content` or a `FileDownloadUrl`.
+     */
+    public function testAPurchaseAttachmentNeedsItsContentOrADownloadUrl(): void
+    {
+        try {
+            $this->connector()->send(new PostPurchaseAttachment(PurchaseAttachmentPostData::from(['PurchaseID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'FileName' => 'Test'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Content'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostPurchaseAttachment(PurchaseAttachmentPostData::from(['PurchaseID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'])));
 
         $this->mock->assertSentCount(1);
     }
@@ -230,6 +290,31 @@ class BodyValidationTest extends TestCase
     }
 
     /**
+     * A received stock line needs its location, by name or by ID; a body with a line with neither
+     * is not sent, and either is enough.
+     */
+    public function testAReceivedStockLineNeedsItsLocation(): void
+    {
+        $stock = static fn (array $line): PurchaseStockPostData => PurchaseStockPostData::from([
+            'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136',
+            'Status' => 'DRAFT',
+            'Lines' => [['Date' => '2017-12-08T00:00:00', 'Quantity' => 3, 'SKU' => 'Bread'] + $line],
+        ]);
+
+        try {
+            $this->connector()->send(new PostPurchaseStock($stock([])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Lines.0.Location', 'Lines.0.LocationID'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostPurchaseStock($stock(['Location' => 'Main Warehouse'])));
+        $this->connector()->send(new PostPurchaseStock($stock(['LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
      * A sale needs a customer, by name or by ID; a body with neither is not sent.
      */
     public function testASaleWithoutACustomerIsNotSent(): void
@@ -248,6 +333,110 @@ class BodyValidationTest extends TestCase
     {
         $this->connector()->send(new PostSale(SalePostData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
         $this->connector()->send(new PostSale(SalePostData::from(['CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A put away line needs its location, by name or by ID: a body with a line that has neither is
+     * not sent, and either one is enough.
+     */
+    public function testAPutAwayLineNeedsItsLocationOrLocationId(): void
+    {
+        $body = ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Status' => 'DRAFT'];
+        $line = ['Date' => '2018-04-20T00:00:00', 'Quantity' => 4, 'SKU' => 'Bread'];
+
+        try {
+            $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Lines.0.Location', 'Lines.0.LocationID'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['Location' => 'Main Warehouse']]])));
+        $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['LocationID' => 'ccb7d97b-a638-4b34-833e-4c348b81f40d']]])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A purchase needs a supplier, by name or by ID; a body with neither is not sent.
+     */
+    public function testAPurchaseWithoutASupplierIsNotSent(): void
+    {
+        try {
+            $this->connector()->send(new PostPurchase(PurchasePostData::from(['Approach' => 'INVOICE', 'Location' => 'Main Warehouse'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['SupplierID', 'Supplier'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    public function testEitherSupplierFieldIsEnoughForAPurchase(): void
+    {
+        $this->connector()->send(new PostPurchase(PurchasePostData::from(['Supplier' => 'ABPA', 'Approach' => 'INVOICE', 'Location' => 'Main Warehouse'])));
+        $this->connector()->send(new PutPurchase(PurchasePutData::from(['ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092', 'SupplierID' => 'f1d1696b-8988-4ca0-8b9d-60317e463d07', 'Approach' => 'STOCK', 'Location' => 'Main Warehouse'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * An advanced purchase, too, needs a supplier, by name or by ID; a body with neither is not
+     * sent.
+     */
+    public function testAnAdvancedPurchaseWithoutASupplierIsNotSent(): void
+    {
+        try {
+            $this->connector()->send(new PostAdvancedPurchase(AdvancedPurchasePostData::from(['Approach' => 'STOCK', 'Location' => 'Main Warehouse'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['SupplierID', 'Supplier'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * Either supplier field is enough for an advanced purchase, and its PUT, like the reference's
+     * example, needs no `Approach`.
+     */
+    public function testEitherSupplierFieldIsEnoughForAnAdvancedPurchase(): void
+    {
+        $this->connector()->send(new PostAdvancedPurchase(AdvancedPurchasePostData::from(['Supplier' => 'ABPA', 'Approach' => 'STOCK', 'Location' => 'Main Warehouse'])));
+        $this->connector()->send(new PutAdvancedPurchase(AdvancedPurchasePutData::from(['ID' => '695dbaf4-92c3-4388-a35c-0efa378db93e', 'SupplierID' => '92c27d86-a8d3-4335-9da1-d3ebd82cb568', 'Location' => 'Main Warehouse'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * Every address table requires `Line1` and `Country`. The purchase responses send them as
+     * `null`, so the address classes take `null`, but a sale's or a purchase's billing address, or
+     * a purchase's shipping address, without them is not sent.
+     */
+    public function testAnAddressWithoutItsLine1AndCountryIsNotSent(): void
+    {
+        $address = ['Line1' => '3 Park Street Industrial Village', 'Country' => 'USA'];
+        $purchase = static fn (array $billing, array $shipping): PurchasePostData => PurchasePostData::from(['Supplier' => 'ABPA', 'Approach' => 'INVOICE', 'Location' => 'Main Warehouse', 'BillingAddress' => $billing, 'ShippingAddress' => $shipping]);
+        $sale = static fn (array $billing): SalePostData => SalePostData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1, 'BillingAddress' => $billing]);
+
+        try {
+            $this->connector()->send(new PostPurchase($purchase(['City' => 'Melbourne'], ['ShipToOther' => false])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['BillingAddress.Line1', 'BillingAddress.Country', 'ShippingAddress.Line1', 'ShippingAddress.Country'], array_keys($exception->errors()));
+        }
+
+        try {
+            $this->connector()->send(new PostSale($sale(['City' => 'Melbourne'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['BillingAddress.Line1', 'BillingAddress.Country'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostPurchase($purchase($address, $address)));
+        $this->connector()->send(new PostSale($sale($address)));
 
         $this->mock->assertSentCount(2);
     }

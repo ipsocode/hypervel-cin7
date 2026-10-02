@@ -1,0 +1,49 @@
+{
+    "TaskID": "02b08cd2-51d2-41e6-ab97-85bcd13e7136",
+    "CombineAdditionalCharges": false,
+    "InvoiceDate": "2017-12-14T00:00:00",
+    "InvoiceDueDate": "2018-01-13T00:00:00",
+    "InvoiceNumber": "1",
+    "Status": "AUTHORISED",
+    "Lines": [
+        {
+            "ProductID": "c08b3876-89cc-46c4-af52-b77f058fdf81",
+            "SKU": "Bread",
+            "Name": "Baked Bread",
+            "Quantity": 2,
+            "Price": 2,
+            "Discount": 0,
+            "Tax": 0,
+            "TaxRule": "Sales Tax on Imports",
+            "Account": "715",
+            "Comment": "",
+            "Total": 4
+        },
+        {
+            "ProductID": "c08b3876-89cc-46c4-af52-b77f058fdf81",
+            "SKU": "Bread",
+            "Name": "Baked Bread",
+            "Quantity": 1,
+            "Price": 2,
+            "Discount": 0,
+            "Tax": 0,
+            "TaxRule": "Sales Tax on Imports",
+            "Account": "715",
+            "Comment": "",
+            "Total": 2
+        }
+    ],
+    "AdditionalCharges": [
+        {
+            "Description": "Half day training - Microsoft Office",
+            "Reference": "",
+            "Quantity": 1,
+            "Price": 3,
+            "Discount": 0,
+            "Tax": 0,
+            "TaxRule": "Sales Tax on Imports",
+            "Account": "715",
+            "Total": 3
+        }
+    ]
+}

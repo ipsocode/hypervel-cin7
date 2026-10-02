@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Hypervel\Saloon\Enums\Method;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Sale\AddressData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentPickPackData;
@@ -76,11 +75,11 @@ return [
         ],
         PutSale::class . ' with data' => [
             PutSale::class,
-            [fn (): SalePutData => SalePutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK'], 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])],
+            [fn (): SalePutData => SalePutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'ShippingAddress' => ['ID' => '8f9a2b6e-3c4d-4e5f-9a7b-1c2d3e4f5a6b', 'Line1' => '1 High St', 'Country' => 'UK'], 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])],
             Method::PUT,
             '/ExternalApi/v2/sale',
             [],
-            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK'], 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0],
+            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'ShippingAddress' => ['ID' => '8f9a2b6e-3c4d-4e5f-9a7b-1c2d3e4f5a6b', 'Line1' => '1 High St', 'Country' => 'UK'], 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0],
         ],
     ],
     'resources' => [
@@ -153,7 +152,6 @@ return [
         SaleInvoiceLineData::class => ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule', 'Total'],
         SaleAdditionalChargeData::class => ['Description', 'Quantity', 'Price', 'Tax', 'TaxRule'],
         SaleInvoiceAdditionalChargeData::class => ['Description', 'Quantity', 'Price', 'Tax', 'TaxRule'],
-        AddressData::class => ['Line1', 'Country'],
         SaleShippingAddressData::class => ['Line1', 'Country'],
         SaleData::class => ['Location', 'CurrencyRate', 'CombinedPickingStatus', 'CombinedPackingStatus', 'CombinedShippingStatus'],
         SalePostData::class => ['Location', 'CurrencyRate'],
