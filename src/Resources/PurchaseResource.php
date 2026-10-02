@@ -7,15 +7,17 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\Purchase\AttachmentResource;
+use Ipsocode\Cin7\Resources\Purchase\InvoiceResource;
 use Ipsocode\Cin7\Resources\Purchase\ManualJournalResource;
 use Ipsocode\Cin7\Resources\Purchase\OrderResource;
 use Ipsocode\Cin7\Resources\Purchase\PaymentResource;
 use Ipsocode\Cin7\Resources\Purchase\StockResource;
 
 /**
- * `purchase`, a simple purchase; `order()`, `stock()`, `payment()`, `manualJournal()` and
- * `attachment()` are the `purchase/order`, `purchase/stock`, `purchase/payment`,
- * `purchase/manualJournal` and `purchase/attachment` sub-resources.
+ * `purchase`, a simple purchase; `order()`, `stock()`, `invoice()`, `payment()`,
+ * `manualJournal()` and `attachment()` are the `purchase/order`, `purchase/stock`,
+ * `purchase/invoice`, `purchase/payment`, `purchase/manualJournal` and `purchase/attachment`
+ * sub-resources.
  *
  * @extends BaseResource<Cin7Connector>
  */
@@ -35,6 +37,14 @@ final class PurchaseResource extends BaseResource
     public function stock(): StockResource
     {
         return new StockResource($this->connector);
+    }
+
+    /**
+     * The `purchase/invoice` resource, a purchase's invoice.
+     */
+    public function invoice(): InvoiceResource
+    {
+        return new InvoiceResource($this->connector);
     }
 
     /**

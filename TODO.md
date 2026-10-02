@@ -19,7 +19,7 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations, 9 left)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 8 left)
 
 - [x] `purchase-list` · `purchaseList` · GET
   - [x] Purchase List: `PurchaseListData`
@@ -34,8 +34,8 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [x] Purchase Order: `PurchaseOrderData`
 - [x] `purchase-stock-received` · `purchase/stock` · GET POST
   - [x] Purchase Stock Received: `PurchaseStockData`
-- [ ] `purchase-invoice` · `purchase/invoice` · GET POST
-  - [ ] Purchase Invoice: `PurchaseInvoiceData`
+- [x] `purchase-invoice` · `purchase/invoice` · GET POST
+  - [x] Purchase Invoice: `PurchaseInvoiceData`
 - [ ] `purchase-credit-note` · `purchase/creditnote` · GET POST
   - [ ] Purchase Credit Note: `PurchaseCreditNoteData`
 - [x] `purchase-payments` · `purchase/payment` · GET POST PUT DELETE
@@ -86,10 +86,10 @@ Each is built with the first resource here that uses it; a ticked one is built, 
 - [x] PurchaseStockModel: `PurchaseStockData` · used by purchase
 - [x] PurchaseStockLineModel: `PurchaseStockLineData` · used by purchase, purchase-stock-received
 - [ ] PurchaseUnStockLineModel: `PurchaseUnStockLineData` · used by purchase, purchase-credit-note, advanced-purchase, advanced-purchase-credit-note
-- [ ] PurchaseInvoiceModel: `PurchaseInvoiceData` · used by purchase
+- [x] PurchaseInvoiceModel: `PurchaseInvoiceData` · used by purchase
 - [ ] PurchaseCreditNoteModel: `PurchaseCreditNoteData` · used by purchase
-- [ ] PurchaseInvoiceLineModel: `PurchaseInvoiceLineData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
-- [ ] PurchaseInvoiceAdditionalChargeModel: `PurchaseInvoiceAdditionalChargeData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
+- [x] PurchaseInvoiceLineModel: `PurchaseInvoiceLineData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
+- [x] PurchaseInvoiceAdditionalChargeModel: `PurchaseInvoiceAdditionalChargeData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
 - [ ] PurchasePaymentLineModel: `PurchasePaymentLineData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseStockModel: `AdvancedPurchaseStockData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseStockLineModel: `AdvancedPurchaseStockLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-stock-received

@@ -69,11 +69,12 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
   | `AbstractPurchaseOrderData` | `PurchaseOrderData`, `PurchaseOrderPostData` | `Memo`, `Status`, `Lines` |
   | `AbstractPurchaseStockData` | `PurchaseStockData`, `PurchaseStockPostData` | `Status`, `Lines` |
+  | `AbstractPurchaseInvoiceData` | `PurchaseInvoiceData`, `PurchaseInvoicePostData` | `InvoiceDate`, `InvoiceDueDate`, `Status`, `Lines` |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
   | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData` | `Status` |
   | `AbstractAdvancedPurchaseStockData` | `AdvancedPurchaseStockData`, `AdvancedPurchaseStockPostData`, `AdvancedPurchaseStockPutData` | `Status`, `Lines` |
-  | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`, `PurchaseOrderLineData`; shaped to serve the other purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
-  | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`, `PurchaseAdditionalChargeData`; shaped to serve the purchase invoice charge model too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
+  | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`, `PurchaseOrderLineData`, `PurchaseInvoiceLineData`; shaped to serve the other purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
+  | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`, `PurchaseAdditionalChargeData`, `PurchaseInvoiceAdditionalChargeData` | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` | none |
   | `AbstractManualJournalLineData` | `SaleManualJournalLineData`, `PurchaseManualJournalLineData` | `Amount`, `Date`, `Debit`, `Credit` |
   | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData` | `Line1`, `Country` |
@@ -214,6 +215,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `purchaseCreditNoteList` | none | GET: `list<PurchaseCreditNoteListData>` (Purchase Credit Note List), read from `PurchaseList` |
 | `purchase/order` | POST: `PurchaseOrderPostData` (Available Fields for Purchase Order, with `Lines`: `PurchaseOrderLineData` and `AdditionalCharges`: `PurchaseAdditionalChargeData`) | GET, POST: `PurchaseOrderData` |
 | `purchase/stock` | POST: `PurchaseStockPostData` (Available Fields for Purchase Stock Received, with `Lines`: `PurchaseStockLineData`) | GET, POST: `PurchaseStockData` |
+| `purchase/invoice` | POST: `PurchaseInvoicePostData` (Available Fields for Purchase Invoice, with `Lines`: `PurchaseInvoiceLineData` and `AdditionalCharges`: `PurchaseInvoiceAdditionalChargeData`) | GET, POST: `PurchaseInvoiceData`, the invoice (the table and the Purchase Invoice Model a purchase embeds, whose `Payments` are `SalePaymentLineData`) |
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
 | `purchase/manualJournal` | POST: `PurchaseManualJournalPostData` (Available field for Purchase Manual Journal, with `Lines`: `PurchaseManualJournalLineData`) | GET, POST: `PurchaseManualJournalData` |
 | `purchase/attachment` | POST: `PurchaseAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `PurchaseAttachmentsData` (`{TaskID, Lines}`, with `Lines`: `AttachmentLineData`) |
@@ -460,6 +462,16 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   checked, as no other quantity is.
 - **Auto-generated numbers.** The invoice and credit note POST tables have no `InvoiceNumber`
   or `CreditNoteNumber` (Cin7 generates them), so the POST classes leave them out.
+- **Purchase Invoice.** The reference documents the model twice: the Purchase Invoice Model a
+  purchase embeds as its `Invoice`, with `Payments` (Sale Payment Line Model) and `Paid`, and the
+  Available Fields for Purchase Invoice table of `purchase/invoice`, which adds `TaskID`,
+  `CombineAdditionalCharges`, `InvoiceTotalAmount` and `InvoiceTotalTaxAmount`. `PurchaseInvoiceData`
+  carries the union, with the fields only one of them has optional. `PurchaseInvoicePostData`
+  follows the table: it requires `TaskID` and `CombineAdditionalCharges`, limits `Status` to
+  `DRAFT` and `AUTHORISED`, takes the totals the notes mark "Not required for POST" as optional,
+  and has no `Payments` or `Paid`. Its notes call `InvoiceNumber` auto-generated, but, unlike the
+  sale invoice's POST table, this table lists it and the POST example sends it, so the POST body
+  takes it.
 - **Fulfilment pick and pack.** The Sale Fulfilment Pick and Pack tables, `sale/fulfilment/pick`
   and `/pack`, add the fulfilment's `TaskID` to the Pick Pack Model a fulfilment embeds;
   `SaleFulfilmentPickData` and `SaleFulfilmentPackData` model them and require it, and
@@ -730,6 +742,25 @@ because `ID`, `Type`, `DepositID`, `Amount` and `Account` are taken by different
 `Type` is a string, and `DepositID`, which takes a payment from a supplier deposit and goes only
 with `Type` `PAYMENT`, is on the response and the POST body. `DateCreated` is on every class and
 never sent. A response missing a required field fails `dto()` with a `CannotCreateData`.
+
+`purchase/invoice` follows the Available Fields for Purchase Invoice table and the Purchase
+Invoice Model, with a POST class because POST requires `TaskID` and `CombineAdditionalCharges`
+and takes only a `DRAFT` or `AUTHORISED` `Status` (see
+[above](#where-the-references-tables-and-examples-disagree)). The reference marks the endpoint
+deprecated: it supports only simple purchases. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `PurchaseInvoiceData` (response) | `src/Data/Purchase/Invoice/` | `InvoiceDate`, `InvoiceDueDate`, `Status`, `Lines` |
+| `PurchaseInvoicePostData` | `src/Data/Purchase/Invoice/` | `InvoiceDate`, `InvoiceDueDate`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `TaskID`, `CombineAdditionalCharges` |
+| `PurchaseInvoiceLineData` | `src/Data/Purchase/Invoice/` | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Account`, `Total` |
+| `PurchaseInvoiceAdditionalChargeData` | `src/Data/Purchase/Invoice/` | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Account` |
+
+`Status` is an `InvoiceStatus`. The line and charge classes extend `AbstractLineData` and
+`AbstractChargeData`, and are in `src/Data/Purchase/Invoice/`, the folder of the path they are
+named for, though the purchase and advanced purchase credit notes and the advanced purchase's
+invoices use them too. A response missing a required field fails `dto()` with a
+`CannotCreateData`.
 
 `purchase/manualJournal` follows the Purchase Manual Journal Model and the table of its path, with a
 POST class because only POST requires `TaskID` and limits `Status` (see
