@@ -1,0 +1,43 @@
+{
+    "PurchaseID": "5a7fb526-527a-4229-b331-90b6f5535aab",
+    "TaskID": "3320ef94-a7e8-4d81-9588-2a3e14cfca6f",
+    "CombineAdditionalCharges": false,
+    "InvoiceDate": "2018-04-23T00:00:00",
+    "InvoiceDueDate": "2018-05-23T00:00:00",
+    "InvoiceNumber": "INV-00103",
+    "Status": "AUTHORISED",
+    "Lines": [
+        {
+            "ProductID": "34d4edc5-d366-4251-82b2-d75e27fe5e9d",
+            "SKU": "GB3-White",
+            "Name": "Golf balls white 3-pack",
+            "Quantity": 11,
+            "Price": 30,
+            "Discount": 0,
+            "Tax": 0,
+            "TaxRule": "Tax on Purchases",
+            "Account": "715",
+            "Comment": "",
+            "Total": 330
+        },
+        {
+            "ProductID": "11510572-0f9e-4d7c-a203-7e0563c3388f",
+            "SKU": "Bread",
+            "Name": "Baked Bread",
+            "Quantity": 6,
+            "Price": 15,
+            "Discount": 0,
+            "Tax": 0,
+            "TaxRule": "Tax on Purchases",
+            "Account": "715",
+            "Comment": "",
+            "Total": 90
+        }
+    ],
+    "AdditionalCharges": [],
+    "TotalBeforeTax": 420,
+    "Tax": 0,
+    "Total": 420,
+    "InvoiceTotalAmount": 420,
+    "InvoiceTotalTaxAmount": 0
+}

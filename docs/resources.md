@@ -79,9 +79,10 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
-| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `manualJournal()` |
+| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `invoice()`, `manualJournal()` |
 | `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->advancedPurchase()->manualJournal()` | `AdvancedPurchase\ManualJournalResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePartialManualJournalPostData $body)` |
+| `$cin7->advancedPurchase()->invoice()` | `AdvancedPurchase\InvoiceResource` | `get(string $purchaseId, ?bool $combineAdditionalCharges = null)`, `post(array\|AdvancedPurchasePartialInvoicePostData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -661,6 +662,36 @@ $journals = $this->cin7->advancedPurchase()->manualJournal()->post(AdvancedPurch
     'Status' => 'DRAFT',
     'Lines' => [['Reference' => 'Freight', 'Amount' => 20.0, 'Date' => '2018-04-23T00:00:00', 'Debit' => '715', 'Credit' => '860']],
 ]))->dto(); // AdvancedPurchaseManualJournalsData
+```
+
+`$cin7->advancedPurchase()->invoice()` is `advanced-purchase/invoice`, an advanced purchase's
+invoices; a simple purchase's invoice is on `purchase/invoice`. Every method answers with the
+purchase's invoices, the `{PurchaseID, Invoices}` envelope, so its `dto()` is an
+`AdvancedPurchaseInvoicesData`, whose `Invoices` are `AdvancedPurchasePartialInvoiceData`.
+`get($purchaseId)` sends `advanced-purchase/invoice?PurchaseID=…`, and
+`combineAdditionalCharges: true` lists the additional charges in `Lines`. `post()` takes an
+`AdvancedPurchasePartialInvoicePostData` as well as an array: one invoice task's fields with the
+purchase's `PurchaseID` beside them. It needs the `PurchaseID`, the `TaskID`,
+`CombineAdditionalCharges`, `InvoiceDate`, `InvoiceDueDate`, a `Status` of `DRAFT` or `AUTHORISED`
+and `Lines`, but no totals; each line needs its `Account` and `Total`, and each additional charge
+its `Account`. Cin7 rejects it unless the order is `AUTHORISED` and the invoice is `DRAFT` or
+`NOT AVAILABLE`, and, for a purchase whose `Approach` is `STOCK`, the stock received is
+`AUTHORISED`. `delete($taskId)` sends `advanced-purchase/invoice?TaskID=…`; `void: true` voids the
+invoice, and `void: false` undoes it; without `void` no `Void` is sent, and the reference defaults
+it to `false`. It is not available for a simple purchase.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
+
+$invoices = $this->cin7->advancedPurchase()->invoice()->get($purchaseId)->dto(); // AdvancedPurchaseInvoicesData
+
+$this->cin7->advancedPurchase()->invoice()->post(AdvancedPurchasePartialInvoicePostData::from([
+    ...$invoices->Invoices[0]->toArray(),
+    'PurchaseID' => $purchaseId,
+    'Status' => 'AUTHORISED',
+]));
+
+$this->cin7->advancedPurchase()->invoice()->delete($invoices->Invoices[0]->TaskID, void: true); // DELETE advanced-purchase/invoice?TaskID=…&Void=true
 ```
 
 ## PUT identifiers

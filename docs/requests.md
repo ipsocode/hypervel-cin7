@@ -121,6 +121,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAdvancedPurchaseStock` | **`purchaseId`** |
 | `DeleteAdvancedPurchaseStock` | **`taskId`**, `void` |
 | `GetAdvancedPurchaseManualJournal` | **`purchaseId`** |
+| `GetAdvancedPurchaseInvoice` | **`purchaseId`**, `combineAdditionalCharges` |
+| `DeleteAdvancedPurchaseInvoice` | **`taskId`**, `void` |
 
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
@@ -241,6 +243,7 @@ path:
 |---|---|---|
 | `Stock/` | `GetAdvancedPurchaseStock` (`PurchaseID`), `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock`, `DeleteAdvancedPurchaseStock` (`TaskID`, with `Void`) | `AdvancedPurchaseStocksData`, the `{PurchaseID, StockReceiving}` envelope |
 | `ManualJournal/` | `GetAdvancedPurchaseManualJournal` (`PurchaseID`), `PostAdvancedPurchaseManualJournal` | `AdvancedPurchaseManualJournalsData`, the `{PurchaseID, ManualJournals}` envelope |
+| `Invoice/` | `GetAdvancedPurchaseInvoice` (`PurchaseID`, with `CombineAdditionalCharges`), `PostAdvancedPurchaseInvoice`, `DeleteAdvancedPurchaseInvoice` (`TaskID`, with `Void`) | `AdvancedPurchaseInvoicesData`, the `{PurchaseID, Invoices}` envelope |
 
 The stock received's write bodies are `AdvancedPurchaseStockPostData` and
 `AdvancedPurchaseStockPutData`, the PUT one carrying the task's `TaskID` as well as the
@@ -252,6 +255,9 @@ the purchase's `PurchaseID` and the journal's `TaskID`.
 The invoice's write body is `PurchaseInvoicePostData`, which carries the purchase's `TaskID`.
 
 The credit note's write body is `PurchaseCreditNotePostData`, which carries the purchase's `TaskID`.
+
+The advanced purchase invoice's POST body is `AdvancedPurchasePartialInvoicePostData`, which
+carries the purchase's `PurchaseID` beside the invoice task's `TaskID`.
 
 ## Wire protocol
 
