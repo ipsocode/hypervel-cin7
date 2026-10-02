@@ -1,0 +1,63 @@
+{
+    "ShipZones": [
+        {
+            "ZoneID": "b25830a0-3db8-4ea2-a6c3-25efe6381649",
+            "Name": "Shipping Zone test v2",
+            "IsRestZone": false,
+            "PricesInclTax": false,
+            "Negative": false,
+            "DefaultShippingCost": 0,
+            "ShortDesc": "Afghanistan, Algeria",
+            "TaxRuleID": "cd3b41ce-e4ba-4fc4-a615-18ca17e7a4c7",
+            "TaxRuleName": null,
+            "AppliesTo": [
+                {
+                    "ID": "d44d3e15-c714-49c2-a3be-7e9400148b37",
+                    "Country2": "DZ",
+                    "StateID": null,
+                    "StateName": null,
+                    "PostCodeFrom": "",
+                    "PostCodeTo": "",
+                    "PostCodesList": "",
+                    "ShippingRate": 7000
+                },
+                {
+                    "ID": "4820bb61-bc4b-47d8-9dc1-c8222408919f",
+                    "Country2": "AF",
+                    "StateID": null,
+                    "StateName": null,
+                    "PostCodeFrom": "",
+                    "PostCodeTo": "",
+                    "PostCodesList": "",
+                    "ShippingRate": 8000
+                }
+            ],
+            "Conditions": [
+                {
+                    "ZoneConditionID": "20c6ecc4-10c6-4170-b3f1-a2d3255ff1c3",
+                    "MinValue": 7,
+                    "MaxValue": 0,
+                    "ShippingCost": 7,
+                    "ConditionType": "Price",
+                    "ConditionDescription": "Rule 1"
+                },
+                {
+                    "ZoneConditionID": "5f948569-8917-4293-8eb7-7e428e3a6cee",
+                    "MinValue": 8,
+                    "MaxValue": 0,
+                    "ShippingCost": 8,
+                    "ConditionType": "Weight",
+                    "ConditionDescription": "Rule v"
+                },
+                {
+                    "ZoneConditionID": "5c353827-6f30-4f45-9b2d-5d7e7afe3431",
+                    "MinValue": 1000,
+                    "MaxValue": 0,
+                    "ShippingCost": 100,
+                    "ConditionType": "Weight",
+                    "ConditionDescription": "Rule v"
+                }
+            ]
+        }
+    ]
+}

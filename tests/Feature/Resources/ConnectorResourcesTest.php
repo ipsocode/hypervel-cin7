@@ -52,6 +52,9 @@ use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource as RefSupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\Ref\UnitResource;
+use Ipsocode\Cin7\Resources\Reference\ShipZonesEnabledResource;
+use Ipsocode\Cin7\Resources\Reference\ShipZonesResource;
+use Ipsocode\Cin7\Resources\ReferenceResource;
 use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\Sale\AttachmentResource;
 use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
@@ -287,6 +290,17 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->customPrices(), $connector->customPrices());
         $this->assertInstanceOf(ProductSuppliersResource::class, $connector->productSuppliers());
         $this->assertNotSame($connector->productSuppliers(), $connector->productSuppliers());
+    }
+
+    public function testReferenceReturnsItsBooks(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(ReferenceResource::class, $connector->reference());
+        $this->assertNotSame($connector->reference(), $connector->reference());
+        $this->assertInstanceOf(ShipZonesResource::class, $connector->reference()->shipZones());
+        $this->assertInstanceOf(ShipZonesEnabledResource::class, $connector->reference()->shipZonesEnabled());
+        $this->assertNotSame($connector->reference()->shipZones(), $connector->reference()->shipZones());
     }
 
     public function testMeReturnsAFreshMeResource(): void
