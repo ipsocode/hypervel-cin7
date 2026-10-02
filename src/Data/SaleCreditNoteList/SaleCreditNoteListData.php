@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\SaleList;
+namespace Ipsocode\Cin7\Data\SaleCreditNoteList;
 
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
@@ -19,12 +19,14 @@ use Ipsocode\Cin7\Enums\ShippingStatus;
 use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
- * Sale List, one entry of `SaleList` in a `saleList` response. `SaleInvoicesTotalAmount` and
- * `CombinedPaymentTotal` appear only in the examples.
+ * Sale Credit Note List, one entry of `SaleList` in a `saleCreditNoteList` response. Its table
+ * is the Sale List's, but the example sends `QuoteStatus` as `""`, outside the quote statuses, and
+ * `CombinedTrackingNumbers` as `null`; so the first is a string and the second optional.
+ * `RestockStatus` appears only in the example.
  *
  * @see docs/data.md
  */
-final class SaleListData extends AbstractSaleListData implements WithResponse
+final class SaleCreditNoteListData extends AbstractSaleListData implements WithResponse
 {
     use HasResponse;
 
@@ -48,11 +50,11 @@ final class SaleListData extends AbstractSaleListData implements WithResponse
         TaskStatus $CreditNoteStatus,
         SalePaymentStatus $CombinedPaymentStatus,
         SaleType $Type,
-        public TaskStatus $QuoteStatus,
+        #[Max(20)]
+        public string $QuoteStatus,
         #[Max(256)]
-        public string $CombinedTrackingNumbers,
-        public ?float $SaleInvoicesTotalAmount = null,
-        public ?float $CombinedPaymentTotal = null,
+        public ?string $CombinedTrackingNumbers = null,
+        public ?string $RestockStatus = null,
     ) {
         parent::__construct($SaleID, $OrderNumber, $Status, $OrderDate, $Customer, $InvoiceAmount, $PaidAmount, $BaseCurrency, $CustomerCurrency, $Updated, $OrderStatus, $CombinedPickingStatus, $CombinedPackingStatus, $CombinedShippingStatus, $FulFilmentStatus, $CombinedInvoiceStatus, $CreditNoteStatus, $CombinedPaymentStatus, $Type);
     }

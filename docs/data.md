@@ -49,6 +49,9 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractMoneyTaskData` | `MoneyTaskData`, `MoneyTaskPostData`, `MoneyTaskPutData` | `TaskType`, `Status`, `BankAccount`, `Date` |
   | `AbstractTaxData` | `TaxData`, `TaxPostData`, `TaxPutData` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
   | `AbstractProductData` | `ProductData`, `ProductPostData`, `ProductPutData` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`; and `QuantityToProduce` and `AssemblyCostEstimationMethod` on a write body with a bill of materials (see [products](#products)) |
+  | `AbstractSaleListData` | `SaleListData`, `SaleCreditNoteListData` | the 19 fields both list tables require but `QuoteStatus` and `CombinedTrackingNumbers` (see [below](#where-the-references-tables-and-examples-disagree)) |
+  | `AbstractSaleQuoteData` | `SaleQuoteData`, `SaleQuotePostData` | `Memo`, `Status`, `Lines` |
+  | `AbstractSaleManualJournalData` | `SaleManualJournalData`, `SaleManualJournalPostData` | `Status` |
   | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
   | `AbstractSaleFulfilmentPickPackTaskData` | `SaleFulfilmentPickData`, `SaleFulfilmentPickPostData`, `SaleFulfilmentPickPutData`, `SaleFulfilmentPackData`, `SaleFulfilmentPackPostData` | `TaskID` |
@@ -168,6 +171,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
 | `saleList` | none | GET: `list<SaleListData>` (Sale List) |
+| `saleCreditNoteList` | none | GET: `list<SaleCreditNoteListData>` (Sale Credit Note List) |
+| `sale/quote` | POST: `SaleQuotePostData` (Sale Quote, with `Lines`: `SaleQuoteLineData`, `AdditionalCharges`: `SaleAdditionalChargeData` and `Prepayments`: `SalePaymentLineData`) | GET, POST: `SaleQuoteData` |
 | `sale/order` | `SaleOrderData` (Sale Order, plus `AutoPickPackShipMode`, which the reference documents only in prose) | GET, POST: `SaleOrderData` |
 | `sale/fulfilment` | `SaleFulfilmentsData`, needing only `SaleID` | GET, POST, DELETE: `SaleFulfilmentsData` (`{SaleID, Fulfilments}`, with `Fulfilments`: `SaleFulfilmentData`, Sale Fulfilment Model) |
 | `sale/fulfilment/pick` | POST: `SaleFulfilmentPickPostData`; PUT: `SaleFulfilmentPickPutData` (Sale Fulfilment Pick, with `Lines`: `SaleFulfilmentPickPackLineData`, plus `AutoPickMode`, which the reference documents only in prose) | GET, POST, PUT: `SaleFulfilmentPickData` |
@@ -175,6 +180,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `sale/fulfilment/ship` | POST: `SaleFulfilmentShipPostData`; PUT: `SaleFulfilmentShipPutData`, which adds `AddTrackingNumbers` (Sale Fulfilment Ship, with `ShippingAddress`: `SaleShippingAddressData` and `Lines`: `SaleFulfilmentShipLinePostPutData`) | GET, POST, PUT: `SaleFulfilmentShipData` (with `Lines`: `SaleFulfilmentShipLineData`) |
 | `sale/invoice` | POST: `SaleInvoicePostData` (Sale Invoice POST Model); PUT: `SaleInvoicePutData` (its fields, needing only `SaleID` and `TaskID`) | GET, POST, PUT, DELETE: `SaleInvoicesData` (`{SaleID, Invoices}`, with `Invoices`: `SaleInvoicePartialData`, Sale Invoice Partial Model) |
 | `sale/creditnote` | POST: `SaleCreditNotePostData` (Sale Credit Note POST Model) | GET, POST, DELETE: `SaleCreditNotesData` (`{SaleID, CreditNotes}`, with `CreditNotes`: `SaleCreditNotePartialData`, Sale Credit Note Invoice Partial Model, whose `Payments` are `SaleCreditNotePaymentData`) |
+| `sale/manualJournal` | POST: `SaleManualJournalPostData` (Sale Manual Journal, with `Lines`: `SaleManualJournalLineData`) | GET, POST: `SaleManualJournalData` |
+| `sale/attachment` | POST: `SaleAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `SaleAttachmentsData` (`{SaleID, Lines}`, with `Lines`: `AttachmentLineData`) |
 | `sale/payment` | POST: `SalePaymentPostData`; PUT: `SalePaymentPutData` (the Sale Payment Line Partial Model's fields for each verb) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
@@ -344,6 +351,20 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **`IncludeProductInfo`.** It adds "all used products in additional array" to a fulfilment,
   pick or pack response; no example shows the array, so it is not modelled, and `json()` still
   has it.
+- **Sale Credit Note List.** Its table is the Sale List's, field for field, so `SaleListData` and
+  `SaleCreditNoteListData` share `AbstractSaleListData`. The credit note list's example sends
+  `QuoteStatus` as `""`, outside the quote statuses, and `CombinedTrackingNumbers` as `null`, so
+  its `QuoteStatus` is a string and its `CombinedTrackingNumbers` optional; `RestockStatus`
+  appears only in its example. Both tables type `Customer` as `Date`; it is the customer's name.
+- **Sale quote and manual journal.** As with the order, the Sale Quote and Sale Manual Journal
+  tables of `sale/quote` and `sale/manualJournal` add `SaleID` (and the quote
+  `CombineAdditionalCharges`) to the models a sale embeds, so `SaleQuoteData` and
+  `SaleManualJournalData` serve both, with those optional. Their POST bodies require them, and
+  limit `Status` to `DRAFT` and `AUTHORISED`; the quote's POST requires no totals ("Not required
+  for POST"), and its example sends none.
+- **Sale attachment delete.** The reference marks the `ID` of `DELETE sale/attachment` optional;
+  a delete names what it deletes, so `DeleteSaleAttachment` requires it. The POST example's base64
+  `Content` is a 62 KB image; the fixture keeps its first 32 characters.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim.
 

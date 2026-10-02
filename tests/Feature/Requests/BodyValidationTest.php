@@ -12,6 +12,7 @@ use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackPostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickPostData;
@@ -20,11 +21,14 @@ use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipPostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipPutData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalPostData;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
+use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PostSaleFulfilmentPack;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pick\PostSaleFulfilmentPick;
@@ -33,9 +37,11 @@ use Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship\PostSaleFulfilmentShip;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship\PutSaleFulfilmentShip;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\ManualJournal\PostSaleManualJournal;
 use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
+use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
 use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -182,7 +188,27 @@ class BodyValidationTest extends TestCase
             'pack POST' => [fn (): WriteRequest => new PostSaleFulfilmentPack(SaleFulfilmentPackPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'NOT AVAILABLE']))],
             'ship POST' => [fn (): WriteRequest => new PostSaleFulfilmentShip(SaleFulfilmentShipPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'VOIDED']))],
             'ship PUT' => [fn (): WriteRequest => new PutSaleFulfilmentShip(SaleFulfilmentShipPutData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'NOT AVAILABLE']))],
+            'quote POST' => [fn (): WriteRequest => new PostSaleQuote(SaleQuotePostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'VOIDED', 'Lines' => []]))],
+            'manual journal POST' => [fn (): WriteRequest => new PostSaleManualJournal(SaleManualJournalPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Status' => 'NOT AVAILABLE']))],
         ];
+    }
+
+    /**
+     * An attachment is sent as base64 `Content` or a `FileDownloadUrl`; a body with neither is
+     * not sent.
+     */
+    public function testAnAttachmentNeedsItsContentOrADownloadUrl(): void
+    {
+        try {
+            $this->connector()->send(new PostSaleAttachment(SaleAttachmentPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'FileName' => 'Test'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Content'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostSaleAttachment(SaleAttachmentPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'])));
+
+        $this->mock->assertSentCount(1);
     }
 
     /**

@@ -12,14 +12,18 @@ use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\RefResource;
+use Ipsocode\Cin7\Resources\Sale\AttachmentResource;
 use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
 use Ipsocode\Cin7\Resources\Sale\Fulfilment\PackResource;
 use Ipsocode\Cin7\Resources\Sale\Fulfilment\PickResource;
 use Ipsocode\Cin7\Resources\Sale\Fulfilment\ShipResource;
 use Ipsocode\Cin7\Resources\Sale\FulfilmentResource;
 use Ipsocode\Cin7\Resources\Sale\InvoiceResource;
+use Ipsocode\Cin7\Resources\Sale\ManualJournalResource;
 use Ipsocode\Cin7\Resources\Sale\OrderResource;
 use Ipsocode\Cin7\Resources\Sale\PaymentResource;
+use Ipsocode\Cin7\Resources\Sale\QuoteResource;
+use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -86,12 +90,23 @@ class ConnectorResourcesTest extends TestCase
     {
         $sale = $this->connector()->sale();
 
+        $this->assertInstanceOf(QuoteResource::class, $sale->quote());
         $this->assertInstanceOf(OrderResource::class, $sale->order());
         $this->assertInstanceOf(FulfilmentResource::class, $sale->fulfilment());
         $this->assertInstanceOf(InvoiceResource::class, $sale->invoice());
         $this->assertInstanceOf(CreditNoteResource::class, $sale->creditNote());
         $this->assertInstanceOf(PaymentResource::class, $sale->payment());
+        $this->assertInstanceOf(ManualJournalResource::class, $sale->manualJournal());
+        $this->assertInstanceOf(AttachmentResource::class, $sale->attachment());
         $this->assertNotSame($sale->order(), $sale->order());
+    }
+
+    public function testSaleCreditNoteListReturnsAFreshSaleCreditNoteListResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(SaleCreditNoteListResource::class, $connector->saleCreditNoteList());
+        $this->assertNotSame($connector->saleCreditNoteList(), $connector->saleCreditNoteList());
     }
 
     public function testAFulfilmentReturnsItsPickPackAndShip(): void
