@@ -167,6 +167,36 @@ class Cin7PaginatorTest extends TestCase
         $mock->assertSentCount(2);
     }
 
+    public function testAnEnvelopeWithNoTotalStopsOnAShortPage(): void
+    {
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'a'], ['ID' => 'b']], page: 1)),
+            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'c']], page: 2)),
+        ]);
+
+        $paginator = $this->connector()->ref()->customer()->credits()->paginate()->perPageLimit(2);
+
+        $items = iterator_to_array($paginator->items(), false);
+
+        $this->assertSame(['a', 'b', 'c'], array_column($items, 'ID'));
+        $mock->assertSentCount(2);
+    }
+
+    public function testAnEnvelopeWithNoTotalStopsOnAnEmptyPage(): void
+    {
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'a']], page: 1)),
+            MockResponse::make(Cin7Payloads::customerCredits([], page: 2)),
+        ]);
+
+        $paginator = $this->connector()->ref()->customer()->credits()->paginate()->perPageLimit(1);
+
+        $items = iterator_to_array($paginator->items(), false);
+
+        $this->assertSame(['a'], array_column($items, 'ID'));
+        $mock->assertSentCount(2);
+    }
+
     public function testPooledFetchGathersEveryPageRegardlessOfCompletionOrder(): void
     {
         Saloon::fake([

@@ -62,6 +62,21 @@ final class Cin7Payloads
     }
 
     /**
+     * One page of a customer's credits. Unlike the other lists, the V2 envelope has no
+     * `Total` (`{Page, CustomerCredits}`).
+     *
+     * @param list<array<string, mixed>> $credits
+     * @return array<string, mixed>
+     */
+    public static function customerCredits(array $credits = [], int $page = 1): array
+    {
+        return [
+            'Page' => $page,
+            'CustomerCredits' => $credits,
+        ];
+    }
+
+    /**
      * A sale, which Cin7 keys by `SaleID` rather than `ID`.
      *
      * @return array<string, mixed>

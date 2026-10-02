@@ -15,6 +15,10 @@ use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
+use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
+use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
+use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
+use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Workbench\App\Support\Cin7Payloads;
@@ -33,7 +37,7 @@ class ResourceCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock = Saloon::fake(array_fill(0, 8, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 14, MockResponse::make(Cin7Payloads::customerList())));
     }
 
     /**
@@ -131,6 +135,54 @@ class ResourceCatalogueTest extends TestCase
                 '/ExternalApi/v2/product',
                 [],
                 ['ID' => 'guid-1', 'Name' => 'Widget'],
+            ],
+            'ref tax get' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->get(),
+                GetTax::class,
+                Method::GET,
+                '/ExternalApi/v2/ref/tax',
+                ['page' => 1, 'limit' => 100],
+                null,
+            ],
+            'ref tax paginate' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->paginate()->current(),
+                GetTax::class,
+                Method::GET,
+                '/ExternalApi/v2/ref/tax',
+                ['page' => 1, 'limit' => 100],
+                null,
+            ],
+            'ref tax post' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->post(['Name' => 'VAT']),
+                PostTax::class,
+                Method::POST,
+                '/ExternalApi/v2/ref/tax',
+                [],
+                ['Name' => 'VAT'],
+            ],
+            'ref tax put' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->put(['ID' => 'guid-1', 'Name' => 'VAT']),
+                PutTax::class,
+                Method::PUT,
+                '/ExternalApi/v2/ref/tax',
+                [],
+                ['ID' => 'guid-1', 'Name' => 'VAT'],
+            ],
+            'ref customer credits get' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->credits()->get(['CustomerID' => 'guid-1', 'ShowUsedCredits' => true]),
+                GetCustomerCredits::class,
+                Method::GET,
+                '/ExternalApi/v2/ref/customer/credits',
+                ['CustomerID' => 'guid-1', 'ShowUsedCredits' => 'true', 'page' => 1, 'limit' => 100],
+                null,
+            ],
+            'ref customer credits paginate' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->credits()->paginate()->current(),
+                GetCustomerCredits::class,
+                Method::GET,
+                '/ExternalApi/v2/ref/customer/credits',
+                ['page' => 1, 'limit' => 100],
+                null,
             ],
         ];
     }
