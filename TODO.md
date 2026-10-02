@@ -19,16 +19,6 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/me/**` Me (3 resources, 9 operations, 1 left)
-
-- [x] `me` · `me` · GET
-  - [x] ME: `MeData`
-  - [x] RoundingTableModel: `RoundingTableData`
-- [x] `me-address` · `me/addresses` · GET POST PUT DELETE
-  - [x] Me Address: `MeAddressData`
-- [ ] `me-contact` · `me/contacts` · GET POST PUT DELETE
-  - [ ] Me Contact: `MeContactData`
-
 ### `reference/purchase/**` Purchase (17 resources, 45 operations)
 
 - [ ] `purchase-list` · `purchaseList` · GET
@@ -451,6 +441,16 @@ Built with the first resource that uses it.
 ## Done
 
 Every resource in these groups is in.
+
+### `reference/me/**` Me (3 resources, 9 operations)
+
+- [x] `me` · `me` · GET
+  - [x] ME: `MeData`
+  - [x] RoundingTableModel: `RoundingTableData`
+- [x] `me-address` · `me/addresses` · GET POST PUT DELETE
+  - [x] Me Address: `MeAddressData`
+- [x] `me-contact` · `me/contacts` · GET POST PUT DELETE
+  - [x] Me Contact: `MeContactData`
 
 ### `reference/sale/**` Sale (14 resources, 38 operations)
 

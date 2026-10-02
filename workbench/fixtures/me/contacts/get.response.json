@@ -1,0 +1,28 @@
+{
+    "Total": 2,
+    "Page": 1,
+    "MeContactsList": [
+        {
+            "ContactID": "1a917f5a-4d68-41a0-8b07-7b26841ffb9d",
+            "Name": "DEFAULT billing contact",
+            "Phone": "12345678",
+            "Fax": null,
+            "Email": "contact@example.com",
+            "Website": null,
+            "Comment": null,
+            "Type": "Billing",
+            "DefaultForType": true
+        },
+        {
+            "ContactID": "d1a6e908-2fe4-42d3-8772-daace0fe80a3",
+            "Name": "DEFAULT shipping contact",
+            "Phone": "12345678",
+            "Fax": null,
+            "Email": "contact@example.com",
+            "Website": null,
+            "Comment": null,
+            "Type": "Shipping",
+            "DefaultForType": true
+        }
+    ]
+}
