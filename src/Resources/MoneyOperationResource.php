@@ -14,8 +14,8 @@ use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
 use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
 
 /**
- * `moneyOperation` has no list action; V2 lists money tasks at `moneyTaskList`, which this
- * package does not cover.
+ * `moneyOperation` has no list action; V2 lists money tasks at `moneyTaskList`, which is
+ * `Cin7Connector::moneyTaskList()`.
  *
  * @extends BaseResource<Cin7Connector>
  */

@@ -28,6 +28,7 @@ final class SaleCreditNotePostData extends Data
     public function __construct(
         public string|Optional $SaleID,
         public string|Optional $TaskID,
+        public bool|Optional $CombineAdditionalCharges,
         public string|Optional $CreditNoteInvoiceNumber,
         public string|Optional $Memo,
         public string|Optional $Status,

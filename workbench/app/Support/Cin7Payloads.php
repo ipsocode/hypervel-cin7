@@ -1198,7 +1198,7 @@ final class Cin7Payloads
      */
     public static function saleInvoicePartial(): array
     {
-        return self::sale()['Invoices'][0];
+        return ['CombineAdditionalCharges' => false] + self::sale()['Invoices'][0];
     }
 
     /**
@@ -1234,6 +1234,7 @@ final class Cin7Payloads
     public static function saleCreditNotePartial(): array
     {
         return self::sale()['CreditNotes'][0] + [
+            'CombineAdditionalCharges' => false,
             'CreditNoteBalance' => 0,
             'Payments' => [
                 [
@@ -1282,12 +1283,55 @@ final class Cin7Payloads
         return [
             'ID' => '20d5ff25-afa2-cd74-96d7-c7f0dd1fa1c1',
             'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4',
+            'TaskID' => '4733ba69-21c5-48f5-95e5-307aa9889747',
+            'SaleOrderNumber' => 'SO-00001',
+            'InvoiceNumber' => 'INV-00005',
+            'CreditNoteNumber' => null,
+            'Type' => 'Payment',
             'Reference' => 'BANK-1',
             'Amount' => 358,
             'DatePaid' => '2017-11-23T00:00:00',
             'Account' => '718',
             'CurrencyRate' => 1,
             'DateCreated' => '2017-11-22T06:58:21.8882229Z',
+            'CreditID' => null,
+        ];
+    }
+
+    /**
+     * The `{Total, Page, MoneyTasks}` envelope `moneyTaskList` answers with, from the reference's example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function moneyTaskList(): array
+    {
+        return [
+            'Total' => 2,
+            'Page' => 1,
+            'MoneyTasks' => [
+                [
+                    'TaskID' => '07a2cdde-6a04-4925-be45-538e3a88dd7a',
+                    'Date' => '2018-01-17T00:00:00',
+                    'TaskType' => 'Receive Money',
+                    'Status' => 'COMPLETED',
+                    'SupplierCustomerName' => '',
+                    'SupplierID' => null,
+                    'CustomerID' => null,
+                    'Reference' => '',
+                    'TotalAmount' => 6,
+                ],
+                [
+                    'TaskID' => 'ded51119-ec29-4fcd-b43b-4c63341f188e',
+                    'Date' => '2018-01-17T00:00:00',
+                    'TaskType' => 'Spend Money',
+                    'Status' => 'COMPLETED',
+                    'SupplierCustomerName' => 'Bayside Wholesale',
+                    'SupplierID' => 'af09cddc-c4b0-47b2-8755-78edac52e920',
+                    'CustomerID' => null,
+                    'Reference' => 'Test 1',
+                    'TotalAmount' => 1.8,
+                ],
+            ],
         ];
     }
 

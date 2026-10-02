@@ -49,6 +49,7 @@ use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
+use Ipsocode\Cin7\Requests\MoneyTaskList\GetMoneyTaskList;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -501,6 +502,22 @@ class ResourceCatalogueTest extends TestCase
                 Method::DELETE,
                 '/ExternalApi/v2/sale/payment',
                 ['ID' => 'pay-1'],
+                null,
+            ],
+            'moneyTaskList get' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyTaskList()->get(['Status' => 'COMPLETED']),
+                GetMoneyTaskList::class,
+                Method::GET,
+                '/ExternalApi/v2/moneyTaskList',
+                ['Status' => 'COMPLETED', 'page' => 1, 'limit' => 100],
+                null,
+            ],
+            'moneyTaskList paginate' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->moneyTaskList()->paginate()->current(),
+                GetMoneyTaskList::class,
+                Method::GET,
+                '/ExternalApi/v2/moneyTaskList',
+                ['page' => 1, 'limit' => 100],
                 null,
             ],
             'saleList get' => [
