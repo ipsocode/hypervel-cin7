@@ -247,6 +247,17 @@ and the saved family (`ProductFamilies.0`). `productFamily/attachments` (under
 `ProductCategoryData` or `UnitOfMeasureData`, and the POST and PUT answer one of them, as the
 whole body.
 
+`ref/location` (under `Location/`) has `GetLocation` (a `ListRequest` keyed `LocationList`, filtered by
+`id`, `deprecated` and `name`), `PostLocation` and `PutLocation` (bodies `LocationPostData` and
+`LocationPutData`, which carries `ID`) and `DeleteLocation` (keyed `ID`); a POST or PUT answers the
+saved `LocationData` as a bare object. `ref/carrier` (under `Carrier/`) is the same with `Description`
+and `CarrierID`, except that its POST and PUT answer a `CarrierList`, so their `dto()` is a
+`list<CarrierData>`. `GetTemplates` (under `Templates/`, keyed `Templates`, filtered by `type` and
+`name`) lists the document templates. `ref/customer/templates` (under `Customer/Templates/`) sets the
+templates a customer uses by default: `GetCustomerTemplates` (keyed `CustomerTemplates`, filtered by
+`customerId`), `PostCustomerTemplates` (body `CustomerDefaultTemplatesPostData`) and
+`DeleteCustomerTemplates` (keyed `TemplateId` and `CustomerId`); all three answer the customers'
+templates, so `dto()` is a `list<CustomerDefaultTemplateData>`.
 `ref/fixedassettype` (under `FixedAssetType/`) has `GetFixedAssetType` (a `ListRequest` keyed
 `FixedAssetTypeList`), `PostFixedAssetType` and `PutFixedAssetType` (the PUT body carries
 `FixedAssetTypeID`); `ref/paymentterm` (under `PaymentTerm/`) has `GetPaymentTerm` (keyed

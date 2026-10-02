@@ -23,20 +23,6 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
 
 Every group not ranked yet: move a group up or down as issues are planned.
 
-### `reference/customer/**` Customer (3 resources, 7 operations, 1 left)
-
-- [x] `customer` · `customer` · GET POST PUT
-  - [x] Customer: `CustomerData`
-- [ ] `customer-default-template` · `ref/customer/templates` · GET POST DELETE
-  - [ ] Customer Default Template: `CustomerDefaultTemplateData`
-- [x] `customer-credits` · `ref/customer/credits` · GET
-  - [x] Customer Credits: `CustomerCreditData`
-
-### `reference/location/**` Location (1 resource, 4 operations)
-
-- [ ] `location` · `ref/location` · GET POST PUT DELETE
-  - [ ] Location: `LocationData`
-
 ### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
 
 - [ ] `webhooks` · `webhooks` · GET POST PUT DELETE
@@ -122,11 +108,6 @@ Built with the first resource that uses it.
 ## Low
 
 CRM, disassembly, finished goods and production, the maintainer's choice.
-
-### `reference/carrier/**` Carrier (1 resource, 4 operations)
-
-- [ ] `carrier` · `ref/carrier` · GET POST PUT DELETE
-  - [ ] Carrier: `CarrierData`
 
 ### `reference/disassembly/**` Disassembly (3 resources, 6 operations)
 
@@ -237,11 +218,6 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] ShipZoneConditionModel: `ShipZoneConditionData`
 - [ ] `ship-zones-enabled` · `reference/shipZonesEnabled` · GET PUT
 
-### `reference/templates/**` Templates (1 resource, 1 operation)
-
-- [ ] `templates` · `ref/templates` · GET
-  - [ ] Templates: `TemplateData`
-
 ### `reference/crm/**` CRM (6 resources, 16 operations)
 
 - [ ] `lead` · `crm/lead` · GET POST PUT
@@ -289,10 +265,24 @@ Every resource in these groups is in.
 - [x] `brand` · `ref/brand` · GET POST PUT DELETE
   - [x] Brand: `BrandData`
 
+### `reference/carrier/**` Carrier (1 resource, 4 operations)
+
+- [x] `carrier` · `ref/carrier` · GET POST PUT DELETE
+  - [x] Carrier: `CarrierData`
+
 ### `reference/chart-of-accounts/**` Chart of Accounts (1 resource, 4 operations)
 
 - [x] `chart-of-accounts` · `ref/account` · GET POST PUT DELETE
   - [x] Chart of Accounts: `AccountData`
+
+### `reference/customer/**` Customer (3 resources, 7 operations)
+
+- [x] `customer` · `customer` · GET POST PUT
+  - [x] Customer: `CustomerData`
+- [x] `customer-default-template` · `ref/customer/templates` · GET POST DELETE
+  - [x] Customer Default Template: `CustomerDefaultTemplateData`
+- [x] `customer-credits` · `ref/customer/credits` · GET
+  - [x] Customer Credits: `CustomerCreditData`
 
 ### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
 
@@ -312,6 +302,11 @@ Every resource in these groups is in.
 
 - [x] `journal` · `journal` · GET POST PUT DELETE
   - [x] Journal: `JournalData`
+
+### `reference/location/**` Location (1 resource, 4 operations)
+
+- [x] `location` · `ref/location` · GET POST PUT DELETE
+  - [x] Location: `LocationData`
 
 ### `reference/me/**` Me (3 resources, 9 operations)
 
@@ -486,6 +481,11 @@ Every resource in these groups is in.
 
 - [x] `tax` · `ref/tax` · GET POST PUT
   - [x] Tax: `TaxData`
+
+### `reference/templates/**` Templates (1 resource, 1 operation)
+
+- [x] `templates` · `ref/templates` · GET
+  - [x] Templates: `TemplateData`
 
 ### `reference/transactions/**` Transactions (1 resource, 1 operation)
 
