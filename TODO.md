@@ -76,10 +76,10 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [ ] Purchase Manual Journal: `AdvancedPurchaseManualJournalsData`
   - [ ] AdvancedPurchasePartialMAnJModel: `AdvancedPurchasePartialManualJournalData`
 
-### `reference/supplier/**` Supplier (2 resources, 4 operations)
+### `reference/supplier/**` Supplier (2 resources, 4 operations, 1 left)
 
-- [ ] `supplier` · `supplier` · GET POST PUT
-  - [ ] Supplier: `SupplierData`
+- [x] `supplier` · `supplier` · GET POST PUT
+  - [x] Supplier: `SupplierData`
 - [ ] `supplier-deposits` · `ref/supplier/deposits` · GET
   - [ ] Supplier Deposits: `SupplierDepositData`
 

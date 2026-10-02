@@ -60,6 +60,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | Accessor | Resource | Methods |
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
+| `$cin7->supplier()` | `SupplierResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|SupplierPostData $body)`, `put(array\|SupplierPutData $body)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
@@ -108,6 +109,30 @@ $saved = $this->cin7->customer()->post(CustomerPostData::from([
     'TaxRule' => 'Tax Exempt',
     'Addresses' => [['Line1' => '1 High St', 'Country' => 'UK', 'Type' => 'Billing']],
 ]))->dto(); // CustomerData
+```
+
+## Supplier
+
+`supplier` is the customer's twin: no GUID-keyed find, so `get(id: $guid)` filters the
+`{Total, Page, SupplierList}` list, with `name`, `modifiedSince` and `includeDeprecated` the
+other filters. `get()->dto()` is a `list<SupplierData>`, with `Addresses`
+(`CustomerAddressData`) and `Contacts` (`CustomerContactData`), the models the customer shares.
+`post()` takes a `SupplierPostData` and `put()` a `SupplierPutData`, which requires `ID`, as well
+as an array, and both answer with the saved supplier: their `dto()` is a `SupplierData`.
+
+```php
+use Ipsocode\Cin7\Data\Supplier\SupplierPostData;
+
+$suppliers = $this->cin7->supplier()->get(name: 'Bayside')->dto(); // list<SupplierData>
+
+$saved = $this->cin7->supplier()->post(SupplierPostData::from([
+    'Name' => 'Bayside Club',
+    'Currency' => 'AUD',
+    'PaymentTerm' => '30 days',
+    'AccountPayable' => '800',
+    'TaxRule' => 'BAS Excluded',
+    'Contacts' => [['Name' => 'Bob Partridge', 'Default' => true]],
+]))->dto(); // SupplierData
 ```
 
 ## Product
@@ -302,6 +327,7 @@ key:
 | Resource | PUT body carries |
 |---|---|
 | `customer` | `ID` |
+| `supplier` | `ID` |
 | `product` | `ID` |
 | `ref/tax` | `ID` |
 | `sale` | `ID` |
