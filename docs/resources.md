@@ -64,10 +64,11 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->me()` | `MeResource` | `get()`; `addresses()`, `contacts()` |
 | `$cin7->me()->addresses()` | `Me\AddressesResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeAddressPostData $body)`, `put(array\|MeAddressPutData $body)`, `delete(string $id)` |
 | `$cin7->me()->contacts()` | `Me\ContactsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeContactPostData $body)`, `put(array\|MeContactPutData $body)`, `delete(string $id)` |
-| `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
+| `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)`; `markupPrices()` |
 | `$cin7->bankTransfer()` | `BankTransferResource` | `get(string $taskId)`, `post(array\|BankTransferPostData $body)`, `put(array\|BankTransferPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->sale()->fulfilment()` | `Sale\FulfilmentResource` | `get(string $saleId, …)`, `post(array\|SaleFulfilmentsData $body)`, `delete(string $taskId, ?bool $void = null)`; `pick()`, `pack()`, `ship()` |
@@ -94,7 +95,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseList()` | `PurchaseListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseCreditNoteList()` | `PurchaseCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
-| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `brand()`, `category()`, `unit()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
+| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `priceTier()`, `brand()`, `category()`, `unit()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -102,6 +103,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->ref()->supplier()->deposits()` | `Ref\Supplier\DepositsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()->account()` | `Ref\AccountResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|AccountPostData $body)`, `put(array\|AccountPutData $body)`, `delete(string $code)`; `bank()` |
 | `$cin7->ref()->account()->bank()` | `Ref\Account\BankResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->ref()->priceTier()` | `Ref\PriceTierResource` | `get()` |
 | `$cin7->ref()->brand()` | `Ref\BrandResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|BrandPostData $body)`, `put(array\|BrandPutData $body)`, `delete(string $id)` |
 | `$cin7->ref()->category()` | `Ref\CategoryResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductCategoryPostData $body)`, `put(array\|ProductCategoryPutData $body)`, `delete(string $id)` |
 | `$cin7->ref()->unit()` | `Ref\UnitResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|UnitOfMeasurePostData $body)`, `put(array\|UnitOfMeasurePutData $body)`, `delete(string $id)` |
@@ -394,6 +396,29 @@ $this->cin7->journal()->delete($journal->TaskID, void: true);
 foreach ($this->cin7->transactions()->paginate(account: '610')->items() as $transaction) {
     // $transaction is one entry of Transactions
 }
+```
+
+## Price tiers and markup prices
+
+`$cin7->ref()->priceTier()->get()` lists the account's price tiers, by code (1 to 10) and name, as
+`list<PriceTierData>`. They cannot be paged. A product's own `PriceTiers` is a different thing: a
+map of those names to prices.
+
+`$cin7->product()->markupPrices()` is `product/markupprices`. `get($productId)` answers a
+`MarkupPricesData`, with a `MarkupPriceLineData` for each of the ten tiers: a tier with no markup
+has `MarkupType::Deleted`. `put()` takes a `MarkupPricesData` or an array: a line for a tier
+creates or changes its markup, and a `Deleted` line deletes it.
+
+```php
+use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
+
+$this->cin7->product()->markupPrices()->put(MarkupPricesData::from([
+    'ProductID' => $productId,
+    'MarkupPrices' => [
+        ['TierNumber' => 1, 'MarkupType' => 'P', 'UsePriceType' => 'A', 'MarkupValue' => 20],
+        ['TierNumber' => 3, 'MarkupType' => 'D'],
+    ],
+]));
 ```
 
 ## Money Task

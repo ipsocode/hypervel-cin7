@@ -86,6 +86,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
 | `DeleteAccount` | **`code`** |
 | `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
+| `GetPriceTier` | none |
+| `GetProductMarkupPrices` | **`productId`** |
 | `GetBrand`, `GetCategory`, `GetUnit` | `page`, `limit`, `name` |
 | `DeleteBrand`, `DeleteCategory`, `DeleteUnit` | **`id`** |
 | `GetFixedAssetType` | `page`, `limit`, `fixedAssetTypeId`, `name` |
@@ -195,6 +197,11 @@ on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountDat
 and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
 to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
 `ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
+
+`GetPriceTier` (`ref/priceTier`, under `PriceTier/`) takes no parameters and is not paged: its
+`dto()` is a `list<PriceTierData>`. `GetProductMarkupPrices` (keyed `ProductID`) and
+`PutProductMarkupPrices` (a `WriteRequest` whose body is a `MarkupPricesData`) are on
+`product/markupprices`, under `Product/MarkupPrices/`; both answer a `MarkupPricesData`.
 
 `ref/brand`, `ref/category` and `ref/unit` (under `Brand/`, `Category/` and `Unit/`) each have a
 `Get…` (a `ListRequest` keyed `BrandList`, `CategoryList` and `UnitList`), a `Post…` and a `Put…`

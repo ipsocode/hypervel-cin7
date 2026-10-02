@@ -19,6 +19,7 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
@@ -53,6 +54,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
 use Ipsocode\Cin7\Requests\Purchase\CreditNote\PostPurchaseCreditNote;
@@ -587,6 +589,45 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PutAccount(AccountPutData::from($account + ['Bank' => 'Bank of Example', 'BankAccountNumber' => '12345678'])));
 
         $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A markup line needs its start price and value unless it deletes the tier (`D`), and a tier
+     * number is 1 to 10, and a value is not negative.
+     *
+     * @param array<string, mixed> $line
+     * @param list<string> $fields
+     */
+    #[DataProvider('invalidMarkupLineProvider')]
+    public function testAMarkupLineBreakingARuleIsNotSent(array $line, array $fields): void
+    {
+        try {
+            $this->connector()->send(new PutProductMarkupPrices(MarkupPricesData::from(['ProductID' => '7c8795c2-1a6b-4318-ba72-291f61444906', 'MarkupPrices' => [$line]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(array_map(static fn (string $field): string => 'MarkupPrices.0.' . $field, $fields), array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, list<string>}>
+     */
+    public static function invalidMarkupLineProvider(): array
+    {
+        return [
+            'a percentage without its start price or value' => [['TierNumber' => 1, 'MarkupType' => 'P'], ['UsePriceType', 'MarkupValue']],
+            'a tier number above 10' => [['TierNumber' => 11, 'MarkupType' => 'D'], ['TierNumber']],
+            'a negative value' => [['TierNumber' => 1, 'MarkupType' => 'A', 'UsePriceType' => 'A', 'MarkupValue' => -1], ['MarkupValue']],
+        ];
+    }
+
+    public function testADeletedMarkupLineNeedsNeitherStartPriceNorValue(): void
+    {
+        $this->connector()->send(new PutProductMarkupPrices(MarkupPricesData::from(['ProductID' => '7c8795c2-1a6b-4318-ba72-291f61444906', 'MarkupPrices' => [['TierNumber' => 3, 'MarkupType' => 'D']]])));
+
+        $this->mock->assertSentCount(1);
     }
 
     /**

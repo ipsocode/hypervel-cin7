@@ -203,6 +203,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/brand` | POST: `BrandPostData`; PUT: `BrandPutData`, which also requires `ID` (Brand) | GET: `list<BrandData>`; POST, PUT: `BrandData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/category` | POST: `ProductCategoryPostData`; PUT: `ProductCategoryPutData`, which also requires `ID` (Product Category) | GET: `list<ProductCategoryData>`; POST, PUT: `ProductCategoryData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/unit` | POST: `UnitOfMeasurePostData`; PUT: `UnitOfMeasurePutData`, which also requires `ID` (Unit of Measure) | GET: `list<UnitOfMeasureData>`; POST, PUT: `UnitOfMeasureData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
+| `ref/priceTier` | none | GET: `list<PriceTierData>` (Price Tier), read from `PriceTiers` |
 | `ref/fixedassettype` | POST: `FixedAssetTypePostData`; PUT: `FixedAssetTypePutData`, which also requires `FixedAssetTypeID` (Fixed Asset Types) | GET: `list<FixedAssetTypeData>`; POST, PUT: `FixedAssetTypeData`, the saved type (`FixedAssetTypeList.0`) |
 | `ref/paymentterm` | POST: `PaymentTermPostData`; PUT: `PaymentTermPutData`, which also requires `ID` (Payment Term) | GET: `list<PaymentTermData>`; POST, PUT: `PaymentTermData`, the saved term (`PaymentTermList.0`); DELETE: `{Success}`, left to `json()` |
 | `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
@@ -211,6 +212,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
+| `product/markupprices` | PUT: `MarkupPricesData` (Markup Prices Model, with `MarkupPrices`: `MarkupPriceLineData`, Markup Price Line Model) | GET, PUT: `MarkupPricesData` |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
@@ -843,6 +845,17 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   saved record itself, `{ID, Name}`, where `ref/tax` and the others answer with the list envelope, so
   their `dto()` reads the whole body. The brand POST example's keys are unquoted, and is fixed
   in its fixture.
+- **Price Tier and a product's `PriceTiers`.** The reference's Other Models `PriceTierModel` is the
+  product's `PriceTiers` map, which has no class; the `{Code, Name}` table of `ref/priceTier` is
+  `PriceTierData`. That list has no `Total` and no page.
+- **Markup Prices values.** `MarkupType` (`P` a percentage, `A` an amount, `D` none) and
+  `UsePriceType` (`A` average cost, `F` latest fixed supplier cost, `L` latest supplier cost, `V`
+  the value itself) are enums named for their meaning: `MarkupType::Percent` is `'P'` and
+  `UsePriceType::AverageCost` is `'A'`. The table's Required column says "Yes, except when
+  `MarkupType` is `D`" for `UsePriceType` and `MarkupValue`, so they are `#[RequiredUnless]`; a
+  tier number is 1 to 10 and a value at least 0. The PUT example's keys are single-quoted and its
+  `ProductID` upper-case, and are fixed in its fixture. The heading says `/ref/markupprices` but the
+  operations use `/product/markupprices`, which the classes follow.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -966,6 +979,10 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
+
+`PriceTierData` (`src/Data/Ref/PriceTier/`) requires nothing. `MarkupPricesData`
+(`src/Data/Product/MarkupPrices/`) requires `ProductID` and `MarkupPrices`, and `MarkupPriceLineData`
+`TierNumber` and `MarkupType`; one `MarkupPricesData` is both the PUT body and the response.
 
 `ref/brand`, `ref/category` and `ref/unit` are each a name and an ID, with a class per verb because
 the ID is taken by PUT and the response only:
