@@ -15,6 +15,8 @@ use Ipsocode\Cin7\Resources\Ref\Account\BankResource;
 use Ipsocode\Cin7\Resources\Ref\AccountResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
+use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
+use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
 use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource as RefSupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
@@ -165,6 +167,8 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(DepositsResource::class, $ref->supplier()->deposits());
         $this->assertInstanceOf(AccountResource::class, $ref->account());
         $this->assertInstanceOf(BankResource::class, $ref->account()->bank());
+        $this->assertInstanceOf(FixedAssetTypeResource::class, $ref->fixedAssetType());
+        $this->assertInstanceOf(PaymentTermResource::class, $ref->paymentTerm());
     }
 
     public function testRefReturnsAFreshInstanceEveryCall(): void
@@ -176,5 +180,7 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->ref()->supplier(), $connector->ref()->supplier());
         $this->assertNotSame($connector->ref()->account(), $connector->ref()->account());
         $this->assertNotSame($connector->ref()->account()->bank(), $connector->ref()->account()->bank());
+        $this->assertNotSame($connector->ref()->fixedAssetType(), $connector->ref()->fixedAssetType());
+        $this->assertNotSame($connector->ref()->paymentTerm(), $connector->ref()->paymentTerm());
     }
 }

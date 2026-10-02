@@ -8,6 +8,8 @@ use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\Ref\AccountResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource;
+use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
+use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 
@@ -48,5 +50,21 @@ final class RefResource extends BaseResource
     public function account(): AccountResource
     {
         return new AccountResource($this->connector);
+    }
+
+    /**
+     * The `ref/fixedassettype` resource.
+     */
+    public function fixedAssetType(): FixedAssetTypeResource
+    {
+        return new FixedAssetTypeResource($this->connector);
+    }
+
+    /**
+     * The `ref/paymentterm` resource.
+     */
+    public function paymentTerm(): PaymentTermResource
+    {
+        return new PaymentTermResource($this->connector);
     }
 }

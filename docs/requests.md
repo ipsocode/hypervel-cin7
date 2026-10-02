@@ -86,6 +86,9 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
 | `DeleteAccount` | **`code`** |
 | `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
+| `GetFixedAssetType` | `page`, `limit`, `fixedAssetTypeId`, `name` |
+| `GetPaymentTerm` | `page`, `limit`, `id`, `name`, `termMethod` (`PaymentTermMethod`; `method` on the resource, since a request already has a `$method`), `isActive`, `isDefault` |
+| `DeletePaymentTerm` | **`id`** |
 | `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
 | `GetMeContacts` | `page`, `limit`, `id`, `name`, `type` (`ContactType`), `defaultForType`, `phone`, `fax`, `email` |
 | `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
@@ -154,6 +157,13 @@ on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountDat
 and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
 to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
 `ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
+
+`ref/fixedassettype` (under `FixedAssetType/`) has `GetFixedAssetType` (a `ListRequest` keyed
+`FixedAssetTypeList`), `PostFixedAssetType` and `PutFixedAssetType` (the PUT body carries
+`FixedAssetTypeID`); `ref/paymentterm` (under `PaymentTerm/`) has `GetPaymentTerm` (keyed
+`PaymentTermList`), `PostPaymentTerm`, `PutPaymentTerm` (the PUT body carries `ID`) and
+`DeletePaymentTerm` (`ID`). Their GET `dto()` is a list of `FixedAssetTypeData` or
+`PaymentTermData`, and POST and PUT answer the saved record (`<list key>.0`).
 
 The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
 model they serve: `GetMoneyTask`
