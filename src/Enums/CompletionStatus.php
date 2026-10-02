@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Enums;
 
 /**
- * The status of a task that completes in one step: a money operation, a journal, an inventory
+ * The status of a task that completes in one step: a money task, a journal, an inventory
  * write-off.
  *
  * @see docs/data.md

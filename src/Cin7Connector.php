@@ -14,8 +14,8 @@ use Hypervel\Saloon\Pagination\Contracts\HasPagination;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Resources\CustomerResource;
-use Ipsocode\Cin7\Resources\MoneyOperationResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
+use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
@@ -112,11 +112,11 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * The `moneyOperation` resource.
+     * The Money Task resource, on `moneyOperation`.
      */
-    public function moneyOperation(): MoneyOperationResource
+    public function moneyTask(): MoneyTaskResource
     {
-        return new MoneyOperationResource($this);
+        return new MoneyTaskResource($this);
     }
 
     /**

@@ -110,7 +110,8 @@ the request object's own accessors.
 `RequestCatalogueTest`, `ResourceCatalogueTest` and `DataCatalogueTest` run the same
 assertions over one row per request, resource method and data class. The rows live in one
 file per API path under `tests/Fixtures/Catalogue/`: `sale/invoice.php` holds the rows for
-`sale/invoice`. Each file returns its rows by kind, and
+`sale/invoice`, and `moneyTask.php` those of `moneyOperation`, which the package names after
+the Money Task. Each file returns its rows by kind, and
 [`Catalogue::rows()`](../tests/Catalogue.php) merges every file's rows of a kind:
 
 | Kind | A row is |

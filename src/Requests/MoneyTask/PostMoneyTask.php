@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Requests\MoneyOperation;
+namespace Ipsocode\Cin7\Requests\MoneyTask;
 
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
-use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `PUT moneyOperation`, body is a Money Task and carries `TaskID`; the response is the saved Money Task.
+ * `POST moneyOperation`, body is a Money Task; the response is the saved Money Task.
  *
  * @extends WriteRequest<MoneyTaskData>
  */
-final class PutMoneyOperation extends WriteRequest
+final class PostMoneyTask extends WriteRequest
 {
-    protected Method $method = Method::PUT;
+    protected Method $method = Method::POST;
 
     public function resolveEndpoint(): string
     {

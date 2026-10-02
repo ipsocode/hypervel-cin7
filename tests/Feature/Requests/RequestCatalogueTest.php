@@ -34,6 +34,12 @@ use Workbench\App\Support\Cin7Payloads;
  */
 class RequestCatalogueTest extends TestCase
 {
+    /**
+     * The paths whose folder and classes are named after the model they serve: `moneyOperation`
+     * serves the Money Task, which also names the reference's group of money endpoints.
+     */
+    private const array PATHS_NAMED_AFTER_THEIR_MODEL = ['moneyOperation' => 'MoneyTask'];
+
     private MockClient $mock;
 
     protected function setUp(): void
@@ -164,11 +170,12 @@ class RequestCatalogueTest extends TestCase
             $request = new ReflectionClass($class)->newInstanceWithoutConstructor();
             $relativeNamespace = str_replace(['Ipsocode\Cin7\Requests\\', '\\' . new ReflectionClass($class)->getShortName()], '', $class);
             $folderAsPath = str_replace('\\', '/', $relativeNamespace);
+            $path = self::PATHS_NAMED_AFTER_THEIR_MODEL[$request->resolveEndpoint()] ?? $request->resolveEndpoint();
 
             // A hyphenated segment is one PascalCase folder: `advanced-purchase/put-away` is
             // AdvancedPurchase/PutAway.
             $this->assertSame(
-                strtolower(str_replace('-', '', $request->resolveEndpoint())),
+                strtolower(str_replace('-', '', $path)),
                 strtolower($folderAsPath),
                 $class,
             );

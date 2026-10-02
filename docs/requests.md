@@ -82,8 +82,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
 | `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
 | `GetMoneyTaskList` | `page`, `limit`, `status` (`CompletionStatus`), `search`, `taskType` (`MoneyTaskType`) |
-| `GetMoneyOperation` | **`taskId`** |
-| `DeleteMoneyOperation` | **`id`**, `void` |
+| `GetMoneyTask` | **`taskId`** |
+| `DeleteMoneyTask` | **`id`**, `void` |
 | `GetSaleList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `shipBy`, `quoteStatus` (`TaskStatus`), `orderStatus` (`OrderStatus`), `combinedPickStatus` (`PickingStatus`), `combinedPackStatus` (`PackingStatus`), `combinedShippingStatus` (`ShippingStatus`), `combinedInvoiceStatus`, `creditNoteStatus` (`TaskStatus`), `externalId`, `status` (`SaleStatus`), `readyForShipping`, `orderLocationId` |
 | `GetSale` | **`id`**, `combineAdditionalCharges`, `hideInventoryMovements`, `includeTransactions`, `countryFormat` (`CountryFormat`) |
 | `DeleteSale` | **`id`**, `void` |
@@ -111,9 +111,10 @@ The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keye
 on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
 `ref/customer/credits`.
 
-The `moneyOperation` actions live under `src/Requests/MoneyOperation/`: `GetMoneyOperation`
-(keyed `TaskID`), `DeleteMoneyOperation` (keyed `ID`, with `Void`), and `PostMoneyOperation` and
-`PutMoneyOperation` (`WriteRequest`s; the PUT body carries `TaskID`), all on `moneyOperation`.
+The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
+model they serve: `GetMoneyTask`
+(keyed `TaskID`), `DeleteMoneyTask` (keyed `ID`, with `Void`), and `PostMoneyTask` and
+`PutMoneyTask` (`WriteRequest`s; the PUT body carries `TaskID`), all on `moneyOperation`.
 Every one's `dto()` is a `MoneyTaskData`.
 
 `GetMoneyTaskList` (a `ListRequest` keyed `MoneyTasks`) is on `moneyTaskList`, under

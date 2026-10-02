@@ -7,19 +7,20 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
-use Ipsocode\Cin7\Requests\MoneyOperation\DeleteMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\GetMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
+use Ipsocode\Cin7\Requests\MoneyTask\DeleteMoneyTask;
+use Ipsocode\Cin7\Requests\MoneyTask\GetMoneyTask;
+use Ipsocode\Cin7\Requests\MoneyTask\PostMoneyTask;
+use Ipsocode\Cin7\Requests\MoneyTask\PutMoneyTask;
 
 /**
- * `moneyOperation` has no list action; V2 lists money tasks at `moneyTaskList`, which is
- * `Cin7Connector::moneyTaskList()`.
+ * The Money Task, on `moneyOperation`: named after the model it serves, as the reference's Money
+ * Task group names it, not after the path. It has no list action; V2 lists money tasks at
+ * `moneyTaskList`, which is `Cin7Connector::moneyTaskList()`.
  *
  * @extends BaseResource<Cin7Connector>
  */
-final class MoneyOperationResource extends BaseResource
+final class MoneyTaskResource extends BaseResource
 {
     /**
      * One money task.
@@ -27,7 +28,7 @@ final class MoneyOperationResource extends BaseResource
     public function get(
         string $taskId,
     ): Response {
-        return $this->connector->send(new GetMoneyOperation($taskId));
+        return $this->connector->send(new GetMoneyTask($taskId));
     }
 
     /**
@@ -35,7 +36,7 @@ final class MoneyOperationResource extends BaseResource
      */
     public function post(array|MoneyTaskData $body): Response
     {
-        return $this->connector->send(new PostMoneyOperation($body));
+        return $this->connector->send(new PostMoneyTask($body));
     }
 
     /**
@@ -43,7 +44,7 @@ final class MoneyOperationResource extends BaseResource
      */
     public function put(array|MoneyTaskData $body): Response
     {
-        return $this->connector->send(new PutMoneyOperation($body));
+        return $this->connector->send(new PutMoneyTask($body));
     }
 
     /**
@@ -55,6 +56,6 @@ final class MoneyOperationResource extends BaseResource
         string $id,
         ?bool $void = null,
     ): Response {
-        return $this->connector->send(new DeleteMoneyOperation($id, $void));
+        return $this->connector->send(new DeleteMoneyTask($id, $void));
     }
 }
