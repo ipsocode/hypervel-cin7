@@ -65,7 +65,7 @@ PUT body carries `TaskID`), all on `moneyOperation`. Every one's `dto()` is a `M
 
 The `sale` actions live under `src/Requests/Sale/`: `GetSale` and `DeleteSale` (`KeyedRequest`s
 keyed `ID`; the DELETE takes `Void` as a parameter) and `PostSale` and `PutSale`
-(`WriteRequest`s; the PUT body carries `ID`), all on `sale`. `sale` has no list action:
+(`WriteRequest`s; the PUT body carries `ID`, and `PutSale` leaves the POST-only `SaleType` out of it), all on `sale`. `sale` has no list action:
 `GetSaleList` (a `ListRequest` keyed `SaleList`) is on `saleList`, under `src/Requests/SaleList/`.
 Every `sale` request's `dto()` is a `SaleData`; `GetSaleList`'s is a `list<SaleListData>`.
 
