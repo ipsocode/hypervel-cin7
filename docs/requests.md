@@ -116,8 +116,9 @@ on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`)
 The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
 model they serve: `GetMoneyTask`
 (keyed `TaskID`), `DeleteMoneyTask` (keyed `ID`, with `Void`), and `PostMoneyTask` and
-`PutMoneyTask` (`WriteRequest`s; the PUT body carries `TaskID`), all on `moneyOperation`.
-Every one's `dto()` is a `MoneyTaskData`.
+`PutMoneyTask` (`WriteRequest`s, whose data object bodies are `MoneyTaskPostData` and
+`MoneyTaskPutData`; the PUT body carries `TaskID`), all on `moneyOperation`. Every one's `dto()` is
+a `MoneyTaskData`.
 
 `GetMoneyTaskList` (a `ListRequest` keyed `MoneyTasks`) is on `moneyTaskList`, under
 `src/Requests/MoneyTaskList/`; its `dto()` is a `list<MoneyTaskListData>`.

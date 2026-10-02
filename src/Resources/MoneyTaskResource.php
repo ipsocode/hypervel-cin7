@@ -7,7 +7,8 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskPostData;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskPutData;
 use Ipsocode\Cin7\Requests\MoneyTask\DeleteMoneyTask;
 use Ipsocode\Cin7\Requests\MoneyTask\GetMoneyTask;
 use Ipsocode\Cin7\Requests\MoneyTask\PostMoneyTask;
@@ -32,17 +33,17 @@ final class MoneyTaskResource extends BaseResource
     }
 
     /**
-     * @param array<string, mixed>|MoneyTaskData $body
+     * @param array<string, mixed>|MoneyTaskPostData $body
      */
-    public function post(array|MoneyTaskData $body): Response
+    public function post(array|MoneyTaskPostData $body): Response
     {
         return $this->connector->send(new PostMoneyTask($body));
     }
 
     /**
-     * @param array<string, mixed>|MoneyTaskData $body
+     * @param array<string, mixed>|MoneyTaskPutData $body
      */
-    public function put(array|MoneyTaskData $body): Response
+    public function put(array|MoneyTaskPutData $body): Response
     {
         return $this->connector->send(new PutMoneyTask($body));
     }

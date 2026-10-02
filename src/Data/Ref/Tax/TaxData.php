@@ -24,14 +24,14 @@ final class TaxData extends Data implements WithResponse
      * @param null|list<TaxComponentData> $Components
      */
     public function __construct(
+        #[Max(50)]
+        public string $Name,
+        public string $Account,
+        public bool $IsActive,
+        public bool $TaxInclusive,
         #[Uuid]
         #[Max(50)]
         public ?string $ID = null,
-        #[Max(50)]
-        public ?string $Name = null,
-        public ?string $Account = null,
-        public ?bool $IsActive = null,
-        public ?bool $TaxInclusive = null,
         public ?float $TaxPercent = null,
         public ?bool $IsTaxForSale = null,
         public ?bool $IsTaxForPurchase = null,

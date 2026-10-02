@@ -10,7 +10,8 @@ use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `PUT moneyOperation`, body is a Money Task and carries `TaskID`; the response is the saved Money Task.
+ * `PUT moneyOperation`, body is a `MoneyTaskPutData` and carries `TaskID`; the response is the
+ * saved Money Task.
  *
  * @extends WriteRequest<MoneyTaskData>
  */

@@ -18,6 +18,7 @@ use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\ErrorData;
+use Ipsocode\Cin7\Data\MoneyTask\AbstractMoneyTaskData;
 use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
 use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
 use Ipsocode\Cin7\Data\Product\AbstractProductData;
@@ -387,6 +388,7 @@ class DataCatalogueTest extends TestCase
             AbstractChargeData::class,
             AbstractLineData::class,
             AbstractCustomerData::class,
+            AbstractMoneyTaskData::class,
             AbstractProductData::class,
             AbstractAddressData::class,
             AbstractSaleData::class,

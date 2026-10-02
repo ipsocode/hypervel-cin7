@@ -1,0 +1,28 @@
+{
+    "ID": "24551562-ebd1-4294-a04a-3ab258f5e541",
+    "Name": "PUT test",
+    "Account": "800",
+    "IsActive": true,
+    "TaxInclusive": false,
+    "TaxPercent": 55,
+    "IsTaxForSale": true,
+    "IsTaxForPurchase": true,
+    "Components": [
+        {
+            "ID": "0119E1C0-504A-429B-B4E2-4EEC02A9E88A",
+            "Name": "Tax 1st",
+            "Percent": "20.0000000000",
+            "AccountCode": "800",
+            "Compound": "1",
+            "ComponentOrder": "1"
+        },
+        {
+            "ID": "0B6D5C0F-D8EF-41FF-86D2-A05E5616FC61",
+            "Name": "Tax 2nd",
+            "Percent": "35.0000000000",
+            "AccountCode": "800",
+            "Compound": "0",
+            "ComponentOrder": "2"
+        }
+    ]
+}

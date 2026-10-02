@@ -9,8 +9,8 @@ the Saloon `Response`, and `json()` is unchanged.
 ```php
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 
-$cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT', 'Account' => '800']));
-$cin7->ref()->tax()->post(['Name' => 'VAT', 'Account' => '800']); // same body
+$cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT', 'Account' => '800', 'IsActive' => true, 'TaxInclusive' => false]));
+$cin7->ref()->tax()->post(['Name' => 'VAT', 'Account' => '800', 'IsActive' => true, 'TaxInclusive' => false]); // same body
 
 $saved = $cin7->ref()->tax()->put($tax)->dto();       // TaxData
 $rules = $cin7->ref()->tax()->get()->dto();           // list<TaxData>
@@ -43,6 +43,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | Parent | Models | Required in every model |
   |---|---|---|
   | `AbstractCustomerData` | `CustomerData`, `CustomerPostData`, `CustomerPutData` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule` |
+  | `AbstractMoneyTaskData` | `MoneyTaskData`, `MoneyTaskPostData`, `MoneyTaskPutData` | `TaskType`, `Status`, `BankAccount`, `Date` |
   | `AbstractProductData` | `ProductData`, `ProductPostData`, `ProductPutData` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`; and `QuantityToProduce` and `AssemblyCostEstimationMethod` on a write body with a bill of materials (see [products](#products)) |
   | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
@@ -63,11 +64,12 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   mapper, so `toArray()` is the JSON Cin7 expects.
 - **A required field has no default.** It is not nullable, and the model cannot be built
   without it: `from()` throws a `Hypervel\Data\Exceptions\CannotCreateData`. Required fields
-  come first in the constructor. So far the customer, product and sale classes require the
-  reference's fields (see [customers](#customers), [products](#products) and
+  come first in the constructor. Every class requires the fields its table does (see
+  [customers](#customers), [products](#products), [tax rules and money
+  tasks](#tax-rules-and-money-tasks) and
   [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)), as do
-  the parents above; the tax and money models keep every field optional. Where the reference
-  requires different fields per verb, the body is a class per verb.
+  the parents above; the Money Task List and Customer Credits tables require none. Where the
+  reference requires different fields per verb, the body is a class per verb.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
   key for every field, `null` where the response had none or sent `null`.
@@ -154,9 +156,9 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 |---|---|---|
 | `customer` | POST: `CustomerPostData`; PUT: `CustomerPutData`, which also requires `ID` (Customer, with `Addresses`: `CustomerAddressData`, `Contacts`: `CustomerContactData` and `ProductPrices`: `ProductPriceData`, Customer specific Product Price Model) | GET: `list<CustomerData>`; POST, PUT: `CustomerData`, the saved customer (`CustomerList.0`); responses add `ChildCustomers`: `ChildCustomerData` |
 | `product` | POST: `ProductPostData`, which also requires `Type`; PUT: `ProductPutData`, which also requires `ID` (Product, with `Suppliers`: `ProductSupplierData` and its `ProductSupplierOptions`: `ProductSupplierOptionData` and `SupplyIntervals`: `ProductSupplierOptionIntervalData`, `ReorderLevels`: `ReorderLevelData`, `BillOfMaterialsProducts`: `BillOfMaterialProductData`, `BillOfMaterialsServices`: `BillOfMaterialServiceData`, `Movements`: `ProductMovementData`, `Attachments`: `AttachmentLineData` and `CustomPrices`: `ProductPriceData`) | GET: `list<ProductData>`; POST, PUT: `ProductData`, the saved product (`Products.0`) |
-| `ref/tax` | `TaxData` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
+| `ref/tax` | `TaxData`, for both verbs (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
-| `moneyOperation` | `MoneyTaskData` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
+| `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
 | `saleList` | none | GET: `list<SaleListData>` (Sale List) |
@@ -225,10 +227,18 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   table includes the `Restock…` keys and `Box`; the example's restock line carries only the
   pick keys, and the others stay unset.
 - **Money Task `SupplierCustomerName`.** The table names the counterparty
-  `SupplierCustomerName`, but every example returns `SupplierCustomer`; `MoneyTaskData` models
-  the wire key, `SupplierCustomer`.
+  `SupplierCustomerName`, but every example returns `SupplierCustomer`; the money task classes
+  model the wire key, `SupplierCustomer`.
+- **Money Task `TaskID`.** The table requires it for PUT only, and the POST example has none,
+  so `MoneyTaskPostData` has no `TaskID` and `MoneyTaskData` leaves it optional.
 - **Money Task Line `TaxRule` and `Account`.** The table names them so, but every example
-  sends `TaxRuleName` and `AccountCode`; `MoneyTaskLineData` models the example keys.
+  sends `TaxRuleName` and `AccountCode`; `MoneyTaskLineData` models the example keys, and
+  requires them as the table requires `TaxRule` and `Account`.
+- **Tax `ID`.** The table requires no `ID`, and its required fields are the same on every verb,
+  so one class, `TaxData`, serves POST, PUT and the responses, with `ID` optional.
+- **Tax Component notes.** The notes on `Name` ("Name of product. Read-only.") and `Percent`
+  ("Cost. Required if product type is `Service`") are copied from a product table;
+  `TaxComponentData` follows the Required column and requires both.
 - **Money Task nulls.** `SupplierID`, `CustomerID` and `Note` are `null` in the examples, so
   those properties admit `null`.
 - **Customer `AdditionalAttribute#`.** The table lists one row, "# - int(1-10)", with no
@@ -348,6 +358,19 @@ The tables' conditions are rules a write body is checked against before it is se
 
 `AverageCost`, `LastModifiedOn` and `BOMType` (read-only) are on `ProductData` alone. A response
 missing a required field fails `dto()` with a `CannotCreateData`.
+
+## Tax rules and money tasks
+
+| Class | Folder | Required |
+|---|---|---|
+| `TaxData` (POST, PUT and responses) | `src/Data/Ref/Tax/` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
+| `TaxComponentData` | `src/Data/Ref/Tax/` | `Name`, `Percent`, `AccountCode`, `ComponentOrder` |
+| `MoneyTaskData` (response) | `src/Data/MoneyTask/` | `TaskType`, `Status`, `BankAccount`, `Date` |
+| `MoneyTaskPostData` | `src/Data/MoneyTask/` | `TaskType`, `Status`, `BankAccount`, `Date` |
+| `MoneyTaskPutData` | `src/Data/MoneyTask/` | `TaskType`, `Status`, `BankAccount`, `Date`, `TaskID` |
+| `MoneyTaskLineData` | `src/Data/MoneyTask/` | `Name`, `Quantity`, `TaxRuleName`, `AccountCode`, `Total` |
+
+A response missing a required field fails `dto()` with a `CannotCreateData`.
 
 ## Sale invoices, credit notes and payments
 

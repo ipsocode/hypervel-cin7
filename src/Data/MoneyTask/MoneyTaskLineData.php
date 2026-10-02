@@ -19,18 +19,18 @@ final class MoneyTaskLineData extends Data
 {
     public function __construct(
         #[Max(256)]
-        public ?string $Name = null,
+        public string $Name,
+        public float $Quantity,
+        #[Max(50)]
+        public string $TaxRuleName,
+        #[Max(50)]
+        public string $AccountCode,
+        public float $Total,
         #[Max(256)]
         public ?string $Comment = null,
-        public ?float $Quantity = null,
         public ?float $Price = null,
         public ?float $Discount = null,
         public ?float $Tax = null,
-        #[Max(50)]
-        public ?string $TaxRuleName = null,
-        #[Max(50)]
-        public ?string $AccountCode = null,
-        public ?float $Total = null,
     ) {
     }
 }
