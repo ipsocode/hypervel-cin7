@@ -71,6 +71,9 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->stockAdjustment()` | `StockAdjustmentResource` | `get(string $taskId)`, `post(array\|StockAdjustmentPostData $body)`, `put(array\|StockAdjustmentPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->stockTakeList()` | `StockTakeListResource` | `get($page, $limit, ?StockTakeStatus $status)`, `paginate($limit, ?StockTakeStatus $status): Cin7Paginator` |
 | `$cin7->stockTake()` | `StockTakeResource` | `get(string $taskId)`, `post(array\|StockTakePostData $body)`, `put(array\|StockTakePutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->stockTransferList()` | `StockTransferListResource` | `get($page, $limit, ?StockTransferStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->stockTransfer()` | `StockTransferResource` | `get(string $taskId)`, `post(array\|StockTransferPostData $body)`, `put(array\|StockTransferPutData $body)`, `delete(string $id, ?bool $void = null)`; `order()` |
+| `$cin7->stockTransfer()->order()` | `StockTransfer\OrderResource` | `get(string $taskId)`, `post(array\|StockTransferOrderPostData $body)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
@@ -1178,4 +1181,33 @@ $take = $this->cin7->stockTake()->post(StockTakePostData::from([
     'Location' => 'Main Warehouse',
     'Tags' => ['bread'],
 ]))->dto(); // StockTakeData
+```
+
+`$cin7->stockTransferList()` is `stockTransferList`, filtered by `status` (a `StockTransferStatus`:
+`DRAFT`, `IN TRANSIT`, `COMPLETED`, `VOIDED`) and `search`.
+
+`$cin7->stockTransfer()` is `stockTransfer`, keyed by `TaskID`. `post()` takes a
+`StockTransferPostData` and `put()` a `StockTransferPutData`, which requires `TaskID`, as well as an
+array. A body needs its `Status`, `CompletionDate` and `Lines` (`StockTransferLineData`: a
+`TransferQuantity` and a product by `ProductID` or `SKU`), the location it moves stock from, by
+`From` or `FromLocation`, and the one it moves it to, by `To` or `ToLocation`; an `IN TRANSIT`
+transfer also needs its `InTransitAccount` and `DepartureDate`. `SkipOrder` skips the transfer
+order, and `CostDistributionType` (`Cost`, `Quantity`, `Weight` or `Volume`) says how additional
+journals are capitalised. Every action answers with the transfer, so `dto()` is a
+`StockTransferData`, with its `Number`, its `Order` and `LastModifiedOn`. `delete($id, void: true)`
+voids it.
+
+`$cin7->stockTransfer()->order()` is `stockTransfer/order`: `get($taskId)` reads the order of a
+transfer, and `post()` takes a `StockTransferOrderPostData` (`TaskID`, `Status` and `Lines`) as well
+as an array. The order's `Status` is `NOT AVAILABLE`, `DRAFT` or `AUTHORISED`, and `dto()` is a
+`StockTransferOrderData`.
+
+```php
+$transfer = $this->cin7->stockTransfer()->post(StockTransferPostData::from([
+    'Status' => 'DRAFT',
+    'CompletionDate' => '2017-12-19T00:00:00',
+    'FromLocation' => 'Main Warehouse',
+    'ToLocation' => 'Main Warehouse: Bin 1',
+    'Lines' => [['SKU' => 'Bread', 'TransferQuantity' => 100]],
+]))->dto(); // StockTransferData
 ```

@@ -46,26 +46,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
 
-### `reference/stock/**` Stock (7 resources, 17 operations, 3 left)
-
-- [x] `stock-adjustment-list` · `stockadjustmentList` · GET
-  - [x] product fields: `trait HasProductFields`
-  - [x] Stock Adjustment List: `StockAdjustmentListData`
-- [x] `stock-adjustment` · `stockadjustment` · GET POST PUT DELETE
-  - [x] Stock Adjustment: `StockAdjustmentData`
-  - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPostData`
-  - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPutData`
-- [x] `stock-take-list` · `stockTakeList` · GET
-  - [x] Stock Take List: `StockTakeListData`
-- [x] `stock-take` · `stocktake` · GET POST PUT DELETE
-  - [x] Stock Take: `StockTakeData`
-- [ ] `stock-transfer-list` · `stockTransferList` · GET
-  - [ ] Stock Transfer List: `StockTransferListData`
-- [ ] `stock-transfer` · `stockTransfer` · GET POST PUT DELETE
-  - [ ] Stock Transfer: `StockTransferData`
-- [ ] `stock-transfer-order` · `stockTransfer/order` · GET POST
-  - [ ] Stock Transfer Order: `StockTransferOrderData`
-
 ### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
 
 - [ ] `webhooks` · `webhooks` · GET POST PUT DELETE
@@ -117,7 +97,7 @@ Built with the first resource that uses it.
 - [x] ExistingStockLineModel: `ExistingStockLineData` · used by stock-adjustment, stock-take
 - [x] NewStockLineModel: `NewStockLineData` · used by stock-adjustment, stock-take
 - [x] TransactionStockLineModel: `TransactionStockLineData` · used by disassembly, finished-goods, inventory-write-off, money-operation, bank-transfer, stock-adjustment, stock-take
-- [ ] StockTransferLineModel: `StockTransferLineData` · used by stock-transfer
+- [x] StockTransferLineModel: `StockTransferLineData` · used by stock-transfer
 - [x] PriceTierModel: no class: a map of tier names to prices · used by product
 - [x] ProductSupplierModel: `ProductSupplierData` · used by product, product-suppliers
 - [x] ProductSupplierOptionsModel: `ProductSupplierOptionData` · used by product, product-suppliers
@@ -145,8 +125,8 @@ Built with the first resource that uses it.
 - [x] AdvancedPurchaseCreditNoteModel: `AdvancedPurchaseCreditNoteData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseManualJournalModel: `AdvancedPurchaseManualJournalData` · used by purchase, advanced-purchase
 - [x] IDNameModel: `IdNameData` · used by stock-take
-- [ ] StockTransferOrderModel: `StockTransferOrderData` · used by stock-transfer
-- [ ] StockTransferOrderLineModel: `StockTransferOrderLineData` · used by stock-transfer, stock-transfer-order
+- [x] StockTransferOrderModel: `StockTransferOrderData` · used by stock-transfer
+- [x] StockTransferOrderLineModel: `StockTransferOrderLineData` · used by stock-transfer, stock-transfer-order
 
 ## Low
 
@@ -474,6 +454,26 @@ Every resource in these groups is in.
 - [x] `sale-attachments` · `sale/attachment` · GET POST DELETE
   - [x] Sale Attachments: `SaleAttachmentsData`
   - [x] Sale Attachments POST body: `SaleAttachmentPostData`
+
+### `reference/stock/**` Stock (7 resources, 17 operations)
+
+- [x] `stock-adjustment-list` · `stockadjustmentList` · GET
+  - [x] product fields: `trait HasProductFields`
+  - [x] Stock Adjustment List: `StockAdjustmentListData`
+- [x] `stock-adjustment` · `stockadjustment` · GET POST PUT DELETE
+  - [x] Stock Adjustment: `StockAdjustmentData`
+  - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPostData`
+  - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPutData`
+- [x] `stock-take-list` · `stockTakeList` · GET
+  - [x] Stock Take List: `StockTakeListData`
+- [x] `stock-take` · `stocktake` · GET POST PUT DELETE
+  - [x] Stock Take: `StockTakeData`
+- [x] `stock-transfer-list` · `stockTransferList` · GET
+  - [x] Stock Transfer List: `StockTransferListData`
+- [x] `stock-transfer` · `stockTransfer` · GET POST PUT DELETE
+  - [x] Stock Transfer: `StockTransferData`
+- [x] `stock-transfer-order` · `stockTransfer/order` · GET POST
+  - [x] Stock Transfer Order: `StockTransferOrderData`
 
 ### `reference/supplier/**` Supplier (2 resources, 4 operations)
 

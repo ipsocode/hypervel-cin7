@@ -1,0 +1,81 @@
+{
+    "Total": 5,
+    "Page": 1,
+    "StockTransferList": [
+        {
+            "TaskID": "418f0b3a-1bf4-46d3-9f25-ca499c680727",
+            "From": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+            "FromLocation": "Main Warehouse",
+            "To": "284a6935-d54a-40f6-b91d-c707604d5bec",
+            "ToLocation": "Main Warehouse: Bin 1",
+            "Status": "COMPLETED",
+            "Number": "TR-00005",
+            "CompletionDate": "2017-12-19T00:00:00",
+            "DepartureDate": "2018-03-12T00:00:00",
+            "InTransitAccount": "715",
+            "CostDistributionType": "Cost",
+            "Reference": "",
+            "LastModifiedOn": "2018-03-12T00:00:00"
+        },
+        {
+            "TaskID": "426c332e-e108-409f-b3e8-40e85120eac5",
+            "From": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+            "FromLocation": "Main Warehouse",
+            "To": "284a6935-d54a-40f6-b91d-c707604d5bec",
+            "ToLocation": "Main Warehouse: Bin 1",
+            "Status": "VOIDED",
+            "Number": "TR-00004",
+            "CompletionDate": "2017-12-19T00:00:00",
+            "DepartureDate": "2018-03-12T00:00:00",
+            "InTransitAccount": "715",
+            "CostDistributionType": "Cost",
+            "Reference": "",
+            "LastModifiedOn": "2018-03-12T00:00:00"
+        },
+        {
+            "TaskID": "d3b090eb-bfc0-4225-8cad-b28bbecc7a68",
+            "From": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+            "FromLocation": "Main Warehouse",
+            "To": "284a6935-d54a-40f6-b91d-c707604d5bec",
+            "ToLocation": "Main Warehouse: Bin 1",
+            "Status": "COMPLETED",
+            "Number": "TR-00003",
+            "CompletionDate": "2017-12-19T00:00:00",
+            "DepartureDate": "2018-03-12T00:00:00",
+            "InTransitAccount": "715",
+            "CostDistributionType": "Cost",
+            "Reference": "",
+            "LastModifiedOn": "2018-03-12T00:00:00"
+        },
+        {
+            "TaskID": "895efc40-a4b6-4a25-8f5d-ca9c6c845c30",
+            "From": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+            "FromLocation": "Main Warehouse",
+            "To": "284a6935-d54a-40f6-b91d-c707604d5bec",
+            "ToLocation": "Main Warehouse: Bin 1",
+            "Status": "VOIDED",
+            "Number": "TR-00002",
+            "CompletionDate": "2017-12-19T00:00:00",
+            "DepartureDate": "2018-03-12T00:00:00",
+            "InTransitAccount": "715",
+            "CostDistributionType": "Cost",
+            "Reference": "",
+            "LastModifiedOn": "2018-03-12T00:00:00"
+        },
+        {
+            "TaskID": "2edd4c2f-2127-41a9-81c6-1b0134590664",
+            "From": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+            "FromLocation": "Main Warehouse",
+            "To": "284a6935-d54a-40f6-b91d-c707604d5bec",
+            "ToLocation": "Main Warehouse: Bin 1",
+            "Status": "VOIDED",
+            "Number": "TR-00001",
+            "CompletionDate": "2017-12-19T00:00:00",
+            "DepartureDate": "2018-03-12T00:00:00",
+            "InTransitAccount": "715",
+            "CostDistributionType": "Cost",
+            "Reference": "",
+            "LastModifiedOn": "2018-03-12T00:00:00"
+        }
+    ]
+}
