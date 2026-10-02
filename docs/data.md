@@ -274,8 +274,9 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   (`Tier 1`, or whatever the account renamed it), so it cannot be a set of properties. It is
   an `array<string, float>`, and there is no `PriceTierData`. `PriceTier1` to `PriceTier10`
   are ordinary properties.
-- **Product supplier link.** The table names it `SupplierProductURL`; the POST and PUT examples
-  and their responses send `URL`. `ProductSupplierData` models both keys.
+- **Product supplier link.** The key is `SupplierProductURL`, as the table names it. The POST
+  and PUT examples and their responses send `URL`, which is not the wire key, so
+  `ProductSupplierData` models `SupplierProductURL` only and the request fixtures use it.
 - **Product `ID` and `Type`.** The table leaves `ID`'s Required column empty, but its notes say
   "Required for PUT action" and "Ignored by POST action", so `ProductPutData` requires it and
   `ProductPostData` has none. `Type` is required and read-only for PUT, so `ProductPostData`
