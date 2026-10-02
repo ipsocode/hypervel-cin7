@@ -19,9 +19,12 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * adds its own fields; the children span the purchase and advanced purchase families, so this
  * parent is in `src/Data/` itself.
  *
- * Every invoice needs its `InvoiceDate`, `InvoiceDueDate`, `Status` and `Lines`, so each child
- * passes them to this constructor; `AdditionalCharges`, the `InvoiceNumber` and the totals, which
- * POST does not require, are set through `from()`.
+ * Every invoice needs its `InvoiceDate`, `Status` and `Lines`, so each child passes them to this
+ * constructor; `AdditionalCharges`, the `InvoiceNumber` and the totals, which POST does not
+ * require, are set through `from()`. Every table requires `InvoiceDueDate` too, but the
+ * `purchase` examples embed an invoice with a `null` one, so each child declares it: the write
+ * bodies and the advanced purchase's invoices require it, and `PurchaseInvoiceData` leaves it
+ * optional.
  *
  * @see docs/data.md
  */
@@ -47,8 +50,6 @@ abstract class AbstractPurchaseInvoiceData extends Data
     public function __construct(
         #[DateTime]
         public string $InvoiceDate,
-        #[DateTime]
-        public string $InvoiceDueDate,
         public InvoiceStatus $Status,
         #[DataCollectionOf(PurchaseInvoiceLineData::class)]
         public array $Lines,

@@ -6,7 +6,7 @@ use Hypervel\Saloon\Enums\Method;
 use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\SimplePurchaseCreditNoteData;
-use Ipsocode\Cin7\Data\Purchase\Invoice\SimplePurchaseInvoiceData;
+use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceData;
 use Ipsocode\Cin7\Data\Purchase\PurchaseData;
 use Ipsocode\Cin7\Data\Purchase\PurchasePostData;
 use Ipsocode\Cin7\Data\Purchase\PurchasePutData;
@@ -25,7 +25,7 @@ $fields = ['Supplier' => 'ABPA', 'Approach' => 'INVOICE', 'Location' => 'Main Wa
 // A shipping address with the fields its table requires and the purchase's own.
 $address = ['Line1' => '3 Park Street Industrial Village', 'Country' => 'USA', 'City' => 'Melbourne', 'ShipToOther' => false];
 
-// The embedded documents of the GET example, which the purchase's own classes read.
+// The GET example, whose embedded documents the missing rows take apart.
 $purchase = Cin7Payloads::load('purchase', 'get.response');
 
 return [
@@ -171,7 +171,7 @@ return [
         'purchase without Approach' => [PurchaseData::class, Arr::except($purchase, 'Approach')],
         'purchase POST without Location' => [PurchasePostData::class, Arr::except(Cin7Payloads::load('purchase', 'post.request'), 'Location')],
         'purchase PUT without ID' => [PurchasePutData::class, Arr::except(Cin7Payloads::load('purchase', 'put.request'), 'ID')],
-        'simple purchase invoice without InvoiceDate' => [SimplePurchaseInvoiceData::class, Arr::except($purchase['Invoice'], 'InvoiceDate')],
+        'purchase embedded invoice without InvoiceDate' => [PurchaseInvoiceData::class, Arr::except($purchase['Invoice'], 'InvoiceDate')],
         'simple purchase credit note without Unstock' => [SimplePurchaseCreditNoteData::class, Arr::except($purchase['CreditNote'], 'Unstock')],
         'purchase unstock without Lines' => [PurchaseUnStockData::class, Arr::except($purchase['CreditNote']['Unstock'], 'Lines')],
     ],
@@ -179,7 +179,6 @@ return [
         PurchaseData::class => ['Approach', 'Location'],
         PurchasePostData::class => ['Approach', 'Location'],
         PurchasePutData::class => ['Approach', 'Location', 'ID'],
-        SimplePurchaseInvoiceData::class => ['InvoiceDate', 'Status', 'Lines'],
         SimplePurchaseCreditNoteData::class => ['CreditNoteNumber', 'Status', 'Lines', 'Unstock'],
         PurchaseUnStockData::class => ['Status', 'Lines'],
     ],
