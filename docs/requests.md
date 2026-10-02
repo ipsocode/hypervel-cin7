@@ -45,6 +45,11 @@ The `product` actions follow the same shape: `GetProduct` (a `ListRequest`
 keyed `Products`), `PostProduct` and `PutProduct` (`WriteRequest`s; the PUT body
 carries `ID`), all on `product`.
 
+The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
+`TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s; the PUT body carries `ID`), all
+on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
+`ref/customer/credits`.
+
 ## Wire protocol
 
 These are the requests Cin7 receives.

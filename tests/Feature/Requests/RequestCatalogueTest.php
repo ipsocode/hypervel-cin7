@@ -15,6 +15,10 @@ use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
+use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
+use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
+use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
+use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
@@ -37,7 +41,7 @@ class RequestCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock = Saloon::fake(array_fill(0, 6, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 10, MockResponse::make(Cin7Payloads::customerList())));
     }
 
     /**
@@ -119,6 +123,38 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/product',
                 [],
                 ['ID' => 'guid-1', 'Name' => 'Widget'],
+            ],
+            GetCustomerCredits::class => [
+                GetCustomerCredits::class,
+                [],
+                Method::GET,
+                '/ExternalApi/v2/ref/customer/credits',
+                ['page' => 1, 'limit' => 100],
+                null,
+            ],
+            GetTax::class => [
+                GetTax::class,
+                [],
+                Method::GET,
+                '/ExternalApi/v2/ref/tax',
+                ['page' => 1, 'limit' => 100],
+                null,
+            ],
+            PostTax::class => [
+                PostTax::class,
+                [['Name' => 'VAT']],
+                Method::POST,
+                '/ExternalApi/v2/ref/tax',
+                [],
+                ['Name' => 'VAT'],
+            ],
+            PutTax::class => [
+                PutTax::class,
+                [['ID' => 'guid-1', 'Name' => 'VAT']],
+                Method::PUT,
+                '/ExternalApi/v2/ref/tax',
+                [],
+                ['ID' => 'guid-1', 'Name' => 'VAT'],
             ],
         ];
     }

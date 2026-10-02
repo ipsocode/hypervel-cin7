@@ -54,6 +54,10 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
 | `$cin7->product()` | `ProductResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
+| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
+| `$cin7->ref()->tax()` | `Ref\TaxResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
+| `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
+| `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator` |
 
 ## Customer
 
@@ -80,6 +84,27 @@ foreach ($this->cin7->product()->paginate(['IncludeDeprecated' => false])->items
 }
 ```
 
+## Ref
+
+The reference data lives under `ref/…`, so the chain spells the path:
+`$cin7->ref()->tax()` and `$cin7->ref()->customer()->credits()`.
+
+`ref/tax` lists under `TaxRuleList` (`{Total, Page, TaxRuleList}`). Its V2 filters
+(`ID`, `Name`, `IsActive`, `IsTaxForSale`, `IsTaxForPurchase`, `Account`) go through
+`get()` and `paginate()` as ordinary filters.
+
+`ref/customer/credits` lists under `CustomerCredits` and its envelope has no `Total`;
+see [pagination](pagination.md#an-envelope-with-no-total). `CustomerID` and
+`ShowUsedCredits` are ordinary filters.
+
+```php
+$vat = $this->cin7->ref()->tax()->get(['IsActive' => true])->json('TaxRuleList');
+
+foreach ($this->cin7->ref()->customer()->credits()->paginate(['CustomerID' => $guid])->items() as $credit) {
+    // $credit is one entry of CustomerCredits
+}
+```
+
 ## PUT identifiers
 
 A PUT body carries the identifier V2 documents for that resource. The caller
@@ -90,6 +115,7 @@ key:
 |---|---|
 | `customer` | `ID` |
 | `product` | `ID` |
+| `ref/tax` | `ID` |
 
 ```php
 $attributes['ID'] = $guid;
