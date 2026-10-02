@@ -99,9 +99,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 
 The connector is registered as a singleton. It holds only readonly scalars and
 is never mutated per request, so sharing one instance across coroutines for a
-worker's lifetime is safe. More resources land as the rest of the
-[Saloon SDK migration series](https://github.com/ipsocode/hypervel-cin7/issues/4)
-merges.
+worker's lifetime is safe.
 
 ## Documentation
 

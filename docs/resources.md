@@ -29,9 +29,11 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 
 ## Conventions
 
-- **Folders mirror the V2 path.** `src/Requests/<Path>` and
-  `src/Resources/<Path>` follow the Cin7 V2 path below `ExternalApi/v2/`, one
-  StudlyCase subfolder per segment: `sale/invoice` becomes `Sale/Invoice/`.
+- **Folders mirror the V2 path.** Below `ExternalApi/v2/`, every segment of a
+  path is a StudlyCase folder under `src/Requests/`: `sale/invoice` becomes
+  `src/Requests/Sale/Invoice/`. Under `src/Resources/`, the last segment names
+  the class instead, so `customer` is `src/Resources/CustomerResource.php` and
+  `sale/invoice` is `src/Resources/Sale/InvoiceResource.php`.
 - **The accessor chain spells the path.** `$cin7->customer()`,
   `$cin7->sale()->invoice()`.
 - **Methods are HTTP verbs.** `get()`, `post()`, `put()`, `delete()`, plus
@@ -51,10 +53,6 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | Accessor | Resource | Methods |
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
-
-The other nine accessors in the V2 reference (`product`, `sale` and its
-sub-resources, `ref/tax`, `ref/customer/credits`, `moneyOperation`) land in the
-rest of this series; see the tracking issue for the plan.
 
 ## Customer
 
