@@ -24,6 +24,7 @@ use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
 use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
 use Ipsocode\Cin7\Data\Sale\SaleOrderData;
+use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
@@ -56,6 +57,7 @@ use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
+use Ipsocode\Cin7\Requests\MoneyTaskList\GetMoneyTaskList;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -152,6 +154,13 @@ class DataCatalogueTest extends TestCase
             GetSalePayment::class => [GetSalePayment::class, ['sale-1'], [Cin7Payloads::salePayment()], SalePaymentLinePartialData::class, ''],
             PostSalePayment::class => [PostSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
             PutSalePayment::class => [PutSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
+            GetMoneyTaskList::class => [
+                GetMoneyTaskList::class,
+                [],
+                Cin7Payloads::moneyTaskList(),
+                MoneyTaskListData::class,
+                'MoneyTasks',
+            ],
             GetSaleList::class => [
                 GetSaleList::class,
                 [],

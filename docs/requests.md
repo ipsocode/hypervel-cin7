@@ -59,6 +59,9 @@ The `moneyOperation` actions live under `src/Requests/MoneyOperation/`: `GetMone
 `Void` as a parameter), and `PostMoneyOperation` and `PutMoneyOperation` (`WriteRequest`s; the
 PUT body carries `TaskID`), all on `moneyOperation`. Every one's `dto()` is a `MoneyTaskData`.
 
+`GetMoneyTaskList` (a `ListRequest` keyed `MoneyTasks`) is on `moneyTaskList`, under
+`src/Requests/MoneyTaskList/`; its `dto()` is a `list<MoneyTaskListData>`.
+
 The `sale` actions live under `src/Requests/Sale/`: `GetSale` and `DeleteSale` (`KeyedRequest`s
 keyed `ID`; the DELETE takes `Void` as a parameter) and `PostSale` and `PutSale`
 (`WriteRequest`s; the PUT body carries `ID`), all on `sale`. `sale` has no list action:
@@ -86,7 +89,7 @@ These are the requests Cin7 receives.
   [configuration](configuration.md).
 - **Parameters.** GET and DELETE carry their parameters in the query string.
   POST and PUT carry theirs as a raw JSON body and send no query string.
-- **Page defaults.** `page=1` and `limit=100`, lowercase, are added to the
+- **Page defaults.** `page=1` and `limit=100` are added to the
   query string of every `ListRequest` when the caller has not set them. They
   are never added to a `KeyedRequest` or a `WriteRequest`.
 - **Boolean query values.** A `true`/`false` filter value goes out as the
@@ -113,9 +116,9 @@ sends them. [`PageDefaults::apply()`](../src/PageDefaults.php):
 - Sets `page` to `PageDefaults::PAGE` (`1`) and `limit` to
   `PageDefaults::LIMIT` (`100`) only when the caller has not. Caller values
   win.
-- Uses the lowercase spelling. Cin7 also accepts `Page` and `Limit`, but those
-  keys do not count as set: `['Page' => 5, 'Limit' => 20]` is sent as
-  `Page=5&Limit=20&page=1&limit=100`. Use the lowercase keys to page by hand.
+- Adds lowercase keys. Cin7 also accepts `Page` and `Limit`, and those count as
+  set: `['Page' => 5, 'Limit' => 20]` is sent as `Page=5&Limit=20`, never with
+  both spellings.
 - Treats a `null` value as absent, so the default is used.
 - Appends the defaults after the caller's keys, which keep their order.
 - Exposes `PAGE` and `LIMIT` as public constants, so code paging by hand can

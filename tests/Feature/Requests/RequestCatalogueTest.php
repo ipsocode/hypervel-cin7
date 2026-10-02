@@ -50,6 +50,7 @@ use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
+use Ipsocode\Cin7\Requests\MoneyTaskList\GetMoneyTaskList;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -167,6 +168,14 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/moneyOperation',
                 [],
                 ['TaskID' => 'task-1', 'Status' => 'COMPLETED'],
+            ],
+            GetMoneyTaskList::class => [
+                GetMoneyTaskList::class,
+                [['Status' => 'COMPLETED', 'TaskType' => 'Spend Money']],
+                Method::GET,
+                '/ExternalApi/v2/moneyTaskList',
+                ['Status' => 'COMPLETED', 'TaskType' => 'Spend Money', 'page' => 1, 'limit' => 100],
+                null,
             ],
             GetProduct::class => [
                 GetProduct::class,

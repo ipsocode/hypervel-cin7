@@ -51,14 +51,23 @@ class PageDefaultsTest extends TestCase
     }
 
     /**
-     * Cin7 accepts `Page`/`Limit` too, but only the lowercase keys satisfy the defaults.
+     * Cin7 accepts `Page`/`Limit` too, so a request never carries both spellings.
      */
     #[UnitTest]
-    public function testTheCapitalisedSpellingDoesNotSuppressTheDefaults(): void
+    public function testTheCapitalisedSpellingSuppressesTheDefaults(): void
     {
         $this->assertSame(
-            ['Page' => 5, 'Limit' => 20, 'page' => 1, 'limit' => 100],
+            ['Page' => 5, 'Limit' => 20],
             PageDefaults::apply(['Page' => 5, 'Limit' => 20]),
+        );
+    }
+
+    #[UnitTest]
+    public function testANullCapitalisedValueDoesNotSuppressTheDefault(): void
+    {
+        $this->assertSame(
+            ['Page' => null, 'page' => 1, 'limit' => 100],
+            PageDefaults::apply(['Page' => null]),
         );
     }
 
