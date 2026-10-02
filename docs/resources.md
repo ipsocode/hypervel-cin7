@@ -115,7 +115,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseList()` | `PurchaseListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseCreditNoteList()` | `PurchaseCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
-| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `attributeSet()`, `priceTier()`, `productAvailability()`, `brand()`, `category()`, `unit()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
+| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `attributeSet()`, `priceTier()`, `productAvailability()`, `brand()`, `category()`, `unit()`, `location()`, `carrier()`, `templates()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -129,6 +129,10 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->ref()->brand()` | `Ref\BrandResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|BrandPostData $body)`, `put(array\|BrandPutData $body)`, `delete(string $id)` |
 | `$cin7->ref()->category()` | `Ref\CategoryResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductCategoryPostData $body)`, `put(array\|ProductCategoryPutData $body)`, `delete(string $id)` |
 | `$cin7->ref()->unit()` | `Ref\UnitResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|UnitOfMeasurePostData $body)`, `put(array\|UnitOfMeasurePutData $body)`, `delete(string $id)` |
+| `$cin7->ref()->location()` | `Ref\LocationResource` | `get($page, $limit, $id, $deprecated, $name)`, `paginate($limit, …): Cin7Paginator`, `post(array\|LocationPostData $body)`, `put(array\|LocationPutData $body)`, `delete(string $id)` |
+| `$cin7->ref()->carrier()` | `Ref\CarrierResource` | `get($page, $limit, $carrierId, $description)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CarrierPostData $body)`, `put(array\|CarrierPutData $body)`, `delete(string $id)` |
+| `$cin7->ref()->templates()` | `Ref\TemplatesResource` | `get($page, $limit, $type, $name)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->ref()->customer()->templates()` | `Ref\Customer\TemplatesResource` | `get($page, $limit, $customerId)`, `paginate($limit, $customerId): Cin7Paginator`, `post(array\|CustomerDefaultTemplatesPostData $body)`, `delete(string $templateId, string $customerId)` |
 | `$cin7->ref()->fixedAssetType()` | `Ref\FixedAssetTypeResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|FixedAssetTypePostData $body)`, `put(array\|FixedAssetTypePutData $body)` |
 | `$cin7->ref()->paymentTerm()` | `Ref\PaymentTermResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|PaymentTermPostData $body)`, `put(array\|PaymentTermPutData $body)`, `delete(string $id)` |
 
