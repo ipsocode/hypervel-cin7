@@ -10,7 +10,10 @@ use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
+use Ipsocode\Cin7\Data\Product\ProductData;
+use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
@@ -23,10 +26,16 @@ use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
 use Ipsocode\Cin7\Data\Sale\SaleOrderData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 use Ipsocode\Cin7\Requests\MoneyOperation\DeleteMoneyOperation;
 use Ipsocode\Cin7\Requests\MoneyOperation\GetMoneyOperation;
 use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
 use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
+use Ipsocode\Cin7\Requests\Product\GetProduct;
+use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Product\PutProduct;
 use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
@@ -107,6 +116,12 @@ class DataCatalogueTest extends TestCase
     public static function dtoProvider(): array
     {
         return [
+            GetCustomer::class => [GetCustomer::class, [], Cin7Payloads::customerExample(), CustomerData::class, 'CustomerList'],
+            PostCustomer::class => [PostCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
+            PutCustomer::class => [PutCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
+            GetProduct::class => [GetProduct::class, [], Cin7Payloads::productExample(), ProductData::class, 'Products'],
+            PostProduct::class => [PostProduct::class, [[]], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
+            PutProduct::class => [PutProduct::class, [[]], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
             GetTax::class => [GetTax::class, [], Cin7Payloads::taxList(), TaxData::class, 'TaxRuleList'],
             PostTax::class => [PostTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
             PutTax::class => [PutTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
@@ -165,6 +180,70 @@ class DataCatalogueTest extends TestCase
     }
 
     /**
+     * The reference's Product example has no supplier, so one is added here, with an option and
+     * a supply interval, to prove the three-deep nesting round-trips.
+     */
+    public function testAProductWithASupplierRoundTrips(): void
+    {
+        $product = Cin7Payloads::productExample();
+        $product['Products'][0]['Suppliers'] = [[
+            'SupplierID' => '42359698-352b-4354-89ed-e06feee1d567',
+            'SupplierName' => 'ABPA',
+            'ProductSupplierID' => '0d1ef9a2-1f26-4d2b-8d11-6f3d2cf0a001',
+            'SupplierInventoryCode' => 'Test',
+            'SupplierProductName' => 'Test Name',
+            'Cost' => 1,
+            'FixedCost' => 1,
+            'Currency' => 'RUB',
+            'DropShip' => false,
+            'SupplierProductURL' => '',
+            'LastSupplied' => '2017-12-25T00:00:00',
+            'ProductSupplierOptions' => [[
+                'ID' => '9a3b7c1e-0000-4000-8000-000000000001',
+                'LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb',
+                'LocationName' => 'Main Warehouse',
+                'ReorderQuantity' => 5,
+                'Lead' => 3,
+                'Safety' => 1,
+                'MinimumToReorder' => 2,
+                'SupplyIntervals' => [[
+                    'ID' => '9a3b7c1e-0000-4000-8000-000000000002',
+                    'DeliveryMethod' => 'Interval',
+                    'IntervalDays' => 7,
+                    'IntervalStartDate' => '2017-12-25',
+                    'IsMonday' => false,
+                    'IsTuesday' => false,
+                    'IsWednesday' => false,
+                    'IsThursday' => false,
+                    'IsFriday' => false,
+                    'IsSaturday' => false,
+                    'IsSunday' => false,
+                ]],
+            ]],
+        ]];
+        Saloon::fake([MockResponse::make($product)]);
+
+        $dto = $this->connector()->send(new GetProduct)->dto();
+
+        $this->assertInstanceOf(ProductSupplierOptionIntervalData::class, $dto[0]->Suppliers[0]->ProductSupplierOptions[0]->SupplyIntervals[0]);
+        $this->assertEquals($product['Products'], array_map(static fn (Data $item): array => $item->toArray(), $dto));
+    }
+
+    /**
+     * `PriceTiers` is keyed by the account's tier names, so it stays a plain map.
+     */
+    public function testProductPriceTiersKeepTheirNames(): void
+    {
+        $product = Cin7Payloads::productExample();
+        $product['Products'][0]['PriceTiers'] = ['Retail' => 8, 'Trade' => 6.5];
+        Saloon::fake([MockResponse::make($product)]);
+
+        $dto = $this->connector()->send(new GetProduct)->dto();
+
+        $this->assertEquals(['Retail' => 8, 'Trade' => 6.5], $dto[0]->PriceTiers);
+    }
+
+    /**
      * The POST models are bodies, not responses, so their fixtures round-trip through the class.
      */
     public function testThePostModelsRoundTripTheirFixtures(): void
@@ -202,7 +281,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([TaxData::class, CustomerCreditData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }

@@ -52,8 +52,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 
 | Accessor | Resource | Methods |
 |---|---|---|
-| `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
-| `$cin7->product()` | `ProductResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
+| `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array|CustomerData $body)`, `put(array|CustomerData $body)` |
+| `$cin7->product()` | `ProductResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array|ProductData $body)`, `put(array|ProductData $body)` |
 | `$cin7->moneyOperation()` | `MoneyOperationResource` | `get(string $taskId)`, `post(array|MoneyTaskData $body)`, `put(array|MoneyTaskData $body)`, `delete(string $id, bool $void = false)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, array $parameters = [])`, `post(array|SalePostPutData $body)`, `put(array|SalePostPutData $body)`, `delete(string $id, bool $void = false)` |
 | `$cin7->saleList()` | `SaleListResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator` |
@@ -72,6 +72,21 @@ the same `{Total, Page, CustomerList}` envelope as an unfiltered list.
 $match = $this->cin7->customer()->get(['ID' => $guid])->json('CustomerList')[0] ?? null;
 ```
 
+`get()->dto()` is a `list<CustomerData>`, with `Addresses` (`CustomerAddressData`), `Contacts`
+(`CustomerContactData`), `ProductPrices` (`ProductPriceData`) and `ChildCustomers`
+(`ChildCustomerData`). `post()` and `put()` accept a `CustomerData` as well as an array (see
+[data](data.md)), and answer with the saved customer: their `dto()` is a `CustomerData`.
+
+```php
+$customers = $this->cin7->customer()->get(['ID' => $guid])->dto(); // list<CustomerData>
+
+$saved = $this->cin7->customer()->post(CustomerData::from([
+    'Name' => 'ACME',
+    'Currency' => 'GBP',
+    'Addresses' => [['Line1' => '1 High St', 'Country' => 'UK', 'Type' => 'Billing']],
+]))->dto(); // CustomerData
+```
+
 ## Product
 
 `product` lists under `Products`, not `ProductList`: its envelope is
@@ -85,6 +100,21 @@ through `get()` and `paginate()` as ordinary filters; booleans go out as
 foreach ($this->cin7->product()->paginate(['IncludeDeprecated' => false])->items() as $product) {
     // $product is one entry of Products
 }
+```
+
+`get()->dto()` is a `list<ProductData>`, with `Suppliers` (`ProductSupplierData`, whose
+`ProductSupplierOptions` hold `SupplyIntervals`), `ReorderLevels` (`ReorderLevelData`),
+`BillOfMaterialsProducts` (`BillOfMaterialProductData`), `BillOfMaterialsServices`
+(`BillOfMaterialServiceData`), `Movements` (`ProductMovementData`), `Attachments`
+(`AttachmentLineData`) and `CustomPrices` (`ProductPriceData`). `PriceTiers` is a plain
+`array<string, float>` keyed by the account's tier names. `post()` and `put()` accept a
+`ProductData` as well as an array, and their `dto()` is the saved `ProductData`.
+
+```php
+$saved = $this->cin7->product()->put(ProductData::from([
+    'ID' => $guid,
+    'PriceTiers' => ['Tier 1' => 8.0],
+]))->dto(); // ProductData
 ```
 
 ## Ref

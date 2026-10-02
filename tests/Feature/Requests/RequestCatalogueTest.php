@@ -9,7 +9,9 @@ use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
+use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
@@ -71,7 +73,7 @@ class RequestCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock = Saloon::fake(array_fill(0, 12, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 16, MockResponse::make(Cin7Payloads::customerList())));
     }
 
     /**
@@ -429,6 +431,38 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/sale/payment',
                 [],
                 ['ID' => 'pay-1', 'Amount' => 12.5],
+            ],
+            PostCustomer::class . ' with data' => [
+                PostCustomer::class,
+                [fn (): CustomerData => CustomerData::from(['Name' => 'ACME', 'AdditionalAttribute10' => 'x', 'Addresses' => [['Line1' => '1 High St', 'Country' => 'UK', 'Type' => 'Billing']]])],
+                Method::POST,
+                '/ExternalApi/v2/customer',
+                [],
+                ['Name' => 'ACME', 'AdditionalAttribute10' => 'x', 'Addresses' => [['Line1' => '1 High St', 'Country' => 'UK', 'Type' => 'Billing']]],
+            ],
+            PutCustomer::class . ' with data' => [
+                PutCustomer::class,
+                [fn (): CustomerData => CustomerData::from(['ID' => 'guid-1', 'TaxNumber' => null])],
+                Method::PUT,
+                '/ExternalApi/v2/customer',
+                [],
+                ['ID' => 'guid-1', 'TaxNumber' => null],
+            ],
+            PostProduct::class . ' with data' => [
+                PostProduct::class,
+                [fn (): ProductData => ProductData::from(['SKU' => 'Bread', 'PriceTiers' => ['Tier 1' => 8.0], 'ReorderLevels' => [['LocationName' => 'Main Warehouse', 'PickZones' => 'test']]])],
+                Method::POST,
+                '/ExternalApi/v2/product',
+                [],
+                ['SKU' => 'Bread', 'PriceTiers' => ['Tier 1' => 8.0], 'ReorderLevels' => [['LocationName' => 'Main Warehouse', 'PickZones' => 'test']]],
+            ],
+            PutProduct::class . ' with data' => [
+                PutProduct::class,
+                [fn (): ProductData => ProductData::from(['ID' => 'guid-1', 'Sellable' => false])],
+                Method::PUT,
+                '/ExternalApi/v2/product',
+                [],
+                ['ID' => 'guid-1', 'Sellable' => false],
             ],
             PostSale::class . ' with data' => [
                 PostSale::class,

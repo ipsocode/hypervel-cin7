@@ -9,7 +9,9 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
+use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
@@ -66,7 +68,7 @@ class ResourceCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock = Saloon::fake(array_fill(0, 16, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 20, MockResponse::make(Cin7Payloads::customerList())));
     }
 
     /**
@@ -124,6 +126,38 @@ class ResourceCatalogueTest extends TestCase
                 '/ExternalApi/v2/customer',
                 [],
                 ['Name' => 'ACME'],
+            ],
+            'customer post with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->customer()->post(CustomerData::from(['Name' => 'ACME'])),
+                PostCustomer::class,
+                Method::POST,
+                '/ExternalApi/v2/customer',
+                [],
+                ['Name' => 'ACME'],
+            ],
+            'customer put with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->customer()->put(CustomerData::from(['ID' => 'guid-1', 'Name' => 'ACME'])),
+                PutCustomer::class,
+                Method::PUT,
+                '/ExternalApi/v2/customer',
+                [],
+                ['ID' => 'guid-1', 'Name' => 'ACME'],
+            ],
+            'product post with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->product()->post(ProductData::from(['SKU' => 'Bread'])),
+                PostProduct::class,
+                Method::POST,
+                '/ExternalApi/v2/product',
+                [],
+                ['SKU' => 'Bread'],
+            ],
+            'product put with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->product()->put(ProductData::from(['ID' => 'guid-1', 'SKU' => 'Bread'])),
+                PutProduct::class,
+                Method::PUT,
+                '/ExternalApi/v2/product',
+                [],
+                ['ID' => 'guid-1', 'SKU' => 'Bread'],
             ],
             'customer put' => [
                 fn (Cin7Connector $cin7): mixed => $cin7->customer()->put(['ID' => 'guid-1', 'Name' => 'ACME']),

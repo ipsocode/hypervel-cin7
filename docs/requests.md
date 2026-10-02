@@ -45,7 +45,9 @@ never constructed directly by application code; go through the
 
 The `product` actions follow the same shape: `GetProduct` (a `ListRequest`
 keyed `Products`), `PostProduct` and `PutProduct` (`WriteRequest`s; the PUT body
-carries `ID`), all on `product`.
+carries `ID`), all on `product`. The `customer` and `product` list requests' `dto()` is a
+`list<CustomerData>` or `list<ProductData>`, and their POST and PUT `dto()` is the saved
+record (`CustomerList.0`, `Products.0`).
 
 The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
 `TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s; the PUT body carries `ID`), all

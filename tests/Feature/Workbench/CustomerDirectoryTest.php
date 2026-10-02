@@ -8,6 +8,7 @@ use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Services\CustomerDirectory;
 use Workbench\App\Support\Cin7Payloads;
@@ -94,7 +95,8 @@ class CustomerDirectoryTest extends TestCase
 
         $customer = $this->app->make(CustomerDirectory::class)->find('guid-1');
 
-        $this->assertSame('ACME', $customer['Name']);
+        $this->assertInstanceOf(CustomerData::class, $customer);
+        $this->assertSame('ACME', $customer->Name);
         $this->assertSame('guid-1', $mock->lastPendingRequest()->queryParameters()['ID']);
     }
 
@@ -107,11 +109,13 @@ class CustomerDirectoryTest extends TestCase
 
     public function testCreatingACustomerPostsAJsonBody(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customer('new', 'ACME'))]);
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('new', 'ACME')])),
+        ]);
 
-        $created = $this->app->make(CustomerDirectory::class)->create(['Name' => 'ACME']);
+        $created = $this->app->make(CustomerDirectory::class)->create(CustomerData::from(['Name' => 'ACME']));
 
-        $this->assertSame('new', $created['ID']);
+        $this->assertSame('new', $created->ID);
 
         $pending = $mock->lastPendingRequest();
 
@@ -122,13 +126,20 @@ class CustomerDirectoryTest extends TestCase
 
     public function testUpdatingACustomerPutsTheGuidInTheBody(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customer('guid-2', 'ACME Ltd'))]);
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('guid-2', 'ACME Ltd')])),
+        ]);
 
-        $this->app->make(CustomerDirectory::class)->update('guid-2', ['Name' => 'ACME Ltd']);
+        $updated = $this->app->make(CustomerDirectory::class)->update(
+            'guid-2',
+            CustomerData::from(['ID' => 'other', 'Name' => 'ACME Ltd']),
+        );
+
+        $this->assertSame('ACME Ltd', $updated->Name);
 
         $pending = $mock->lastPendingRequest();
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(['Name' => 'ACME Ltd', 'ID' => 'guid-2'], $pending->body());
+        $this->assertSame(['ID' => 'guid-2', 'Name' => 'ACME Ltd'], $pending->body());
     }
 }
