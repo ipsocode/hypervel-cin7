@@ -7,22 +7,38 @@ namespace Ipsocode\Cin7\Requests\Sale\Invoice;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
-use Ipsocode\Cin7\Requests\KeyedRequest;
+use Ipsocode\Cin7\Requests\Cin7Request;
 
 /**
  * `DELETE sale/invoice?TaskID&Void`, voids or undoes a void of an invoice; the response is the sale's invoices.
  *
- * @extends KeyedRequest<SaleInvoicesData>
+ * @extends Cin7Request<SaleInvoicesData>
  */
-final class DeleteSaleInvoice extends KeyedRequest
+final class DeleteSaleInvoice extends Cin7Request
 {
-    protected string $idKey = 'TaskID';
-
     protected Method $method = Method::DELETE;
+
+    public function __construct(
+        protected readonly string $taskId,
+        protected readonly ?bool $void = null,
+    ) {
+        parent::__construct();
+    }
 
     public function resolveEndpoint(): string
     {
         return 'sale/invoice';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function defaultQuery(): array
+    {
+        return $this->queryValues([
+            'TaskID' => $this->taskId,
+            'Void' => $this->void,
+        ]);
     }
 
     public function createDtoFromResponse(Response $response): SaleInvoicesData

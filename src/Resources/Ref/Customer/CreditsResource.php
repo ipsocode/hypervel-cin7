@@ -16,20 +16,46 @@ use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 final class CreditsResource extends BaseResource
 {
     /**
-     * @param array<string, mixed> $filters
+     * One page of customer credits; without a page or limit, page 1 of 100.
+     *
+     * @param null|int $page the page, from 1
+     * @param null|int $limit the page size, 1 to 1000
+     * @param null|string $customerId only this customer's credits
+     * @param null|bool $showUsedCredits include the credits already used
      */
-    public function get(array $filters = []): Response
-    {
-        return $this->connector->send(new GetCustomerCredits($filters));
+    public function get(
+        ?int $page = null,
+        ?int $limit = null,
+        ?string $customerId = null,
+        ?bool $showUsedCredits = null,
+    ): Response {
+        return $this->connector->send(new GetCustomerCredits(
+            $page,
+            $limit,
+            $customerId,
+            $showUsedCredits,
+        ));
     }
 
     /**
-     * The envelope has no `Total`, so `pool()` stops at page one; walk with `items()`.
+     * Every page of customer credits, fetched as they are walked; call `startPage()` on the
+     * paginator to begin later. The envelope has no `Total`, so `pool()` stops at page one; walk
+     * with `items()`.
      *
-     * @param array<string, mixed> $filters
+     * @param null|int $limit the page size, 1 to 1000
+     * @param null|string $customerId only this customer's credits
+     * @param null|bool $showUsedCredits include the credits already used
      */
-    public function paginate(array $filters = []): Cin7Paginator
-    {
-        return $this->connector->paginate(new GetCustomerCredits($filters));
+    public function paginate(
+        ?int $limit = null,
+        ?string $customerId = null,
+        ?bool $showUsedCredits = null,
+    ): Cin7Paginator {
+        return $this->connector->paginate(new GetCustomerCredits(
+            null,
+            $limit,
+            $customerId,
+            $showUsedCredits,
+        ));
     }
 }

@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Resources\Sale;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Sale\SaleOrderData;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 
@@ -17,11 +17,21 @@ use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 final class OrderResource extends BaseResource
 {
     /**
-     * @param array<string, mixed> $parameters
+     * A sale's order.
+     *
+     * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @param null|bool $includeProductInfo add the products the lines use
      */
-    public function get(string $saleId, array $parameters = []): Response
-    {
-        return $this->connector->send(new GetSaleOrder($saleId, $parameters));
+    public function get(
+        string $saleId,
+        ?bool $combineAdditionalCharges = null,
+        ?bool $includeProductInfo = null,
+    ): Response {
+        return $this->connector->send(new GetSaleOrder(
+            $saleId,
+            $combineAdditionalCharges,
+            $includeProductInfo,
+        ));
     }
 
     /**

@@ -1,0 +1,28 @@
+{
+    "Total": 2,
+    "Page": 1,
+    "MoneyTasks": [
+        {
+            "TaskID": "07a2cdde-6a04-4925-be45-538e3a88dd7a",
+            "Date": "2018-01-17T00:00:00",
+            "TaskType": "Receive Money",
+            "Status": "COMPLETED",
+            "SupplierCustomerName": "",
+            "SupplierID": null,
+            "CustomerID": null,
+            "Reference": "",
+            "TotalAmount": 6
+        },
+        {
+            "TaskID": "ded51119-ec29-4fcd-b43b-4c63341f188e",
+            "Date": "2018-01-17T00:00:00",
+            "TaskType": "Spend Money",
+            "Status": "COMPLETED",
+            "SupplierCustomerName": "Bayside Wholesale",
+            "SupplierID": "af09cddc-c4b0-47b2-8755-78edac52e920",
+            "CustomerID": null,
+            "Reference": "Test 1",
+            "TotalAmount": 1.8
+        }
+    ]
+}

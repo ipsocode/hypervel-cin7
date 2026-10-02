@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Requests;
 
+use DateTimeImmutable;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
@@ -12,14 +13,21 @@ use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
 use InvalidArgumentException;
+use Ipsocode\Cin7\Data\Customer\CustomerPutData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
-use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPostData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPutData;
+use Ipsocode\Cin7\Enums\CountryFormat;
+use Ipsocode\Cin7\Enums\PickingStatus;
+use Ipsocode\Cin7\Enums\SaleStatus;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
-use Ipsocode\Cin7\Requests\KeyedRequest;
+use Ipsocode\Cin7\Requests\Product\GetProduct;
+use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -30,6 +38,13 @@ use Workbench\App\Support\Cin7Payloads;
  */
 class RequestBuildingTest extends TestCase
 {
+    /**
+     * The fields every tax rule requires.
+     *
+     * @var array<string, bool|string>
+     */
+    private const array TAX = ['Name' => 'VAT', 'Account' => '820', 'IsActive' => true, 'TaxInclusive' => false];
+
     private MockClient $mock;
 
     protected function setUp(): void
@@ -67,30 +82,62 @@ class RequestBuildingTest extends TestCase
         $this->assertSame(['page' => 1, 'limit' => 100], $pending->queryParameters());
     }
 
-    public function testListLetsCallerValuesWin(): void
+    public function testListSendsTheCallersPageLimitAndFilters(): void
     {
-        $pending = $this->send(new GetCustomer(['page' => 4, 'limit' => 10, 'Name' => 'ACME']));
+        $pending = $this->send(new GetCustomer(page: 4, limit: 10, name: 'ACME'));
 
         $this->assertSame(
-            ['page' => 4, 'limit' => 10, 'Name' => 'ACME'],
+            ['Name' => 'ACME', 'page' => 4, 'limit' => 10],
             $pending->queryParameters(),
         );
     }
 
-    public function testANullFilterIsTreatedAsAbsent(): void
+    public function testANullParameterIsLeftOut(): void
     {
-        $pending = $this->send(new GetCustomer(['page' => null, 'limit' => null]));
+        $pending = $this->send(new GetCustomer(page: null, limit: null, name: null));
 
         $this->assertSame(['page' => 1, 'limit' => 100], $pending->queryParameters());
     }
 
     public function testBooleanFiltersAreSentAsTrueAndFalseStrings(): void
     {
-        $pending = $this->send(new GetCustomer(['IncludeDeprecated' => true, 'IncludeBOM' => false]));
+        $pending = $this->send(new GetProduct(includeDeprecated: true, includeBom: false));
 
         $this->assertSame(
             ['IncludeDeprecated' => 'true', 'IncludeBOM' => 'false', 'page' => 1, 'limit' => 100],
             $pending->queryParameters(),
+        );
+    }
+
+    /**
+     * Cin7 reads dates as ISO 8601 in UTC with milliseconds, `yyyy-MM-ddTHH:mm:ss.fff`.
+     */
+    public function testDateFiltersAreSentInUtcWithMilliseconds(): void
+    {
+        $pending = $this->send(new GetCustomer(modifiedSince: new DateTimeImmutable('2012-11-14T23:28:33.363+10:00')));
+
+        $this->assertSame(
+            ['ModifiedSince' => '2012-11-14T13:28:33.363', 'page' => 1, 'limit' => 100],
+            $pending->queryParameters(),
+        );
+    }
+
+    public function testADateGivenAsAStringIsSentAsWritten(): void
+    {
+        $pending = $this->send(new GetSaleList(updatedSince: '2012-11-14'));
+
+        $this->assertSame(['UpdatedSince' => '2012-11-14', 'page' => 1, 'limit' => 100], $pending->queryParameters());
+    }
+
+    public function testAnEnumParameterIsSentAsItsValue(): void
+    {
+        $this->assertSame(
+            ['CombinedPickStatus' => 'NOT PICKED', 'Status' => 'ORDERED', 'page' => 1, 'limit' => 100],
+            $this->send(new GetSaleList(combinedPickStatus: PickingStatus::NotPicked, status: SaleStatus::Ordered))->queryParameters(),
+        );
+        $this->assertSame(
+            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CountryFormat' => 'Code2'],
+            $this->send(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', countryFormat: CountryFormat::Code2))->queryParameters(),
         );
     }
 
@@ -101,25 +148,18 @@ class RequestBuildingTest extends TestCase
         $this->assertNotInstanceOf(Paginatable::class, new PutCustomer);
     }
 
-    public function testPaginatingAKeyedRequestThrows(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->connector()->paginate($this->anonymousKeyedRequest('guid-1'));
-    }
-
     public function testPaginatingAGetSaleThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->connector()->paginate(new GetSale('guid-1'));
+        $this->connector()->paginate(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'));
     }
 
-    public function testTheIdentifierIsPlacedFirstAndWinsOverACallerSuppliedValue(): void
+    public function testTheIdentifierComesFirstAndTheUnsetParametersAreLeftOut(): void
     {
-        $pending = $this->send($this->anonymousKeyedRequest('guid-1', ['ID' => 'ignored', 'Extra' => 'kept']));
+        $pending = $this->send(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', includeTransactions: true));
 
-        $this->assertSame(['ID' => 'guid-1', 'Extra' => 'kept'], $pending->queryParameters());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'IncludeTransactions' => 'true'], $pending->queryParameters());
     }
 
     public function testCreateSendsAnUntouchedJsonBodyAndNoQueryString(): void
@@ -143,10 +183,10 @@ class RequestBuildingTest extends TestCase
 
     public function testUpdateSendsTheBodyVerbatim(): void
     {
-        $pending = $this->send(new PutCustomer(['ID' => 'guid-4', 'Name' => 'ACME Ltd']));
+        $pending = $this->send(new PutCustomer(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf4', 'Name' => 'ACME Ltd']));
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(['ID' => 'guid-4', 'Name' => 'ACME Ltd'], $pending->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf4', 'Name' => 'ACME Ltd'], $pending->body());
         $this->assertSame([], $pending->queryParameters());
     }
 
@@ -156,25 +196,50 @@ class RequestBuildingTest extends TestCase
      */
     public function testADataObjectSendsOnlyTheKeysThatWereSet(): void
     {
-        $pending = $this->send(new PutTax(TaxData::from(['ID' => 'guid-1', 'Name' => 'VAT'])));
+        $pending = $this->send(new PutTax(TaxPutData::from([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])));
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(['ID' => 'guid-1', 'Name' => 'VAT'], $pending->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ...self::TAX], $pending->body());
         $this->assertArrayNotHasKey('Components', $pending->body());
+    }
+
+    /**
+     * A data object's null means not set, so it is never sent; an explicit null, to clear a
+     * field, goes in an array body, which is sent as given.
+     */
+    public function testANullIsSentOnlyFromAnArrayBody(): void
+    {
+        $customer = Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1');
+
+        $this->assertArrayNotHasKey('TaxNumber', $this->send(new PutCustomer(CustomerPutData::from([...$customer, 'TaxNumber' => null])))->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null], $this->send(new PutCustomer(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null]))->body());
+    }
+
+    /**
+     * Nulls go at every depth, but a list keeps its items so it still encodes as a JSON array.
+     */
+    public function testNestedNullsAreLeftOutAndListsKeepTheirShape(): void
+    {
+        $gst = ['Name' => 'GST', 'Percent' => '5.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '1'];
+        $pst = ['Name' => 'PST', 'Percent' => '7.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '2'];
+
+        $body = $this->send(new PutTax(TaxPutData::from([
+            ...self::TAX,
+            'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1',
+            'Components' => [[...$gst, 'Compound' => null], [...$pst, 'ID' => null]],
+        ])))->body();
+
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Components' => [$gst, $pst], ...self::TAX], $body);
+        $this->assertStringContainsString('"Components":[{"Name":"GST"', (string) json_encode($body));
     }
 
     public function testASetCollectionIsSentAndAnUnsetOneIsLeftOut(): void
     {
-        $withComponents = TaxData::from([
-            'Name' => 'VAT',
-            'Components' => [['Name' => 'Tax', 'Percent' => '20.0000000000', 'ComponentOrder' => '1']],
-        ]);
+        $component = ['Name' => 'Tax', 'Percent' => '20.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '1'];
+        $withComponents = TaxPostData::from([...self::TAX, 'Components' => [$component]]);
 
         $this->assertInstanceOf(TaxComponentData::class, $withComponents->Components[0]);
-        $this->assertSame(
-            ['Name' => 'VAT', 'Components' => [['Name' => 'Tax', 'Percent' => '20.0000000000', 'ComponentOrder' => '1']]],
-            $this->send(new PutTax($withComponents))->body(),
-        );
+        $this->assertSame(['Components' => [$component], ...self::TAX], $this->send(new PostTax($withComponents))->body());
     }
 
     public function testTheDecodedBodyIsReturnedAsAnArray(): void
@@ -202,23 +267,5 @@ class RequestBuildingTest extends TestCase
         $this->assertNotNull($pending);
 
         return $pending;
-    }
-
-    /**
-     * The concrete `KeyedRequest`s are covered by the catalogue; the identifier contract is
-     * exercised through an anonymous one built on the `customer` path.
-     *
-     * @param array<string, mixed> $parameters
-     */
-    private function anonymousKeyedRequest(string $id, array $parameters = []): KeyedRequest
-    {
-        return new class($id, $parameters) extends KeyedRequest {
-            protected Method $method = Method::GET;
-
-            public function resolveEndpoint(): string
-            {
-                return 'customer';
-            }
-        };
     }
 }

@@ -1,0 +1,141 @@
+{
+    "Total": 2,
+    "Page": 1,
+    "CustomerList": [
+        {
+            "ID": "0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1",
+            "Name": "Human Test",
+            "DisplayName": "Mary Jane",
+            "Currency": "AUD",
+            "PaymentTerm": "30 days",
+            "Discount": 0,
+            "TaxRule": "BAS Excluded",
+            "Carrier": "DEFAULT Carrier",
+            "SalesRepresentative": null,
+            "Location": "Main Warehouse",
+            "Comments": "",
+            "AccountReceivable": "610",
+            "RevenueAccount": "200",
+            "PriceTier": "Tier 1",
+            "TaxNumber": "",
+            "AdditionalAttribute1": "",
+            "AdditionalAttribute2": "",
+            "AdditionalAttribute3": "",
+            "AdditionalAttribute4": "",
+            "AdditionalAttribute5": "",
+            "AdditionalAttribute6": "",
+            "AdditionalAttribute7": "",
+            "AdditionalAttribute8": "",
+            "AdditionalAttribute9": "",
+            "AdditionalAttribute10": "",
+            "AttributeSet": null,
+            "Tags": "",
+            "Status": "Active",
+            "CreditLimit": 0,
+            "IsOnCreditHold": false,
+            "IsLegalEntity": false,
+            "CustomerParentID": null,
+            "CustomerParentName": null,
+            "IsBillParent": false,
+            "LastModifiedOn": "2018-01-24T05:07:23.917Z",
+            "Addresses": [
+                {
+                    "Line1": "P O Box 456",
+                    "Line2": "Southbank",
+                    "City": "Melbourne GPO",
+                    "State": "VIC",
+                    "Postcode": "3331",
+                    "Country": "Uruguay",
+                    "Type": "Billing",
+                    "DefaultForType": true,
+                    "ID": "fc8ca28e-7f91-4ac3-8fff-deb86395b494"
+                }
+            ],
+            "Contacts": [
+                {
+                    "Name": "Nick Wakefield",
+                    "JobTitle": null,
+                    "Phone": "03 3014556",
+                    "MobilePhone": null,
+                    "Fax": null,
+                    "Email": null,
+                    "Website": null,
+                    "Default": true,
+                    "Comment": null,
+                    "IncludeInEmail": false,
+                    "MarketingConsent": 1,
+                    "ID": "c650db26-2fca-4fe4-837d-ffd0f4d97200"
+                }
+            ],
+            "ChildCustomers": [
+                {
+                    "CustomerID": "4f36c2a6-f736-450f-be41-28372bde80f6",
+                    "CustomerName": "Child Customer"
+                }
+            ]
+        },
+        {
+            "ID": "861918cc-81f9-4701-9639-864c796561cf",
+            "Name": "Customer Test",
+            "DisplayName": "John Doe",
+            "Currency": "AUD",
+            "PaymentTerm": "30 days",
+            "Discount": 0,
+            "TaxRule": "GST Free Exports",
+            "Carrier": null,
+            "SalesRepresentative": null,
+            "Location": "Main Warehouse",
+            "Comments": null,
+            "AccountReceivable": "610",
+            "RevenueAccount": "200",
+            "PriceTier": "Tier 1",
+            "TaxNumber": null,
+            "AdditionalAttribute1": null,
+            "AdditionalAttribute2": null,
+            "AdditionalAttribute3": null,
+            "AdditionalAttribute4": null,
+            "AdditionalAttribute5": null,
+            "AdditionalAttribute6": null,
+            "AdditionalAttribute7": null,
+            "AdditionalAttribute8": null,
+            "AdditionalAttribute9": null,
+            "AdditionalAttribute10": null,
+            "AttributeSet": null,
+            "Tags": null,
+            "Status": "Active",
+            "CreditLimit": 0,
+            "IsOnCreditHold": false,
+            "IsLegalEntity": true,
+            "CustomerParentID": "ceb4ef7a-e23d-4730-8021-e807e5b76882",
+            "CustomerParentName": "Parent customer test",
+            "IsBillParent": true,
+            "LastModifiedOn": "2018-01-30T06:07:43.46Z",
+            "Addresses": [],
+            "Contacts": [
+                {
+                    "Name": "Customer Test",
+                    "JobTitle": null,
+                    "Phone": null,
+                    "MobilePhone": null,
+                    "Fax": null,
+                    "Email": "Customer@mail.ru",
+                    "Website": null,
+                    "Default": true,
+                    "Comment": null,
+                    "IncludeInEmail": false,
+                    "MarketingConsent": 2,
+                    "ID": "23ef723b-75b5-43b3-8ee7-56d193e53923"
+                }
+            ],
+            "ProductPrices": [
+                {
+                    "ProductID": "1cd995b0-a8f1-456c-9784-ecf3a8fc2804",
+                    "ProductName": "Screws Drive Cross",
+                    "ProductSKU": "Screws-SKU - 002",
+                    "Price": 1.1
+                }
+            ],
+            "ChildCustomers": []
+        }
+    ]
+}

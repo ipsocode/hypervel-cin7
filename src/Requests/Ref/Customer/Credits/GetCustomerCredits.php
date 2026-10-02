@@ -18,9 +18,29 @@ final class GetCustomerCredits extends ListRequest
 {
     protected string $listKey = 'CustomerCredits';
 
+    public function __construct(
+        ?int $page = null,
+        ?int $limit = null,
+        protected readonly ?string $customerId = null,
+        protected readonly ?bool $showUsedCredits = null,
+    ) {
+        parent::__construct($page, $limit);
+    }
+
     public function resolveEndpoint(): string
     {
         return 'ref/customer/credits';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function filters(): array
+    {
+        return [
+            'CustomerID' => $this->customerId,
+            'ShowUsedCredits' => $this->showUsedCredits,
+        ];
     }
 
     /**

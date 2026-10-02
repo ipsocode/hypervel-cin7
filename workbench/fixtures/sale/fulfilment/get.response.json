@@ -1,0 +1,71 @@
+{
+    "SaleID": "916ab4c0-6ccb-4c93-873d-0603859050e4",
+    "Fulfilments": [
+        {
+            "TaskID": "cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57",
+            "FulfillmentNumber": 1,
+            "LinkedInvoiceNumber": "INV-00001",
+            "FulFilmentStatus": "NOT FULFILLED",
+            "Pick": {
+                "Status": "DRAFT",
+                "Lines": [
+                    {
+                        "ProductID": "4aadd8f6-4d3d-46ca-acbb-1a9a662f9bc1",
+                        "SKU": "Bread",
+                        "Name": "Baked Bread",
+                        "Location": "Main Warehouse",
+                        "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+                        "Quantity": 1,
+                        "BatchSN": "PO-00001-1",
+                        "ExpiryDate": "2017-11-30T00:00:00"
+                    }
+                ]
+            },
+            "Pack": {
+                "Status": "NOT AVAILABLE",
+                "Lines": [
+                    {
+                        "ProductID": "4aadd8f6-4d3d-46ca-acbb-1a9a662f9bc1",
+                        "SKU": "Bread",
+                        "Name": "Baked Bread",
+                        "Location": "Main Warehouse",
+                        "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+                        "Box": "Box 1",
+                        "Quantity": 1,
+                        "BatchSN": "PO-00001-1",
+                        "ExpiryDate": "2017-11-30T00:00:00"
+                    }
+                ]
+            },
+            "Ship": {
+                "Status": "NOT AVAILABLE",
+                "RequireBy": null,
+                "ShippingAddress": {
+                    "DisplayAddressLine1": "Line 1 Lines 2",
+                    "DisplayAddressLine2": "City State Code Russia",
+                    "Line1": "Line 1",
+                    "Line2": "Lines 2",
+                    "City": "City",
+                    "State": "State",
+                    "Postcode": "Code",
+                    "Country": "Russia",
+                    "Company": "DIISR - Small Business Services",
+                    "Contact": "Sheree Bond",
+                    "ShipToOther": false
+                },
+                "ShippingNotes": "",
+                "Lines": [
+                    {
+                        "ID": "67f67884-8115-4546-93c9-48230f24bd56",
+                        "ShipmentDate": "2017-11-22T00:00:00",
+                        "Carrier": "DEFAULT Carrier",
+                        "Boxes": "Box 1",
+                        "TrackingNumber": "",
+                        "TrackingURL": "",
+                        "IsShipped": true
+                    }
+                ]
+            }
+        }
+    ]
+}

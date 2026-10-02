@@ -7,22 +7,38 @@ namespace Ipsocode\Cin7\Requests\Sale\CreditNote;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
-use Ipsocode\Cin7\Requests\KeyedRequest;
+use Ipsocode\Cin7\Requests\Cin7Request;
 
 /**
  * `DELETE sale/creditnote?TaskID&Void`, voids or undoes a void of a credit note; the response is the sale's credit notes.
  *
- * @extends KeyedRequest<SaleCreditNotesData>
+ * @extends Cin7Request<SaleCreditNotesData>
  */
-final class DeleteSaleCreditNote extends KeyedRequest
+final class DeleteSaleCreditNote extends Cin7Request
 {
-    protected string $idKey = 'TaskID';
-
     protected Method $method = Method::DELETE;
+
+    public function __construct(
+        protected readonly string $taskId,
+        protected readonly ?bool $void = null,
+    ) {
+        parent::__construct();
+    }
 
     public function resolveEndpoint(): string
     {
         return 'sale/creditnote';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function defaultQuery(): array
+    {
+        return $this->queryValues([
+            'TaskID' => $this->taskId,
+            'Void' => $this->void,
+        ]);
     }
 
     public function createDtoFromResponse(Response $response): SaleCreditNotesData

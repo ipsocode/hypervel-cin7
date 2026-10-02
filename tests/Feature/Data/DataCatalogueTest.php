@@ -4,72 +4,75 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Data;
 
+use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
+use Hypervel\Data\Exceptions\CannotCreateData;
+use Hypervel\Data\Support\Validation\ValidationPath;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
+use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Data\AbstractChargeData;
+use Ipsocode\Cin7\Data\AbstractLineData;
+use Ipsocode\Cin7\Data\AbstractSaleListData;
+use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
-use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
+use Ipsocode\Cin7\Data\MoneyTask\AbstractMoneyTaskData;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
+use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
+use Ipsocode\Cin7\Data\Other\ErrorData;
+use Ipsocode\Cin7\Data\Product\AbstractProductData;
 use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
+use Ipsocode\Cin7\Data\Ref\Tax\AbstractTaxData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
-use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
+use Ipsocode\Cin7\Data\Sale\AbstractAddressData;
+use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
+use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
+use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentsData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePaymentData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
-use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\AbstractSaleFulfilmentPickPackTaskData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentsData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\AbstractSaleFulfilmentShipTaskData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
+use Ipsocode\Cin7\Data\Sale\Invoice\AbstractSaleInvoiceData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\AbstractSaleManualJournalData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalLineData;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
+use Ipsocode\Cin7\Data\Sale\Quote\AbstractSaleQuoteData;
+use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
-use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
-use Ipsocode\Cin7\Data\Sale\SaleOrderData;
+use Ipsocode\Cin7\Data\SaleCreditNoteList\SaleCreditNoteListData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
-use Ipsocode\Cin7\Requests\Customer\GetCustomer;
-use Ipsocode\Cin7\Requests\Customer\PostCustomer;
-use Ipsocode\Cin7\Requests\Customer\PutCustomer;
-use Ipsocode\Cin7\Requests\MoneyOperation\DeleteMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\GetMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
-use Ipsocode\Cin7\Requests\Product\PostProduct;
-use Ipsocode\Cin7\Requests\Product\PutProduct;
-use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
-use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
-use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
-use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
-use Ipsocode\Cin7\Requests\Sale\CreditNote\DeleteSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
-use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
-use Ipsocode\Cin7\Requests\Sale\DeleteSale;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
-use Ipsocode\Cin7\Requests\Sale\Invoice\DeleteSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\GetSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
-use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
-use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;
-use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
-use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
-use Ipsocode\Cin7\Requests\Sale\PostSale;
-use Ipsocode\Cin7\Requests\Sale\PutSale;
-use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
+use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use ReflectionEnum;
 use ReflectionNamedType;
+use ReflectionProperty;
 use ReflectionUnionType;
 use SplFileInfo;
 use Workbench\App\Support\Cin7Payloads;
 
 /**
- * One row per request with a response body, plus the conventions every class in `src/Data/`
- * is held to.
+ * One row per request with a response body, from the per-path files under
+ * `tests/Fixtures/Catalogue/`, plus the conventions every class in `src/Data/` is held to.
  *
  * @see docs/data.md
  */
@@ -99,14 +102,14 @@ class DataCatalogueTest extends TestCase
         if (array_is_list($expected)) {
             $this->assertIsArray($dto);
             $this->assertContainsOnlyInstancesOf($dataClass, $dto);
-            $this->assertEquals($expected, array_map(static fn (Data $item): array => $item->toArray(), $dto));
+            $this->assertRoundTrips($expected, array_map(static fn (Data $item): array => $item->toArray(), $dto));
             $this->assertSame($response, $dto[0]->getResponse());
 
             return;
         }
 
         $this->assertInstanceOf($dataClass, $dto);
-        $this->assertEquals($expected, $dto->toArray());
+        $this->assertRoundTrips($expected, $dto->toArray());
         $this->assertSame($response, $dto->getResponse());
     }
 
@@ -115,51 +118,7 @@ class DataCatalogueTest extends TestCase
      */
     public static function dtoProvider(): array
     {
-        return [
-            GetCustomer::class => [GetCustomer::class, [], Cin7Payloads::customerExample(), CustomerData::class, 'CustomerList'],
-            PostCustomer::class => [PostCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
-            PutCustomer::class => [PutCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
-            GetProduct::class => [GetProduct::class, [], Cin7Payloads::productExample(), ProductData::class, 'Products'],
-            PostProduct::class => [PostProduct::class, [[]], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
-            PutProduct::class => [PutProduct::class, [[]], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
-            GetTax::class => [GetTax::class, [], Cin7Payloads::taxList(), TaxData::class, 'TaxRuleList'],
-            PostTax::class => [PostTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
-            PutTax::class => [PutTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
-            GetCustomerCredits::class => [
-                GetCustomerCredits::class,
-                [],
-                Cin7Payloads::customerCreditsExample(),
-                CustomerCreditData::class,
-                'CustomerCredits',
-            ],
-            GetMoneyOperation::class => [GetMoneyOperation::class, ['task-1'], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
-            PostMoneyOperation::class => [PostMoneyOperation::class, [[]], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
-            PutMoneyOperation::class => [PutMoneyOperation::class, [[]], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
-            DeleteMoneyOperation::class => [DeleteMoneyOperation::class, ['task-1'], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
-            GetSale::class => [GetSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
-            PostSale::class => [PostSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
-            PutSale::class => [PutSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
-            DeleteSale::class => [DeleteSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
-            GetSaleOrder::class => [GetSaleOrder::class, ['sale-1'], Cin7Payloads::saleOrder(), SaleOrderData::class, ''],
-            PostSaleOrder::class => [PostSaleOrder::class, [[]], Cin7Payloads::saleOrder(), SaleOrderData::class, ''],
-            GetSaleInvoice::class => [GetSaleInvoice::class, ['sale-1'], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
-            PostSaleInvoice::class => [PostSaleInvoice::class, [[]], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
-            PutSaleInvoice::class => [PutSaleInvoice::class, [[]], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
-            DeleteSaleInvoice::class => [DeleteSaleInvoice::class, ['task-1'], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
-            GetSaleCreditNote::class => [GetSaleCreditNote::class, ['sale-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
-            PostSaleCreditNote::class => [PostSaleCreditNote::class, [[]], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
-            DeleteSaleCreditNote::class => [DeleteSaleCreditNote::class, ['task-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
-            GetSalePayment::class => [GetSalePayment::class, ['sale-1'], [Cin7Payloads::salePayment()], SalePaymentLinePartialData::class, ''],
-            PostSalePayment::class => [PostSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
-            PutSalePayment::class => [PutSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
-            GetSaleList::class => [
-                GetSaleList::class,
-                [],
-                Cin7Payloads::saleList(),
-                SaleListData::class,
-                'SaleList',
-            ],
-        ];
+        return Catalogue::rows('dtos');
     }
 
     /**
@@ -176,7 +135,7 @@ class DataCatalogueTest extends TestCase
         $dto = $this->connector()->send(new GetSale('guid-1'))->dto();
 
         $this->assertInstanceOf(SaleManualJournalLineData::class, $dto->ManualJournals->Lines[0]);
-        $this->assertEquals($sale, $dto->toArray());
+        $this->assertRoundTrips($sale, $dto->toArray());
     }
 
     /**
@@ -226,7 +185,7 @@ class DataCatalogueTest extends TestCase
         $dto = $this->connector()->send(new GetProduct)->dto();
 
         $this->assertInstanceOf(ProductSupplierOptionIntervalData::class, $dto[0]->Suppliers[0]->ProductSupplierOptions[0]->SupplyIntervals[0]);
-        $this->assertEquals($product['Products'], array_map(static fn (Data $item): array => $item->toArray(), $dto));
+        $this->assertRoundTrips($product['Products'], array_map(static fn (Data $item): array => $item->toArray(), $dto));
     }
 
     /**
@@ -244,45 +203,294 @@ class DataCatalogueTest extends TestCase
     }
 
     /**
-     * The POST models are bodies, not responses, so their fixtures round-trip through the class.
+     * The body models are not responses, so their fixtures, the reference's request examples,
+     * round-trip through the class.
+     *
+     * @param class-string<Data> $class
+     * @param array<string, mixed> $fixture
      */
-    public function testThePostModelsRoundTripTheirFixtures(): void
+    #[DataProvider('bodyProvider')]
+    public function testTheBodyModelsRoundTripTheirFixtures(string $class, array $fixture): void
     {
-        $invoice = Cin7Payloads::saleInvoicePost();
-        $creditNote = Cin7Payloads::saleCreditNotePost();
-
-        $this->assertEquals($invoice, SaleInvoicePostData::from($invoice)->toArray());
-        $this->assertEquals($creditNote, SaleCreditNotePostData::from($creditNote)->toArray());
+        $this->assertRoundTrips($fixture, $class::from($fixture)->toArray());
     }
 
-    public function testEveryDataClassIsFinalAndExtendsData(): void
+    /**
+     * @return array<string, array{class-string<Data>, array<string, mixed>}>
+     */
+    public static function bodyProvider(): array
+    {
+        return Catalogue::rows('bodies');
+    }
+
+    /**
+     * Every model is reached from a catalogue row: it is a `dto()` class or a body class, or a
+     * property of one of those, at any depth. The Error Model is read from failed responses.
+     */
+    public function testEveryDataClassIsReachedFromACatalogueRow(): void
+    {
+        $queue = [
+            ErrorData::class,
+            ...array_column(self::dtoProvider(), 3),
+            ...array_column(self::bodyProvider(), 0),
+            ...array_column(self::missingRequiredFieldProvider(), 0),
+            ...array_keys(Catalogue::rows('required')),
+        ];
+        $reached = [];
+
+        while ($queue !== []) {
+            $class = array_shift($queue);
+
+            if (isset($reached[$class])) {
+                continue;
+            }
+
+            $reached[$class] = true;
+
+            foreach (new ReflectionClass($class)->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+                $type = $property->getType();
+                $types = $type instanceof ReflectionUnionType ? $type->getTypes() : [$type];
+
+                foreach ($types as $named) {
+                    if ($named instanceof ReflectionNamedType && ! $named->isBuiltin() && is_a($named->getName(), Data::class, true)) {
+                        $queue[] = $named->getName();
+                    }
+                }
+
+                foreach ($property->getAttributes(DataCollectionOf::class) as $attribute) {
+                    $queue[] = $attribute->newInstance()->class;
+                }
+            }
+        }
+
+        foreach (self::dataClasses() as $class) {
+            if (! new ReflectionClass($class)->isAbstract()) {
+                $this->assertArrayHasKey($class, $reached, "No catalogue row reaches {$class}.");
+            }
+        }
+    }
+
+    /**
+     * Every enum in `src/Enums/` is string-backed, so its cases are the wire values, and types a
+     * field of at least one model or a parameter of at least one request.
+     */
+    public function testEveryEnumIsStringBackedAndTypesAFieldOrParameter(): void
+    {
+        $used = [];
+
+        $requests = realpath(__DIR__ . '/../../../src/Requests');
+
+        /** @var SplFileInfo $file */
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator((string) $requests)) as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $class = 'Ipsocode\Cin7\Requests\\' . str_replace(['/', '.php'], ['\\', ''], substr($file->getPathname(), strlen((string) $requests) + 1));
+
+            foreach (new ReflectionClass($class)->getConstructor()?->getParameters() ?? [] as $parameter) {
+                $type = $parameter->getType();
+
+                foreach ($type instanceof ReflectionUnionType ? $type->getTypes() : [$type] as $named) {
+                    if ($named instanceof ReflectionNamedType && enum_exists($named->getName())) {
+                        $used[$named->getName()] = true;
+                    }
+                }
+            }
+        }
+
+        foreach (self::dataClasses() as $class) {
+            foreach (new ReflectionClass($class)->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+                $type = $property->getType();
+
+                foreach ($type instanceof ReflectionUnionType ? $type->getTypes() : [$type] as $named) {
+                    if ($named instanceof ReflectionNamedType && enum_exists($named->getName())) {
+                        $used[$named->getName()] = true;
+                    }
+                }
+            }
+        }
+
+        foreach (glob(__DIR__ . '/../../../src/Enums/*.php') ?: [] as $file) {
+            $enum = 'Ipsocode\Cin7\Enums\\' . basename($file, '.php');
+
+            $this->assertSame('string', (string) new ReflectionEnum($enum)->getBackingType(), $enum);
+            $this->assertArrayHasKey($enum, $used, "No model field or request parameter is typed {$enum}.");
+        }
+    }
+
+    /**
+     * The Error Model is read from a failed response, not from a path's `dto()`.
+     */
+    public function testTheErrorModelRoundTrips(): void
+    {
+        $this->assertRoundTrips(Cin7Payloads::error(), ErrorData::from(Cin7Payloads::error())->toArray());
+    }
+
+    /**
+     * @param class-string<Data> $class
+     * @param array<string, mixed> $payload
+     */
+    #[DataProvider('missingRequiredFieldProvider')]
+    public function testAModelWithoutARequiredFieldCannotBeBuilt(string $class, array $payload): void
+    {
+        $this->expectException(CannotCreateData::class);
+
+        $class::from($payload);
+    }
+
+    /**
+     * @return array<string, array{class-string<Data>, array<string, mixed>}>
+     */
+    public static function missingRequiredFieldProvider(): array
+    {
+        return Catalogue::rows('missing');
+    }
+
+    /**
+     * The credit note's payments carry more than a Sale Payment Line; `Type` and the numbers survive `dto()`.
+     */
+    public function testACreditNotePaymentKeepsItsTypeAndNumbers(): void
+    {
+        Saloon::fake([MockResponse::make(Cin7Payloads::saleCreditNotes())]);
+
+        $payment = $this->connector()->send(new GetSaleCreditNote('sale-1', includePaymentInfo: true))->dto()->CreditNotes[0]->Payments[0];
+
+        $this->assertInstanceOf(SaleCreditNotePaymentData::class, $payment);
+        $this->assertSame('Refund', $payment->Type);
+        $this->assertSame('CR-00001', $payment->CreditNoteNumber);
+        $this->assertNull($payment->CreditID);
+    }
+
+    /**
+     * Cin7's DateTime: `yyyy-MM-ddTHH:mm:ss`, an optional fraction of up to seven digits and an
+     * optional `Z`; the `date` rule beside the pattern rejects an impossible date.
+     */
+    public function testTheDateTimeRuleMatchesCin7sFormat(): void
+    {
+        $this->assertSame(['regex:' . DateTime::PATTERN, 'date'], new DateTime()->getRules(ValidationPath::create()));
+
+        foreach (['2017-11-30T00:00:00', '2012-11-14T13:28:33.363', '2017-11-22T06:58:21.8882229Z'] as $date) {
+            $this->assertSame(1, preg_match(DateTime::PATTERN, $date), $date);
+        }
+
+        foreach (['2017-11-30', '2017-11-30T00:00', '2017-11-30T00:00:00+10:00', '2017-11-30 00:00:00', '2017-11-30T00:00:00.12345678'] as $date) {
+            $this->assertSame(0, preg_match(DateTime::PATTERN, $date), $date);
+        }
+    }
+
+    /**
+     * Every model is a final class; an abstract class holds only the fields several models share
+     * (the `Abstract…Data` classes): a model is a final child that adds its own fields.
+     */
+    public function testEveryDataClassIsFinalOrAnAbstractParentAndExtendsData(): void
+    {
+        $parents = [];
+
+        foreach (self::dataClasses() as $class) {
+            $reflection = new ReflectionClass($class);
+
+            $this->assertTrue($reflection->isFinal() || $reflection->isAbstract(), $class);
+            $this->assertTrue($reflection->isSubclassOf(Data::class), $class);
+
+            if ($reflection->isAbstract()) {
+                $parents[] = $class;
+            }
+        }
+
+        $this->assertSame([
+            AbstractChargeData::class,
+            AbstractLineData::class,
+            AbstractSaleListData::class,
+            AbstractCustomerData::class,
+            AbstractMoneyTaskData::class,
+            AbstractProductData::class,
+            AbstractTaxData::class,
+            AbstractAddressData::class,
+            AbstractSaleData::class,
+            AbstractSalePaymentLineData::class,
+            AbstractSaleCreditNoteData::class,
+            AbstractSaleFulfilmentPickPackTaskData::class,
+            AbstractSaleFulfilmentShipTaskData::class,
+            AbstractSaleInvoiceData::class,
+            AbstractSaleManualJournalData::class,
+            AbstractSaleQuoteData::class,
+        ], $parents);
+    }
+
+    /**
+     * A field the reference marks required is not nullable and has no default, so building the
+     * model without it fails; every other field is nullable and defaults to `null`, which a write
+     * leaves out of the body. The required fields come first, as PHP needs.
+     */
+    public function testOnlyTheRequiredFieldsHaveNoDefault(): void
     {
         foreach (self::dataClasses() as $class) {
             $reflection = new ReflectionClass($class);
 
-            $this->assertTrue($reflection->isFinal(), $class);
-            $this->assertTrue($reflection->isSubclassOf(Data::class), $class);
-        }
-    }
-
-    public function testEveryConstructorPropertyAdmitsOptional(): void
-    {
-        foreach (self::dataClasses() as $class) {
-            foreach (new ReflectionClass($class)->getConstructor()->getParameters() as $parameter) {
-                $type = $parameter->getType();
-                $names = $type instanceof ReflectionUnionType
-                    ? array_map(static fn (ReflectionNamedType $named): string => $named->getName(), $type->getTypes())
-                    : [$type->getName()];
-
-                $this->assertContains(Optional::class, $names, $class . '::$' . $parameter->getName());
+            if ($reflection->isAbstract()) {
+                continue;
             }
+
+            $required = Catalogue::rows('required')[$class] ?? [];
+            $parameters = [];
+
+            foreach ($reflection->getConstructor()?->getParameters() ?? [] as $parameter) {
+                $parameters[$parameter->getName()] = $parameter;
+            }
+
+            // A parent's optional and trait fields are properties with a default; its required
+            // fields reach the child through the constructor.
+            foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+                $name = $class . '::$' . $property->getName();
+                $parameter = $parameters[$property->getName()] ?? null;
+                $hasDefault = $parameter?->isDefaultValueAvailable() ?? $property->hasDefaultValue();
+
+                if (in_array($property->getName(), $required, true)) {
+                    $this->assertFalse($property->getType()->allowsNull(), $name);
+                    $this->assertFalse($hasDefault, $name);
+                } else {
+                    $this->assertTrue($property->getType()->allowsNull(), $name);
+                    $this->assertTrue($hasDefault, $name);
+                    $this->assertNull($parameter?->getDefaultValue() ?? $property->getDefaultValue(), $name);
+                }
+            }
+
+            $this->assertSame($required, array_slice(array_keys($parameters), 0, count($required)), $class);
         }
     }
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
+        }
+    }
+
+    /**
+     * Assert a model's `toArray()` holds the fixture: every fixture key is modelled under its
+     * wire name with an equal value, and every other key is null, the default of a field the
+     * fixture left out. Absent and `null` are the same to a model.
+     *
+     * @param array<array-key, mixed> $expected
+     * @param array<array-key, mixed> $actual
+     */
+    private function assertRoundTrips(array $expected, array $actual, string $path = ''): void
+    {
+        foreach ($expected as $key => $value) {
+            $at = $path === '' ? (string) $key : $path . '.' . $key;
+
+            $this->assertArrayHasKey($key, $actual, $at);
+
+            if (is_array($value) && is_array($actual[$key])) {
+                $this->assertRoundTrips($value, $actual[$key], $at);
+            } else {
+                $this->assertEquals($value, $actual[$key], $at);
+            }
+        }
+
+        foreach (array_diff_key($actual, $expected) as $key => $value) {
+            $this->assertNull($value, $path === '' ? (string) $key : $path . '.' . $key);
         }
     }
 
@@ -298,11 +506,12 @@ class DataCatalogueTest extends TestCase
 
         /** @var SplFileInfo $file */
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root)) as $file) {
+            $relative = str_replace($root . '/', '', $file->getPathname());
+
             if ($file->getExtension() !== 'php') {
                 continue;
             }
 
-            $relative = str_replace($root . '/', '', $file->getPathname());
             $classes[] = 'Ipsocode\Cin7\Data\\' . str_replace(['/', '.php'], ['\\', ''], $relative);
         }
 

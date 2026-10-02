@@ -5,85 +5,84 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
-use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
-use Ipsocode\Cin7\Data\AttachmentLineData;
+use Ipsocode\Cin7\Data\Other\AttachmentLineData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNoteData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
+use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
+use Ipsocode\Cin7\Enums\FulfilmentStatus;
+use Ipsocode\Cin7\Enums\PackingStatus;
+use Ipsocode\Cin7\Enums\PickingStatus;
+use Ipsocode\Cin7\Enums\SalePaymentStatus;
+use Ipsocode\Cin7\Enums\SaleStatus;
+use Ipsocode\Cin7\Enums\SaleType;
+use Ipsocode\Cin7\Enums\ShippingStatus;
+use Ipsocode\Cin7\Enums\TaxCalculation;
 
 /**
  * Sale, the response of `sale` GET, POST, PUT and DELETE.
  *
  * @see docs/data.md
  */
-final class SaleData extends Data implements WithResponse
+final class SaleData extends AbstractSaleData implements WithResponse
 {
     use HasResponse;
 
     /**
-     * @param list<SaleFulfilmentData>|Optional $Fulfilments
-     * @param list<SaleInvoiceData>|Optional $Invoices
-     * @param list<SaleCreditNoteData>|Optional $CreditNotes
-     * @param list<AttachmentLineData>|Optional $Attachments
-     * @param list<InventoryMovementLineData>|Optional $InventoryMovements
-     * @param list<SaleTransactionLineData>|Optional $Transactions
+     * @param null|list<SaleFulfilmentData> $Fulfilments
+     * @param null|list<SaleInvoiceData> $Invoices
+     * @param null|list<SaleCreditNoteData> $CreditNotes
+     * @param null|list<AttachmentLineData> $Attachments
+     * @param null|list<InventoryMovementLineData> $InventoryMovements
+     * @param null|list<SaleTransactionLineData> $Transactions
      */
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $Customer,
-        public string|Optional $CustomerID,
-        public string|Optional $Contact,
-        public string|Optional $Phone,
-        public string|Optional $Email,
-        public string|Optional $DefaultAccount,
-        public bool|Optional $SkipQuote,
-        public AddressData|Optional $BillingAddress,
-        public SaleShippingAddressData|Optional $ShippingAddress,
-        public string|Optional $ShippingNotes,
-        public string|Optional $BaseCurrency,
-        public string|Optional $CustomerCurrency,
-        public string|Optional $TaxRule,
-        public string|Optional $TaxCalculation,
-        public string|Optional $Terms,
-        public string|Optional $PriceTier,
-        public string|Optional $ShipBy,
-        public string|Optional $Location,
-        public string|Optional $SaleOrderDate,
-        public string|Optional $LastModifiedOn,
-        public string|Optional $Note,
-        public string|Optional $CustomerReference,
-        public float|Optional $COGSAmount,
-        public string|Optional $Status,
-        public string|Optional $CombinedPickingStatus,
-        public string|Optional $CombinedPackingStatus,
-        public string|Optional $CombinedShippingStatus,
-        public string|Optional $FulFilmentStatus,
-        public string|Optional $CombinedInvoiceStatus,
-        public string|Optional $CombinedPaymentStatus,
-        public string|Optional $CombinedTrackingNumbers,
-        public string|Optional $Carrier,
-        public float|Optional $CurrencyRate,
-        public string|Optional $SalesRepresentative,
-        public string|Optional $Type,
-        public string|Optional|null $SourceChannel,
-        public string|Optional|null $ExternalID,
-        public bool|Optional $ServiceOnly,
-        public SaleQuoteData|Optional $Quote,
-        public SaleOrderData|Optional $Order,
+        string $Location,
+        float $CurrencyRate,
+        public PickingStatus $CombinedPickingStatus,
+        public PackingStatus $CombinedPackingStatus,
+        public ShippingStatus $CombinedShippingStatus,
+        #[Uuid]
+        public ?string $ID = null,
+        #[Max(3)]
+        public ?string $BaseCurrency = null,
+        #[Max(3)]
+        public ?string $CustomerCurrency = null,
+        public ?TaxCalculation $TaxCalculation = null,
+        public ?float $COGSAmount = null,
+        public ?SaleStatus $Status = null,
+        public ?FulfilmentStatus $FulFilmentStatus = null,
+        #[Max(20)]
+        public ?string $CombinedInvoiceStatus = null,
+        public ?SalePaymentStatus $CombinedPaymentStatus = null,
+        #[Max(256)]
+        public ?string $CombinedTrackingNumbers = null,
+        public ?SaleType $Type = null,
+        #[Max(32)]
+        public ?string $SourceChannel = null,
+        public ?bool $ServiceOnly = null,
+        public ?SaleQuoteData $Quote = null,
+        public ?SaleOrderData $Order = null,
         #[DataCollectionOf(SaleFulfilmentData::class)]
-        public array|Optional $Fulfilments,
+        public ?array $Fulfilments = null,
         #[DataCollectionOf(SaleInvoiceData::class)]
-        public array|Optional $Invoices,
+        public ?array $Invoices = null,
         #[DataCollectionOf(SaleCreditNoteData::class)]
-        public array|Optional $CreditNotes,
-        public SaleManualJournalData|Optional $ManualJournals,
-        public AdditionalAttributeData|Optional $AdditionalAttributes,
+        public ?array $CreditNotes = null,
+        public ?SaleManualJournalData $ManualJournals = null,
         #[DataCollectionOf(AttachmentLineData::class)]
-        public array|Optional $Attachments,
+        public ?array $Attachments = null,
         #[DataCollectionOf(InventoryMovementLineData::class)]
-        public array|Optional $InventoryMovements,
+        public ?array $InventoryMovements = null,
         #[DataCollectionOf(SaleTransactionLineData::class)]
-        public array|Optional $Transactions,
+        public ?array $Transactions = null,
     ) {
+        parent::__construct($Location, $CurrencyRate);
     }
 }

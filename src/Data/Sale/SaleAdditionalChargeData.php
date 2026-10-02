@@ -4,25 +4,16 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale;
 
-use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
+use Hypervel\Data\Attributes\Validation\Max;
+use Ipsocode\Cin7\Data\AbstractChargeData;
 
 /**
- * Sale Additional Charge Model, a quote or order charge line.
+ * Sale Additional Charge Model: the charge fields of `AbstractChargeData` and a `Comment`.
  *
  * @see docs/data.md
  */
-final class SaleAdditionalChargeData extends Data
+final class SaleAdditionalChargeData extends AbstractChargeData
 {
-    public function __construct(
-        public string|Optional $Description,
-        public float|Optional $Price,
-        public float|Optional $Quantity,
-        public float|Optional $Discount,
-        public float|Optional $Tax,
-        public float|Optional $Total,
-        public string|Optional $TaxRule,
-        public string|Optional $Comment,
-    ) {
-    }
+    #[Max(1024)]
+    public ?string $Comment = null;
 }

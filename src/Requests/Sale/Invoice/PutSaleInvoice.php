@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `PUT sale/invoice`, body needs `SaleID` and `TaskID`; an empty collection in it deletes the existing records.
+ * `PUT sale/invoice`, body is a `SaleInvoicePutData` or an array, and needs `SaleID` and `TaskID`; an empty collection in it deletes the existing records.
  *
  * @extends WriteRequest<SaleInvoicesData>
  */

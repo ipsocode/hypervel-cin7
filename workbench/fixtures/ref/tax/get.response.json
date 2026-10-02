@@ -1,0 +1,45 @@
+{
+    "Total": 2,
+    "Page": 1,
+    "TaxRuleList": [
+        {
+            "ID": "9d707beb-19cf-4d7b-a5d9-9eaff05c504c",
+            "Name": "GST on Income",
+            "Account": "820",
+            "IsActive": true,
+            "TaxInclusive": false,
+            "TaxPercent": 10,
+            "IsTaxForSale": true,
+            "IsTaxForPurchase": false,
+            "Components": [
+                {
+                    "ID": "B1151EEA-3364-4534-88E6-DF2C6B59A6D8",
+                    "Name": "Tax",
+                    "Percent": "10.0000000000",
+                    "AccountCode": "0",
+                    "ComponentOrder": "1"
+                }
+            ]
+        },
+        {
+            "ID": "d4d53cdf-4b87-4b67-9c17-733fc5419a2a",
+            "Name": "Tax test",
+            "Account": "820",
+            "IsActive": true,
+            "TaxInclusive": false,
+            "TaxPercent": 0,
+            "IsTaxForSale": false,
+            "IsTaxForPurchase": true,
+            "Components": [
+                {
+                    "ID": "534AC4D9-6F37-448A-971E-DF1C2B21FB64",
+                    "Name": "No Tax",
+                    "Percent": "0.0000000000",
+                    "AccountCode": "",
+                    "Compound": "0",
+                    "ComponentOrder": "1"
+                }
+            ]
+        }
+    ]
+}

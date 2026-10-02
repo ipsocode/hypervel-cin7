@@ -5,16 +5,25 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Ipsocode\Cin7\Resources\CustomerResource;
-use Ipsocode\Cin7\Resources\MoneyOperationResource;
+use Ipsocode\Cin7\Resources\MoneyTaskListResource;
+use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\RefResource;
+use Ipsocode\Cin7\Resources\Sale\AttachmentResource;
 use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
+use Ipsocode\Cin7\Resources\Sale\Fulfilment\PackResource;
+use Ipsocode\Cin7\Resources\Sale\Fulfilment\PickResource;
+use Ipsocode\Cin7\Resources\Sale\Fulfilment\ShipResource;
+use Ipsocode\Cin7\Resources\Sale\FulfilmentResource;
 use Ipsocode\Cin7\Resources\Sale\InvoiceResource;
+use Ipsocode\Cin7\Resources\Sale\ManualJournalResource;
 use Ipsocode\Cin7\Resources\Sale\OrderResource;
 use Ipsocode\Cin7\Resources\Sale\PaymentResource;
+use Ipsocode\Cin7\Resources\Sale\QuoteResource;
+use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -39,12 +48,12 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->customer(), $connector->customer());
     }
 
-    public function testMoneyOperationReturnsAFreshMoneyOperationResource(): void
+    public function testMoneyTaskReturnsAFreshMoneyTaskResource(): void
     {
         $connector = $this->connector();
 
-        $this->assertInstanceOf(MoneyOperationResource::class, $connector->moneyOperation());
-        $this->assertNotSame($connector->moneyOperation(), $connector->moneyOperation());
+        $this->assertInstanceOf(MoneyTaskResource::class, $connector->moneyTask());
+        $this->assertNotSame($connector->moneyTask(), $connector->moneyTask());
     }
 
     public function testProductReturnsAProductResource(): void
@@ -57,6 +66,14 @@ class ConnectorResourcesTest extends TestCase
         $connector = $this->connector();
 
         $this->assertNotSame($connector->product(), $connector->product());
+    }
+
+    public function testMoneyTaskListReturnsAFreshMoneyTaskListResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(MoneyTaskListResource::class, $connector->moneyTaskList());
+        $this->assertNotSame($connector->moneyTaskList(), $connector->moneyTaskList());
     }
 
     public function testSaleAndSaleListReturnTheirResources(): void
@@ -73,11 +90,33 @@ class ConnectorResourcesTest extends TestCase
     {
         $sale = $this->connector()->sale();
 
+        $this->assertInstanceOf(QuoteResource::class, $sale->quote());
         $this->assertInstanceOf(OrderResource::class, $sale->order());
+        $this->assertInstanceOf(FulfilmentResource::class, $sale->fulfilment());
         $this->assertInstanceOf(InvoiceResource::class, $sale->invoice());
         $this->assertInstanceOf(CreditNoteResource::class, $sale->creditNote());
         $this->assertInstanceOf(PaymentResource::class, $sale->payment());
+        $this->assertInstanceOf(ManualJournalResource::class, $sale->manualJournal());
+        $this->assertInstanceOf(AttachmentResource::class, $sale->attachment());
         $this->assertNotSame($sale->order(), $sale->order());
+    }
+
+    public function testSaleCreditNoteListReturnsAFreshSaleCreditNoteListResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(SaleCreditNoteListResource::class, $connector->saleCreditNoteList());
+        $this->assertNotSame($connector->saleCreditNoteList(), $connector->saleCreditNoteList());
+    }
+
+    public function testAFulfilmentReturnsItsPickPackAndShip(): void
+    {
+        $fulfilment = $this->connector()->sale()->fulfilment();
+
+        $this->assertInstanceOf(PickResource::class, $fulfilment->pick());
+        $this->assertInstanceOf(PackResource::class, $fulfilment->pack());
+        $this->assertInstanceOf(ShipResource::class, $fulfilment->ship());
+        $this->assertNotSame($fulfilment->pick(), $fulfilment->pick());
     }
 
     public function testRefReturnsARefResourceWithItsGroupings(): void

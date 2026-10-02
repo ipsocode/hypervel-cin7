@@ -1,0 +1,55 @@
+{
+    "SaleID": "916ab4c0-6ccb-4c93-873d-0603859050e4",
+    "SaleOrderNumber": "SO-00001",
+    "Memo": "",
+    "Status": "AUTHORISED",
+    "Lines": [
+        {
+            "ProductID": "4aadd8f6-4d3d-46ca-acbb-1a9a662f9bc1",
+            "SKU": "Bread",
+            "Name": "Baked Bread",
+            "Quantity": 1,
+            "Price": 8,
+            "Discount": 0,
+            "Tax": 0,
+            "AverageCost": 5,
+            "TaxRule": "Tax on Sales",
+            "Comment": "",
+            "DropShip": false,
+            "Backorder": false,
+            "BackorderQuantity": 0,
+            "Total": 8,
+            "ProductLength": 0,
+            "ProductWidth": 0,
+            "ProductHeight": 0,
+            "ProductWeight": 0,
+            "WeightUnits": "",
+            "DimensionsUnits": "",
+            "ProductCustomField1": null,
+            "ProductCustomField2": null,
+            "ProductCustomField3": null,
+            "ProductCustomField4": null,
+            "ProductCustomField5": null,
+            "ProductCustomField6": null,
+            "ProductCustomField7": null,
+            "ProductCustomField8": null,
+            "ProductCustomField9": null,
+            "ProductCustomField10": null
+        }
+    ],
+    "AdditionalCharges": [
+        {
+            "Description": "Desktop/network support via phone. Per month fixed fee for minimum 20 hours/month.",
+            "Price": 350,
+            "Quantity": 1,
+            "Discount": 0,
+            "Tax": 0,
+            "Total": 350,
+            "TaxRule": "Tax on Sales",
+            "Comment": ""
+        }
+    ],
+    "TotalBeforeTax": 8,
+    "Tax": 0,
+    "Total": 8
+}
