@@ -8,10 +8,11 @@ use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
 use InvalidArgumentException;
 use Ipsocode\Cin7\Data\Product\ProductData;
+use Ipsocode\Cin7\Data\Product\ProductPutData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `PUT product`, body is a Product, and must carry a non-empty `ID`, which Cin7 requires on PUT;
+ * `PUT product`, body is a `ProductPutData`, and must carry a non-empty `ID`, which Cin7 requires on PUT;
  * the response is the saved Product. `Type` is read-only for PUT, and the fields read-only on
  * POST too (`AverageCost`, `LastModifiedOn`, `BOMType`, the supplier `Currency`, the BOM `Name`,
  * the custom-price `ProductName`) are left out of the body.
@@ -38,11 +39,11 @@ final class PutProduct extends WriteRequest
     ];
 
     /**
-     * @param array<string, mixed>|ProductData $body
+     * @param array<string, mixed>|ProductPutData $body
      */
-    public function __construct(array|ProductData $body)
+    public function __construct(array|ProductPutData $body)
     {
-        $id = $body instanceof ProductData ? $body->ID : ($body['ID'] ?? null);
+        $id = $body instanceof ProductPutData ? $body->ID : ($body['ID'] ?? null);
 
         if (! is_string($id) || $id === '') {
             throw new InvalidArgumentException('PUT product needs the Product ID.');

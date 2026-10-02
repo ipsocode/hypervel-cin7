@@ -9,7 +9,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Validation\ValidationException;
-use Ipsocode\Cin7\Data\Product\ProductData;
+use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
@@ -36,6 +36,13 @@ use Workbench\App\Support\Cin7Payloads;
  */
 class BodyValidationTest extends TestCase
 {
+    /**
+     * The fields every product POST requires.
+     *
+     * @var array<string, string>
+     */
+    private const array PRODUCT = ['SKU' => 'Bread', 'Name' => 'Baked Bread', 'Category' => 'Other', 'CostingMethod' => 'FIFO', 'UOM' => 'Item', 'Status' => 'Active', 'Type' => 'Stock'];
+
     private MockClient $mock;
 
     protected function setUp(): void
@@ -185,13 +192,99 @@ class BodyValidationTest extends TestCase
     }
 
     /**
-     * Validation runs on what is sent: a field the request leaves out is not checked.
+     * Validation runs on what is sent: a field the request leaves out is not checked, like a
+     * component's read-only `Name` beyond its 256 characters.
      */
     public function testAnOmittedFieldIsNotValidated(): void
     {
-        $this->connector()->send(new PostProduct(ProductData::from(['ID' => 'not-a-guid', 'SKU' => 'Bread'])));
+        $this->connector()->send(new PostProduct(ProductPostData::from(self::PRODUCT + [
+            'BillOfMaterialsProducts' => [['ProductCode' => 'GB1-White', 'Quantity' => 2, 'Name' => str_repeat('x', 300)]],
+        ])));
 
-        $this->assertSame(['SKU' => 'Bread'], $this->mock->lastPendingRequest()?->body());
+        $this->assertSame([['Quantity' => 2.0, 'ProductCode' => 'GB1-White']], $this->mock->lastPendingRequest()?->body()['BillOfMaterialsProducts']);
+    }
+
+    /**
+     * A product with a bill of materials needs the quantity it makes and how its cost is
+     * estimated; one without needs neither.
+     */
+    public function testABillOfMaterialsNeedsItsQuantityAndCostEstimation(): void
+    {
+        try {
+            $this->connector()->send(new PostProduct(ProductPostData::from(self::PRODUCT + ['BillOfMaterial' => true])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['QuantityToProduce', 'AssemblyCostEstimationMethod'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostProduct(ProductPostData::from(self::PRODUCT + ['BillOfMaterial' => false])));
+        $this->connector()->send(new PostProduct(ProductPostData::from(self::PRODUCT + ['BillOfMaterial' => true, 'QuantityToProduce' => 1, 'AssemblyCostEstimationMethod' => 'Average Cost'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * The reference requires one field of each of these pairs: a body with neither is not sent.
+     *
+     * @param array<string, mixed> $part
+     * @param list<string> $fields
+     */
+    #[DataProvider('eitherFieldProvider')]
+    public function testAProductPartWithNeitherFieldOfItsPairIsNotSent(array $part, array $fields): void
+    {
+        try {
+            $this->connector()->send(new PostProduct(ProductPostData::from(self::PRODUCT + $part)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame($fields, array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, list<string>}>
+     */
+    public static function eitherFieldProvider(): array
+    {
+        return [
+            'supplier' => [['Suppliers' => [['Cost' => 1]]], ['Suppliers.0.SupplierID', 'Suppliers.0.SupplierName']],
+            'supplier option location' => [
+                ['Suppliers' => [['SupplierName' => 'ABPA', 'ProductSupplierOptions' => [['Lead' => 3]]]]],
+                ['Suppliers.0.ProductSupplierOptions.0.LocationID', 'Suppliers.0.ProductSupplierOptions.0.LocationName'],
+            ],
+            'reorder level location' => [['ReorderLevels' => [['PickZones' => 'A']]], ['ReorderLevels.0.LocationID', 'ReorderLevels.0.LocationName']],
+            'component' => [['BillOfMaterialsProducts' => [['Quantity' => 1]]], ['BillOfMaterialsProducts.0.ComponentProductID', 'BillOfMaterialsProducts.0.ProductCode']],
+            'service' => [['BillOfMaterialsServices' => [['Quantity' => 1]]], ['BillOfMaterialsServices.0.ComponentProductID', 'BillOfMaterialsServices.0.Name']],
+        ];
+    }
+
+    /**
+     * A supply interval needs the fields of its delivery method: the days and start of an
+     * `Interval`, each weekday of a `Fixed` one.
+     */
+    public function testASupplyIntervalNeedsTheFieldsOfItsDeliveryMethod(): void
+    {
+        $product = static fn (array $interval): array => self::PRODUCT + [
+            'Suppliers' => [['SupplierName' => 'ABPA', 'ProductSupplierOptions' => [['LocationName' => 'Main Warehouse', 'SupplyIntervals' => [$interval]]]]],
+        ];
+        $at = 'Suppliers.0.ProductSupplierOptions.0.SupplyIntervals.0.';
+
+        foreach ([
+            'Interval' => ['IntervalDays', 'IntervalStartDate'],
+            'Fixed' => ['IsMonday', 'IsTuesday', 'IsWednesday', 'IsThursday', 'IsFriday', 'IsSaturday', 'IsSunday'],
+        ] as $method => $fields) {
+            try {
+                $this->connector()->send(new PostProduct(ProductPostData::from($product(['DeliveryMethod' => $method]))));
+                $this->fail("The {$method} interval should have failed validation.");
+            } catch (ValidationException $exception) {
+                $this->assertSame(array_map(static fn (string $field): string => $at . $field, $fields), array_keys($exception->errors()));
+            }
+        }
+
+        $this->connector()->send(new PostProduct(ProductPostData::from($product(['DeliveryMethod' => 'Interval', 'IntervalDays' => 7, 'IntervalStartDate' => '2017-12-25']))));
+
+        $this->mock->assertSentCount(1);
     }
 
     /**
