@@ -200,6 +200,9 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
 | `ref/account` | POST: `AccountPostData`, which also takes `SystemAccount` and `SystemAccountCode`; PUT: `AccountPutData` (Chart of Accounts) | GET: `list<AccountData>`; POST, PUT: `AccountData`, the saved account (`AccountsList.0`); DELETE: `{Success}`, left to `json()` |
 | `ref/account/bank` | none | GET: `list<BankAccountData>` (Bank Accounts) |
+| `ref/brand` | POST: `BrandPostData`; PUT: `BrandPutData`, which also requires `ID` (Brand) | GET: `list<BrandData>`; POST, PUT: `BrandData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
+| `ref/category` | POST: `ProductCategoryPostData`; PUT: `ProductCategoryPutData`, which also requires `ID` (Product Category) | GET: `list<ProductCategoryData>`; POST, PUT: `ProductCategoryData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
+| `ref/unit` | POST: `UnitOfMeasurePostData`; PUT: `UnitOfMeasurePutData`, which also requires `ID` (Unit of Measure) | GET: `list<UnitOfMeasureData>`; POST, PUT: `UnitOfMeasureData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/fixedassettype` | POST: `FixedAssetTypePostData`; PUT: `FixedAssetTypePutData`, which also requires `FixedAssetTypeID` (Fixed Asset Types) | GET: `list<FixedAssetTypeData>`; POST, PUT: `FixedAssetTypeData`, the saved type (`FixedAssetTypeList.0`) |
 | `ref/paymentterm` | POST: `PaymentTermPostData`; PUT: `PaymentTermPutData`, which also requires `ID` (Payment Term) | GET: `list<PaymentTermData>`; POST, PUT: `PaymentTermData`, the saved term (`PaymentTermList.0`); DELETE: `{Success}`, left to `json()` |
 | `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
@@ -836,6 +839,10 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `Attachments` is on the response only: no request example sends it.
 - **Transactions `Type`.** The table's list of thirteen kinds is the `TransactionType` enum; every
   field of `TransactionData` is optional, as the table marks none required.
+- **Brand, Product Category and Unit of Measure responses.** Their POST and PUT answer with the
+  saved record itself, `{ID, Name}`, where `ref/tax` and the others answer with the list envelope, so
+  their `dto()` reads the whole body. The brand POST example's keys are unquoted, and is fixed
+  in its fixture.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -959,6 +966,18 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
+
+`ref/brand`, `ref/category` and `ref/unit` are each a name and an ID, with a class per verb because
+the ID is taken by PUT and the response only:
+
+| Class | Folder | Required |
+|---|---|---|
+| `BrandData`, `BrandPostData` | `src/Data/Ref/Brand/` | `Name` |
+| `BrandPutData` | `src/Data/Ref/Brand/` | `Name`, `ID` |
+| `ProductCategoryData`, `ProductCategoryPostData` | `src/Data/Ref/Category/` | `Name` |
+| `ProductCategoryPutData` | `src/Data/Ref/Category/` | `Name`, `ID` |
+| `UnitOfMeasureData`, `UnitOfMeasurePostData` | `src/Data/Ref/Unit/` | `Name` |
+| `UnitOfMeasurePutData` | `src/Data/Ref/Unit/` | `Name`, `ID` |
 
 `bankTransfer` is the Money Task's twin, with a class per verb because `TaskID` is taken by PUT and
 the response only; `TransactionStockLineData` moved to `src/Data/Other/` when it gained a second

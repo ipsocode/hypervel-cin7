@@ -28,11 +28,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `attribute-set` · `ref/attributeset` · GET POST PUT DELETE
   - [ ] Attribute Set: `AttributeSetData`
 
-### `reference/brand/**` Brand (1 resource, 4 operations)
-
-- [ ] `brand` · `ref/brand` · GET POST PUT DELETE
-  - [ ] Brand: `BrandData`
-
 ### `reference/customer/**` Customer (3 resources, 7 operations, 1 left)
 
 - [x] `customer` · `customer` · GET POST PUT
@@ -69,11 +64,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [ ] Product Attachments POST body: `ProductAttachmentPostData`
 - [ ] `product-availability` · `ref/productavailability` · GET
   - [ ] Product Availability: `ProductAvailabilityData`
-
-### `reference/product-categories/**` Product Categories (1 resource, 4 operations)
-
-- [ ] `product-category` · `ref/category` · GET POST PUT DELETE
-  - [ ] Product Category: `ProductCategoryData`
 
 ### `reference/product-family/**` Product Family (2 resources, 6 operations)
 
@@ -313,11 +303,6 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
 - [ ] `templates` · `ref/templates` · GET
   - [ ] Templates: `TemplateData`
 
-### `reference/unit-of-measure/**` Unit of Measure (1 resource, 4 operations)
-
-- [ ] `unit-of-measure` · `ref/unit` · GET POST PUT DELETE
-  - [ ] Unit of Measure: `UnitOfMeasureData`
-
 ### `reference/crm/**` CRM (6 resources, 16 operations)
 
 - [ ] `lead` · `crm/lead` · GET POST PUT
@@ -354,6 +339,11 @@ Every resource in these groups is in.
 
 - [x] `bank-accounts` · `ref/account/bank` · GET
   - [x] Bank Accounts: `BankAccountData`
+
+### `reference/brand/**` Brand (1 resource, 4 operations)
+
+- [x] `brand` · `ref/brand` · GET POST PUT DELETE
+  - [x] Brand: `BrandData`
 
 ### `reference/chart-of-accounts/**` Chart of Accounts (1 resource, 4 operations)
 
@@ -393,6 +383,11 @@ Every resource in these groups is in.
 
 - [x] `payment-term` · `ref/paymentterm` · GET POST PUT DELETE
   - [x] Payment Term: `PaymentTermData`
+
+### `reference/product-categories/**` Product Categories (1 resource, 4 operations)
+
+- [x] `product-category` · `ref/category` · GET POST PUT DELETE
+  - [x] Product Category: `ProductCategoryData`
 
 ### `reference/purchase/**` Purchase (17 resources, 45 operations)
 
@@ -496,3 +491,8 @@ Every resource in these groups is in.
 
 - [x] `transactions` · `transactions` · GET
   - [x] Transactions: `TransactionData`
+
+### `reference/unit-of-measure/**` Unit of Measure (1 resource, 4 operations)
+
+- [x] `unit-of-measure` · `ref/unit` · GET POST PUT DELETE
+  - [x] Unit of Measure: `UnitOfMeasureData`

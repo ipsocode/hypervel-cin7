@@ -94,7 +94,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseList()` | `PurchaseListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->purchaseCreditNoteList()` | `PurchaseCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
-| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
+| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `brand()`, `category()`, `unit()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -102,6 +102,9 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->ref()->supplier()->deposits()` | `Ref\Supplier\DepositsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()->account()` | `Ref\AccountResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|AccountPostData $body)`, `put(array\|AccountPutData $body)`, `delete(string $code)`; `bank()` |
 | `$cin7->ref()->account()->bank()` | `Ref\Account\BankResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->ref()->brand()` | `Ref\BrandResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|BrandPostData $body)`, `put(array\|BrandPutData $body)`, `delete(string $id)` |
+| `$cin7->ref()->category()` | `Ref\CategoryResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductCategoryPostData $body)`, `put(array\|ProductCategoryPutData $body)`, `delete(string $id)` |
+| `$cin7->ref()->unit()` | `Ref\UnitResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|UnitOfMeasurePostData $body)`, `put(array\|UnitOfMeasurePutData $body)`, `delete(string $id)` |
 | `$cin7->ref()->fixedAssetType()` | `Ref\FixedAssetTypeResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|FixedAssetTypePostData $body)`, `put(array\|FixedAssetTypePutData $body)` |
 | `$cin7->ref()->paymentTerm()` | `Ref\PaymentTermResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|PaymentTermPostData $body)`, `put(array\|PaymentTermPutData $body)`, `delete(string $id)` |
 
@@ -315,6 +318,18 @@ $this->cin7->ref()->account()->delete('091'); // DELETE ref/account?Code=091
 foreach ($this->cin7->ref()->account()->bank()->paginate()->items() as $bankAccount) {
     // $bankAccount is one entry of BankAccountsList
 }
+```
+
+`ref/brand`, `ref/category` (the product categories) and `ref/unit` (the units of measure) are the
+same simple resource three times: they list under `BrandList`, `CategoryList` and `UnitList`,
+filtered by `name`, and `post()` and `put()` take a `…PostData` or `…PutData` (which requires `ID`)
+or an array. Unlike `ref/tax`, a POST or PUT answers with the saved record, not a list, so its
+`dto()` is a `BrandData`, `ProductCategoryData` or `UnitOfMeasureData`; `delete($id)` sends `?ID=…`.
+
+```php
+$brand = $this->cin7->ref()->brand()->post(['Name' => 'Acme'])->dto(); // BrandData
+
+$this->cin7->ref()->unit()->delete($unitId);
 ```
 
 `ref/fixedassettype` lists under `FixedAssetTypeList`, filtered by `fixedAssetTypeId` and `name`;
