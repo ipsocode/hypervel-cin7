@@ -52,6 +52,12 @@ The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keye
 on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
 `ref/customer/credits`.
 
+The `sale` actions live under `src/Requests/Sale/`: `GetSale` and `DeleteSale` (`KeyedRequest`s
+keyed `ID`; the DELETE takes `Void` as a parameter) and `PostSale` and `PutSale`
+(`WriteRequest`s; the PUT body carries `ID`), all on `sale`. `sale` has no list action:
+`GetSaleList` (a `ListRequest` keyed `SaleList`) is on `saleList`, under `src/Requests/SaleList/`.
+Every `sale` request's `dto()` is a `SaleData`; `GetSaleList`'s is a `list<SaleListData>`.
+
 ## Wire protocol
 
 These are the requests Cin7 receives.
