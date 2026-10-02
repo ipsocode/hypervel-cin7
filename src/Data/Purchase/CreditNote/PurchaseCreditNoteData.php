@@ -8,6 +8,7 @@ use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
+use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\AbstractPurchaseCreditNoteData;
 use Ipsocode\Cin7\Data\Other\PurchaseUnStockLineData;
 use Ipsocode\Cin7\Data\Other\SalePaymentLineData;
@@ -37,16 +38,17 @@ final class PurchaseCreditNoteData extends AbstractPurchaseCreditNoteData implem
      */
     public function __construct(
         string $CreditNoteNumber,
-        string $CreditNoteDate,
         TaskStatus $Status,
         array $Lines,
         array $Unstock,
+        #[DateTime]
+        public string $CreditNoteDate,
         #[Uuid]
         public ?string $TaskID = null,
         public ?bool $CombineAdditionalCharges = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
         public ?array $Refunds = null,
     ) {
-        parent::__construct($CreditNoteNumber, $CreditNoteDate, $Status, $Lines, $Unstock);
+        parent::__construct($CreditNoteNumber, $Status, $Lines, $Unstock);
     }
 }

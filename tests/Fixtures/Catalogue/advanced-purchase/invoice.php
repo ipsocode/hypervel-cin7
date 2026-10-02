@@ -59,10 +59,10 @@ return [
                 'PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab',
                 'TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f',
                 'CombineAdditionalCharges' => false,
+                'InvoiceDate' => '2018-04-23T00:00:00',
                 'InvoiceDueDate' => '2018-05-23T00:00:00',
                 'InvoiceNumber' => 'INV-00103',
                 'AdditionalCharges' => [['Account' => '715', 'Description' => 'Freight', 'Quantity' => 1.0, 'Price' => 3.0, 'Tax' => 0.0, 'TaxRule' => 'Tax on Purchases']],
-                'InvoiceDate' => '2018-04-23T00:00:00',
                 'Lines' => [['Account' => '715', 'Total' => 90.0, 'ProductID' => '11510572-0f9e-4d7c-a203-7e0563c3388f', 'SKU' => 'Bread', 'Name' => 'Baked Bread', 'Quantity' => 6.0, 'Price' => 15.0, 'Tax' => 0.0, 'TaxRule' => 'Tax on Purchases']],
             ],
         ],
@@ -98,7 +98,7 @@ return [
             Method::POST,
             '/ExternalApi/v2/advanced-purchase/invoice',
             [],
-            ['Status' => 'AUTHORISED', 'PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'CombineAdditionalCharges' => false, 'InvoiceDueDate' => '2018-05-23T00:00:00', 'InvoiceDate' => '2018-04-23T00:00:00', 'Lines' => []],
+            ['Status' => 'AUTHORISED', 'PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'CombineAdditionalCharges' => false, 'InvoiceDate' => '2018-04-23T00:00:00', 'InvoiceDueDate' => '2018-05-23T00:00:00', 'Lines' => []],
         ],
         'advancedPurchase invoice delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->invoice()->delete('3320ef94-a7e8-4d81-9588-2a3e14cfca6f'),
@@ -137,7 +137,7 @@ return [
     ],
     'required' => [
         AdvancedPurchaseInvoicesData::class => ['PurchaseID', 'Invoices'],
-        AdvancedPurchasePartialInvoiceData::class => ['InvoiceDate', 'Status', 'Lines', 'TaskID', 'CombineAdditionalCharges', 'InvoiceDueDate'],
-        AdvancedPurchasePartialInvoicePostData::class => ['InvoiceDate', 'Status', 'Lines', 'PurchaseID', 'TaskID', 'CombineAdditionalCharges', 'InvoiceDueDate'],
+        AdvancedPurchasePartialInvoiceData::class => ['Status', 'Lines', 'TaskID', 'CombineAdditionalCharges', 'InvoiceDate', 'InvoiceDueDate'],
+        AdvancedPurchasePartialInvoicePostData::class => ['Status', 'Lines', 'PurchaseID', 'TaskID', 'CombineAdditionalCharges', 'InvoiceDate', 'InvoiceDueDate'],
     ],
 ];

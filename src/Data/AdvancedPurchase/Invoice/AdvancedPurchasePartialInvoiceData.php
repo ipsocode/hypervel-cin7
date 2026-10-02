@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
 /**
  * Advanced purchase invoice partial model, one invoice of an advanced purchase (an item of the
  * `Invoices` that every `advanced-purchase/invoice` action answers with): the invoice fields of
- * `AbstractPurchaseInvoiceData`, with the `TaskID`, `CombineAdditionalCharges` and
+ * `AbstractPurchaseInvoiceData`, with the `TaskID`, `CombineAdditionalCharges`, `InvoiceDate` and
  * `InvoiceDueDate` the table requires. Its lines and additional charges are the Purchase Invoice
  * Line and Additional Charge Models. The POST body is `AdvancedPurchasePartialInvoicePostData`.
  *
@@ -25,17 +25,18 @@ final class AdvancedPurchasePartialInvoiceData extends AbstractPurchaseInvoiceDa
      * @param list<PurchaseInvoiceLineData> $Lines
      */
     public function __construct(
-        string $InvoiceDate,
         InvoiceStatus $Status,
         array $Lines,
         #[Uuid]
         public string $TaskID,
         public bool $CombineAdditionalCharges,
         #[DateTime]
+        public string $InvoiceDate,
+        #[DateTime]
         public string $InvoiceDueDate,
         public ?float $InvoiceTotalAmount = null,
         public ?float $InvoiceTotalTaxAmount = null,
     ) {
-        parent::__construct($InvoiceDate, $Status, $Lines);
+        parent::__construct($Status, $Lines);
     }
 }

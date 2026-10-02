@@ -9,16 +9,21 @@ use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasProductFields;
 
 /**
  * Advanced Purchase Put Away Line Model, a line of an advanced purchase's put away. `ProductID`
  * and `SKU` are a bare `Yes*`, so optional; a line needs its `Location` or its `LocationID`.
- * `Name` and `Received` are read-only, and the write request leaves them out of the body.
+ * `Name` and `Received` are read-only, and the write request leaves them out of the body. Like
+ * every object with a `ProductID`, it carries the product fields, which the `advanced-purchase`
+ * examples send.
  *
  * @see docs/data.md
  */
 final class AdvancedPurchasePutAwayLineData extends Data
 {
+    use HasProductFields;
+
     public function __construct(
         #[DateTime]
         public string $Date,

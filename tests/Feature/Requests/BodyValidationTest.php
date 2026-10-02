@@ -10,6 +10,8 @@ use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
+use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePutData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchasePartialCreditNotePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
@@ -43,6 +45,8 @@ use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\PostAdvancedPurchase;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAdvancedPurchase;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
@@ -374,6 +378,34 @@ class BodyValidationTest extends TestCase
     {
         $this->connector()->send(new PostPurchase(PurchasePostData::from(['Supplier' => 'ABPA', 'Approach' => 'INVOICE', 'Location' => 'Main Warehouse'])));
         $this->connector()->send(new PutPurchase(PurchasePutData::from(['ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092', 'SupplierID' => 'f1d1696b-8988-4ca0-8b9d-60317e463d07', 'Approach' => 'STOCK', 'Location' => 'Main Warehouse'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * An advanced purchase, too, needs a supplier, by name or by ID; a body with neither is not
+     * sent.
+     */
+    public function testAnAdvancedPurchaseWithoutASupplierIsNotSent(): void
+    {
+        try {
+            $this->connector()->send(new PostAdvancedPurchase(AdvancedPurchasePostData::from(['Approach' => 'STOCK', 'Location' => 'Main Warehouse'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['SupplierID', 'Supplier'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * Either supplier field is enough for an advanced purchase, and its PUT, like the reference's
+     * example, needs no `Approach`.
+     */
+    public function testEitherSupplierFieldIsEnoughForAnAdvancedPurchase(): void
+    {
+        $this->connector()->send(new PostAdvancedPurchase(AdvancedPurchasePostData::from(['Supplier' => 'ABPA', 'Approach' => 'STOCK', 'Location' => 'Main Warehouse'])));
+        $this->connector()->send(new PutAdvancedPurchase(AdvancedPurchasePutData::from(['ID' => '695dbaf4-92c3-4388-a35c-0efa378db93e', 'SupplierID' => '92c27d86-a8d3-4335-9da1-d3ebd82cb568', 'Location' => 'Main Warehouse'])));
 
         $this->mock->assertSentCount(2);
     }

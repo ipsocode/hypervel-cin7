@@ -15,8 +15,8 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * The body of `advanced-purchase/invoice` POST: the Advanced purchase invoice partial model with
  * the purchase's `PurchaseID`, which the Available Fields for Purchase Invoice table requires and
  * the POST example sends beside the invoice's fields. It requires the `TaskID`,
- * `CombineAdditionalCharges` and `InvoiceDueDate`, takes a `Status` of `DRAFT` or `AUTHORISED`,
- * and leaves the totals, which POST does not require, optional. The response is
+ * `CombineAdditionalCharges`, `InvoiceDate` and `InvoiceDueDate`, takes a `Status` of `DRAFT` or
+ * `AUTHORISED`, and leaves the totals, which POST does not require, optional. The response is
  * `AdvancedPurchaseInvoicesData`.
  *
  * @see docs/data.md
@@ -27,7 +27,6 @@ final class AdvancedPurchasePartialInvoicePostData extends AbstractPurchaseInvoi
      * @param list<PurchaseInvoiceLineData> $Lines
      */
     public function __construct(
-        string $InvoiceDate,
         #[In(InvoiceStatus::Draft, InvoiceStatus::Authorised)]
         public InvoiceStatus $Status,
         array $Lines,
@@ -37,10 +36,12 @@ final class AdvancedPurchasePartialInvoicePostData extends AbstractPurchaseInvoi
         public string $TaskID,
         public bool $CombineAdditionalCharges,
         #[DateTime]
+        public string $InvoiceDate,
+        #[DateTime]
         public string $InvoiceDueDate,
         public ?float $InvoiceTotalAmount = null,
         public ?float $InvoiceTotalTaxAmount = null,
     ) {
-        parent::__construct($InvoiceDate, $Status, $Lines);
+        parent::__construct($Status, $Lines);
     }
 }

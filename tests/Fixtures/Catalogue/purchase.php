@@ -69,10 +69,10 @@ return [
             '/ExternalApi/v2/purchase',
             [],
             [
+                'Approach' => 'INVOICE',
                 'Supplier' => 'ABPA',
                 'ShippingAddress' => ['Line1' => '3 Park Street Industrial Village', 'Country' => 'USA', 'ShipToOther' => false, 'City' => 'Melbourne'],
                 'TaxCalculation' => 'Exclusive',
-                'Approach' => 'INVOICE',
                 'Location' => 'Main Warehouse',
             ],
         ],
@@ -84,9 +84,9 @@ return [
             [],
             [
                 'ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092',
+                'Approach' => 'STOCK',
                 'SupplierID' => 'f1d1696b-8988-4ca0-8b9d-60317e463d07',
                 'BillingAddress' => ['Line1' => '3 Park Street Industrial Village', 'Country' => 'USA'],
-                'Approach' => 'STOCK',
                 'Location' => 'Main Warehouse',
             ],
         ],
@@ -146,7 +146,7 @@ return [
             Method::POST,
             '/ExternalApi/v2/purchase',
             [],
-            $fields,
+            ['Approach' => 'INVOICE', 'Supplier' => 'ABPA', 'Location' => 'Main Warehouse'],
         ],
         'purchase put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->put(PurchasePutData::from(['ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092', ...$fields, 'Note' => 'Rush'])),
@@ -154,7 +154,7 @@ return [
             Method::PUT,
             '/ExternalApi/v2/purchase',
             [],
-            ['ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092', 'Supplier' => 'ABPA', 'Note' => 'Rush', 'Approach' => 'INVOICE', 'Location' => 'Main Warehouse'],
+            ['ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092', 'Approach' => 'INVOICE', 'Supplier' => 'ABPA', 'Note' => 'Rush', 'Location' => 'Main Warehouse'],
         ],
     ],
     'dtos' => [
@@ -176,9 +176,9 @@ return [
         'purchase unstock without Lines' => [PurchaseUnStockData::class, Arr::except($purchase['CreditNote']['Unstock'], 'Lines')],
     ],
     'required' => [
-        PurchaseData::class => ['Approach', 'Location'],
-        PurchasePostData::class => ['Approach', 'Location'],
-        PurchasePutData::class => ['Approach', 'Location', 'ID'],
+        PurchaseData::class => ['Location', 'Approach'],
+        PurchasePostData::class => ['Location', 'Approach'],
+        PurchasePutData::class => ['Location', 'ID', 'Approach'],
         SimplePurchaseCreditNoteData::class => ['CreditNoteNumber', 'Status', 'Lines', 'Unstock'],
         PurchaseUnStockData::class => ['Status', 'Lines'],
     ],

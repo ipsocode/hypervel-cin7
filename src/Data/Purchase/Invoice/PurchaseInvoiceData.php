@@ -34,9 +34,10 @@ final class PurchaseInvoiceData extends AbstractPurchaseInvoiceData implements W
      * @param null|list<SalePaymentLineData> $Payments
      */
     public function __construct(
-        string $InvoiceDate,
         InvoiceStatus $Status,
         array $Lines,
+        #[DateTime]
+        public string $InvoiceDate,
         #[DateTime]
         public ?string $InvoiceDueDate = null,
         public ?string $InvocieNumber = null,
@@ -49,6 +50,6 @@ final class PurchaseInvoiceData extends AbstractPurchaseInvoiceData implements W
         public ?float $InvoiceTotalAmount = null,
         public ?float $InvoiceTotalTaxAmount = null,
     ) {
-        parent::__construct($InvoiceDate, $Status, $Lines);
+        parent::__construct($Status, $Lines);
     }
 }
