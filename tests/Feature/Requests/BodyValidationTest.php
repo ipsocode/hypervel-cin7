@@ -411,6 +411,37 @@ class BodyValidationTest extends TestCase
     }
 
     /**
+     * Every address table requires `Line1` and `Country`. The purchase responses send them as
+     * `null`, so the address classes take `null`, but a sale's or a purchase's billing address, or
+     * a purchase's shipping address, without them is not sent.
+     */
+    public function testAnAddressWithoutItsLine1AndCountryIsNotSent(): void
+    {
+        $address = ['Line1' => '3 Park Street Industrial Village', 'Country' => 'USA'];
+        $purchase = static fn (array $billing, array $shipping): PurchasePostData => PurchasePostData::from(['Supplier' => 'ABPA', 'Approach' => 'INVOICE', 'Location' => 'Main Warehouse', 'BillingAddress' => $billing, 'ShippingAddress' => $shipping]);
+        $sale = static fn (array $billing): SalePostData => SalePostData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1, 'BillingAddress' => $billing]);
+
+        try {
+            $this->connector()->send(new PostPurchase($purchase(['City' => 'Melbourne'], ['ShipToOther' => false])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['BillingAddress.Line1', 'BillingAddress.Country', 'ShippingAddress.Line1', 'ShippingAddress.Country'], array_keys($exception->errors()));
+        }
+
+        try {
+            $this->connector()->send(new PostSale($sale(['City' => 'Melbourne'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['BillingAddress.Line1', 'BillingAddress.Country'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostPurchase($purchase($address, $address)));
+        $this->connector()->send(new PostSale($sale($address)));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
      * Validation runs on what is sent: a field the request leaves out is not checked, like a
      * component's read-only `Name` beyond its 256 characters.
      */
