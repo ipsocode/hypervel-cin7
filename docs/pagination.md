@@ -77,14 +77,19 @@ Cin7 wraps a list in an envelope:
 
 - `Total` is the full number of matching records, across all pages.
 - `Page` is the page just served.
-- The list itself sits under a key that differs per endpoint (`CustomerList`,
-  `ProductList`, `SaleList`, …).
+- The list itself sits under a key that differs per endpoint (`CustomerList`
+  for `customer`), and not every endpoint's key ends in `List`.
 
-The paginator finds the list by its suffix: the first string key ending in
-`List` whose value is an array. It does not take the first array in the body,
-because an envelope can also carry arrays such as `Errors` or `Warnings`, and
-those are ignored wherever they appear. An envelope with no `…List` key yields
-no items.
+Each `ListRequest` names that key in `$listKey`, and the paginator reads a
+page's items from it through the request's `mapPaginatedResponseItems()`. A
+response without the key yields no items.
+
+No request in this package needs it, but a paginatable request that does not
+map its own items falls back to a lookup by suffix: the first string key
+ending in `List` whose value is an array. It does not take the first array in
+the body, because an envelope can also carry arrays such as `Errors` or
+`Warnings`, and those are ignored wherever they appear. An envelope with no
+`…List` key yields no items.
 
 ## Finding the last page
 

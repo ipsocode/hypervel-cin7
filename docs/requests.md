@@ -68,9 +68,9 @@ These are the requests Cin7 receives.
 
 Query parameters on a `KeyedRequest` go out identifier first, then the
 caller's own keys: `[$idKey => $id] + $parameters`, so the identifier wins
-over a caller-supplied value under the same key. For example
-`new AnonymousDelete('guid', ['ID' => 'ignored', 'Force' => 'true'])` sends
-`ID=guid&Force=true`.
+over a caller-supplied value under the same key. For example, a
+`KeyedRequest` constructed with `('guid', ['ID' => 'ignored', 'Force' => 'true'])`
+sends `ID=guid&Force=true`.
 
 ## Page defaults
 
