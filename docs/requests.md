@@ -86,6 +86,9 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
 | `DeleteAccount` | **`code`** |
 | `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
+| `GetProductAvailability` | `page`, `limit`, `id`, `name`, `sku`, `location`, `batch`, `category` |
+| `GetProductAttachments` | **`productId`** |
+| `DeleteProductAttachments` | **`id`** |
 | `GetPriceTier` | none |
 | `GetProductMarkupPrices` | **`productId`** |
 | `GetBrand`, `GetCategory`, `GetUnit` | `page`, `limit`, `name` |
@@ -197,6 +200,12 @@ on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountDat
 and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
 to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
 `ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
+
+`product/attachments` (under `Product/Attachments/`) has `GetProductAttachments` (keyed
+`ProductID`), `PostProductAttachments` (a `WriteRequest` whose body is a
+`ProductAttachmentPostData`) and `DeleteProductAttachments` (keyed `ID`); each answers a
+`list<AttachmentLineData>`. `GetProductAvailability` (a `ListRequest` keyed
+`ProductAvailabilityList`) is on `ref/productavailability`, under `ProductAvailability/`.
 
 `GetPriceTier` (`ref/priceTier`, under `PriceTier/`) takes no parameters and is not paged: its
 `dto()` is a `list<PriceTierData>`. `GetProductMarkupPrices` (keyed `ProductID`) and

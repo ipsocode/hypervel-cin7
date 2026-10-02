@@ -13,6 +13,7 @@ use Ipsocode\Cin7\Resources\Ref\CustomerResource;
 use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
 use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
 use Ipsocode\Cin7\Resources\Ref\PriceTierResource;
+use Ipsocode\Cin7\Resources\Ref\ProductAvailabilityResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\Ref\UnitResource;
@@ -102,5 +103,13 @@ final class RefResource extends BaseResource
     public function priceTier(): PriceTierResource
     {
         return new PriceTierResource($this->connector);
+    }
+
+    /**
+     * The `ref/productavailability` resource.
+     */
+    public function productAvailability(): ProductAvailabilityResource
+    {
+        return new ProductAvailabilityResource($this->connector);
     }
 }

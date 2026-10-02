@@ -212,6 +212,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
+| `product/attachments` | POST: `ProductAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
+| `ref/productavailability` | none | GET: `list<ProductAvailabilityData>` (Product Availability) |
 | `product/markupprices` | PUT: `MarkupPricesData` (Markup Prices Model, with `MarkupPrices`: `MarkupPriceLineData`, Markup Price Line Model) | GET, PUT: `MarkupPricesData` |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
@@ -856,6 +858,14 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   tier number is 1 to 10 and a value at least 0. The PUT example's keys are single-quoted and its
   `ProductID` upper-case, and are fixed in its fixture. The heading says `/ref/markupprices` but the
   operations use `/product/markupprices`, which the classes follow.
+- **Product attachments.** Every action answers a bare array of `AttachmentLineData`, so each
+  item keeps its response (`AttachmentLineData` is a `WithResponse`). The examples send `IsDefault`
+  as the strings `"true"` and `"false"`; the fixtures use JSON booleans, and the class types it
+  `bool`. The reference marks the `ProductID` of GET and the `ID` of DELETE optional, but each names
+  what it reads or deletes, so the requests require them. The POST example's `Content` is a base64
+  image; its fixture keeps the first 32 characters, and its keys are unquoted, fixed in the fixture.
+- **Product Availability `Sku`.** The GET parameter is spelt `Sku`, not `SKU`, and the field is
+  `SKU`; each is sent as the reference spells it. Every field is optional.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -980,6 +990,9 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
 
+`ProductAttachmentPostData` (`src/Data/Product/Attachments/`) requires `ProductID` and `FileName`,
+and `Content` unless a `FileDownloadUrl` is given (`#[RequiredWithout]`);
+`ProductAvailabilityData` (`src/Data/Ref/ProductAvailability/`) requires nothing.
 `PriceTierData` (`src/Data/Ref/PriceTier/`) requires nothing. `MarkupPricesData`
 (`src/Data/Product/MarkupPrices/`) requires `ProductID` and `MarkupPrices`, and `MarkupPriceLineData`
 `TierNumber` and `MarkupType`; one `MarkupPricesData` is both the PUT body and the response.
