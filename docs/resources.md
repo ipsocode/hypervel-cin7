@@ -79,10 +79,11 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
-| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `invoice()`, `manualJournal()` |
+| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `putAway()`, `invoice()`, `manualJournal()` |
 | `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->advancedPurchase()->manualJournal()` | `AdvancedPurchase\ManualJournalResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePartialManualJournalPostData $body)` |
 | `$cin7->advancedPurchase()->invoice()` | `AdvancedPurchase\InvoiceResource` | `get(string $purchaseId, ?bool $combineAdditionalCharges = null)`, `post(array\|AdvancedPurchasePartialInvoicePostData $body)`, `delete(string $taskId, ?bool $void = null)` |
+| `$cin7->advancedPurchase()->putAway()` | `AdvancedPurchase\PutAwayResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePutAwayPostData $body)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -692,6 +693,32 @@ $this->cin7->advancedPurchase()->invoice()->post(AdvancedPurchasePartialInvoiceP
 ]));
 
 $this->cin7->advancedPurchase()->invoice()->delete($invoices->Invoices[0]->TaskID, void: true); // DELETE advanced-purchase/invoice?TaskID=…&Void=true
+```
+
+`$cin7->advancedPurchase()->putAway()` is `advanced-purchase/put-away`, an advanced purchase's put
+away. Both methods answer with the purchase's put away tasks, the `{PurchaseID, PutAway}` envelope,
+so their `dto()` is an `AdvancedPurchasePutAwaysData`, whose `PutAway` are
+`AdvancedPurchasePutAwayData`. `get($purchaseId)` sends `advanced-purchase/put-away?PurchaseID=…`.
+`post()` takes an `AdvancedPurchasePutAwayPostData` as well as an array; it needs the `PurchaseID`,
+a `Status` of `DRAFT` or `AUTHORISED` (only `AUTHORISED` once the invoice lines match the
+receiving) and `Lines`, each with its `Location` or `LocationID`. A POST only adds lines: without a
+`TaskID`, or with the empty GUID, it creates a new task, and with `Status` `AUTHORISED` and empty
+`Lines` it authorises the task. Duplicate lines in one body become one line with their quantities
+summed, and a line with the product, location, batch and expiry date of an existing line fails.
+It fails unless the order is authorised, the put away is `DRAFT` or `NOT AVAILABLE`, and, for an
+`INVOICE` approach, the invoice is authorised. The put away has no PUT or DELETE.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
+
+$putAway = $this->cin7->advancedPurchase()->putAway()->get($purchaseId)->dto(); // AdvancedPurchasePutAwaysData
+
+$saved = $this->cin7->advancedPurchase()->putAway()->post(AdvancedPurchasePutAwayPostData::from([
+    'PurchaseID' => $purchaseId,
+    'Status' => 'AUTHORISED',
+    'Lines' => [['Date' => '2018-04-20T00:00:00', 'Quantity' => 4, 'SKU' => 'Bread', 'Location' => 'Main Warehouse']],
+]))->dto(); // AdvancedPurchasePutAwaysData
+$taskId = $saved->PutAway[0]->TaskID;
 ```
 
 ## PUT identifiers

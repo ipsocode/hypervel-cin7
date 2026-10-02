@@ -19,7 +19,7 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations, 5 left)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 4 left)
 
 - [x] `purchase-list` · `purchaseList` · GET
   - [x] Purchase List: `PurchaseListData`
@@ -52,8 +52,8 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [ ] Purchase POST/PUT body: `AdvancedPurchasePutData`
 - [x] `advanced-purchase-stock-received` · `advanced-purchase/stock` · GET POST PUT DELETE
   - [x] AdvancedPurchaseStock: `AdvancedPurchaseStockData`
-- [ ] `advanced-purchase-put-away` · `advanced-purchase/put-away` · GET POST
-  - [ ] AdvancedPurchasePutAway: `AdvancedPurchasePutAwayData`
+- [x] `advanced-purchase-put-away` · `advanced-purchase/put-away` · GET POST
+  - [x] AdvancedPurchasePutAway: `AdvancedPurchasePutAwayData`
 - [x] `advanced-purchase-invoice` · `advanced-purchase/invoice` · GET POST DELETE
   - [x] AdvancedPurchaseInvoice: `AdvancedPurchaseInvoicesData`
   - [x] AdvancedPurchasePartialInvoiceModel: `AdvancedPurchasePartialInvoiceData`
@@ -93,8 +93,8 @@ Each is built with the first resource here that uses it; a ticked one is built, 
 - [ ] PurchasePaymentLineModel: `PurchasePaymentLineData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseStockModel: `AdvancedPurchaseStockData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseStockLineModel: `AdvancedPurchaseStockLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-stock-received
-- [ ] AdvancedPurchasePutAwayModel: `AdvancedPurchasePutAwayData` · used by purchase, advanced-purchase
-- [ ] AdvancedPurchasePutAwayLineModel: `AdvancedPurchasePutAwayLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-put-away
+- [x] AdvancedPurchasePutAwayModel: `AdvancedPurchasePutAwayData` · used by purchase, advanced-purchase
+- [x] AdvancedPurchasePutAwayLineModel: `AdvancedPurchasePutAwayLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-put-away
 - [ ] AdvancedPurchaseInvoiceModel: `AdvancedPurchaseInvoiceData` · used by purchase, advanced-purchase
 - [ ] AdvancedPurchaseCreditNoteModel: `AdvancedPurchaseCreditNoteData` · used by purchase, advanced-purchase
 - [ ] AdvancedPurchaseManualJournalModel: `AdvancedPurchaseManualJournalData` · used by purchase, advanced-purchase

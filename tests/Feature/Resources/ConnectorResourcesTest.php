@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Ipsocode\Cin7\Resources\AdvancedPurchase\InvoiceResource as AdvancedPurchaseInvoiceResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\ManualJournalResource as AdvancedPurchaseManualJournalResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\PutAwayResource as AdvancedPurchasePutAwayResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource as AdvancedPurchaseStockResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
@@ -183,6 +184,14 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($advancedPurchase->manualJournal(), $advancedPurchase->manualJournal());
         $this->assertInstanceOf(AdvancedPurchaseInvoiceResource::class, $advancedPurchase->invoice());
         $this->assertNotSame($advancedPurchase->invoice(), $advancedPurchase->invoice());
+    }
+
+    public function testAdvancedPurchasePutAwayReturnsAFreshPutAwayResource(): void
+    {
+        $advancedPurchase = $this->connector()->advancedPurchase();
+
+        $this->assertInstanceOf(AdvancedPurchasePutAwayResource::class, $advancedPurchase->putAway());
+        $this->assertNotSame($advancedPurchase->putAway(), $advancedPurchase->putAway());
     }
 
     public function testSupplierReturnsAFreshSupplierResource(): void
