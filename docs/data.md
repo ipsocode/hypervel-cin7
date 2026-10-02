@@ -212,6 +212,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
+| `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
+| `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
 | `product/attachments` | POST: `ProductAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
 | `ref/productavailability` | none | GET: `list<ProductAvailabilityData>` (Product Availability) |
 | `product/markupprices` | PUT: `MarkupPricesData` (Markup Prices Model, with `MarkupPrices`: `MarkupPriceLineData`, Markup Price Line Model) | GET, PUT: `MarkupPricesData` |
@@ -864,6 +866,16 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `bool`. The reference marks the `ProductID` of GET and the `ID` of DELETE optional, but each names
   what it reads or deletes, so the requests require them. The POST example's `Content` is a base64
   image; its fixture keeps the first 32 characters, and its keys are unquoted, fixed in the fixture.
+- **Product Family.** It follows the Product table's conventions: `CostingMethod` and `DropShipMode`
+  are the product's enums, `PriceTier1` to `PriceTier10` are ten wire keys, and the read-only
+  `Option1Values` to `Option3Values`, `LastModifiedOn`, `Attachments` and `CountryOfOriginCode` are on
+  `ProductFamilyData` alone. The table's `Products` line says a product's `SKU` and `Name` are
+  "ignored in POST and PUT", yet the examples send them, so they are modelled and the requests leave
+  them out of the body (`Products.*.SKU` and `Products.*.Name`). A PUT adds or updates the products
+  it lists and never deletes one. `Option1Name` is required, the one option every family has.
+- **Product family attachments.** The same as the product's: the family's key is `FamilyID`, and the
+  POST table marks `Content` required without the `Content`-or-`FileDownloadUrl` rule the product's
+  has, which the examples and the notes both give, so it is `#[RequiredWithout]` here too.
 - **Product Availability `Sku`.** The GET parameter is spelt `Sku`, not `SKU`, and the field is
   `SKU`; each is sent as the reference spells it. Every field is optional.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
@@ -990,6 +1002,11 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
 
+`ProductFamilyData`, `ProductFamilyPostData` (`src/Data/ProductFamily/`) require `SKU`, `Name`,
+`Category`, `CostingMethod`, `DefaultLocation`, `UOM` and `Option1Name`; `ProductFamilyPutData` adds
+`ID`; `ProductFamilyProductLineData` requires `ID` and `Option1`. `ProductFamilyAttachmentPostData`
+(`src/Data/ProductFamily/Attachments/`) requires `FamilyID` and `FileName`, and `Content` unless a
+`FileDownloadUrl` is given.
 `ProductAttachmentPostData` (`src/Data/Product/Attachments/`) requires `ProductID` and `FileName`,
 and `Content` unless a `FileDownloadUrl` is given (`#[RequiredWithout]`);
 `ProductAvailabilityData` (`src/Data/Ref/ProductAvailability/`) requires nothing.

@@ -86,6 +86,9 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
 | `DeleteAccount` | **`code`** |
 | `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
+| `GetProductFamily` | `page`, `limit`, `id`, `name`, `sku`, `modifiedSince` |
+| `GetProductFamilyAttachments` | **`familyId`** |
+| `DeleteProductFamilyAttachments` | **`id`** |
 | `GetProductAvailability` | `page`, `limit`, `id`, `name`, `sku`, `location`, `batch`, `category` |
 | `GetProductAttachments` | **`productId`** |
 | `DeleteProductAttachments` | **`id`** |
@@ -200,6 +203,13 @@ on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountDat
 and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
 to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
 `ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
+
+`productFamily` (under `ProductFamily/`) has `GetProductFamily` (a `ListRequest` keyed
+`ProductFamilies`) and `PostProductFamily` and `PutProductFamily` (`WriteRequest`s whose bodies are
+`ProductFamilyPostData` and `ProductFamilyPutData`, the PUT carrying `ID`); each leaves the ignored
+`Products.*.SKU` and `Products.*.Name` out of the body. Their `dto()` is a `list<ProductFamilyData>`
+and the saved family (`ProductFamilies.0`). `productFamily/attachments` (under
+`ProductFamily/Attachments/`) is the product's attachments with a `FamilyID`.
 
 `product/attachments` (under `Product/Attachments/`) has `GetProductAttachments` (keyed
 `ProductID`), `PostProductAttachments` (a `WriteRequest` whose body is a
