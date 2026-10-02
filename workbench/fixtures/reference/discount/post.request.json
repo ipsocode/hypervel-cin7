@@ -1,0 +1,17 @@
+{
+    "DiscountRules": [
+        {
+            "Name": "The second one",
+            "IsActive": false,
+            "DiscountLines": [
+                {
+                    "MinValue": 0,
+                    "MaxValue": 10,
+                    "DiscountType": "MarkupPercent",
+                    "Amount": 50
+                }
+            ],
+            "Type": "Simple"
+        }
+    ]
+}

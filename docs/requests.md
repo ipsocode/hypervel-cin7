@@ -109,6 +109,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `DeleteProductSuppliers` | **`productId`**, **`supplierId`** |
 | `GetShipZones` | `page`, `limit`, `id`, `search` |
 | `DeleteShipZones` | **`shipZoneId`** (sent as `ShipZoneID`) |
+| `GetDiscount` | `page`, `limit`, `id`, `search` |
 | `GetBankTransfer` | **`taskId`** |
 | `DeleteBankTransfer` | **`id`**, `void` |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
@@ -263,6 +264,8 @@ The `reference/…` actions live under `src/Requests/Reference/`. `GetShipZones`
 `ShipZones`) lists the shipping zones, and `PostShipZones` and `PutShipZones` (bodies
 `ShippingZonePostData` and `ShippingZonePutData`) answer the saved zone, read from `ShipZones.0`;
 `DeleteShipZones` sends `ShipZoneID` (the reference documents the key with a trailing space).
+`GetDiscount` (keyed `DiscountRules`), `PostDiscount` (body `ProductDiscountRulesPostData`, a list of
+rules) and `PutDiscount` (body `ProductDiscountRulePutData`, one bare rule) are the discount rules.
 `GetShipZonesEnabled` and `PutShipZonesEnabled` (body `ShipZonesEnabledData`) read and set
 `IsEnabled`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed

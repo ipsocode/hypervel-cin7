@@ -242,7 +242,7 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] WorkCenterLocation: `WorkCenterLocationData`
   - [ ] WorkCenterSupplier: `WorkCenterSupplierData`
 
-### `reference/reference-books/**` Reference Books (6 resources, 19 operations, 2 left)
+### `reference/reference-books/**` Reference Books (6 resources, 19 operations, 1 left)
 
 - [x] `custom-prices` · `custom-prices` · POST PUT DELETE
   - uses ProductPriceModel
@@ -255,9 +255,9 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] ProductDealDiscountProductModel: `ProductDealDiscountProductData`
   - [ ] ProductDealDiscountTagModel: `ProductDealDiscountTagData`
   - [ ] ProductDealDiscountCategoryModel: `ProductDealDiscountCategoryData`
-- [ ] `product-discounts` · `reference/discount` · GET POST PUT
-  - [ ] ProductDiscountRuleModel: `ProductDiscountRuleData`
-  - [ ] DiscountLineModel: `DiscountLineData`
+- [x] `product-discounts` · `reference/discount` · GET POST PUT
+  - [x] ProductDiscountRuleModel: `ProductDiscountRuleData`
+  - [x] DiscountLineModel: `DiscountLineData`
 - [x] `product-suppliers` · `product-suppliers` · GET POST PUT DELETE
   - uses ProductSupplierModel, ProductSupplierOptionsModel, ProductSupplierOptionsIntervalModel
 - [x] `ship-zones` · `reference/shipZones` · GET POST PUT DELETE
