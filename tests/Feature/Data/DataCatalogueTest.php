@@ -12,11 +12,19 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Sale\SaleData;
+use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
+use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
+use Ipsocode\Cin7\Requests\Sale\DeleteSale;
+use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Requests\Sale\PostSale;
+use Ipsocode\Cin7\Requests\Sale\PutSale;
+use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
@@ -40,7 +48,7 @@ class DataCatalogueTest extends TestCase
      * @param list<mixed> $args
      * @param array<string, mixed> $fixture
      * @param class-string<Data> $dataClass
-     * @param string $path where the record or list sits in the fixture
+     * @param string $path where the record or list sits in the fixture, empty for the whole body
      */
     #[DataProvider('dtoProvider')]
     public function testTheDtoIsTheDataClassAndRoundTripsTheFixture(
@@ -54,7 +62,7 @@ class DataCatalogueTest extends TestCase
 
         $response = $this->connector()->send(new $class(...$args));
         $dto = $response->dto();
-        $expected = Arr::get($fixture, $path);
+        $expected = $path === '' ? $fixture : Arr::get($fixture, $path);
 
         if (array_is_list($expected)) {
             $this->assertIsArray($dto);
@@ -86,7 +94,35 @@ class DataCatalogueTest extends TestCase
                 CustomerCreditData::class,
                 'CustomerCredits',
             ],
+            GetSale::class => [GetSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
+            PostSale::class => [PostSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
+            PutSale::class => [PutSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
+            DeleteSale::class => [DeleteSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
+            GetSaleList::class => [
+                GetSaleList::class,
+                [],
+                Cin7Payloads::saleList(),
+                SaleListData::class,
+                'SaleList',
+            ],
         ];
+    }
+
+    /**
+     * The reference's Sale example carries no manual journal line, so one is added here.
+     */
+    public function testASaleWithAManualJournalLineRoundTrips(): void
+    {
+        $sale = Cin7Payloads::sale();
+        $sale['ManualJournals']['Lines'] = [
+            ['Reference' => 'Freight', 'Amount' => 12.5, 'Date' => '2017-11-22T00:00:00', 'Debit' => '610', 'Credit' => '200'],
+        ];
+        Saloon::fake([MockResponse::make($sale)]);
+
+        $dto = $this->connector()->send(new GetSale('guid-1'))->dto();
+
+        $this->assertInstanceOf(SaleManualJournalLineData::class, $dto->ManualJournals->Lines[0]);
+        $this->assertEquals($sale, $dto->toArray());
     }
 
     public function testEveryDataClassIsFinalAndExtendsData(): void
@@ -115,7 +151,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([TaxData::class, CustomerCreditData::class] as $class) {
+        foreach ([TaxData::class, CustomerCreditData::class, SaleData::class, SaleListData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }

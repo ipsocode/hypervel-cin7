@@ -16,6 +16,8 @@ use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\RefResource;
+use Ipsocode\Cin7\Resources\SaleListResource;
+use Ipsocode\Cin7\Resources\SaleResource;
 use UnitEnum;
 
 /**
@@ -70,6 +72,22 @@ final class Cin7Connector extends Connector implements HasPagination
     public function ref(): RefResource
     {
         return new RefResource($this);
+    }
+
+    /**
+     * The `sale` resource.
+     */
+    public function sale(): SaleResource
+    {
+        return new SaleResource($this);
+    }
+
+    /**
+     * The `saleList` resource.
+     */
+    public function saleList(): SaleListResource
+    {
+        return new SaleListResource($this);
     }
 
     /**

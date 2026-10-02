@@ -54,6 +54,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
 | `$cin7->product()` | `ProductResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
+| `$cin7->sale()` | `SaleResource` | `get(string $id, array $parameters = [])`, `post(array|SalePostPutData $body)`, `put(array|SalePostPutData $body)`, `delete(string $id, bool $void = false)` |
+| `$cin7->saleList()` | `SaleListResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array|TaxData $body)`, `put(array|TaxData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
@@ -108,6 +110,32 @@ foreach ($this->cin7->ref()->customer()->credits()->paginate(['CustomerID' => $g
 }
 ```
 
+## Sale
+
+`sale` is keyed: `get($id)` sends `sale?ID=…`, and the optional V2 parameters
+(`CombineAdditionalCharges`, `HideInventoryMovements`, `IncludeTransactions`,
+`CountryFormat`) go in the second argument. `sale` has no list action, so a `GetSale`
+cannot be paginated; list sales through `saleList()`, whose envelope is
+`{Total, Page, SaleList}` and whose filters (`Search`, `CreatedSince`, `UpdatedSince`,
+`ShipBy`, the status filters, `ExternalID`, `ReadyForShipping`, `OrderLocationID`) go through
+`get()` and `paginate()` as ordinary filters.
+
+`delete($id, $void)` sends `sale?ID=…&Void=…`: `void: true` voids the sale, and the default
+`false` undoes a void. Every `sale` action answers with the Sale, so `dto()` is a `SaleData`
+for `get()`, `post()`, `put()` and `delete()`, and a `list<SaleListData>` for
+`saleList()->get()`. `post()` and `put()` accept a `SalePostPutData` as well as an array (see
+[data](data.md)).
+
+```php
+$sale = $this->cin7->sale()->get($guid, ['IncludeTransactions' => true])->dto(); // SaleData
+
+foreach ($this->cin7->saleList()->paginate(['Status' => 'ORDERED'])->items() as $row) {
+    // $row is one entry of SaleList
+}
+
+$this->cin7->sale()->delete($guid, void: true);
+```
+
 ## PUT identifiers
 
 A PUT body carries the identifier V2 documents for that resource. The caller
@@ -119,6 +147,7 @@ key:
 | `customer` | `ID` |
 | `product` | `ID` |
 | `ref/tax` | `ID` |
+| `sale` | `ID` |
 
 ```php
 $attributes['ID'] = $guid;

@@ -10,6 +10,7 @@ use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Sale\SalePostPutData;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
@@ -20,6 +21,11 @@ use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
+use Ipsocode\Cin7\Requests\Sale\DeleteSale;
+use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Requests\Sale\PostSale;
+use Ipsocode\Cin7\Requests\Sale\PutSale;
+use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Workbench\App\Support\Cin7Payloads;
@@ -184,6 +190,78 @@ class ResourceCatalogueTest extends TestCase
                 '/ExternalApi/v2/ref/customer/credits',
                 ['page' => 1, 'limit' => 100],
                 null,
+            ],
+            'sale get' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->get('guid-1', ['CombineAdditionalCharges' => true]),
+                GetSale::class,
+                Method::GET,
+                '/ExternalApi/v2/sale',
+                ['ID' => 'guid-1', 'CombineAdditionalCharges' => 'true'],
+                null,
+            ],
+            'sale post' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(['Customer' => 'ACME']),
+                PostSale::class,
+                Method::POST,
+                '/ExternalApi/v2/sale',
+                [],
+                ['Customer' => 'ACME'],
+            ],
+            'sale put' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(['ID' => 'guid-1', 'Note' => 'Rush']),
+                PutSale::class,
+                Method::PUT,
+                '/ExternalApi/v2/sale',
+                [],
+                ['ID' => 'guid-1', 'Note' => 'Rush'],
+            ],
+            'sale delete' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->delete('guid-1'),
+                DeleteSale::class,
+                Method::DELETE,
+                '/ExternalApi/v2/sale',
+                ['ID' => 'guid-1', 'Void' => 'false'],
+                null,
+            ],
+            'sale delete with void' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->delete('guid-1', void: true),
+                DeleteSale::class,
+                Method::DELETE,
+                '/ExternalApi/v2/sale',
+                ['ID' => 'guid-1', 'Void' => 'true'],
+                null,
+            ],
+            'saleList get' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->saleList()->get(['Status' => 'ORDERED']),
+                GetSaleList::class,
+                Method::GET,
+                '/ExternalApi/v2/saleList',
+                ['Status' => 'ORDERED', 'page' => 1, 'limit' => 100],
+                null,
+            ],
+            'saleList paginate' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->saleList()->paginate()->current(),
+                GetSaleList::class,
+                Method::GET,
+                '/ExternalApi/v2/saleList',
+                ['page' => 1, 'limit' => 100],
+                null,
+            ],
+            'sale post with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(SalePostPutData::from(['Customer' => 'ACME'])),
+                PostSale::class,
+                Method::POST,
+                '/ExternalApi/v2/sale',
+                [],
+                ['Customer' => 'ACME'],
+            ],
+            'sale put with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(SalePostPutData::from(['ID' => 'guid-1', 'Note' => 'Rush'])),
+                PutSale::class,
+                Method::PUT,
+                '/ExternalApi/v2/sale',
+                [],
+                ['ID' => 'guid-1', 'Note' => 'Rush'],
             ],
             'ref tax post with data' => [
                 fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT'])),

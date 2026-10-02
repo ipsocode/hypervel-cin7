@@ -10,6 +10,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Sale\SalePostPutData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
@@ -21,6 +22,11 @@ use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
+use Ipsocode\Cin7\Requests\Sale\DeleteSale;
+use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Requests\Sale\PostSale;
+use Ipsocode\Cin7\Requests\Sale\PutSale;
+use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
@@ -162,6 +168,46 @@ class RequestCatalogueTest extends TestCase
                 [],
                 ['ID' => 'guid-1', 'Name' => 'VAT'],
             ],
+            GetSaleList::class => [
+                GetSaleList::class,
+                [['Status' => 'ORDERED', 'ReadyForShipping' => true]],
+                Method::GET,
+                '/ExternalApi/v2/saleList',
+                ['Status' => 'ORDERED', 'ReadyForShipping' => 'true', 'page' => 1, 'limit' => 100],
+                null,
+            ],
+            DeleteSale::class => [
+                DeleteSale::class,
+                ['guid-1', ['Void' => true]],
+                Method::DELETE,
+                '/ExternalApi/v2/sale',
+                ['ID' => 'guid-1', 'Void' => 'true'],
+                null,
+            ],
+            GetSale::class => [
+                GetSale::class,
+                ['guid-1', ['IncludeTransactions' => true]],
+                Method::GET,
+                '/ExternalApi/v2/sale',
+                ['ID' => 'guid-1', 'IncludeTransactions' => 'true'],
+                null,
+            ],
+            PostSale::class => [
+                PostSale::class,
+                [['Customer' => 'ACME']],
+                Method::POST,
+                '/ExternalApi/v2/sale',
+                [],
+                ['Customer' => 'ACME'],
+            ],
+            PutSale::class => [
+                PutSale::class,
+                [['ID' => 'guid-1', 'Note' => 'Rush']],
+                Method::PUT,
+                '/ExternalApi/v2/sale',
+                [],
+                ['ID' => 'guid-1', 'Note' => 'Rush'],
+            ],
             PostTax::class . ' with data' => [
                 PostTax::class,
                 [fn (): TaxData => TaxData::from(['Name' => 'VAT'])],
@@ -177,6 +223,22 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/ref/tax',
                 [],
                 ['ID' => 'guid-1', 'Name' => 'VAT'],
+            ],
+            PostSale::class . ' with data' => [
+                PostSale::class,
+                [fn (): SalePostPutData => SalePostPutData::from(['Customer' => 'ACME', 'SkipQuote' => false])],
+                Method::POST,
+                '/ExternalApi/v2/sale',
+                [],
+                ['Customer' => 'ACME', 'SkipQuote' => false],
+            ],
+            PutSale::class . ' with data' => [
+                PutSale::class,
+                [fn (): SalePostPutData => SalePostPutData::from(['ID' => 'guid-1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']])],
+                Method::PUT,
+                '/ExternalApi/v2/sale',
+                [],
+                ['ID' => 'guid-1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']],
             ],
         ];
     }

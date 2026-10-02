@@ -51,6 +51,23 @@ Send `[]` only to delete on purpose, by setting the property to an empty list.
 |---|---|---|
 | `ref/tax` | `TaxData` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
+| `sale` | `SalePostPutData` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
+| `saleList` | none | GET: `list<SaleListData>` (Sale List) |
+
+`SaleData` nests one class per model, all under `src/Data/Sale/` beside it and reused by the
+later sale paths:
+
+| Key | Class (reference model) |
+|---|---|
+| `BillingAddress`, `ShippingAddress`, `AdditionalAttributes` | `AddressData`, `SaleShippingAddressData`, `AdditionalAttributeData` |
+| `Quote` | `SaleQuoteData`, with `Prepayments` (`SalePaymentLineData`), `Lines` (`SaleQuoteLineData`) and `AdditionalCharges` (`SaleAdditionalChargeData`) |
+| `Order` | `SaleOrderData`, with `Lines` (`SaleOrderLineData`) and `AdditionalCharges` (`SaleAdditionalChargeData`) |
+| `Fulfilments` | `SaleFulfilmentData`: `Pick` and `Pack` are `SaleFulfilmentPickPackData` (`Lines`: `SaleFulfilmentPickPackLineData`), `Ship` is `SaleFulfilmentShipData` (`Lines`: `SaleFulfilmentShipLineData`) |
+| `Invoices` | `SaleInvoiceData`, with `Lines` (`SaleInvoiceLineData`), `AdditionalCharges` (`SaleInvoiceAdditionalChargeData`) and `Payments` (`SalePaymentLineData`) |
+| `CreditNotes` | `SaleCreditNoteData`, with the same lines plus `Refunds` (`SalePaymentLineData`) and `Restock` (`SaleFulfilmentPickPackLineData`) |
+| `ManualJournals` | `SaleManualJournalData`, with `Lines` (`SaleManualJournalLineData`) |
+| `Attachments` | `AttachmentLineData`, in `src/Data/` because several paths use it |
+| `InventoryMovements`, `Transactions` | `InventoryMovementLineData`, `SaleTransactionLineData` |
 
 ## Typed pages
 
@@ -74,5 +91,24 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Tax Component `ID` and `Compound`.** Both appear only in the examples; the first
   example component has no `Compound`. `Compound` is `string|int` because the examples
   send `"0"` and `"1"`.
+- **Sale Order.** The reference documents the model twice: under "Other Models" and in
+  `sale/order`'s own table (which adds `SaleID` and `CombineAdditionalCharges`).
+  `SaleOrderData` carries the union. Its `Lines` are `SaleOrderLineData`, a superset of the
+  Sale Quote Line the first table names: it adds `BackorderQuantity` and `DropShip`, and the
+  examples also send `Backorder`.
+- **Sale POST/PUT.** The POST example sends `AutoPickPackShipMode`, which no Sale table
+  lists; it is modelled on `SalePostPutData`. The example also sends `"SkipQuote": "false"`,
+  `"TaxInclusive": "false"` and `"CurrencyRate": "1"` as strings; the properties are `bool`
+  and `float`, following the tables.
+- **Product fields on lines.** "All objects that contain `ProductID` also contain additional
+  fields": `ProductLength`, `ProductWidth`, `ProductHeight`, `ProductWeight`, `WeightUnits`,
+  `DimensionsUnits` and `ProductCustomField1`–`10`. Every class with a `ProductID` models
+  them, and the custom fields admit `null`, as the examples send.
+- **Nulls.** `ExternalID`, `SourceChannel`, `Ship.RequireBy` and the invoice, due and ship
+  dates and numbers of a Sale List row are `null` in the examples, so those properties admit
+  `null`.
+- **Credit note `Restock`.** The reference types it as Sale Fulfilment Pick Pack Line, whose
+  table includes the `Restock…` keys and `Box`; the example's restock line carries only the
+  pick keys, and the others stay unset.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim.
