@@ -74,9 +74,26 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
+| `$cin7->purchase()` | `PurchaseResource` | `get(string $id, …)`, `post(array\|PurchasePostData $body)`, `put(array\|PurchasePutData $body)`, `delete(string $id, ?bool $void = null)`; `order()`, `stock()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
+| `$cin7->purchase()->order()` | `Purchase\OrderResource` | `get(string $taskId, ?bool $combineAdditionalCharges = null)`, `post(array\|PurchaseOrderPostData $body)` |
+| `$cin7->purchase()->stock()` | `Purchase\StockResource` | `get(string $taskId)`, `post(array\|PurchaseStockPostData $body)` |
+| `$cin7->purchase()->invoice()` | `Purchase\InvoiceResource` | `get(string $taskId, …)`, `post(array\|PurchaseInvoicePostData $body)` |
+| `$cin7->purchase()->creditNote()` | `Purchase\CreditNoteResource` | `get(string $taskId, …)`, `post(array\|PurchaseCreditNotePostData $body)` |
+| `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
+| `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
+| `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
+| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `get(string $id, …)`, `post(array\|AdvancedPurchasePostData $body)`, `put(array\|AdvancedPurchasePutData $body)`, `delete(string $id, ?bool $void = null)`; `stock()`, `putAway()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()` |
+| `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
+| `$cin7->advancedPurchase()->putAway()` | `AdvancedPurchase\PutAwayResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePutAwayPostData $body)` |
+| `$cin7->advancedPurchase()->invoice()` | `AdvancedPurchase\InvoiceResource` | `get(string $purchaseId, ?bool $combineAdditionalCharges = null)`, `post(array\|AdvancedPurchasePartialInvoicePostData $body)`, `delete(string $taskId, ?bool $void = null)` |
+| `$cin7->advancedPurchase()->creditNote()` | `AdvancedPurchase\CreditNoteResource` | `get(string $purchaseId, …)`, `post(array\|AdvancedPurchasePartialCreditNotePostData $body)`, `delete(string $taskId)` |
+| `$cin7->advancedPurchase()->payment()` | `AdvancedPurchase\PaymentResource` | `get(?string $purchaseId = null, …)`, `post(array\|AdvancedPurchasePaymentPostData $body)`, `put(array\|AdvancedPurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
+| `$cin7->advancedPurchase()->manualJournal()` | `AdvancedPurchase\ManualJournalResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePartialManualJournalPostData $body)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->purchaseList()` | `PurchaseListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->purchaseCreditNoteList()` | `PurchaseCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`, `fixedAssetType()`, `paymentTerm()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
@@ -491,6 +508,450 @@ $this->cin7->sale()->fulfilment()->pick()->post(SaleFulfilmentPickPostData::from
 ]));
 ```
 
+## Purchase
+
+`$cin7->purchase()` is `purchase`, the simple purchase, which the reference marks deprecated: it
+supports only simple purchases, and an advanced purchase is on `advanced-purchase`. `purchase` is
+keyed: `get($id)` sends `purchase?ID=…`, and `combineAdditionalCharges: true` lists the additional
+charges in `Lines`. `post()` takes a `PurchasePostData` and `put()` a `PurchasePutData` as well as
+an array; a write needs `Approach` (`INVOICE` or `STOCK`), `Location` and the supplier, by
+`Supplier` or `SupplierID`, and a PUT the purchase's `ID`. `delete($id, void: true)` sends
+`purchase?ID=…&Void=true` and voids the purchase, and `void: false` undoes a void; without `void` no
+`Void` is sent, and the reference defaults it to `false`. Every action answers with the purchase, so
+`dto()` is a `PurchaseData`, which carries its `Order`, `StockReceived`, `Invoice`, `CreditNote` and
+`ManualJournals`. `purchase` has no list action; list purchases through `purchaseList()` (see
+below).
+
+```php
+use Ipsocode\Cin7\Data\Purchase\PurchasePostData;
+
+$purchase = $this->cin7->purchase()->post(PurchasePostData::from([
+    'Supplier' => 'ABPA',
+    'Approach' => 'INVOICE',
+    'Location' => 'Main Warehouse',
+]))->dto(); // PurchaseData
+
+$order = $this->cin7->purchase()->get($purchase->ID)->dto()->Order; // PurchaseOrderData
+
+$this->cin7->purchase()->delete($purchase->ID, void: true); // DELETE purchase?ID=…&Void=true
+```
+
+`$cin7->purchaseList()` is `purchaseList`, the purchases, simple, advanced and service ones, listed
+under `PurchaseList` (`{Total, Page, PurchaseList}`). Its filters are named arguments of `get()` and
+`paginate()`: `search`, the dates (`requiredBy`, `updatedSince`, `updatedUntil`), the documents'
+statuses (`orderStatus`, `restockReceivedStatus`, `creditNoteStatus` and `unstockStatus`, each a
+`TaskStatus`, and `invoiceStatus`, an `InvoiceStatus`), `status`, a string (see
+[data](data.md#where-the-references-tables-and-examples-disagree)), and `dropShipTaskId`, the sale
+task a drop-ship purchase was created by. `$cin7->purchaseCreditNoteList()` is
+`purchaseCreditNoteList`, the purchases with a credit note, from the same `PurchaseList` envelope,
+filtered by `search`, `updatedSince`, `updatedUntil`, `creditNoteStatus` and `status`. Their `dto()`
+is a `list<PurchaseListData>` and a `list<PurchaseCreditNoteListData>`.
+
+```php
+use Ipsocode\Cin7\Enums\InvoiceStatus;
+
+foreach ($this->cin7->purchaseList()->paginate(invoiceStatus: InvoiceStatus::Paid)->items() as $row) {
+    // $row is one entry of PurchaseList
+}
+
+$credited = $this->cin7->purchaseCreditNoteList()->get(updatedSince: '2021-09-01T00:00:00')->dto(); // list<PurchaseCreditNoteListData>
+```
+
+The purchase's documents are sub-resources below `$cin7->purchase()`, as the paths are:
+`->order()`, `->stock()`, `->invoice()`, `->creditNote()`, `->payment()`, `->manualJournal()` and
+`->attachment()` send `purchase/order`, `purchase/stock`, `purchase/invoice`, `purchase/creditnote`,
+`purchase/payment`, `purchase/manualJournal` and `purchase/attachment`. Each is read by the
+purchase's `TaskID`, the purchase's `ID`.
+
+`$cin7->purchase()->order()` is `purchase/order`, a purchase's order. `get($taskId)` sends
+`purchase/order?TaskID=…`, and `combineAdditionalCharges: true` lists the additional charges in
+`Lines`; its `dto()` is a `PurchaseOrderData`, with `Lines` (`PurchaseOrderLineData`) and
+`AdditionalCharges` (`PurchaseAdditionalChargeData`). `post()` takes a `PurchaseOrderPostData` as
+well as an array and answers with the saved order, a `PurchaseOrderData`. An order POST needs
+`TaskID`, `CombineAdditionalCharges`, `Memo`, a `Status` of `DRAFT` or `AUTHORISED` and `Lines`,
+but no totals; Cin7 rejects it when the order is neither `DRAFT` nor `NOT AVAILABLE`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
+
+$order = $this->cin7->purchase()->order()->get($taskId)->dto(); // PurchaseOrderData
+
+$saved = $this->cin7->purchase()->order()->post(PurchaseOrderPostData::from([
+    'TaskID' => $taskId,
+    'CombineAdditionalCharges' => false,
+    'Memo' => '',
+    'Status' => 'DRAFT',
+    'Lines' => [[
+        'ProductID' => $productId,
+        'SKU' => 'Bread',
+        'Name' => 'Baked Bread',
+        'Quantity' => 2.0,
+        'Price' => 2.0,
+        'Tax' => 0.0,
+        'TaxRule' => 'Sales Tax on Imports',
+        'Total' => 4.0,
+    ]],
+]))->dto(); // PurchaseOrderData
+```
+
+`$cin7->purchase()->stock()` is `purchase/stock`, a purchase's stock received, which the reference
+marks deprecated: it supports only simple purchases, and an advanced purchase's stock is on
+`advanced-purchase/stock` and `advanced-purchase/put-away`. `get($taskId)` sends
+`purchase/stock?TaskID=…`, and its `dto()` is a `PurchaseStockData`, with `Lines`
+(`PurchaseStockLineData`). `post()` takes a `PurchaseStockPostData` as well as an array and answers
+with the saved stock received, a `PurchaseStockData`. A stock POST needs `TaskID`, a `Status` of
+`DRAFT` or `AUTHORISED` and `Lines`, each with its `Date`, `Quantity` and a `Location` or
+`LocationID`; a line's read-only `Name` and `Received` are left out of the body. POST only adds
+lines: duplicates in one body become one line with their quantities summed, and a line matching an
+existing one's product, location, batch and expiry date is an error. `Status` `AUTHORISED` with
+empty `Lines` authorises the stock received. Cin7 rejects the POST unless the order is
+`AUTHORISED` and the stock received `DRAFT` or `NOT AVAILABLE`, and, for a purchase whose
+`Approach` is `INVOICE`, the invoice `AUTHORISED`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
+
+$stock = $this->cin7->purchase()->stock()->get($taskId)->dto(); // PurchaseStockData
+
+$saved = $this->cin7->purchase()->stock()->post(PurchaseStockPostData::from([
+    'TaskID' => $taskId,
+    'Status' => 'DRAFT',
+    'Lines' => [[
+        'Date' => '2017-12-08T00:00:00',
+        'Quantity' => 3.0,
+        'SKU' => 'Bread',
+        'Location' => 'Main Warehouse',
+        'BatchSN' => 'PO-00001-1',
+    ]],
+]))->dto(); // PurchaseStockData
+
+$this->cin7->purchase()->stock()->post(PurchaseStockPostData::from([
+    'TaskID' => $taskId,
+    'Status' => 'AUTHORISED',
+    'Lines' => [],
+])); // authorises the stock received
+```
+
+`$cin7->purchase()->invoice()` is `purchase/invoice`, a purchase's invoice, which the reference
+marks deprecated: it supports only simple purchases, and an advanced purchase's invoices are on
+`advanced-purchase/invoice`. `get($taskId)` sends `purchase/invoice?TaskID=…`, and
+`combineAdditionalCharges: true` lists the additional charges in `Lines`. `post()` takes a
+`PurchaseInvoicePostData` as well as an array. Both answer with the invoice, so `dto()` is a
+`PurchaseInvoiceData`. An invoice POST needs `TaskID`, `CombineAdditionalCharges`, `InvoiceDate`,
+`InvoiceDueDate`, a `Status` of `DRAFT` or `AUTHORISED` and `Lines`, but no totals; each line needs
+its `Account` and `Total`, and each additional charge its `Account`. Cin7 rejects it unless the order
+is `AUTHORISED` and the invoice is `DRAFT` or `NOT AVAILABLE`, and, for a purchase whose `Approach`
+is `STOCK`, the stock received is `AUTHORISED`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
+
+$invoice = $this->cin7->purchase()->invoice()->get($taskId)->dto(); // PurchaseInvoiceData
+
+$this->cin7->purchase()->invoice()->post(PurchaseInvoicePostData::from([
+    ...$invoice->toArray(),
+    'Status' => 'AUTHORISED',
+]));
+```
+
+`$cin7->purchase()->creditNote()` is `purchase/creditnote`, a purchase's credit note, which the
+reference marks deprecated: it supports only simple purchases, and an advanced purchase's credit
+notes are on `advanced-purchase/creditnote`. `get($taskId)` sends `purchase/creditnote?TaskID=…`,
+and `combineAdditionalCharges: true` lists the additional charges in `Lines`. `post()` takes a
+`PurchaseCreditNotePostData` as well as an array. Both answer with the credit note, so `dto()` is a
+`PurchaseCreditNoteData`. A credit note POST needs `TaskID`, `CombineAdditionalCharges`,
+`CreditNoteNumber`, `CreditNoteDate`, a `Status` of `DRAFT` or `AUTHORISED`, `Lines` and `Unstock`,
+but no totals; each line needs its `Account` and `Total`, each additional charge its `Account`, and
+each unstock line its stock batch's `CardID` and `Quantity`. An unstock line's product, location,
+batch and expiry are read-only and left out of the body. Cin7 rejects the POST unless the invoice is
+`AUTHORISED` or `PAID` and the credit note is `DRAFT` or `NOT AVAILABLE`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
+
+$creditNote = $this->cin7->purchase()->creditNote()->get($taskId)->dto(); // PurchaseCreditNoteData
+
+$this->cin7->purchase()->creditNote()->post(PurchaseCreditNotePostData::from([
+    ...$creditNote->toArray(),
+    'Status' => 'AUTHORISED',
+]));
+```
+
+`$cin7->purchase()->payment()` is `purchase/payment`, a purchase's payments, which the reference
+marks deprecated: it supports only simple purchases, and an advanced purchase's payments are on
+`advanced-purchase/payment`. `get($taskId)` sends `purchase/payment?TaskID=…`, and its `dto()` is a
+`list<PurchasePaymentData>`, read from a bare array. `post()` takes a `PurchasePaymentPostData` and
+`put()` a `PurchasePaymentPutData` as well as an array; both answer with the saved payment, a
+`PurchasePaymentData`. A payment POST needs `TaskID`, `Type`, `Amount`, `DatePaid`, `Account` and
+`CurrencyRate`, and takes a `DepositID` to pay from a supplier deposit; a payment PUT needs `TaskID`,
+`ID`, `DatePaid` and `CurrencyRate`, and takes no `Amount` or `Account` for a payment from a deposit.
+A prepayment cannot be changed. `delete($id)` sends `purchase/payment?ID=…` and answers `{Success}`;
+`deleteAllocation` says whether the allocated payments go too. Without it no `DeleteAllocation` is
+sent, and the reference defaults it to `true`, so `deleteAllocation: false` keeps them.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Payment\PurchasePaymentPostData;
+
+$payments = $this->cin7->purchase()->payment()->get($taskId)->dto(); // list<PurchasePaymentData>
+
+$saved = $this->cin7->purchase()->payment()->post(PurchasePaymentPostData::from([
+    'TaskID' => $taskId,
+    'Type' => 'Payment',
+    'Amount' => 9.0,
+    'DatePaid' => '2017-12-21T00:00:00',
+    'Account' => '718',
+    'CurrencyRate' => 1.0,
+]))->dto(); // PurchasePaymentData
+
+$this->cin7->purchase()->payment()->delete($paymentId, deleteAllocation: false); // DELETE purchase/payment?ID=…&DeleteAllocation=false
+```
+
+`$cin7->purchase()->manualJournal()` is `purchase/manualJournal`, a purchase's manual journal, which
+the reference also marks deprecated: an advanced purchase's manual journals are on
+`advanced-purchase/manualJournal`. `get($taskId)` sends `purchase/manualJournal?TaskID=…`, and
+`post()` takes a `PurchaseManualJournalPostData` as well as an array; both answer with the manual
+journal, a `PurchaseManualJournalData`. A POST needs `TaskID` and a `Status` of `DRAFT` or
+`AUTHORISED`, and can be sent even when the journal is authorised. A line's `IsSystem` is read-only
+and never sent: a line Cin7 posted (`IsSystem` `true`) cannot be changed or deleted.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
+
+$journal = $this->cin7->purchase()->manualJournal()->post(PurchaseManualJournalPostData::from([
+    'TaskID' => $taskId,
+    'Status' => 'DRAFT',
+    'Lines' => [['Reference' => 'Rounding', 'Amount' => 2.0, 'Date' => '2017-12-06T00:00:00', 'Debit' => '720', 'Credit' => '404']],
+]))->dto(); // PurchaseManualJournalData
+```
+
+`$cin7->purchase()->attachment()` is `purchase/attachment`, a purchase's attachments, like the
+sale's. `get($taskId)` sends `purchase/attachment?TaskID=…`, `post()` takes a
+`PurchaseAttachmentPostData` as well as an array, and `delete($id)` sends
+`purchase/attachment?ID=…`; each answers with the purchase's attachments, a
+`PurchaseAttachmentsData` (`{TaskID, Lines}`, `Lines` being `AttachmentLineData`). A POST needs
+the purchase's `PurchaseID`, a `FileName`, and base64 `Content` or a `FileDownloadUrl`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
+
+$attachments = $this->cin7->purchase()->attachment()->post(PurchaseAttachmentPostData::from([
+    'PurchaseID' => $taskId,
+    'FileName' => 'invoice.pdf',
+    'FileDownloadUrl' => 'https://files.example/invoice.pdf',
+]))->dto(); // PurchaseAttachmentsData
+
+$this->cin7->purchase()->attachment()->delete($attachments->Lines[0]->ID); // DELETE purchase/attachment?ID=…
+```
+
+## Advanced purchase
+
+`$cin7->advancedPurchase()` is `advanced-purchase`, a purchase of any kind: simple, advanced or
+service, where `purchase` supports only simple ones. It is keyed: `get($id)` sends
+`advanced-purchase?ID=…`, and `combineAdditionalCharges: true` lists the additional charges in
+`Lines` (a service purchase, which has only additional charges, answers with empty `Lines` without
+it). `post()` takes an `AdvancedPurchasePostData` and `put()` an `AdvancedPurchasePutData` as well
+as an array; a write needs `Location` and the supplier, by `Supplier` or `SupplierID`, a POST also
+`Approach` (`INVOICE` or `STOCK`) and, optionally, `PurchaseType` (`Simple` or `Advanced`, a
+`ProcessType`), which PUT does not take, and a PUT the purchase's `ID`. `delete($id, void: true)`
+sends `advanced-purchase?ID=…&Void=true` and voids the purchase, and `void: false` undoes a void;
+without `void` no `Void` is sent, and the reference defaults it to `false`. Every action answers
+with the purchase, so `dto()` is an `AdvancedPurchaseData`, which carries its `Order` and the lists
+of its `StockReceived`, `PutAway`, `Invoice`, `CreditNote` and `ManualJournals`. `advanced-purchase`
+has no list action; list purchases through `purchaseList()`.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePostData;
+
+$purchase = $this->cin7->advancedPurchase()->post(AdvancedPurchasePostData::from([
+    'Supplier' => 'ABPA',
+    'Approach' => 'STOCK',
+    'Location' => 'Main Warehouse',
+    'PurchaseType' => 'Advanced',
+]))->dto(); // AdvancedPurchaseData
+
+$invoices = $this->cin7->advancedPurchase()->get($purchase->ID)->dto()->Invoice; // list<AdvancedPurchaseInvoiceData>
+
+$this->cin7->advancedPurchase()->delete($purchase->ID, void: true); // DELETE advanced-purchase?ID=…&Void=true
+```
+
+Its documents are sub-resources below it, as the paths are: `->stock()`, `->putAway()`,
+`->invoice()`, `->creditNote()`, `->payment()` and `->manualJournal()` send
+`advanced-purchase/stock`, `advanced-purchase/put-away`, `advanced-purchase/invoice`,
+`advanced-purchase/creditnote`, `advanced-purchase/payment` and `advanced-purchase/manualJournal`.
+Each is read by the purchase's `ID`, sent as `PurchaseID`.
+
+`$cin7->advancedPurchase()->stock()` is `advanced-purchase/stock`, an advanced purchase's stock
+received. It is not available for a service purchase, and only when `Use Put Away` is set in the
+General Settings; a POST or PUT for a simple purchase converts it to an advanced one. Every method
+answers with the purchase's stock receiving tasks, the `{PurchaseID, StockReceiving}` envelope, so
+its `dto()` is an `AdvancedPurchaseStocksData`, whose `StockReceiving` are
+`AdvancedPurchaseStockData`. `get($purchaseId)` sends `advanced-purchase/stock?PurchaseID=…`.
+`post()` takes an `AdvancedPurchaseStockPostData` and `put()` an `AdvancedPurchaseStockPutData` as
+well as an array; both need the `PurchaseID`, a `Status` of `DRAFT` or `AUTHORISED` and `Lines`,
+and a PUT also the `TaskID` of the task it overwrites. A POST only adds lines: without a `TaskID`,
+or with the empty GUID, it creates a new task, and with `Status` `AUTHORISED` and empty `Lines` it
+authorises the task. Both fail unless the order is authorised, the stock received is `DRAFT`,
+`NOT AVAILABLE` or `PARTIALLY RECEIVED`, and, for an `INVOICE` approach, the invoice is authorised.
+`delete($taskId)` sends `advanced-purchase/stock?TaskID=…`; `void: true` voids the task, and
+`void: false` undoes a void; without `void` no `Void` is sent, and the reference defaults it to
+`false`. It is not available for a simple purchase.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
+
+$received = $this->cin7->advancedPurchase()->stock()->get($purchaseId)->dto(); // AdvancedPurchaseStocksData
+
+$saved = $this->cin7->advancedPurchase()->stock()->post(AdvancedPurchaseStockPostData::from([
+    'PurchaseID' => $purchaseId,
+    'Status' => 'AUTHORISED',
+    'Lines' => [['Date' => '2018-04-23T00:00:00', 'Quantity' => 6, 'SKU' => 'Bread']],
+]))->dto(); // AdvancedPurchaseStocksData
+$taskId = $saved->StockReceiving[0]->TaskID;
+
+$this->cin7->advancedPurchase()->stock()->delete($taskId, void: true); // DELETE advanced-purchase/stock?TaskID=…&Void=true
+```
+
+`$cin7->advancedPurchase()->putAway()` is `advanced-purchase/put-away`, an advanced purchase's put
+away. Both methods answer with the purchase's put away tasks, the `{PurchaseID, PutAway}` envelope,
+so their `dto()` is an `AdvancedPurchasePutAwaysData`, whose `PutAway` are
+`AdvancedPurchasePutAwayData`. `get($purchaseId)` sends `advanced-purchase/put-away?PurchaseID=…`.
+`post()` takes an `AdvancedPurchasePutAwayPostData` as well as an array; it needs the `PurchaseID`,
+a `Status` of `DRAFT` or `AUTHORISED` (only `AUTHORISED` once the invoice lines match the
+receiving) and `Lines`, each with its `Location` or `LocationID`. A POST only adds lines: without a
+`TaskID`, or with the empty GUID, it creates a new task, and with `Status` `AUTHORISED` and empty
+`Lines` it authorises the task. Duplicate lines in one body become one line with their quantities
+summed, and a line with the product, location, batch and expiry date of an existing line fails.
+It fails unless the order is authorised, the put away is `DRAFT` or `NOT AVAILABLE`, and, for an
+`INVOICE` approach, the invoice is authorised. The put away has no PUT or DELETE.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
+
+$putAway = $this->cin7->advancedPurchase()->putAway()->get($purchaseId)->dto(); // AdvancedPurchasePutAwaysData
+
+$saved = $this->cin7->advancedPurchase()->putAway()->post(AdvancedPurchasePutAwayPostData::from([
+    'PurchaseID' => $purchaseId,
+    'Status' => 'AUTHORISED',
+    'Lines' => [['Date' => '2018-04-20T00:00:00', 'Quantity' => 4, 'SKU' => 'Bread', 'Location' => 'Main Warehouse']],
+]))->dto(); // AdvancedPurchasePutAwaysData
+$taskId = $saved->PutAway[0]->TaskID;
+```
+
+`$cin7->advancedPurchase()->invoice()` is `advanced-purchase/invoice`, an advanced purchase's
+invoices; a simple purchase's invoice is on `purchase/invoice`. Every method answers with the
+purchase's invoices, the `{PurchaseID, Invoices}` envelope, so its `dto()` is an
+`AdvancedPurchaseInvoicesData`, whose `Invoices` are `AdvancedPurchasePartialInvoiceData`.
+`get($purchaseId)` sends `advanced-purchase/invoice?PurchaseID=…`, and
+`combineAdditionalCharges: true` lists the additional charges in `Lines`. `post()` takes an
+`AdvancedPurchasePartialInvoicePostData` as well as an array: one invoice task's fields with the
+purchase's `PurchaseID` beside them. It needs the `PurchaseID`, the `TaskID`,
+`CombineAdditionalCharges`, `InvoiceDate`, `InvoiceDueDate`, a `Status` of `DRAFT` or `AUTHORISED`
+and `Lines`, but no totals; each line needs its `Account` and `Total`, and each additional charge
+its `Account`. Cin7 rejects it unless the order is `AUTHORISED` and the invoice is `DRAFT` or
+`NOT AVAILABLE`, and, for a purchase whose `Approach` is `STOCK`, the stock received is
+`AUTHORISED`. `delete($taskId)` sends `advanced-purchase/invoice?TaskID=…`; `void: true` voids the
+invoice, and `void: false` undoes a void; without `void` no `Void` is sent, and the reference
+defaults it to `false`. It is not available for a simple purchase.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
+
+$invoices = $this->cin7->advancedPurchase()->invoice()->get($purchaseId)->dto(); // AdvancedPurchaseInvoicesData
+
+$this->cin7->advancedPurchase()->invoice()->post(AdvancedPurchasePartialInvoicePostData::from([
+    ...$invoices->Invoices[0]->toArray(),
+    'PurchaseID' => $purchaseId,
+    'Status' => 'AUTHORISED',
+]));
+
+$this->cin7->advancedPurchase()->invoice()->delete($invoices->Invoices[0]->TaskID, void: true); // DELETE advanced-purchase/invoice?TaskID=…&Void=true
+```
+
+`$cin7->advancedPurchase()->creditNote()` is `advanced-purchase/creditnote`, an advanced purchase's
+credit notes. Every method answers with the purchase's credit notes, the `{PurchaseID, CreditNotes}`
+envelope, so its `dto()` is an `AdvancedPurchaseCreditNotesData`, whose `CreditNotes` are
+`AdvancedPurchasePartialCreditNoteData`. `get($purchaseId)` sends
+`advanced-purchase/creditnote?PurchaseID=…`, and `combineAdditionalCharges: true` lists the
+additional charges in `Lines`. `post()` takes an `AdvancedPurchasePartialCreditNotePostData` as well
+as an array: one credit note, which needs the `PurchaseID`, its `TaskID` (the empty GUID creates a
+credit note), `CombineAdditionalCharges`, `CreditNoteNumber`, `CreditNoteInvoiceNumber`,
+`CreditNoteDate`, a `Status` of `DRAFT` or `AUTHORISED`, `Lines` and `Unstock`, but no totals; each
+line needs its `Account` and `Total`, each additional charge its `Account`, and each unstock line its
+stock batch's `CardID` and `Quantity`. An unstock line's product, location, batch and expiry are
+read-only and left out of the body. Cin7 rejects the POST unless the invoice is `AUTHORISED` or
+`PAID` and the credit note is `DRAFT` or `NOT AVAILABLE`. `delete($taskId)` sends
+`advanced-purchase/creditnote?TaskID=…` and voids that credit note; the reference documents no
+`Void` flag for it.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchasePartialCreditNotePostData;
+
+$creditNotes = $this->cin7->advancedPurchase()->creditNote()->get($purchaseId)->dto(); // AdvancedPurchaseCreditNotesData
+
+$saved = $this->cin7->advancedPurchase()->creditNote()->post(AdvancedPurchasePartialCreditNotePostData::from([
+    ...$creditNotes->CreditNotes[0]->toArray(),
+    'PurchaseID' => $purchaseId,
+    'Status' => 'AUTHORISED',
+]))->dto(); // AdvancedPurchaseCreditNotesData
+
+$this->cin7->advancedPurchase()->creditNote()->delete($saved->CreditNotes[0]->TaskID); // DELETE advanced-purchase/creditnote?TaskID=…
+```
+
+`$cin7->advancedPurchase()->payment()` is `advanced-purchase/payment`, an advanced purchase's
+payments. `get()` takes the purchase's `purchaseId`, or the number of its order, invoice or credit
+note (`orderNumber`, `invoiceNumber`, `creditNoteNumber`), all optional, and sends the ones given,
+as in `advanced-purchase/payment?PurchaseID=…`; its `dto()` is a `list<AdvancedPurchasePaymentData>`,
+read from a bare array. `post()` takes an `AdvancedPurchasePaymentPostData` and `put()` an
+`AdvancedPurchasePaymentPutData` as well as an array; both answer with the saved payment, an
+`AdvancedPurchasePaymentData`, which also carries the purchase's `PurchaseID`. The bodies are the
+simple purchase's: a payment POST needs `TaskID`, `Type`, `Amount`, `DatePaid`, `Account` and
+`CurrencyRate`, and takes a `DepositID` to pay from a supplier deposit; a payment PUT needs
+`TaskID`, `ID`, `DatePaid` and `CurrencyRate`, and takes no `Amount` or `Account` for a payment
+from a deposit. A payment needs an authorised invoice and a refund an authorised credit note, and
+a prepayment cannot be changed. The reference documents the DELETE on `/purchase/payment`, so
+`delete($id)` sends `DeletePurchasePayment`, `purchase/payment?ID=…`, and answers `{Success}`;
+`deleteAllocation` works as on `$cin7->purchase()->payment()`.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\Payment\AdvancedPurchasePaymentPostData;
+
+$payments = $this->cin7->advancedPurchase()->payment()->get($purchaseId)->dto(); // list<AdvancedPurchasePaymentData>
+$invoicePayments = $this->cin7->advancedPurchase()->payment()->get(invoiceNumber: $invoiceNumber)->dto();
+
+$saved = $this->cin7->advancedPurchase()->payment()->post(AdvancedPurchasePaymentPostData::from([
+    'TaskID' => $taskId,
+    'Type' => 'Payment',
+    'Amount' => 9.0,
+    'DatePaid' => '2017-12-21T00:00:00',
+    'Account' => '718',
+    'CurrencyRate' => 1.0,
+]))->dto(); // AdvancedPurchasePaymentData
+
+$this->cin7->advancedPurchase()->payment()->delete($saved->ID); // DELETE purchase/payment?ID=…
+```
+
+`$cin7->advancedPurchase()->manualJournal()` is `advanced-purchase/manualJournal`, an advanced
+purchase's manual journals, each keyed by the `TaskID` of its purchase invoice task. Both methods
+answer with the `{PurchaseID, ManualJournals}` envelope, so the `dto()` is an
+`AdvancedPurchaseManualJournalsData`, whose `ManualJournals` are
+`AdvancedPurchasePartialManualJournalData`. `get($purchaseId)` sends
+`advanced-purchase/manualJournal?PurchaseID=…`. `post()` takes an
+`AdvancedPurchasePartialManualJournalPostData` as well as an array; it needs the `PurchaseID`, the
+journal's `TaskID` and a `Status` of `DRAFT` or `AUTHORISED`, and can be sent even when the journal
+is authorised. A line's `IsSystem` is read-only and never sent: a line Cin7 posted (`IsSystem`
+`true`) cannot be changed or deleted.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
+
+$journals = $this->cin7->advancedPurchase()->manualJournal()->post(AdvancedPurchasePartialManualJournalPostData::from([
+    'PurchaseID' => $purchaseId,
+    'TaskID' => $invoices->Invoices[0]->TaskID, // the invoice task's
+    'Status' => 'DRAFT',
+    'Lines' => [['Reference' => 'Freight', 'Amount' => 20.0, 'Date' => '2018-04-23T00:00:00', 'Debit' => '715', 'Credit' => '860']],
+]))->dto(); // AdvancedPurchaseManualJournalsData
+```
+
 ## PUT identifiers
 
 A PUT body carries the identifier V2 documents for that resource. The caller
@@ -508,6 +969,11 @@ key:
 | `sale` | `ID` |
 | `sale/invoice` | `SaleID` and `TaskID` |
 | `sale/payment` | `ID` |
+| `purchase` | `ID` |
+| `purchase/payment` | `TaskID` and `ID` |
+| `advanced-purchase` | `ID` |
+| `advanced-purchase/stock` | `PurchaseID` and `TaskID` |
+| `advanced-purchase/payment` | `TaskID` and `ID` |
 | `moneyOperation` | `TaskID` |
 
 ```php

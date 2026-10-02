@@ -1,0 +1,105 @@
+{
+    "ID": "3fb1debd-1f89-476c-b7ac-826a493a2092",
+    "SupplierID": "f1d1696b-8988-4ca0-8b9d-60317e463d07",
+    "Supplier": "ABPA",
+    "Contact": "No Name",
+    "Phone": null,
+    "InventoryAccount": "715",
+    "BlindReceipt": false,
+    "Approach": "INVOICE",
+    "BillingAddress": {
+        "DisplayAddressLine1": null,
+        "DisplayAddressLine2": null,
+        "Line1": null,
+        "Line2": null,
+        "City": null,
+        "State": null,
+        "Postcode": null,
+        "Country": null
+    },
+    "ShippingAddress": {
+        "DisplayAddressLine1": "3 Park Street Industrial Village Southbank",
+        "DisplayAddressLine2": "Melbourne VIC 3331 United States",
+        "Line1": "3 Park Street Industrial Village",
+        "Line2": "Southbank",
+        "City": "Melbourne",
+        "State": "VIC",
+        "Postcode": "3331",
+        "Country": "United States",
+        "ShipToOther": false
+    },
+    "BaseCurrency": "RUB",
+    "SupplierCurrency": "RUB",
+    "TaxRule": "Sales Tax on Imports",
+    "TaxCalculation": "Exclusive",
+    "Terms": "30 days",
+    "RequiredBy": null,
+    "Location": "Main Warehouse",
+    "Note": null,
+    "OrderNumber": "PO-00007",
+    "OrderDate": "2017-12-08T00:00:00",
+    "Status": "ORDERING",
+    "RelatedDropShipSaleTask": null,
+    "CurrencyRate": 1,
+    "LastUpdatedDate": "2017-12-08T10:14:18.45Z",
+    "Order": {
+        "Memo": null,
+        "Status": "NOT AVAILABLE",
+        "Lines": [],
+        "AdditionalCharges": [],
+        "Prepayments": [],
+        "TotalBeforeTax": 0,
+        "Tax": 0,
+        "Total": 0
+    },
+    "StockReceived": {
+        "Status": "NOT AVAILABLE",
+        "Lines": []
+    },
+    "Invoice": {
+        "InvoiceDate": "2017-12-08T00:00:00",
+        "InvoiceDueDate": null,
+        "InvocieNumber": null,
+        "Status": "DRAFT",
+        "Lines": [],
+        "AdditionalCharges": [],
+        "Payments": [],
+        "TotalBeforeTax": 0,
+        "Tax": 0,
+        "Total": 0,
+        "Paid": 0
+    },
+    "CreditNote": {
+        "CreditNoteNumber": "",
+        "CreditNoteDate": null,
+        "Status": "NOT AVAILABLE",
+        "Lines": [],
+        "AdditionalCharges": [],
+        "Refunds": [],
+        "Unstock": {
+            "Status": "NOT AVAILABLE",
+            "Lines": []
+        },
+        "TotalBeforeTax": 0,
+        "Tax": 0,
+        "Total": 0
+    },
+    "ManualJournals": {
+        "Status": "NOT AVAILABLE",
+        "Lines": []
+    },
+    "AdditionalAttributes": {
+        "AdditionalAttribute1": "",
+        "AdditionalAttribute2": "",
+        "AdditionalAttribute3": "",
+        "AdditionalAttribute4": "",
+        "AdditionalAttribute5": "",
+        "AdditionalAttribute6": "",
+        "AdditionalAttribute7": "",
+        "AdditionalAttribute8": "",
+        "AdditionalAttribute9": "",
+        "AdditionalAttribute10": ""
+    },
+    "Attachments": [],
+    "InventoryMovements": []
+}

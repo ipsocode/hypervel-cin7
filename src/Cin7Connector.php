@@ -13,6 +13,7 @@ use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\HasPagination;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
+use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -20,6 +21,9 @@ use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
+use Ipsocode\Cin7\Resources\PurchaseListResource;
+use Ipsocode\Cin7\Resources\PurchaseResource;
 use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
@@ -110,6 +114,14 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
+     * The `advanced-purchase` resource, the advanced purchase.
+     */
+    public function advancedPurchase(): AdvancedPurchaseResource
+    {
+        return new AdvancedPurchaseResource($this);
+    }
+
+    /**
      * The `customer` resource.
      */
     public function customer(): CustomerResource
@@ -147,6 +159,30 @@ final class Cin7Connector extends Connector implements HasPagination
     public function product(): ProductResource
     {
         return new ProductResource($this);
+    }
+
+    /**
+     * The `purchase` resource, the simple purchase.
+     */
+    public function purchase(): PurchaseResource
+    {
+        return new PurchaseResource($this);
+    }
+
+    /**
+     * The `purchaseCreditNoteList` resource.
+     */
+    public function purchaseCreditNoteList(): PurchaseCreditNoteListResource
+    {
+        return new PurchaseCreditNoteListResource($this);
+    }
+
+    /**
+     * The `purchaseList` resource.
+     */
+    public function purchaseList(): PurchaseListResource
+    {
+        return new PurchaseListResource($this);
     }
 
     /**

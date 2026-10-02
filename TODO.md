@@ -19,86 +19,6 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations)
-
-- [ ] `purchase-list` · `purchaseList` · GET
-  - [ ] Purchase List: `PurchaseListData`
-- [ ] `purchase-credit-note-list` · `purchaseCreditNoteList` · GET
-  - [ ] Purchase Credit Note List: `PurchaseCreditNoteListData`
-- [ ] `purchase` · `purchase` · GET POST PUT DELETE
-  - [ ] Purchase: `PurchaseData`
-  - [x] product fields: `trait HasProductFields`
-  - [ ] Purchase POST/PUT body: `PurchasePostData`
-  - [ ] Purchase POST/PUT body: `PurchasePutData`
-- [ ] `purchase-order` · `purchase/order` · GET POST
-  - [ ] Purchase Order: `PurchaseOrderData`
-- [ ] `purchase-stock-received` · `purchase/stock` · GET POST
-  - [ ] Purchase Stock Received: `PurchaseStockData`
-- [ ] `purchase-invoice` · `purchase/invoice` · GET POST
-  - [ ] Purchase Invoice: `PurchaseInvoiceData`
-- [ ] `purchase-credit-note` · `purchase/creditnote` · GET POST
-  - [ ] Purchase Credit Note: `PurchaseCreditNoteData`
-- [ ] `purchase-payments` · `purchase/payment` · GET POST PUT DELETE
-  - [ ] Purchase Payments: `PurchasePaymentData`
-- [ ] `purchase-manual-journals` · `purchase/manualJournal` · GET POST
-  - [ ] Purchase Manual Journal: `PurchaseManualJournalData`
-- [ ] `purchase-attachments` · `purchase/attachment` · GET POST DELETE
-  - [ ] Purchase Attachments: `PurchaseAttachmentsData`
-  - [ ] Purchase Attachments POST body: `PurchaseAttachmentPostData`
-- [ ] `advanced-purchase` · `advanced-purchase` · GET POST PUT DELETE
-  - [ ] AdvancedPurchase: `AdvancedPurchaseData`
-  - [x] product fields: `trait HasProductFields`
-  - [ ] Purchase POST/PUT body: `AdvancedPurchasePostData`
-  - [ ] Purchase POST/PUT body: `AdvancedPurchasePutData`
-- [ ] `advanced-purchase-stock-received` · `advanced-purchase/stock` · GET POST PUT DELETE
-  - [ ] AdvancedPurchaseStock: `AdvancedPurchaseStockData`
-- [ ] `advanced-purchase-put-away` · `advanced-purchase/put-away` · GET POST
-  - [ ] AdvancedPurchasePutAway: `AdvancedPurchasePutAwayData`
-- [ ] `advanced-purchase-invoice` · `advanced-purchase/invoice` · GET POST DELETE
-  - [ ] AdvancedPurchaseInvoice: `AdvancedPurchaseInvoicesData`
-  - [ ] AdvancedPurchasePartialInvoiceModel: `AdvancedPurchasePartialInvoiceData`
-- [ ] `advanced-purchase-credit-note` · `advanced-purchase/creditnote` · GET POST DELETE
-  - [ ] AdvancedPurchaseCreditNote: `AdvancedPurchaseCreditNotesData`
-  - [ ] AdvancedPurchasePartialCreditNoteModel: `AdvancedPurchasePartialCreditNoteData`
-- [ ] `advanced-purchase-payments` · `advanced-purchase/payment` · GET POST PUT DELETE
-  - [ ] AdvancedPurchasePayments: `AdvancedPurchasePaymentData`
-- [ ] `advanced-purchase-manual-journals` · `advanced-purchase/manualJournal` · GET POST
-  - [ ] Purchase Manual Journal: `AdvancedPurchaseManualJournalsData`
-  - [ ] AdvancedPurchasePartialMAnJModel: `AdvancedPurchasePartialManualJournalData`
-
-### `reference/other-models/**` Shared models for purchase, supplier and me
-
-Each is built with the first resource here that uses it; a ticked one is built, and moves to
-`src/Data/Other/` when a second family uses it.
-
-- [x] DimensionUnitAvailableValues: `enum WeightUnit`, `enum DimensionUnit` · used by me, product, purchase, advanced-purchase, sale
-- [x] AddressModel: `AddressData` · used by purchase, advanced-purchase, sale
-- [ ] PurchaseShippingAddressModel: `PurchaseShippingAddressData` · used by purchase, advanced-purchase
-- [x] AdditionalAttributeModel: `AdditionalAttributeData` · used by purchase, advanced-purchase, sale
-- [x] SalePaymentLineModel: `SalePaymentLineData` · used by purchase, advanced-purchase, sale
-- [x] AttachmentLineModel: `AttachmentLineData` · used by journal, money-operation, bank-transfer, product, product-attachments, product-family, product-family-attachments, purchase, purchase-attachments, advanced-purchase, sale, sale-attachments, stock-adjustment, stock-take
-- [x] InventoryMovementLineModel: `InventoryMovementLineData` · used by purchase, advanced-purchase, sale
-- [ ] PurchaseManualJournalModel: `PurchaseManualJournalData` · used by purchase
-- [ ] PurchaseManualJournalLineModel: `PurchaseManualJournalLineData` · used by purchase, purchase-manual-journals, advanced-purchase, advanced-purchase-manual-journals
-- [ ] PurchaseOrderModel: `PurchaseOrderData` · used by purchase, advanced-purchase
-- [ ] PurchaseOrderLineModel: `PurchaseOrderLineData` · used by purchase, purchase-order, advanced-purchase
-- [ ] PurchaseAdditionalChargeModel: `PurchaseAdditionalChargeData` · used by purchase, purchase-order, advanced-purchase
-- [ ] PurchaseStockModel: `PurchaseStockData` · used by purchase
-- [ ] PurchaseStockLineModel: `PurchaseStockLineData` · used by purchase, purchase-stock-received
-- [ ] PurchaseUnStockLineModel: `PurchaseUnStockLineData` · used by purchase, purchase-credit-note, advanced-purchase, advanced-purchase-credit-note
-- [ ] PurchaseInvoiceModel: `PurchaseInvoiceData` · used by purchase
-- [ ] PurchaseCreditNoteModel: `PurchaseCreditNoteData` · used by purchase
-- [ ] PurchaseInvoiceLineModel: `PurchaseInvoiceLineData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
-- [ ] PurchaseInvoiceAdditionalChargeModel: `PurchaseInvoiceAdditionalChargeData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
-- [ ] PurchasePaymentLineModel: `PurchasePaymentLineData` · used by purchase, advanced-purchase
-- [ ] AdvancedPurchaseStockModel: `AdvancedPurchaseStockData` · used by purchase, advanced-purchase
-- [ ] AdvancedPurchaseStockLineModel: `AdvancedPurchaseStockLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-stock-received
-- [ ] AdvancedPurchasePutAwayModel: `AdvancedPurchasePutAwayData` · used by purchase, advanced-purchase
-- [ ] AdvancedPurchasePutAwayLineModel: `AdvancedPurchasePutAwayLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-put-away
-- [ ] AdvancedPurchaseInvoiceModel: `AdvancedPurchaseInvoiceData` · used by purchase, advanced-purchase
-- [ ] AdvancedPurchaseCreditNoteModel: `AdvancedPurchaseCreditNoteData` · used by purchase, advanced-purchase
-- [ ] AdvancedPurchaseManualJournalModel: `AdvancedPurchaseManualJournalData` · used by purchase, advanced-purchase
-
 ## Medium
 
 Every group not ranked yet: move a group up or down as issues are planned.
@@ -198,7 +118,11 @@ Every group not ranked yet: move a group up or down as issues are planned.
 Each is built with the first resource here that uses it; a ticked one is built, and moves to
 Built with the first resource that uses it.
 
+- [x] DimensionUnitAvailableValues: `enum WeightUnit`, `enum DimensionUnit` · used by me, product, purchase, advanced-purchase, sale
+- [x] AddressModel: `AddressData` · used by purchase, advanced-purchase, sale
 - [x] SaleShippingAddressModel: `SaleShippingAddressData` · used by sale, sale-fulfilment, sale-fulfilment-ship
+- [x] PurchaseShippingAddressModel: `PurchaseShippingAddressData` · used by purchase, advanced-purchase
+- [x] AdditionalAttributeModel: `AdditionalAttributeData` · used by purchase, advanced-purchase, sale
 - [x] SaleQuoteModel: `SaleQuoteData` · used by sale
 - [x] SaleQuoteLineModel: `SaleQuoteLineData` · used by sale, sale-quote
 - [x] SaleOrderModel: `SaleOrderData` · used by sale
@@ -213,10 +137,25 @@ Built with the first resource that uses it.
 - [x] SaleInvoiceAdditionalChargeModel: `SaleInvoiceAdditionalChargeData` · used by sale, sale-invoice, sale-credit-note
 - [x] SaleInvoiceLineModel: `SaleInvoiceLineData` · used by sale, sale-invoice, sale-credit-note
 - [x] SaleCreditNoteModel: `SaleCreditNoteData` · used by sale
+- [x] SalePaymentLineModel: `SalePaymentLineData` · used by purchase, advanced-purchase, sale
 - [x] SaleManualJournalModel: `SaleManualJournalData` · used by sale
 - [x] SaleManualJournalLineModel: `SaleManualJournalLineData` · used by sale, sale-manual-journals
+- [x] AttachmentLineModel: `AttachmentLineData` · used by journal, money-operation, bank-transfer, product, product-attachments, product-family, product-family-attachments, purchase, purchase-attachments, advanced-purchase, sale, sale-attachments, stock-adjustment, stock-take
 - [ ] ProductFamilyProductLineModel: `ProductFamilyProductLineData` · used by product-family
+- [x] InventoryMovementLineModel: `InventoryMovementLineData` · used by purchase, advanced-purchase, sale
 - [x] SaleTransactionLineModel: `SaleTransactionLineData` · used by sale
+- [x] PurchaseManualJournalModel: `PurchaseManualJournalData` · used by purchase
+- [x] PurchaseManualJournalLineModel: `PurchaseManualJournalLineData` · used by purchase, purchase-manual-journals, advanced-purchase, advanced-purchase-manual-journals
+- [x] PurchaseOrderModel: `PurchaseOrderData` · used by purchase, advanced-purchase
+- [x] PurchaseOrderLineModel: `PurchaseOrderLineData` · used by purchase, purchase-order, advanced-purchase
+- [x] PurchaseAdditionalChargeModel: `PurchaseAdditionalChargeData` · used by purchase, purchase-order, advanced-purchase
+- [x] PurchaseStockModel: `PurchaseStockData` · used by purchase
+- [x] PurchaseStockLineModel: `PurchaseStockLineData` · used by purchase, purchase-stock-received
+- [x] PurchaseUnStockLineModel: `PurchaseUnStockLineData` · used by purchase, purchase-credit-note, advanced-purchase, advanced-purchase-credit-note
+- [x] PurchaseInvoiceModel: `PurchaseInvoiceData` · used by purchase
+- [x] PurchaseCreditNoteModel: `PurchaseCreditNoteData` · used by purchase
+- [x] PurchaseInvoiceLineModel: `PurchaseInvoiceLineData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
+- [x] PurchaseInvoiceAdditionalChargeModel: `PurchaseInvoiceAdditionalChargeData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
 - [ ] ExistingStockLineModel: `ExistingStockLineData` · used by stock-adjustment, stock-take
 - [ ] NewStockLineModel: `NewStockLineData` · used by stock-adjustment, stock-take
 - [x] TransactionStockLineModel: `TransactionStockLineData` · used by disassembly, finished-goods, inventory-write-off, money-operation, bank-transfer, stock-adjustment, stock-take
@@ -239,6 +178,14 @@ Built with the first resource that uses it.
 - [x] ChildCustomerModel: `ChildCustomerData` · used by customer
 - [x] ProductPriceModel: `ProductPriceData` · used by customer, product, custom-prices
 - [x] JournalLineModel: `JournalLineData` · used by journal
+- [x] PurchasePaymentLineModel: `PurchasePaymentLineData` · used by purchase, advanced-purchase
+- [x] AdvancedPurchaseStockModel: `AdvancedPurchaseStockData` · used by purchase, advanced-purchase
+- [x] AdvancedPurchaseStockLineModel: `AdvancedPurchaseStockLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-stock-received
+- [x] AdvancedPurchasePutAwayModel: `AdvancedPurchasePutAwayData` · used by purchase, advanced-purchase
+- [x] AdvancedPurchasePutAwayLineModel: `AdvancedPurchasePutAwayLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-put-away
+- [x] AdvancedPurchaseInvoiceModel: `AdvancedPurchaseInvoiceData` · used by purchase, advanced-purchase
+- [x] AdvancedPurchaseCreditNoteModel: `AdvancedPurchaseCreditNoteData` · used by purchase, advanced-purchase
+- [x] AdvancedPurchaseManualJournalModel: `AdvancedPurchaseManualJournalData` · used by purchase, advanced-purchase
 - [ ] IDNameModel: `IdNameData` · used by stock-take
 - [ ] StockTransferOrderModel: `StockTransferOrderData` · used by stock-transfer
 - [ ] StockTransferOrderLineModel: `StockTransferOrderLineData` · used by stock-transfer, stock-transfer-order
@@ -446,6 +393,53 @@ Every resource in these groups is in.
 
 - [x] `payment-term` · `ref/paymentterm` · GET POST PUT DELETE
   - [x] Payment Term: `PaymentTermData`
+
+### `reference/purchase/**` Purchase (17 resources, 45 operations)
+
+- [x] `purchase-list` · `purchaseList` · GET
+  - [x] Purchase List: `PurchaseListData`
+- [x] `purchase-credit-note-list` · `purchaseCreditNoteList` · GET
+  - [x] Purchase Credit Note List: `PurchaseCreditNoteListData`
+- [x] `purchase` · `purchase` · GET POST PUT DELETE
+  - [x] Purchase: `PurchaseData`
+  - [x] product fields: `trait HasProductFields`
+  - [x] Purchase POST/PUT body: `PurchasePostData`
+  - [x] Purchase POST/PUT body: `PurchasePutData`
+- [x] `purchase-order` · `purchase/order` · GET POST
+  - [x] Purchase Order: `PurchaseOrderData`
+- [x] `purchase-stock-received` · `purchase/stock` · GET POST
+  - [x] Purchase Stock Received: `PurchaseStockData`
+- [x] `purchase-invoice` · `purchase/invoice` · GET POST
+  - [x] Purchase Invoice: `PurchaseInvoiceData`
+- [x] `purchase-credit-note` · `purchase/creditnote` · GET POST
+  - [x] Purchase Credit Note: `PurchaseCreditNoteData`
+- [x] `purchase-payments` · `purchase/payment` · GET POST PUT DELETE
+  - [x] Purchase Payments: `PurchasePaymentData`
+- [x] `purchase-manual-journals` · `purchase/manualJournal` · GET POST
+  - [x] Purchase Manual Journal: `PurchaseManualJournalData`
+- [x] `purchase-attachments` · `purchase/attachment` · GET POST DELETE
+  - [x] Purchase Attachments: `PurchaseAttachmentsData`
+  - [x] Purchase Attachments POST body: `PurchaseAttachmentPostData`
+- [x] `advanced-purchase` · `advanced-purchase` · GET POST PUT DELETE
+  - [x] AdvancedPurchase: `AdvancedPurchaseData`
+  - [x] product fields: `trait HasProductFields`
+  - [x] Purchase POST/PUT body: `AdvancedPurchasePostData`
+  - [x] Purchase POST/PUT body: `AdvancedPurchasePutData`
+- [x] `advanced-purchase-stock-received` · `advanced-purchase/stock` · GET POST PUT DELETE
+  - [x] AdvancedPurchaseStock: `AdvancedPurchaseStockData`
+- [x] `advanced-purchase-put-away` · `advanced-purchase/put-away` · GET POST
+  - [x] AdvancedPurchasePutAway: `AdvancedPurchasePutAwayData`
+- [x] `advanced-purchase-invoice` · `advanced-purchase/invoice` · GET POST DELETE
+  - [x] AdvancedPurchaseInvoice: `AdvancedPurchaseInvoicesData`
+  - [x] AdvancedPurchasePartialInvoiceModel: `AdvancedPurchasePartialInvoiceData`
+- [x] `advanced-purchase-credit-note` · `advanced-purchase/creditnote` · GET POST DELETE
+  - [x] AdvancedPurchaseCreditNote: `AdvancedPurchaseCreditNotesData`
+  - [x] AdvancedPurchasePartialCreditNoteModel: `AdvancedPurchasePartialCreditNoteData`
+- [x] `advanced-purchase-payments` · `advanced-purchase/payment` · GET POST PUT DELETE
+  - [x] AdvancedPurchasePayments: `AdvancedPurchasePaymentData`
+- [x] `advanced-purchase-manual-journals` · `advanced-purchase/manualJournal` · GET POST
+  - [x] Purchase Manual Journal: `AdvancedPurchaseManualJournalsData`
+  - [x] AdvancedPurchasePartialMAnJModel: `AdvancedPurchasePartialManualJournalData`
 
 ### `reference/sale/**` Sale (14 resources, 38 operations)
 
