@@ -62,13 +62,14 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
-| `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()` |
+| `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->sale()->fulfilment()` | `Sale\FulfilmentResource` | `get(string $saleId, …)`, `post(array\|SaleFulfilmentsData $body)`, `delete(string $taskId, ?bool $void = null)`; `pick()`, `pack()`, `ship()` |
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
@@ -221,20 +222,24 @@ foreach ($this->cin7->saleList()->paginate(status: SaleStatus::Ordered)->items()
 $this->cin7->sale()->delete($guid, void: true);
 ```
 
-### Sale order, invoice, credit note and payment
+### Sale quote, order, invoice, credit note, payment, manual journal and attachment
 
-`sale` also has these sub-resources, mirroring the V2 paths: `$cin7->sale()->order()`,
-`->invoice()`, `->creditNote()` and `->payment()`, and `->fulfilment()` (see
-[sale fulfilment](#sale-fulfilment)). Their `get()` takes the sale's GUID (`SaleID`), then the
-optional parameters as named arguments; they send `sale/order`, `sale/invoice`,
-`sale/creditnote` and `sale/payment`.
+`sale` also has these sub-resources, mirroring the V2 paths: `$cin7->sale()->quote()`,
+`->order()`, `->invoice()`, `->creditNote()`, `->payment()`, `->manualJournal()` and
+`->attachment()`, and `->fulfilment()` (see [sale fulfilment](#sale-fulfilment)). Their `get()`
+takes the sale's GUID (`SaleID`), then the optional parameters as named arguments; they send
+`sale/quote`, `sale/order`, `sale/invoice`, `sale/creditnote`, `sale/payment`,
+`sale/manualJournal` and `sale/attachment`.
 
 | Resource | Methods | Body and `dto()` |
 |---|---|---|
+| `sale()->quote()` (Sale Quote Model and table) | `get(string $saleId, ?bool $combineAdditionalCharges = null, ?bool $includeProductInfo = null)`, `post(array\|SaleQuotePostData $body)` | `SaleQuoteData` |
 | `sale()->order()` (Sale Order Model) | `get(string $saleId, ?bool $combineAdditionalCharges = null, ?bool $includeProductInfo = null)`, `post(array\|SaleOrderData $body)` | `SaleOrderData` |
 | `sale()->invoice()` (Sale Invoice Partial and POST Models) | `get($saleId, …)`, `post(array\|SaleInvoicePostData)`, `put(array\|SaleInvoicePutData)`, `delete(string $taskId, ?bool $void = null)` | `SaleInvoicesData`, the `{SaleID, Invoices}` envelope |
 | `sale()->creditNote()` (Sale Credit Note Partial and POST Models) | `get($saleId, …)` (also `includePaymentInfo`), `post(array\|SaleCreditNotePostData)`, `delete(string $taskId, ?bool $void = null)` | `SaleCreditNotesData`, the `{SaleID, CreditNotes}` envelope |
 | `sale()->payment()` (Sale Payment Line Partial Model) | `get(string $saleId)`, `post(array\|SalePaymentPostData)`, `put(array\|SalePaymentPutData)`, `delete(string $id)` | `GET`: `list<SalePaymentLinePartialData>`; POST, PUT: one line; DELETE answers `{Success}` |
+| `sale()->manualJournal()` (Sale Manual Journal Model and table) | `get(string $saleId)`, `post(array\|SaleManualJournalPostData)` | `SaleManualJournalData` |
+| `sale()->attachment()` (Sale Attachments) | `get(string $saleId)`, `post(array\|SaleAttachmentPostData)`, `delete(string $id)` | `SaleAttachmentsData`, the `{SaleID, Lines}` envelope |
 
 Invoice and credit note deletes go by `TaskID` and take `Void`; a payment delete goes by `ID`
 and has no `Void`. An invoice or credit note POST with the empty GUID as `TaskID`
@@ -242,7 +247,13 @@ and has no `Void`. An invoice or credit note POST with the empty GUID as `TaskID
 each with the fields the reference requires for that verb mandatory: a payment POST needs
 `TaskID`, `Type`, `Amount`, `DatePaid`, `Account` and `CurrencyRate`, a payment PUT only `ID`, an
 invoice PUT only `SaleID` and `TaskID`. A payment read with `get()` becomes a PUT body with
-`SalePaymentPutData::from($payment->toArray())`, which keeps the fields PUT takes.
+`SalePaymentPutData::from($payment->toArray())`, which keeps the fields PUT takes. A quote POST
+needs `SaleID`, `CombineAdditionalCharges`, `Memo`, a `Status` of `DRAFT` or `AUTHORISED` and
+`Lines`, but no totals; an attachment POST needs base64 `Content` or a `FileDownloadUrl`.
+
+`$cin7->saleCreditNoteList()` lists the sales with a credit note, like `saleList()`, from the same
+`{Total, Page, SaleList}` envelope; its `get()` and `paginate()` filter by `search`, the dates,
+`creditNoteStatus` and `status`, and `dto()` is a `list<SaleCreditNoteListData>`.
 
 ```php
 $this->cin7->sale()->invoice()->delete($taskId, void: true); // DELETE sale/invoice?TaskID=…&Void=true

@@ -18,6 +18,7 @@ use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\RefResource;
+use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
 use UnitEnum;
@@ -149,6 +150,14 @@ final class Cin7Connector extends Connector implements HasPagination
     public function sale(): SaleResource
     {
         return new SaleResource($this);
+    }
+
+    /**
+     * The `saleCreditNoteList` resource.
+     */
+    public function saleCreditNoteList(): SaleCreditNoteListResource
+    {
+        return new SaleCreditNoteListResource($this);
     }
 
     /**

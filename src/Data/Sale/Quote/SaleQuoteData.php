@@ -4,38 +4,36 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\Quote;
 
-use Hypervel\Data\Attributes\DataCollectionOf;
-use Hypervel\Data\Attributes\Validation\Max;
-use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Sale\SaleAdditionalChargeData;
-use Ipsocode\Cin7\Data\Sale\SalePaymentLineData;
+use Hypervel\Data\Attributes\Validation\Uuid;
+use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
+use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
- * Sale Quote Model.
+ * Sale Quote Model, a sale's `Quote`, and the Sale Quote table, the response of `sale/quote`,
+ * which adds `SaleID` and `CombineAdditionalCharges`. One name, so one class: those two are
+ * optional, as only the second table has them. The POST body is `SaleQuotePostData`.
  *
  * @see docs/data.md
  */
-final class SaleQuoteData extends Data
+final class SaleQuoteData extends AbstractSaleQuoteData implements WithResponse
 {
+    use HasResponse;
+
     /**
-     * @param null|list<SalePaymentLineData> $Prepayments
      * @param list<SaleQuoteLineData> $Lines
-     * @param null|list<SaleAdditionalChargeData> $AdditionalCharges
      */
     public function __construct(
-        #[Max(1024)]
-        public string $Memo,
-        public TaskStatus $Status,
-        #[DataCollectionOf(SaleQuoteLineData::class)]
-        public array $Lines,
+        string $Memo,
+        TaskStatus $Status,
+        array $Lines,
         public float $TotalBeforeTax,
         public float $Tax,
         public float $Total,
-        #[DataCollectionOf(SalePaymentLineData::class)]
-        public ?array $Prepayments = null,
-        #[DataCollectionOf(SaleAdditionalChargeData::class)]
-        public ?array $AdditionalCharges = null,
+        #[Uuid]
+        public ?string $SaleID = null,
+        public ?bool $CombineAdditionalCharges = null,
     ) {
+        parent::__construct($Memo, $Status, $Lines);
     }
 }

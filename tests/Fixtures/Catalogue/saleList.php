@@ -50,6 +50,6 @@ return [
         ],
     ],
     'required' => [
-        SaleListData::class => ['SaleID', 'OrderNumber', 'Status', 'OrderDate', 'Customer', 'InvoiceAmount', 'PaidAmount', 'BaseCurrency', 'CustomerCurrency', 'Updated', 'QuoteStatus', 'OrderStatus', 'CombinedPickingStatus', 'CombinedPackingStatus', 'CombinedShippingStatus', 'FulFilmentStatus', 'CombinedInvoiceStatus', 'CreditNoteStatus', 'CombinedPaymentStatus', 'Type', 'CombinedTrackingNumbers'],
+        SaleListData::class => ['SaleID', 'OrderNumber', 'Status', 'OrderDate', 'Customer', 'InvoiceAmount', 'PaidAmount', 'BaseCurrency', 'CustomerCurrency', 'Updated', 'OrderStatus', 'CombinedPickingStatus', 'CombinedPackingStatus', 'CombinedShippingStatus', 'FulFilmentStatus', 'CombinedInvoiceStatus', 'CreditNoteStatus', 'CombinedPaymentStatus', 'Type', 'QuoteStatus', 'CombinedTrackingNumbers'],
     ],
 ];

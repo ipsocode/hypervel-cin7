@@ -15,6 +15,7 @@ use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\AbstractChargeData;
 use Ipsocode\Cin7\Data\AbstractLineData;
+use Ipsocode\Cin7\Data\AbstractSaleListData;
 use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\ErrorData;
@@ -30,6 +31,7 @@ use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\AbstractAddressData;
 use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
 use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
+use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentsData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePaymentData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
@@ -41,10 +43,15 @@ use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\AbstractSaleFulfilmentShipTaskData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
 use Ipsocode\Cin7\Data\Sale\Invoice\AbstractSaleInvoiceData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\AbstractSaleManualJournalData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
 use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalLineData;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
+use Ipsocode\Cin7\Data\Sale\Quote\AbstractSaleQuoteData;
+use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
+use Ipsocode\Cin7\Data\SaleCreditNoteList\SaleCreditNoteListData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
@@ -394,6 +401,7 @@ class DataCatalogueTest extends TestCase
         $this->assertSame([
             AbstractChargeData::class,
             AbstractLineData::class,
+            AbstractSaleListData::class,
             AbstractCustomerData::class,
             AbstractMoneyTaskData::class,
             AbstractProductData::class,
@@ -405,6 +413,8 @@ class DataCatalogueTest extends TestCase
             AbstractSaleFulfilmentPickPackTaskData::class,
             AbstractSaleFulfilmentShipTaskData::class,
             AbstractSaleInvoiceData::class,
+            AbstractSaleManualJournalData::class,
+            AbstractSaleQuoteData::class,
         ], $parents);
     }
 
@@ -452,7 +462,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }

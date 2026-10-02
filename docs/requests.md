@@ -98,6 +98,10 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `DeleteSaleCreditNote` | **`taskId`**, `void` |
 | `GetSalePayment` | **`saleId`** |
 | `DeleteSalePayment` | **`id`** |
+| `GetSaleQuote` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo` |
+| `GetSaleManualJournal`, `GetSaleAttachment` | **`saleId`** |
+| `DeleteSaleAttachment` | **`id`** |
+| `GetSaleCreditNoteList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` (`SaleStatus`) |
 
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
@@ -131,13 +135,17 @@ a `MoneyTaskData`.
 The `sale` actions live under `src/Requests/Sale/`: `GetSale` and `DeleteSale` (keyed `ID`; the
 DELETE takes `Void`) and `PostSale` and `PutSale`
 (`WriteRequest`s; the PUT body carries `ID`, and `PutSale` leaves the POST-only `SaleType` out of it), all on `sale`. `sale` has no list action:
-`GetSaleList` (a `ListRequest` keyed `SaleList`) is on `saleList`, under `src/Requests/SaleList/`.
-Every `sale` request's `dto()` is a `SaleData`; `GetSaleList`'s is a `list<SaleListData>`.
+`GetSaleList` (a `ListRequest` keyed `SaleList`) is on `saleList`, under `src/Requests/SaleList/`,
+and `GetSaleCreditNoteList` (keyed `SaleList` too) on `saleCreditNoteList`, under
+`src/Requests/SaleCreditNoteList/`. Every `sale` request's `dto()` is a `SaleData`;
+`GetSaleList`'s is a `list<SaleListData>` and `GetSaleCreditNoteList`'s a
+`list<SaleCreditNoteListData>`.
 
-The `sale/…` documents live under `src/Requests/Sale/`, one folder per path, 25 classes in all:
+The `sale/…` documents live under `src/Requests/Sale/`, one folder per path, 32 classes in all:
 
 | Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
 |---|---|---|
+| `Quote/` | `GetSaleQuote` (`SaleID`), `PostSaleQuote` | `SaleQuoteData` |
 | `Order/` | `GetSaleOrder` (`SaleID`), `PostSaleOrder` | `SaleOrderData` |
 | `Fulfilment/` | `GetSaleFulfilment` (`SaleID`), `PostSaleFulfilment`, `DeleteSaleFulfilment` (`TaskID`) | `SaleFulfilmentsData` |
 | `Fulfilment/Pick/` | `GetSaleFulfilmentPick` (`TaskID`), `PostSaleFulfilmentPick`, `PutSaleFulfilmentPick` | `SaleFulfilmentPickData` |
@@ -146,6 +154,8 @@ The `sale/…` documents live under `src/Requests/Sale/`, one folder per path, 2
 | `Invoice/` | `GetSaleInvoice` (`SaleID`), `PostSaleInvoice`, `PutSaleInvoice`, `DeleteSaleInvoice` (`TaskID`) | `SaleInvoicesData` |
 | `CreditNote/` | `GetSaleCreditNote` (`SaleID`), `PostSaleCreditNote`, `DeleteSaleCreditNote` (`TaskID`) | `SaleCreditNotesData` |
 | `Payment/` | `GetSalePayment` (`SaleID`), `PostSalePayment`, `PutSalePayment`, `DeleteSalePayment` (`ID`) | `list<SalePaymentLinePartialData>` for the GET, `SalePaymentLinePartialData` for POST and PUT; none for the DELETE |
+| `ManualJournal/` | `GetSaleManualJournal` (`SaleID`), `PostSaleManualJournal` | `SaleManualJournalData` |
+| `Attachment/` | `GetSaleAttachment` (`SaleID`), `PostSaleAttachment`, `DeleteSaleAttachment` (`ID`) | `SaleAttachmentsData` |
 
 The write bodies are per verb where the reference's fields differ: `SaleInvoicePostData` and
 `SaleInvoicePutData` for `sale/invoice`, `SaleCreditNotePostData` for `sale/creditnote`,
