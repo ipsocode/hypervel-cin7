@@ -71,10 +71,12 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
-| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
+| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->ref()->supplier()` | `Ref\SupplierResource` | `deposits()`; also a pure grouping |
+| `$cin7->ref()->supplier()->deposits()` | `Ref\Supplier\DepositsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 
 `…` stands for the optional query parameters, listed per request in
 [query parameters](requests.md#query-parameters).
@@ -169,7 +171,8 @@ $saved = $this->cin7->product()->put(ProductPutData::from([
 ## Ref
 
 The reference data lives under `ref/…`, so the chain spells the path:
-`$cin7->ref()->tax()` and `$cin7->ref()->customer()->credits()`.
+`$cin7->ref()->tax()`, `$cin7->ref()->customer()->credits()` and
+`$cin7->ref()->supplier()->deposits()`.
 
 `ref/tax` lists under `TaxRuleList` (`{Total, Page, TaxRuleList}`). Its data classes are
 `TaxData` and `TaxComponentData`; `get()->dto()` is a `list<TaxData>`. `post()` takes a
@@ -181,13 +184,19 @@ are named arguments of `get()` and `paginate()`: `id`, `name`, `isActive`, `isTa
 `ref/customer/credits` lists under `CustomerCredits` (`get()->dto()` is a
 `list<CustomerCreditData>`) and its envelope has no `Total`;
 see [pagination](pagination.md#an-envelope-with-no-total). Its filters are `customerId` and
-`showUsedCredits`.
+`showUsedCredits`. `ref/supplier/deposits` is its twin for suppliers: it lists under
+`SupplierDeposits` (`get()->dto()` is a `list<SupplierDepositData>`), has no `Total` either, and
+filters by `supplierId` and `showUsedDeposits`.
 
 ```php
 $vat = $this->cin7->ref()->tax()->get(isActive: true)->json('TaxRuleList');
 
 foreach ($this->cin7->ref()->customer()->credits()->paginate(customerId: $guid)->items() as $credit) {
     // $credit is one entry of CustomerCredits
+}
+
+foreach ($this->cin7->ref()->supplier()->deposits()->paginate(supplierId: $guid)->items() as $deposit) {
+    // $deposit is one entry of SupplierDeposits
 }
 ```
 

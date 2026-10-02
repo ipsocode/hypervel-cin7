@@ -1,0 +1,29 @@
+{
+    "Page": 1,
+    "SupplierDeposits": [
+        {
+            "DepositID": "55607b9a-dc9b-4ef4-9ed3-495434e90434",
+            "SupplierID": "ce607b9a-dc9b-4ef4-9ed3-495434e90467",
+            "SupplierName": "Supplier name 1",
+            "Account": "1200",
+            "Amount": 100,
+            "RemainingAmount": 50,
+            "Currency": "USD",
+            "ConvRate": 1,
+            "Date": "2024-01-09T00:00:00",
+            "Description": ""
+        },
+        {
+            "DepositID": "67607b9a-dc9b-4ef4-9ed3-495434e90489",
+            "SupplierID": "ce607b9a-dc9b-4ef4-9ed3-495434e90467",
+            "SupplierName": "Supplier name 2",
+            "Account": "1300",
+            "Amount": 100,
+            "RemainingAmount": 0,
+            "Currency": "USD",
+            "ConvRate": 1,
+            "Date": "2024-04-09T00:00:00",
+            "Description": ""
+        }
+    ]
+}
