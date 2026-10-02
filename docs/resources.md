@@ -70,7 +70,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
-| `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxData $body)`, `put(array\|TaxData $body)` |
+| `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 
@@ -146,8 +146,9 @@ The reference data lives under `ref/…`, so the chain spells the path:
 `$cin7->ref()->tax()` and `$cin7->ref()->customer()->credits()`.
 
 `ref/tax` lists under `TaxRuleList` (`{Total, Page, TaxRuleList}`). Its data classes are
-`TaxData` and `TaxComponentData`; `get()->dto()` is a `list<TaxData>` and `post()` and
-`put()` accept a `TaxData` and return it from `dto()` (see [data](data.md)). Its V2 filters
+`TaxData` and `TaxComponentData`; `get()->dto()` is a `list<TaxData>`. `post()` takes a
+`TaxPostData` and `put()` a `TaxPutData`, which requires the rule's `ID`, and both return the saved
+`TaxData` from `dto()` (see [data](data.md)). Its V2 filters
 are named arguments of `get()` and `paginate()`: `id`, `name`, `isActive`, `isTaxForSale`,
 `isTaxForPurchase` and `account`.
 

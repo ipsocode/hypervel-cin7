@@ -10,8 +10,9 @@ use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `PUT ref/tax`, body is a Tax rule and carries `ID`; the response is the list envelope holding the saved rule.
- * Cin7 marks `TaxPercent` read-only, so it is left out of the body.
+ * `PUT ref/tax`, body is a `TaxPutData` and carries the rule's `ID`; the response is the list
+ * envelope holding the saved rule. Cin7 marks `TaxPercent` read-only, so it is left out of the
+ * body.
  *
  * @extends WriteRequest<TaxData>
  */

@@ -25,6 +25,7 @@ use Ipsocode\Cin7\Data\Product\AbstractProductData;
 use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
+use Ipsocode\Cin7\Data\Ref\Tax\AbstractTaxData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\AbstractAddressData;
 use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
@@ -396,6 +397,7 @@ class DataCatalogueTest extends TestCase
             AbstractCustomerData::class,
             AbstractMoneyTaskData::class,
             AbstractProductData::class,
+            AbstractTaxData::class,
             AbstractAddressData::class,
             AbstractSaleData::class,
             AbstractSalePaymentLineData::class,

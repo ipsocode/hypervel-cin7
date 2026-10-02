@@ -10,8 +10,8 @@ use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `POST ref/tax`, body is a Tax rule; the response is the list envelope holding the saved rule.
- * Cin7 marks `TaxPercent` read-only, so it is left out of the body.
+ * `POST ref/tax`, body is a `TaxPostData`; the response is the list envelope holding the saved
+ * rule. Cin7 marks `TaxPercent` read-only, so it is left out of the body.
  *
  * @extends WriteRequest<TaxData>
  */

@@ -7,7 +7,8 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPostData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
@@ -86,17 +87,17 @@ final class TaxResource extends BaseResource
     }
 
     /**
-     * @param array<string, mixed>|TaxData $body
+     * @param array<string, mixed>|TaxPostData $body
      */
-    public function post(array|TaxData $body): Response
+    public function post(array|TaxPostData $body): Response
     {
         return $this->connector->send(new PostTax($body));
     }
 
     /**
-     * @param array<string, mixed>|TaxData $body
+     * @param array<string, mixed>|TaxPutData $body
      */
-    public function put(array|TaxData $body): Response
+    public function put(array|TaxPutData $body): Response
     {
         return $this->connector->send(new PutTax($body));
     }
