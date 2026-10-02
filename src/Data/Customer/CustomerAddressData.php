@@ -19,11 +19,13 @@ use Ipsocode\Cin7\Enums\AddressType;
 final class CustomerAddressData extends Data
 {
     public function __construct(
+        #[Max(256)]
+        public string $Line1,
+        public string $Country,
+        public AddressType $Type,
         #[Uuid]
         public ?string $ID = null,
         public ?string $CustomerID = null,
-        #[Max(256)]
-        public ?string $Line1 = null,
         #[Max(256)]
         public ?string $Line2 = null,
         #[Max(256)]
@@ -32,8 +34,6 @@ final class CustomerAddressData extends Data
         public ?string $State = null,
         #[Max(20)]
         public ?string $Postcode = null,
-        public ?string $Country = null,
-        public ?AddressType $Type = null,
         public ?bool $DefaultForType = null,
     ) {
     }

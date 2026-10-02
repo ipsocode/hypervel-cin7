@@ -15,6 +15,7 @@ use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Data\AbstractChargeData;
 use Ipsocode\Cin7\Data\AbstractLineData;
 use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\ErrorData;
 use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
@@ -384,6 +385,7 @@ class DataCatalogueTest extends TestCase
         $this->assertSame([
             AbstractChargeData::class,
             AbstractLineData::class,
+            AbstractCustomerData::class,
             AbstractAddressData::class,
             AbstractSaleData::class,
             AbstractSalePaymentLineData::class,

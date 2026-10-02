@@ -18,11 +18,11 @@ use Hypervel\Data\Data;
 final class CustomerContactData extends Data
 {
     public function __construct(
+        #[Max(256)]
+        public string $Name,
         #[Uuid]
         public ?string $ID = null,
         public ?string $CustomerID = null,
-        #[Max(256)]
-        public ?string $Name = null,
         public ?string $JobTitle = null,
         #[Max(50)]
         public ?string $Phone = null,

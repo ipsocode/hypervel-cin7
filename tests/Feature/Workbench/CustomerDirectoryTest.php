@@ -7,8 +7,10 @@ namespace Ipsocode\Cin7\Tests\Feature\Workbench;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
+use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
+use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Services\CustomerDirectory;
 use Workbench\App\Support\Cin7Payloads;
@@ -113,14 +115,17 @@ class CustomerDirectoryTest extends TestCase
             MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('new', 'ACME')])),
         ]);
 
-        $created = $this->app->make(CustomerDirectory::class)->create(CustomerData::from(['Name' => 'ACME']));
+        $created = $this->app->make(CustomerDirectory::class)->create(CustomerPostData::from(Arr::except(Cin7Payloads::customer(), 'ID')));
 
         $this->assertSame('new', $created->ID);
 
         $pending = $mock->lastPendingRequest();
 
         $this->assertSame(Method::POST, $pending->method());
-        $this->assertSame(['Name' => 'ACME'], $pending->body());
+        $this->assertSame(
+            ['Status' => 'Active', 'Name' => 'ACME', 'Currency' => 'GBP', 'PaymentTerm' => '30 days', 'AccountReceivable' => '610', 'RevenueAccount' => '200', 'TaxRule' => 'Tax Exempt'],
+            $pending->body(),
+        );
         $this->assertSame([], $pending->queryParameters());
     }
 
@@ -132,7 +137,7 @@ class CustomerDirectoryTest extends TestCase
 
         $updated = $this->app->make(CustomerDirectory::class)->update(
             '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf2',
-            CustomerData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf9', 'Name' => 'ACME Ltd']),
+            CustomerData::from(Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf9', 'ACME Ltd')),
         );
 
         $this->assertSame('ACME Ltd', $updated->Name);
@@ -140,6 +145,9 @@ class CustomerDirectoryTest extends TestCase
         $pending = $mock->lastPendingRequest();
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf2', 'Name' => 'ACME Ltd'], $pending->body());
+        $this->assertSame(
+            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf2', 'Status' => 'Active', 'Name' => 'ACME Ltd', 'Currency' => 'GBP', 'PaymentTerm' => '30 days', 'AccountReceivable' => '610', 'RevenueAccount' => '200', 'TaxRule' => 'Tax Exempt'],
+            $pending->body(),
+        );
     }
 }

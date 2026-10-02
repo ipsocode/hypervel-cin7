@@ -8,7 +8,8 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Customer\CustomerData;
+use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+use Ipsocode\Cin7\Data\Customer\CustomerPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
@@ -89,17 +90,17 @@ final class CustomerResource extends BaseResource
     }
 
     /**
-     * @param array<string, mixed>|CustomerData $body
+     * @param array<string, mixed>|CustomerPostData $body
      */
-    public function post(array|CustomerData $body): Response
+    public function post(array|CustomerPostData $body): Response
     {
         return $this->connector->send(new PostCustomer($body));
     }
 
     /**
-     * @param array<string, mixed>|CustomerData $body
+     * @param array<string, mixed>|CustomerPutData $body
      */
-    public function put(array|CustomerData $body): Response
+    public function put(array|CustomerPutData $body): Response
     {
         return $this->connector->send(new PutCustomer($body));
     }

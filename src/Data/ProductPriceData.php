@@ -16,6 +16,7 @@ use Hypervel\Data\Data;
 final class ProductPriceData extends Data
 {
     public function __construct(
+        public float $Price,
         #[Uuid]
         public ?string $ProductID = null,
         #[Uuid]
@@ -25,7 +26,6 @@ final class ProductPriceData extends Data
         #[Max(50)]
         public ?string $ProductSKU = null,
         public ?string $ProductName = null,
-        public ?float $Price = null,
     ) {
     }
 }

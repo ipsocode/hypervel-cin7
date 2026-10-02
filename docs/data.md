@@ -41,6 +41,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
 
   | Parent | Models | Required in every model |
   |---|---|---|
+  | `AbstractCustomerData` | `CustomerData`, `CustomerPostData`, `CustomerPutData` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule` |
   | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
@@ -60,10 +61,10 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   mapper, so `toArray()` is the JSON Cin7 expects.
 - **A required field has no default.** It is not nullable, and the model cannot be built
   without it: `from()` throws a `Hypervel\Data\Exceptions\CannotCreateData`. Required fields
-  come first in the constructor. The required fields so far are those of the sale invoice,
-  credit note and payment classes (see
-  [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)) and
-  those the parents above declare; the other models keep every field optional. Where the
+  come first in the constructor. So far the customer and sale classes require the reference's
+  fields (see [customers](#customers) and
+  [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)), as do
+  the parents above; the product, tax and money models keep every field optional. Where the
   reference requires different fields per verb, the body is a class per verb.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
@@ -133,8 +134,8 @@ An array body skips all four: it is sent as given, less the `$omit` paths. That 
 send an explicit `null`, to clear a field:
 
 ```php
-$this->cin7->customer()->put(['ID' => $guid, 'TaxNumber' => null]);            // TaxNumber: null
-$this->cin7->customer()->put(CustomerData::from(['ID' => $guid, 'TaxNumber' => null])); // left out
+$this->cin7->customer()->put(['ID' => $guid, 'TaxNumber' => null]);           // TaxNumber: null
+$this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'TaxNumber' => null])); // left out
 ```
 
 Because a data object's `toArray()` carries every field, spreading it into an array body
@@ -142,14 +143,14 @@ sends a `null` for each field the caller left unset. To change a model before se
 build a data object again:
 
 ```php
-$this->cin7->customer()->put(CustomerData::from([...$customer->toArray(), 'ID' => $guid]));
+$this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID' => $guid]));
 ```
 
 ## Classes by path
 
 | Path | Request body (POST/PUT) | `dto()` |
 |---|---|---|
-| `customer` | `CustomerData` (Customer, with `Addresses`: `CustomerAddressData`, `Contacts`: `CustomerContactData` and `ProductPrices`: `ProductPriceData`, Customer specific Product Price Model) | GET: `list<CustomerData>`; POST, PUT: `CustomerData`, the saved customer (`CustomerList.0`); responses add `ChildCustomers`: `ChildCustomerData` |
+| `customer` | POST: `CustomerPostData`; PUT: `CustomerPutData`, which also requires `ID` (Customer, with `Addresses`: `CustomerAddressData`, `Contacts`: `CustomerContactData` and `ProductPrices`: `ProductPriceData`, Customer specific Product Price Model) | GET: `list<CustomerData>`; POST, PUT: `CustomerData`, the saved customer (`CustomerList.0`); responses add `ChildCustomers`: `ChildCustomerData` |
 | `product` | `ProductData` (Product, with `Suppliers`: `ProductSupplierData` and its `ProductSupplierOptions`: `ProductSupplierOptionData` and `SupplyIntervals`: `ProductSupplierOptionIntervalData`, `ReorderLevels`: `ReorderLevelData`, `BillOfMaterialsProducts`: `BillOfMaterialProductData`, `BillOfMaterialsServices`: `BillOfMaterialServiceData`, `Movements`: `ProductMovementData`, `Attachments`: `AttachmentLineData` and `CustomPrices`: `ProductPriceData`) | GET: `list<ProductData>`; POST, PUT: `ProductData`, the saved product (`Products.0`) |
 | `ref/tax` | `TaxData` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
@@ -230,16 +231,21 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   those properties admit `null`.
 - **Customer `AdditionalAttribute#`.** The table lists one row, "# - int(1-10)", with no
   length. On the wire these are ten keys, `AdditionalAttribute1` to `AdditionalAttribute10`,
-  which `CustomerData`, `ProductData` and `AdditionalAttributeData` take from the
+  which the customer classes, `ProductData` and `AdditionalAttributeData` take from the
   `HasAdditionalAttributes` trait. The Product table and the Additional Attribute Model give
   each 256 characters, and the trait applies that limit to all three.
 - **Customer `TaxNumber`.** The table types it `Int`, but every example has `""` or `null`, so
-  it is a nullable string. `Discount` and `CreditLimit` are `float`, since a decimal is
-  harmless where an integer is documented.
+  it is a nullable string. `Discount` and `CreditLimit` are `int`, as the table types them.
+- **Customer `ID` and `Status`.** The table marks `ID` required, but the POST example has none,
+  since Cin7 assigns it, so `CustomerPostData` has no `ID`. `Status` is required for POST only,
+  so `CustomerData` and `CustomerPutData` leave it optional.
 - **Customer addresses and contacts.** The examples also send `CustomerID` on each address
   and contact, and `JobTitle` on each contact; the classes model them.
 - **One class for two price models.** Product's Custom Price and Customer's Product Price are
-  the same Customer specific Product Price Model, so `ProductPriceData` serves both.
+  the same Customer specific Product Price Model, so `ProductPriceData` serves both. Its
+  footnote requires `ProductID` or `ProductSKU`, and `CustomerID` or `CustomerName`; nested in
+  a customer the customer is the parent, nested in a product the product is, and the examples
+  nested in either carry no customer, so the class requires only `Price`.
 - **Product `PriceTiers`.** The Price Tier Model's one row is named after the account's tier
   (`Tier 1`, or whatever the account renamed it), so it cannot be a set of properties. It is
   an `array<string, float>`, and there is no `PriceTierData`. `PriceTier1` to `PriceTier10`
@@ -286,6 +292,23 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   or `CreditNoteNumber` (Cin7 generates them), so the POST classes leave them out.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim.
+
+## Customers
+
+`customer` follows the Customer table, with a class per verb because `ID` and `Status` are
+required on different verbs. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `CustomerData` (response) | `src/Data/Customer/` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule`, `ID` |
+| `CustomerPostData` | `src/Data/Customer/` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule`, `Status` |
+| `CustomerPutData` | `src/Data/Customer/` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule`, `ID` |
+| `CustomerAddressData` | `src/Data/Customer/` | `Line1`, `Country`, `Type` |
+| `CustomerContactData` | `src/Data/Customer/` | `Name` |
+| `ProductPriceData` | `src/Data/` | `Price` |
+
+`LastModifiedOn` (read-only) and `ChildCustomers` (responses only) are on `CustomerData` alone.
+A response missing a required field fails `dto()` with a `CannotCreateData`.
 
 ## Sale invoices, credit notes and payments
 
