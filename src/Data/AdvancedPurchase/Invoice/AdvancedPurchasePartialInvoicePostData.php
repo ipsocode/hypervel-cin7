@@ -2,21 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Purchase\Invoice;
+namespace Ipsocode\Cin7\Data\AdvancedPurchase\Invoice;
 
 use Hypervel\Data\Attributes\Validation\In;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Ipsocode\Cin7\Data\AbstractPurchaseInvoiceData;
+use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceLineData;
 use Ipsocode\Cin7\Enums\InvoiceStatus;
 
 /**
- * The body of `purchase/invoice` POST: the Available Fields for Purchase Invoice table with the
- * `TaskID` and `CombineAdditionalCharges` it requires, a `Status` of `DRAFT` or `AUTHORISED`, and
- * the totals, which POST does not require. The response is `PurchaseInvoiceData`.
+ * The body of `advanced-purchase/invoice` POST: the Advanced purchase invoice partial model with
+ * the purchase's `PurchaseID`, which the Available Fields for Purchase Invoice table requires and
+ * the POST example sends beside the invoice's fields. It requires the `TaskID` and
+ * `CombineAdditionalCharges`, takes a `Status` of `DRAFT` or `AUTHORISED`, and leaves the totals,
+ * which POST does not require, optional. The response is `AdvancedPurchaseInvoicesData`.
  *
  * @see docs/data.md
  */
-final class PurchaseInvoicePostData extends AbstractPurchaseInvoiceData
+final class AdvancedPurchasePartialInvoicePostData extends AbstractPurchaseInvoiceData
 {
     /**
      * @param list<PurchaseInvoiceLineData> $Lines
@@ -27,6 +30,8 @@ final class PurchaseInvoicePostData extends AbstractPurchaseInvoiceData
         #[In(InvoiceStatus::Draft, InvoiceStatus::Authorised)]
         public InvoiceStatus $Status,
         array $Lines,
+        #[Uuid]
+        public string $PurchaseID,
         #[Uuid]
         public string $TaskID,
         public bool $CombineAdditionalCharges,

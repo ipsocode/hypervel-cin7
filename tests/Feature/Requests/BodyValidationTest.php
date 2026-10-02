@@ -10,6 +10,7 @@ use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
@@ -35,6 +36,7 @@ use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
@@ -216,6 +218,7 @@ class BodyValidationTest extends TestCase
             'advanced purchase manual journal POST' => [fn (): WriteRequest => new PostAdvancedPurchaseManualJournal(AdvancedPurchasePartialManualJournalPostData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/manualJournal', 'post.request')))],
             'purchase invoice POST' => [fn (): WriteRequest => new PostPurchaseInvoice(PurchaseInvoicePostData::from(['Status' => 'PAID'] + Cin7Payloads::load('purchase/invoice', 'post.request')))],
             'purchase credit note POST' => [fn (): WriteRequest => new PostPurchaseCreditNote(PurchaseCreditNotePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('purchase/creditnote', 'post.request')))],
+            'advanced purchase invoice POST' => [fn (): WriteRequest => new PostAdvancedPurchaseInvoice(AdvancedPurchasePartialInvoicePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/invoice', 'post.request')))],
         ];
     }
 

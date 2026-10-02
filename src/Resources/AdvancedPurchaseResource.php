@@ -6,12 +6,14 @@ namespace Ipsocode\Cin7\Resources;
 
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\InvoiceResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\ManualJournalResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource;
 
 /**
- * `advanced-purchase`, an advanced purchase; `stock()` and `manualJournal()` are the
- * `advanced-purchase/stock` and `advanced-purchase/manualJournal` sub-resources.
+ * `advanced-purchase`, an advanced purchase; `stock()`, `invoice()` and `manualJournal()` are the
+ * `advanced-purchase/stock`, `advanced-purchase/invoice` and `advanced-purchase/manualJournal`
+ * sub-resources.
  *
  * @extends BaseResource<Cin7Connector>
  */
@@ -31,5 +33,13 @@ final class AdvancedPurchaseResource extends BaseResource
     public function manualJournal(): ManualJournalResource
     {
         return new ManualJournalResource($this->connector);
+    }
+
+    /**
+     * The `advanced-purchase/invoice` resource, an advanced purchase's invoices.
+     */
+    public function invoice(): InvoiceResource
+    {
+        return new InvoiceResource($this->connector);
     }
 }
