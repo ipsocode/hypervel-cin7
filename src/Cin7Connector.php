@@ -21,6 +21,7 @@ use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
+use Ipsocode\Cin7\Resources\SupplierResource;
 use UnitEnum;
 
 /**
@@ -137,7 +138,8 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * The `ref` grouping: `ref()->tax()` and `ref()->customer()->credits()`.
+     * The `ref` grouping: `ref()->tax()`, `ref()->customer()->credits()` and
+     * `ref()->supplier()->deposits()`.
      */
     public function ref(): RefResource
     {
@@ -166,6 +168,14 @@ final class Cin7Connector extends Connector implements HasPagination
     public function saleList(): SaleListResource
     {
         return new SaleListResource($this);
+    }
+
+    /**
+     * The `supplier` resource.
+     */
+    public function supplier(): SupplierResource
+    {
+        return new SupplierResource($this);
     }
 
     /**

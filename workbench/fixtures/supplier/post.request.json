@@ -1,0 +1,19 @@
+{
+    "Name": "Post Supplier test",
+    "Currency": "AUD",
+    "PaymentTerm": "30 days",
+    "TaxRule": "BAS Excluded",
+    "AccountPayable": "800",
+    "Status": "Active",
+    "AdditionalAttribute1": "Black",
+    "AdditionalAttribute2": "True",
+    "AdditionalAttribute3": "Test string",
+    "AdditionalAttribute4": null,
+    "AdditionalAttribute5": null,
+    "AdditionalAttribute6": null,
+    "AdditionalAttribute7": null,
+    "AdditionalAttribute8": null,
+    "AdditionalAttribute9": null,
+    "AdditionalAttribute10": null,
+    "AttributeSet": "Test set"
+}
