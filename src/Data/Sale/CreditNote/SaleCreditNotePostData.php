@@ -4,25 +4,14 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
-use Hypervel\Data\Attributes\DataCollectionOf;
-use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Sale\SaleFulfilmentPickPackLineData;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceAdditionalChargeData;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceLineData;
-
 /**
  * Sale Credit Note POST Model, the body of `sale/creditnote` POST. The fields the reference marks
  * required have no default; an empty-GUID `TaskID` creates a new credit note.
  *
  * @see docs/data.md
  */
-final class SaleCreditNotePostData extends Data
+final class SaleCreditNotePostData extends AbstractSaleCreditNoteData
 {
-    /**
-     * @param null|list<SaleInvoiceLineData> $Lines
-     * @param null|list<SaleInvoiceAdditionalChargeData> $AdditionalCharges
-     * @param null|list<SaleFulfilmentPickPackLineData> $Restock
-     */
     public function __construct(
         public string $SaleID,
         public string $TaskID,
@@ -30,14 +19,6 @@ final class SaleCreditNotePostData extends Data
         public string $CreditNoteInvoiceNumber,
         public string $Status,
         public string $CreditNoteDate,
-        public ?string $Memo = null,
-        public ?float $CreditNoteConversionRate = null,
-        #[DataCollectionOf(SaleInvoiceLineData::class)]
-        public ?array $Lines = null,
-        #[DataCollectionOf(SaleInvoiceAdditionalChargeData::class)]
-        public ?array $AdditionalCharges = null,
-        #[DataCollectionOf(SaleFulfilmentPickPackLineData::class)]
-        public ?array $Restock = null,
     ) {
     }
 }

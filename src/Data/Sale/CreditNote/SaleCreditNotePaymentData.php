@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
-use Hypervel\Data\Data;
+use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
 
 /**
  * One entry of a credit note's `Payments` in the `sale/creditnote` GET with `IncludePaymentInfo`.
@@ -13,20 +13,13 @@ use Hypervel\Data\Data;
  *
  * @see docs/data.md
  */
-final class SaleCreditNotePaymentData extends Data
+final class SaleCreditNotePaymentData extends AbstractSalePaymentLineData
 {
     public function __construct(
-        public ?string $ID = null,
         public ?string $SaleOrderNumber = null,
         public ?string $InvoiceNumber = null,
         public ?string $CreditNoteNumber = null,
         public ?string $Type = null,
-        public ?string $Reference = null,
-        public ?float $Amount = null,
-        public ?string $DatePaid = null,
-        public ?string $Account = null,
-        public ?float $CurrencyRate = null,
-        public ?string $DateCreated = null,
         public ?string $CreditID = null,
     ) {
     }

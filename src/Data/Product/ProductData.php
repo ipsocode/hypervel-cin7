@@ -9,6 +9,7 @@ use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
+use Ipsocode\Cin7\Data\Concerns\HasAdditionalAttributes;
 use Ipsocode\Cin7\Data\ProductPriceData;
 
 /**
@@ -22,6 +23,7 @@ use Ipsocode\Cin7\Data\ProductPriceData;
  */
 final class ProductData extends Data implements WithResponse
 {
+    use HasAdditionalAttributes;
     use HasResponse;
 
     /**
@@ -74,16 +76,6 @@ final class ProductData extends Data implements WithResponse
         public ?string $ShortDescription = null,
         public ?string $Description = null,
         public ?string $InternalNote = null,
-        public ?string $AdditionalAttribute1 = null,
-        public ?string $AdditionalAttribute2 = null,
-        public ?string $AdditionalAttribute3 = null,
-        public ?string $AdditionalAttribute4 = null,
-        public ?string $AdditionalAttribute5 = null,
-        public ?string $AdditionalAttribute6 = null,
-        public ?string $AdditionalAttribute7 = null,
-        public ?string $AdditionalAttribute8 = null,
-        public ?string $AdditionalAttribute9 = null,
-        public ?string $AdditionalAttribute10 = null,
         public ?string $AttributeSet = null,
         public ?string $DiscountRule = null,
         public ?string $Tags = null,
