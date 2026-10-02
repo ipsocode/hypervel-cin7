@@ -14,9 +14,10 @@ use Ipsocode\Cin7\Requests\Ref\Account\DeleteAccount;
 use Ipsocode\Cin7\Requests\Ref\Account\GetAccount;
 use Ipsocode\Cin7\Requests\Ref\Account\PostAccount;
 use Ipsocode\Cin7\Requests\Ref\Account\PutAccount;
+use Ipsocode\Cin7\Resources\Ref\Account\BankResource;
 
 /**
- * `ref/account`, the chart of accounts.
+ * `ref/account`, the chart of accounts; `bank()` is the `ref/account/bank` sub-resource.
  *
  * @extends BaseResource<Cin7Connector>
  */
@@ -85,5 +86,13 @@ final class AccountResource extends BaseResource
     public function delete(string $code): Response
     {
         return $this->connector->send(new DeleteAccount($code));
+    }
+
+    /**
+     * The `ref/account/bank` resource, the bank accounts.
+     */
+    public function bank(): BankResource
+    {
+        return new BankResource($this->connector);
     }
 }

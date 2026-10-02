@@ -271,11 +271,6 @@ Built with the first resource that uses it.
 
 CRM, disassembly, finished goods and production, the maintainer's choice.
 
-### `reference/bank-accounts/**` Bank Accounts (1 resource, 1 operation)
-
-- [ ] `bank-accounts` · `ref/account/bank` · GET
-  - [ ] Bank Accounts: `BankAccountData`
-
 ### `reference/carrier/**` Carrier (1 resource, 4 operations)
 
 - [ ] `carrier` · `ref/carrier` · GET POST PUT DELETE
@@ -436,6 +431,11 @@ Built with the first resource that uses it.
 ## Done
 
 Every resource in these groups is in.
+
+### `reference/bank-accounts/**` Bank Accounts (1 resource, 1 operation)
+
+- [x] `bank-accounts` · `ref/account/bank` · GET
+  - [x] Bank Accounts: `BankAccountData`
 
 ### `reference/chart-of-accounts/**` Chart of Accounts (1 resource, 4 operations)
 

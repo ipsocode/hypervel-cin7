@@ -179,6 +179,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
 | `ref/account` | POST: `AccountPostData`, which also takes `SystemAccount` and `SystemAccountCode`; PUT: `AccountPutData` (Chart of Accounts) | GET: `list<AccountData>`; POST, PUT: `AccountData`, the saved account (`AccountsList.0`); DELETE: `{Success}`, left to `json()` |
+| `ref/account/bank` | none | GET: `list<BankAccountData>` (Bank Accounts) |
 | `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
 | `me/addresses` | POST: `MeAddressPostData`; PUT: `MeAddressPutData`, which also requires `AddressID` (Me Address) | GET: `list<MeAddressData>`; POST, PUT: `MeAddressData`, the saved address (`MeAddressesList.0`); DELETE: `{Success}`, left to `json()` |
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
@@ -432,6 +433,8 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Chart of Accounts `Bank` and `BankAccountNumber`.** The table says both are "Only for PUT and
   POST", but every response example carries `BankAccountNumber`, as `null`, so they are on
   `AccountData` too. A write body of a `BANK` account requires both (`#[RequiredIf]`).
+- **Bank Accounts `InitialBalance`.** The table types it `String`, but the example sends `0`;
+  `BankAccountData` accepts both (`string|float`).
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -552,6 +555,9 @@ and `SystemAccountCode` are read-only for PUT, and `DisplayName`, `OldCode`, `Ba
 `Class` is an `AccountClass`, and `SystemAccount` and `SystemAccountCode`, which name the same
 system account by name and by code, are the `SystemAccount` and `SystemAccountCode` enums. A
 response missing a required field fails `dto()` with a `CannotCreateData`.
+
+`ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
+which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
 
 ## Sale invoices, credit notes and payments
 
