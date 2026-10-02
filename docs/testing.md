@@ -32,6 +32,11 @@ assert on its `headers()`, `queryParameters()` and `body()`.
   `{Total, Page, <Thing>List}` envelope described in
   [pagination](pagination.md#the-list-envelope); a fake with any other shape
   tests code against a body Cin7 never sends.
+- **Fixtures for the typed bodies.** `Cin7Payloads::taxList()`, `taxSaved()` and
+  `customerCreditsExample()` are the V2 reference's examples, one per response shape;
+  `DataCatalogueTest` asserts each `dto()` round-trips its fixture, so every key is
+  modelled under its wire name. Testbench does not auto-discover
+  `Hypervel\Data\DataServiceProvider`, so `testbench.yaml` lists it, as it does Saloon's.
 - **Nothing to reset.** The package keeps no static state, so there is nothing
   to register for the framework's between-test reset. The mock client lives on
   the container's `SaloonManager` singleton and goes with each test's

@@ -15,6 +15,7 @@ use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\RefResource;
 use UnitEnum;
 
 /**
@@ -61,6 +62,14 @@ final class Cin7Connector extends Connector implements HasPagination
     public function product(): ProductResource
     {
         return new ProductResource($this);
+    }
+
+    /**
+     * The `ref` grouping: `ref()->tax()` and `ref()->customer()->credits()`.
+     */
+    public function ref(): RefResource
+    {
+        return new RefResource($this);
     }
 
     /**

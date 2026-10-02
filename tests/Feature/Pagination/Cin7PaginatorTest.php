@@ -10,6 +10,7 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
+use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
@@ -165,6 +166,52 @@ class Cin7PaginatorTest extends TestCase
 
         $this->assertSame(['ACME', 'Globex'], array_column($items, 'Name'));
         $mock->assertSentCount(2);
+    }
+
+    public function testAnEnvelopeWithNoTotalStopsOnAShortPage(): void
+    {
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'a'], ['ID' => 'b']], page: 1)),
+            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'c']], page: 2)),
+        ]);
+
+        $paginator = $this->connector()->ref()->customer()->credits()->paginate()->perPageLimit(2);
+
+        $items = iterator_to_array($paginator->items(), false);
+
+        $this->assertSame(['a', 'b', 'c'], array_column($items, 'ID'));
+        $mock->assertSentCount(2);
+    }
+
+    public function testAnEnvelopeWithNoTotalStopsOnAnEmptyPage(): void
+    {
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'a']], page: 1)),
+            MockResponse::make(Cin7Payloads::customerCredits([], page: 2)),
+        ]);
+
+        $paginator = $this->connector()->ref()->customer()->credits()->paginate()->perPageLimit(1);
+
+        $items = iterator_to_array($paginator->items(), false);
+
+        $this->assertSame(['a'], array_column($items, 'ID'));
+        $mock->assertSentCount(2);
+    }
+
+    public function testIteratingPagesYieldsResponsesWhoseDtoIsTyped(): void
+    {
+        Saloon::fake([
+            MockResponse::make(Cin7Payloads::customerCredits([['CreditID' => 'a'], ['CreditID' => 'b']], page: 1)),
+            MockResponse::make(Cin7Payloads::customerCredits([['CreditID' => 'c']], page: 2)),
+        ]);
+
+        $pages = [];
+
+        foreach ($this->connector()->ref()->customer()->credits()->paginate()->perPageLimit(2) as $response) {
+            $pages[] = array_map(static fn (CustomerCreditData $credit): string => $credit->CreditID, $response->dto());
+        }
+
+        $this->assertSame([['a', 'b'], ['c']], $pages);
     }
 
     public function testPooledFetchGathersEveryPageRegardlessOfCompletionOrder(): void

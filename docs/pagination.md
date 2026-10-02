@@ -111,6 +111,20 @@ Reading the limit off the sent request matters: a caller can set `limit` as a
 request parameter without ever calling `perPageLimit()`, and dividing by the
 default of 100 in that case would undercount the pages and stop early.
 
+## An envelope with no `Total`
+
+`ref/customer/credits` answers `{Page, CustomerCredits}` with no `Total`. When `Total` is
+absent, a page is the last one when it holds fewer items than the `limit` sent, so an
+empty page ends the walk too. `items()` follows this; `pool()` cannot, because it needs
+the total to plan the remaining pages, so on credits it sends page one and stops. Walk
+credits with `items()`.
+
+## Typed pages
+
+Iterating `paginate()` yields each page's `Response`, so `->dto()` returns that page's
+items as data objects. `items()`, `collect()` and `pool()` keep yielding arrays. See
+[data](data.md#typed-pages).
+
 ## Only a `ListRequest` paginates
 
 `ListRequest` is the only request base that implements `Paginatable`. Saloon's
