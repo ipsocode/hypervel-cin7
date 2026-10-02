@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\Purchase\AttachmentResource;
+use Ipsocode\Cin7\Resources\Purchase\CreditNoteResource;
 use Ipsocode\Cin7\Resources\Purchase\InvoiceResource;
 use Ipsocode\Cin7\Resources\Purchase\ManualJournalResource;
 use Ipsocode\Cin7\Resources\Purchase\OrderResource;
@@ -14,10 +15,10 @@ use Ipsocode\Cin7\Resources\Purchase\PaymentResource;
 use Ipsocode\Cin7\Resources\Purchase\StockResource;
 
 /**
- * `purchase`, a simple purchase; `order()`, `stock()`, `invoice()`, `payment()`,
+ * `purchase`, a simple purchase; `order()`, `stock()`, `invoice()`, `creditNote()`, `payment()`,
  * `manualJournal()` and `attachment()` are the `purchase/order`, `purchase/stock`,
- * `purchase/invoice`, `purchase/payment`, `purchase/manualJournal` and `purchase/attachment`
- * sub-resources.
+ * `purchase/invoice`, `purchase/creditnote`, `purchase/payment`, `purchase/manualJournal` and
+ * `purchase/attachment` sub-resources.
  *
  * @extends BaseResource<Cin7Connector>
  */
@@ -45,6 +46,14 @@ final class PurchaseResource extends BaseResource
     public function invoice(): InvoiceResource
     {
         return new InvoiceResource($this->connector);
+    }
+
+    /**
+     * The `purchase/creditnote` resource, a purchase's credit note.
+     */
+    public function creditNote(): CreditNoteResource
+    {
+        return new CreditNoteResource($this->connector);
     }
 
     /**

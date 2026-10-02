@@ -15,6 +15,7 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
+use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
 use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
 use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
@@ -38,6 +39,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
+use Ipsocode\Cin7\Requests\Purchase\CreditNote\PostPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\Purchase\Invoice\PostPurchaseInvoice;
 use Ipsocode\Cin7\Requests\Purchase\ManualJournal\PostPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\Purchase\Order\PostPurchaseOrder;
@@ -210,6 +212,7 @@ class BodyValidationTest extends TestCase
             'advanced purchase stock POST' => [fn (): WriteRequest => new PostAdvancedPurchaseStock(AdvancedPurchaseStockPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/stock', 'post.request')))],
             'advanced purchase stock PUT' => [fn (): WriteRequest => new PutAdvancedPurchaseStock(AdvancedPurchaseStockPutData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/stock', 'put.request')))],
             'purchase invoice POST' => [fn (): WriteRequest => new PostPurchaseInvoice(PurchaseInvoicePostData::from(['Status' => 'PAID'] + Cin7Payloads::load('purchase/invoice', 'post.request')))],
+            'purchase credit note POST' => [fn (): WriteRequest => new PostPurchaseCreditNote(PurchaseCreditNotePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('purchase/creditnote', 'post.request')))],
         ];
     }
 
