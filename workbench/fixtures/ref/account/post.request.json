@@ -1,0 +1,10 @@
+{
+    "Code": "001",
+    "Status": "ACTIVE",
+    "Name": "Accounts Payable test",
+    "Type": "CURRLIAB",
+    "Description": "Outstanding invoices the company has received from suppliers but has not yet paid at balance date",
+    "Class": "LIABILITY",
+    "SystemAccount": "Accounts payable",
+    "SystemAccountCode": "CREDITORS"
+}

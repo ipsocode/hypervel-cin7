@@ -11,6 +11,7 @@ use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\Ref\AccountResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
 use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
@@ -161,6 +162,7 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(CreditsResource::class, $ref->customer()->credits());
         $this->assertInstanceOf(RefSupplierResource::class, $ref->supplier());
         $this->assertInstanceOf(DepositsResource::class, $ref->supplier()->deposits());
+        $this->assertInstanceOf(AccountResource::class, $ref->account());
     }
 
     public function testRefReturnsAFreshInstanceEveryCall(): void
@@ -170,5 +172,6 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->ref(), $connector->ref());
         $this->assertNotSame($connector->ref()->customer(), $connector->ref()->customer());
         $this->assertNotSame($connector->ref()->supplier(), $connector->ref()->supplier());
+        $this->assertNotSame($connector->ref()->account(), $connector->ref()->account());
     }
 }
