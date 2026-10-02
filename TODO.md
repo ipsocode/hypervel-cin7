@@ -51,15 +51,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
 
-### `reference/product/**` Product (3 resources, 7 operations, 2 left)
-
-- [x] `product` · `product` · GET POST PUT
-  - [x] Product: `ProductData`
-- [ ] `product-attachments` · `product/attachments` · GET POST DELETE
-  - [ ] Product Attachments POST body: `ProductAttachmentPostData`
-- [ ] `product-availability` · `ref/productavailability` · GET
-  - [ ] Product Availability: `ProductAvailabilityData`
-
 ### `reference/product-family/**` Product Family (2 resources, 6 operations)
 
 - [ ] `product-family` · `productFamily` · GET POST PUT
@@ -377,6 +368,15 @@ Every resource in these groups is in.
 
 - [x] `price-tiers` · `ref/priceTier` · GET
   - [x] Price Tier: `PriceTierData`
+
+### `reference/product/**` Product (3 resources, 7 operations)
+
+- [x] `product` · `product` · GET POST PUT
+  - [x] Product: `ProductData`
+- [x] `product-attachments` · `product/attachments` · GET POST DELETE
+  - [x] Product Attachments POST body: `ProductAttachmentPostData`
+- [x] `product-availability` · `ref/productavailability` · GET
+  - [x] Product Availability: `ProductAvailabilityData`
 
 ### `reference/product-categories/**` Product Categories (1 resource, 4 operations)
 
