@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Product Supplier Model, one entry of a product's `Suppliers`.
@@ -18,24 +17,24 @@ use Hypervel\Data\Optional;
 final class ProductSupplierData extends Data
 {
     /**
-     * @param list<ProductSupplierOptionData>|Optional $ProductSupplierOptions
+     * @param null|list<ProductSupplierOptionData> $ProductSupplierOptions
      */
     public function __construct(
-        public string|Optional $SupplierID,
-        public string|Optional $SupplierName,
-        public string|Optional $ProductID,
-        public string|Optional $ProductSKU,
-        public string|Optional $ProductSupplierID,
-        public string|Optional|null $SupplierInventoryCode,
-        public string|Optional|null $SupplierProductName,
-        public float|Optional $Cost,
-        public float|Optional $FixedCost,
-        public string|Optional $Currency,
-        public bool|Optional $DropShip,
-        public string|Optional|null $SupplierProductURL,
-        public string|Optional|null $LastSupplied,
+        public ?string $SupplierID = null,
+        public ?string $SupplierName = null,
+        public ?string $ProductID = null,
+        public ?string $ProductSKU = null,
+        public ?string $ProductSupplierID = null,
+        public ?string $SupplierInventoryCode = null,
+        public ?string $SupplierProductName = null,
+        public ?float $Cost = null,
+        public ?float $FixedCost = null,
+        public ?string $Currency = null,
+        public ?bool $DropShip = null,
+        public ?string $SupplierProductURL = null,
+        public ?string $LastSupplied = null,
         #[DataCollectionOf(ProductSupplierOptionData::class)]
-        public array|Optional $ProductSupplierOptions,
+        public ?array $ProductSupplierOptions = null,
     ) {
     }
 }

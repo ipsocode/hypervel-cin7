@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 
@@ -20,12 +19,12 @@ final class SaleCreditNotesData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param list<SaleCreditNotePartialData>|Optional $CreditNotes
+     * @param null|list<SaleCreditNotePartialData> $CreditNotes
      */
     public function __construct(
-        public string|Optional $SaleID,
+        public ?string $SaleID = null,
         #[DataCollectionOf(SaleCreditNotePartialData::class)]
-        public array|Optional $CreditNotes,
+        public ?array $CreditNotes = null,
     ) {
     }
 }

@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale\Invoice;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 
@@ -20,12 +19,12 @@ final class SaleInvoicesData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param list<SaleInvoicePartialData>|Optional $Invoices
+     * @param null|list<SaleInvoicePartialData> $Invoices
      */
     public function __construct(
-        public string|Optional $SaleID,
+        public ?string $SaleID = null,
         #[DataCollectionOf(SaleInvoicePartialData::class)]
-        public array|Optional $Invoices,
+        public ?array $Invoices = null,
     ) {
     }
 }

@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Customer;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\ProductPriceData;
@@ -25,55 +24,55 @@ final class CustomerData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param list<ProductPriceData>|Optional $ProductPrices
-     * @param list<CustomerAddressData>|Optional $Addresses
-     * @param list<CustomerContactData>|Optional $Contacts
-     * @param list<ChildCustomerData>|Optional $ChildCustomers
+     * @param null|list<ProductPriceData> $ProductPrices
+     * @param null|list<CustomerAddressData> $Addresses
+     * @param null|list<CustomerContactData> $Contacts
+     * @param null|list<ChildCustomerData> $ChildCustomers
      */
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $Name,
-        public string|Optional|null $DisplayName,
-        public string|Optional $Status,
-        public string|Optional $Currency,
-        public string|Optional $PaymentTerm,
-        public string|Optional $AccountReceivable,
-        public string|Optional $RevenueAccount,
-        public string|Optional $TaxRule,
-        public string|Optional|null $PriceTier,
-        public string|Optional|null $Carrier,
-        public string|Optional|null $SalesRepresentative,
-        public string|Optional|null $Location,
-        public int|Optional $Discount,
-        public string|Optional|null $Comments,
-        public string|Optional|null $TaxNumber,
-        public int|Optional $CreditLimit,
-        public string|Optional|null $Tags,
-        public string|Optional|null $AttributeSet,
-        public string|Optional|null $AdditionalAttribute1,
-        public string|Optional|null $AdditionalAttribute2,
-        public string|Optional|null $AdditionalAttribute3,
-        public string|Optional|null $AdditionalAttribute4,
-        public string|Optional|null $AdditionalAttribute5,
-        public string|Optional|null $AdditionalAttribute6,
-        public string|Optional|null $AdditionalAttribute7,
-        public string|Optional|null $AdditionalAttribute8,
-        public string|Optional|null $AdditionalAttribute9,
-        public string|Optional|null $AdditionalAttribute10,
-        public string|Optional $LastModifiedOn,
-        public bool|Optional $IsOnCreditHold,
-        public bool|Optional $IsLegalEntity,
-        public string|Optional|null $CustomerParentID,
-        public string|Optional|null $CustomerParentName,
-        public bool|Optional $IsBillParent,
+        public ?string $ID = null,
+        public ?string $Name = null,
+        public ?string $DisplayName = null,
+        public ?string $Status = null,
+        public ?string $Currency = null,
+        public ?string $PaymentTerm = null,
+        public ?string $AccountReceivable = null,
+        public ?string $RevenueAccount = null,
+        public ?string $TaxRule = null,
+        public ?string $PriceTier = null,
+        public ?string $Carrier = null,
+        public ?string $SalesRepresentative = null,
+        public ?string $Location = null,
+        public ?int $Discount = null,
+        public ?string $Comments = null,
+        public ?string $TaxNumber = null,
+        public ?int $CreditLimit = null,
+        public ?string $Tags = null,
+        public ?string $AttributeSet = null,
+        public ?string $AdditionalAttribute1 = null,
+        public ?string $AdditionalAttribute2 = null,
+        public ?string $AdditionalAttribute3 = null,
+        public ?string $AdditionalAttribute4 = null,
+        public ?string $AdditionalAttribute5 = null,
+        public ?string $AdditionalAttribute6 = null,
+        public ?string $AdditionalAttribute7 = null,
+        public ?string $AdditionalAttribute8 = null,
+        public ?string $AdditionalAttribute9 = null,
+        public ?string $AdditionalAttribute10 = null,
+        public ?string $LastModifiedOn = null,
+        public ?bool $IsOnCreditHold = null,
+        public ?bool $IsLegalEntity = null,
+        public ?string $CustomerParentID = null,
+        public ?string $CustomerParentName = null,
+        public ?bool $IsBillParent = null,
         #[DataCollectionOf(ProductPriceData::class)]
-        public array|Optional $ProductPrices,
+        public ?array $ProductPrices = null,
         #[DataCollectionOf(CustomerAddressData::class)]
-        public array|Optional $Addresses,
+        public ?array $Addresses = null,
         #[DataCollectionOf(CustomerContactData::class)]
-        public array|Optional $Contacts,
+        public ?array $Contacts = null,
         #[DataCollectionOf(ChildCustomerData::class)]
-        public array|Optional $ChildCustomers,
+        public ?array $ChildCustomers = null,
     ) {
     }
 }

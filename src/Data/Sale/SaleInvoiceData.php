@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Sale Invoice Model.
@@ -16,31 +15,31 @@ use Hypervel\Data\Optional;
 final class SaleInvoiceData extends Data
 {
     /**
-     * @param list<SaleInvoiceLineData>|Optional $Lines
-     * @param list<SaleInvoiceAdditionalChargeData>|Optional $AdditionalCharges
-     * @param list<SalePaymentLineData>|Optional $Payments
+     * @param null|list<SaleInvoiceLineData> $Lines
+     * @param null|list<SaleInvoiceAdditionalChargeData> $AdditionalCharges
+     * @param null|list<SalePaymentLineData> $Payments
      */
     public function __construct(
-        public string|Optional $TaskID,
-        public string|Optional $InvoiceNumber,
-        public string|Optional $Memo,
-        public string|Optional $Status,
-        public string|Optional $InvoiceDate,
-        public string|Optional $InvoiceDueDate,
-        public float|Optional $CurrencyConversionRate,
-        public string|Optional $BillingAddressLine1,
-        public string|Optional $BillingAddressLine2,
-        public string|Optional $LinkedFulfillmentNumber,
+        public ?string $TaskID = null,
+        public ?string $InvoiceNumber = null,
+        public ?string $Memo = null,
+        public ?string $Status = null,
+        public ?string $InvoiceDate = null,
+        public ?string $InvoiceDueDate = null,
+        public ?float $CurrencyConversionRate = null,
+        public ?string $BillingAddressLine1 = null,
+        public ?string $BillingAddressLine2 = null,
+        public ?string $LinkedFulfillmentNumber = null,
         #[DataCollectionOf(SaleInvoiceLineData::class)]
-        public array|Optional $Lines,
+        public ?array $Lines = null,
         #[DataCollectionOf(SaleInvoiceAdditionalChargeData::class)]
-        public array|Optional $AdditionalCharges,
+        public ?array $AdditionalCharges = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
-        public array|Optional $Payments,
-        public float|Optional $TotalBeforeTax,
-        public float|Optional $Tax,
-        public float|Optional $Total,
-        public float|Optional $Paid,
+        public ?array $Payments = null,
+        public ?float $TotalBeforeTax = null,
+        public ?float $Tax = null,
+        public ?float $Total = null,
+        public ?float $Paid = null,
     ) {
     }
 }

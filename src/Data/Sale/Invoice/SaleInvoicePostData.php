@@ -6,38 +6,38 @@ namespace Ipsocode\Cin7\Data\Sale\Invoice;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Ipsocode\Cin7\Data\Sale\SaleInvoiceAdditionalChargeData;
 use Ipsocode\Cin7\Data\Sale\SaleInvoiceLineData;
 
 /**
- * Sale Invoice POST Model, the body of `sale/invoice` POST and PUT. POST needs `SaleID` and an empty-GUID `TaskID`; PUT needs `SaleID` and `TaskID`. On PUT, an empty collection deletes the existing records, so set one only to delete on purpose.
+ * Sale Invoice POST Model, the body of `sale/invoice` POST. The fields the reference marks
+ * required have no default; an empty-GUID `TaskID` creates a new invoice. The PUT body is
+ * `SaleInvoicePutData`.
  *
  * @see docs/data.md
  */
 final class SaleInvoicePostData extends Data
 {
     /**
-     * @param list<SaleInvoiceLineData>|Optional $Lines
-     * @param list<SaleInvoiceAdditionalChargeData>|Optional $AdditionalCharges
+     * @param null|list<SaleInvoiceLineData> $Lines
+     * @param null|list<SaleInvoiceAdditionalChargeData> $AdditionalCharges
      */
     public function __construct(
-        public string|Optional $SaleID,
-        public string|Optional $TaskID,
-        public bool|Optional $CombineAdditionalCharges,
-        public string|Optional $InvoiceNumber,
-        public string|Optional $Memo,
-        public string|Optional $Status,
-        public string|Optional $InvoiceDate,
-        public string|Optional $InvoiceDueDate,
-        public float|Optional $CurrencyConversionRate,
-        public string|Optional $BillingAddressLine1,
-        public string|Optional $BillingAddressLine2,
-        public string|Optional $LinkedFulfillmentNumber,
+        public string $SaleID,
+        public string $TaskID,
+        public bool $CombineAdditionalCharges,
+        public string $Status,
+        public string $InvoiceDate,
+        public string $InvoiceDueDate,
+        public ?string $Memo = null,
+        public ?float $CurrencyConversionRate = null,
+        public ?string $BillingAddressLine1 = null,
+        public ?string $BillingAddressLine2 = null,
+        public ?string $LinkedFulfillmentNumber = null,
         #[DataCollectionOf(SaleInvoiceLineData::class)]
-        public array|Optional $Lines,
+        public ?array $Lines = null,
         #[DataCollectionOf(SaleInvoiceAdditionalChargeData::class)]
-        public array|Optional $AdditionalCharges,
+        public ?array $AdditionalCharges = null,
     ) {
     }
 }

@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Product Supplier Options Model, one entry of a product supplier's `ProductSupplierOptions`.
@@ -16,18 +15,18 @@ use Hypervel\Data\Optional;
 final class ProductSupplierOptionData extends Data
 {
     /**
-     * @param list<ProductSupplierOptionIntervalData>|Optional $SupplyIntervals
+     * @param null|list<ProductSupplierOptionIntervalData> $SupplyIntervals
      */
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $LocationID,
-        public string|Optional $LocationName,
-        public float|Optional $ReorderQuantity,
-        public int|Optional $Lead,
-        public int|Optional $Safety,
-        public float|Optional $MinimumToReorder,
+        public ?string $ID = null,
+        public ?string $LocationID = null,
+        public ?string $LocationName = null,
+        public ?float $ReorderQuantity = null,
+        public ?int $Lead = null,
+        public ?int $Safety = null,
+        public ?float $MinimumToReorder = null,
         #[DataCollectionOf(ProductSupplierOptionIntervalData::class)]
-        public array|Optional $SupplyIntervals,
+        public ?array $SupplyIntervals = null,
     ) {
     }
 }

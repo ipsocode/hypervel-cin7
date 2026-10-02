@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Sale Fulfilment Pick Pack Model, a fulfilment's `Pick` or `Pack`.
@@ -16,12 +15,12 @@ use Hypervel\Data\Optional;
 final class SaleFulfilmentPickPackData extends Data
 {
     /**
-     * @param list<SaleFulfilmentPickPackLineData>|Optional $Lines
+     * @param null|list<SaleFulfilmentPickPackLineData> $Lines
      */
     public function __construct(
-        public string|Optional $Status,
+        public ?string $Status = null,
         #[DataCollectionOf(SaleFulfilmentPickPackLineData::class)]
-        public array|Optional $Lines,
+        public ?array $Lines = null,
     ) {
     }
 }

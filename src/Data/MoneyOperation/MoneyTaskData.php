@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\MoneyOperation;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
@@ -25,29 +24,29 @@ final class MoneyTaskData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param list<MoneyTaskLineData>|Optional $Lines
-     * @param list<TransactionStockLineData>|Optional $Transactions
-     * @param list<AttachmentLineData>|Optional $Attachments
+     * @param null|list<MoneyTaskLineData> $Lines
+     * @param null|list<TransactionStockLineData> $Transactions
+     * @param null|list<AttachmentLineData> $Attachments
      */
     public function __construct(
-        public string|Optional $TaskID,
-        public string|Optional $TaskType,
-        public string|Optional $Status,
-        public string|Optional $BankAccount,
-        public float|Optional $CurrencyConversionRate,
-        public string|Optional $SupplierCustomer,
-        public string|Optional|null $SupplierID,
-        public string|Optional|null $CustomerID,
-        public string|Optional $Reference,
-        public string|Optional $Date,
-        public bool|Optional $TaxInclusive,
-        public string|Optional|null $Note,
+        public ?string $TaskID = null,
+        public ?string $TaskType = null,
+        public ?string $Status = null,
+        public ?string $BankAccount = null,
+        public ?float $CurrencyConversionRate = null,
+        public ?string $SupplierCustomer = null,
+        public ?string $SupplierID = null,
+        public ?string $CustomerID = null,
+        public ?string $Reference = null,
+        public ?string $Date = null,
+        public ?bool $TaxInclusive = null,
+        public ?string $Note = null,
         #[DataCollectionOf(MoneyTaskLineData::class)]
-        public array|Optional $Lines,
+        public ?array $Lines = null,
         #[DataCollectionOf(TransactionStockLineData::class)]
-        public array|Optional $Transactions,
+        public ?array $Transactions = null,
         #[DataCollectionOf(AttachmentLineData::class)]
-        public array|Optional $Attachments,
+        public ?array $Attachments = null,
     ) {
     }
 }

@@ -7,7 +7,8 @@ namespace Ipsocode\Cin7\Resources\Sale;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPutData;
 use Ipsocode\Cin7\Requests\Sale\Payment\DeleteSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
@@ -19,25 +20,25 @@ use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
 final class PaymentResource extends BaseResource
 {
     /**
-     * @param array<string, mixed> $parameters
+     * A sale's payments; the endpoint takes no parameter but `SaleID`.
      */
-    public function get(string $saleId, array $parameters = []): Response
+    public function get(string $saleId): Response
     {
-        return $this->connector->send(new GetSalePayment($saleId, $parameters));
+        return $this->connector->send(new GetSalePayment($saleId));
     }
 
     /**
-     * @param array<string, mixed>|SalePaymentLinePartialData $body
+     * @param array<string, mixed>|SalePaymentPostData $body
      */
-    public function post(array|SalePaymentLinePartialData $body): Response
+    public function post(array|SalePaymentPostData $body): Response
     {
         return $this->connector->send(new PostSalePayment($body));
     }
 
     /**
-     * @param array<string, mixed>|SalePaymentLinePartialData $body
+     * @param array<string, mixed>|SalePaymentPutData $body
      */
-    public function put(array|SalePaymentLinePartialData $body): Response
+    public function put(array|SalePaymentPutData $body): Response
     {
         return $this->connector->send(new PutSalePayment($body));
     }

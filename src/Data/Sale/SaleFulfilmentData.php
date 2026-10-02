@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Sale Fulfilment Model.
@@ -15,13 +14,13 @@ use Hypervel\Data\Optional;
 final class SaleFulfilmentData extends Data
 {
     public function __construct(
-        public string|Optional $TaskID,
-        public int|Optional $FulfillmentNumber,
-        public string|Optional $LinkedInvoiceNumber,
-        public string|Optional $FulFilmentStatus,
-        public SaleFulfilmentPickPackData|Optional $Pick,
-        public SaleFulfilmentPickPackData|Optional $Pack,
-        public SaleFulfilmentShipData|Optional $Ship,
+        public ?string $TaskID = null,
+        public ?int $FulfillmentNumber = null,
+        public ?string $LinkedInvoiceNumber = null,
+        public ?string $FulFilmentStatus = null,
+        public ?SaleFulfilmentPickPackData $Pick = null,
+        public ?SaleFulfilmentPickPackData $Pack = null,
+        public ?SaleFulfilmentShipData $Ship = null,
     ) {
     }
 }

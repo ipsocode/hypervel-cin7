@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Product Movement Model, one entry of a product's `Movements` (responses only).
@@ -17,17 +16,17 @@ use Hypervel\Data\Optional;
 final class ProductMovementData extends Data
 {
     public function __construct(
-        public string|Optional $TaskID,
-        public string|Optional $Type,
-        public string|Optional $Date,
-        public string|Optional $Number,
-        public int|Optional $Status,
-        public float|Optional $Quantity,
-        public float|Optional $Amount,
-        public string|Optional $Location,
-        public string|Optional|null $BatchSN,
-        public string|Optional|null $ExpiryDate,
-        public string|Optional|null $FromTo,
+        public ?string $TaskID = null,
+        public ?string $Type = null,
+        public ?string $Date = null,
+        public ?string $Number = null,
+        public ?int $Status = null,
+        public ?float $Quantity = null,
+        public ?float $Amount = null,
+        public ?string $Location = null,
+        public ?string $BatchSN = null,
+        public ?string $ExpiryDate = null,
+        public ?string $FromTo = null,
     ) {
     }
 }

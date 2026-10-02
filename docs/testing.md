@@ -30,8 +30,10 @@ assert on its `headers()`, `queryParameters()` and `body()`.
 
 - **Shape the fakes like Cin7.** A list comes back in the
   `{Total, Page, <Thing>List}` envelope described in
-  [pagination](pagination.md#the-list-envelope); a fake with any other shape
-  tests code against a body Cin7 never sends.
+  [pagination](pagination.md#the-list-envelope), and a failure as the Error
+  Model, `{ErrorCode, Exception}`; a fake with any other shape tests code
+  against a body Cin7 never sends. A faked Error Model throws even with a 200,
+  as the real one does (see [errors](requests.md#errors)).
 - **Fixtures for the typed bodies.** `Cin7Payloads::taxList()`, `taxSaved()` and
   `customerCreditsExample()` are the V2 reference's examples, one per response shape;
   `DataCatalogueTest` asserts each `dto()` round-trips its fixture, so every key is
@@ -42,13 +44,17 @@ assert on its `headers()`, `queryParameters()` and `body()`.
   the container's `SaloonManager` singleton and goes with each test's
   application.
 - **No limiter store needed.** A faked send never touches the rate limiter:
-  Saloon enforces limits only when no fake matched, and records the 503
+  Saloon enforces limits only when no fake matched, and records the throttling
   cooldown only for responses that came off the wire.
-- **Faking a 503.** The request retries it, 4 attempts 5 seconds apart by
-  default (see [retry policy](requests.md#retry-policy)). Call
+- **Faking a 429 or 503.** The request retries it, 4 attempts 5 seconds apart
+  by default (see [retry policy](requests.md#retry-policy)). Call
   `Hypervel\Support\Sleep::fake()` so the waits take no time, and fake one
   response per attempt; or set `cin7.retry.times` to `1` before constructing
   the request, since the retry policy is read in the constructor.
+- **Data object bodies are validated.** A body built from a data class must
+  pass its rules, so a fake GUID such as `'guid-1'` in a `#[Uuid]` field throws
+  a `ValidationException` before the mock sees the request. Use a real-shaped
+  GUID, or an array body, which is sent as given.
 
 A fake can also be keyed by request class, with a closure that builds the
 response from the `PendingRequest`:
@@ -134,11 +140,11 @@ the `HasRateLimits` accessors directly, with a `PendingRequest` from
 
 | Accessor | Pins |
 |---|---|
-| `resolveRateLimitPolicies()` | one policy, keyed `cin7:api:<accountId>`, the same for every endpoint; none when max or period is not positive |
+| `resolveRateLimitPolicies()` | one policy, keyed `cin7:api:<accountId>:<digest of the application key>`, the same for every endpoint; none when max or period is not positive |
 | `resolveRateLimitStoreName()` | `null` by default, the configured store otherwise |
 | `shouldWaitForRateLimits()` | wait for capacity instead of throwing |
-| `resolveRateLimitCooldownKeyFor()` | the cooldown key carries the account |
-| `resolveRateLimitCooldownFor()` | 5 seconds for a 503, `null` for anything else, 200 included |
+| `resolveRateLimitCooldownKeyFor()` | the cooldown is keyed like the window |
+| `resolveRateLimitCooldownFor()` | a 429's `Retry-After`, or 5 seconds without one; 5 seconds for a 503; `null` for anything else, 200 included |
 
 It also consumes the policy to exhaustion on the suite's default limiter store
 (Testbench's `worker-array`) to show the framework limiter really denies on it.
@@ -173,7 +179,7 @@ the seam a consuming application has:
 | Piece | Purpose |
 |---|---|
 | [`CustomerDirectory`](../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's singleton resolves as a dependency of an application's own service, not only through `$app->make()`. |
-| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Response fixtures keyed like real Cin7 bodies: `customerList()` (the `Total`/`Page`/`CustomerList` envelope), `customer()`, `sale()` (the V2 reference's Sale example, keyed by `ID`), `saleList()` (its Sale List example), `throttled()` (the 503 body, which comes with no `Retry-After`) and `error()`. A test asserting on `CustomerList` asserts on a key Cin7 actually sends. |
+| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies, taken from the V2 reference's examples: `customerList()` (the `Total`/`Page`/`CustomerList` envelope), `customer()`, `sale()` (the Sale example, keyed by `ID`), `saleList()`, the `sale/invoice`, `sale/creditnote` and `sale/payment` examples (`saleInvoices()`, `saleInvoicePost()`, `saleCreditNotes()`, `salePayments()`, `salePaymentPost()` and the rest), and Error Model bodies: `error()`, `throttled()` (the 503, which comes with no `Retry-After`) and `limitReached()` (the 429). A test asserting on `CustomerList` asserts on a key Cin7 actually sends. |
 | [`cin7:customers`](../workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for calling the live API by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
 
 `cin7:customers` lists customers through `CustomerDirectory::all()`, which

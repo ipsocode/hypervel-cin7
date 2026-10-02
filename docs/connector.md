@@ -3,7 +3,8 @@
 [`Cin7Connector`](../src/Cin7Connector.php) is the one object every Cin7 call
 goes through. It names the base URL and the auth headers, sends over the
 framework's shared HTTP connection, throttles every call against one window per
-Cin7 account, and puts the account into a short cooldown when Cin7 answers 503.
+Cin7 API application, puts the application into a short cooldown when Cin7
+answers 429 or 503, and fails any response whose body is Cin7's Error Model.
 This page covers how it is shared, how it reaches Cin7, and how its rate
 limiting behaves; the requests it sends are in [requests](requests.md) and its
 configuration keys in [configuration](configuration.md).
@@ -11,10 +12,11 @@ configuration keys in [configuration](configuration.md).
 ## One connector per worker
 
 `Cin7ServiceProvider` binds the connector as a container singleton. It holds
-only readonly scalars (the account ID, the application key and the three rate
-limit settings) and nothing is mutated per send, so one instance serves every
-coroutine in a worker for the worker's lifetime. Inject it rather than building
-one per call:
+only readonly values, all set in its constructor: the account ID, the
+application key and the three rate limit settings, and the headers, rate limit
+key and rate limit policy it builds from them once rather than on every send.
+Nothing is mutated per send, so one instance serves every coroutine in a worker
+for the worker's lifetime. Inject it rather than building one per call:
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
@@ -26,7 +28,8 @@ The credentials are constructor-injected. The provider reads them from
 `config('cin7.*')` when the singleton is first resolved and passes them in;
 nothing calls `env()` or `getenv()` at request time. A second Cin7 account,
 such as a sandbox next to production, is a second instance built with its own
-credentials, and it throttles on its own key:
+credentials, and it throttles on its own key, as does a second API application
+of the same account:
 
 ```php
 $sandbox = new Cin7Connector($sandboxAccountId, $sandboxApplicationKey);
@@ -78,13 +81,17 @@ application's Saloon configuration and apply to every Saloon connector in it.
 ## Rate limiting
 
 The connector uses Saloon's `HasRateLimits` with a single policy: `max` calls
-per `period` seconds (60 per 60 by default), keyed `cin7:api:<accountId>`.
+per `period` seconds (60 per 60 by default), keyed
+`cin7:api:<accountId>:<digest>`, where the digest is the first 16 hex digits of
+the SHA-256 of the application key. The key never carries the application key
+itself, and the limiter store only ever sees a hash of the whole key.
 
-- **Account-wide, not per endpoint.** Every endpoint and every verb draws on
-  the same window, because Cin7 meters the account, not the endpoint.
-- **Per account.** Two connectors for different Cin7 accounts (tenants, or a
-  sandbox alongside production) never throttle each other, even on a shared
-  store.
+- **Per application, not per endpoint.** Every endpoint and every verb draws on
+  the same window. Cin7's reference applies its limit "on per API Application
+  basis", and one account can have several applications.
+- **Per account and application.** Two connectors for different Cin7 accounts
+  (tenants, or a sandbox alongside production), or for two applications of one
+  account, never throttle each other, even on a shared store.
 - **Off switch.** A `max` or `period` of zero or less removes the window. The
   connector still reads the 503 cooldown from the store on every send, and
   still records one after a 503.
@@ -105,8 +112,8 @@ The window lives in a framework rate limiter store, chosen in this order:
 3. `rate-limiter.default`, which an application ships as `database` unless
    `RATE_LIMITER_STORE` says otherwise
 
-The limit is only account-wide if every worker and server that calls Cin7
-shares the store:
+The limit only holds across the application if every worker and server that
+calls Cin7 with it shares the store:
 
 | Store | Shared by |
 |---|---|
@@ -131,25 +138,42 @@ the store when it consumes, not in `resolveRateLimits()`. It happens even with
 `rate_limit.max` at `0`, because the 503 cooldown is still read from the store;
 point `rate_limit.store` at a store that is reachable.
 
-## The 503 cooldown
+## The throttling cooldown
 
-Cin7 signals throttling with a 503 and no `Retry-After` header. The connector
-maps that to a 5-second cooldown: `resolveRateLimitCooldown()` returns `5` for
-a 503 and `null` for every other status. The cooldown is recorded in the same
-limiter store under `Ipsocode\Cin7\Cin7Connector:<accountId>`, and every send
-for that account checks it before taking from the window, so the coroutines
-sending for a throttled account wait the throttle out instead of adding to it.
-The key includes the account for the same reason the limit's does: a 503 on one
-account never cools down another.
+Cin7's reference documents `429 Too Many Requests` for its limit of 60 calls a
+minute, and Cin7 also answers 503 when it throttles. The connector maps both to
+a cooldown:
 
-The cooldown sits alongside the request's own 503 retry (see
+| Response | Cooldown |
+|---|---|
+| 429 with `Retry-After` | the seconds `Retry-After` names (seconds or an HTTP date) |
+| 429 without `Retry-After` | `Cin7Connector::THROTTLE_COOLDOWN`, 5 seconds |
+| 503 | 5 seconds; Cin7 sends no `Retry-After` with it |
+| anything else | none |
+
+The cooldown is recorded in the same limiter store under the same logical key as
+the window (the store keeps the two apart), and every send for that application
+checks it before taking from the window, so the coroutines sending for a
+throttled application wait the throttle out instead of adding to it. A
+throttling response on one application never cools down another.
+
+The cooldown sits alongside the request's own retry on 429 and 503 (see
 [retry policy](requests.md#retry-policy)): a retried attempt passes the same
-cooldown and limit check as a fresh send.
+cooldown and limit check as a fresh send, so a 429's `Retry-After` is honoured
+even when it is longer than the retry delay.
 
 Saloon calls `resolveRateLimitCooldown()` for every response that came off the
 wire, 200s included, and never for a mocked or cached one. That is why it must
-return `null` for anything but a 503, and why the suite tests it by calling it
-directly.
+return `null` for anything but a 429 or 503, and why the suite tests it by
+calling it directly.
+
+## Error Model responses
+
+Cin7 reports a failure with its Error Model, `{"ErrorCode": …, "Exception": "…"}`,
+sometimes inside a list, and sometimes with a 200. The connector's
+`hasRequestFailed()` treats any body carrying `ErrorCode` (at the top level, or
+in the first item of a list) as failed, so the request throws whatever the
+status; see [errors](requests.md#errors).
 
 ## Editing the rate-limit hooks
 
@@ -159,20 +183,21 @@ The connector is `final`, so this concerns changes to the package itself.
 
 This is a method of the `HasRateLimits` trait, not of `Connector`. The
 connector's own method shadows the trait's, so
-`parent::resolveRateLimitCooldown()` is a fatal error. To reuse the trait's
-parser (429 with `Retry-After`) alongside Cin7's 503, alias it:
+`parent::resolveRateLimitCooldown()` is a fatal error. The connector reuses the
+trait's `Retry-After` parser for a 429 through an alias:
 
 ```php
 use HasRateLimits {
-    resolveRateLimitCooldown as baseResolveRateLimitCooldown;
+    resolveRateLimitCooldown as retryAfterCooldown;
 }
 ```
 
 ### `resolveRateLimitCooldownKey()`
 
 The trait's default keys the cooldown on `static::class` alone, so without this
-override a 503 on one Cin7 account would put every account sharing the store
-into cooldown. Keep the account ID in the key.
+override a throttling response on one Cin7 application would put every
+application sharing the store into cooldown. Keep the account and the
+application key's digest in the key.
 
 ### `resolveRateLimitStore()`
 

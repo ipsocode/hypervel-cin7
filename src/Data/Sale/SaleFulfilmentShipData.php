@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Sale Fulfilment Ship Model.
@@ -16,15 +15,15 @@ use Hypervel\Data\Optional;
 final class SaleFulfilmentShipData extends Data
 {
     /**
-     * @param list<SaleFulfilmentShipLineData>|Optional $Lines
+     * @param null|list<SaleFulfilmentShipLineData> $Lines
      */
     public function __construct(
-        public string|Optional $Status,
-        public string|Optional|null $RequireBy,
-        public SaleShippingAddressData|Optional $ShippingAddress,
-        public string|Optional $ShippingNotes,
+        public ?string $Status = null,
+        public ?string $RequireBy = null,
+        public ?SaleShippingAddressData $ShippingAddress = null,
+        public ?string $ShippingNotes = null,
         #[DataCollectionOf(SaleFulfilmentShipLineData::class)]
-        public array|Optional $Lines,
+        public ?array $Lines = null,
     ) {
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\MoneyOperation;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Money Task Line Model.
@@ -18,15 +17,15 @@ use Hypervel\Data\Optional;
 final class MoneyTaskLineData extends Data
 {
     public function __construct(
-        public string|Optional $Name,
-        public string|Optional $Comment,
-        public float|Optional $Quantity,
-        public float|Optional $Price,
-        public float|Optional $Discount,
-        public float|Optional $Tax,
-        public string|Optional $TaxRuleName,
-        public string|Optional $AccountCode,
-        public float|Optional $Total,
+        public ?string $Name = null,
+        public ?string $Comment = null,
+        public ?float $Quantity = null,
+        public ?float $Price = null,
+        public ?float $Discount = null,
+        public ?float $Tax = null,
+        public ?string $TaxRuleName = null,
+        public ?string $AccountCode = null,
+        public ?float $Total = null,
     ) {
     }
 }

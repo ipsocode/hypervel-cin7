@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
@@ -21,69 +20,69 @@ final class SaleData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param list<SaleFulfilmentData>|Optional $Fulfilments
-     * @param list<SaleInvoiceData>|Optional $Invoices
-     * @param list<SaleCreditNoteData>|Optional $CreditNotes
-     * @param list<AttachmentLineData>|Optional $Attachments
-     * @param list<InventoryMovementLineData>|Optional $InventoryMovements
-     * @param list<SaleTransactionLineData>|Optional $Transactions
+     * @param null|list<SaleFulfilmentData> $Fulfilments
+     * @param null|list<SaleInvoiceData> $Invoices
+     * @param null|list<SaleCreditNoteData> $CreditNotes
+     * @param null|list<AttachmentLineData> $Attachments
+     * @param null|list<InventoryMovementLineData> $InventoryMovements
+     * @param null|list<SaleTransactionLineData> $Transactions
      */
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $Customer,
-        public string|Optional $CustomerID,
-        public string|Optional $Contact,
-        public string|Optional $Phone,
-        public string|Optional $Email,
-        public string|Optional $DefaultAccount,
-        public bool|Optional $SkipQuote,
-        public AddressData|Optional $BillingAddress,
-        public SaleShippingAddressData|Optional $ShippingAddress,
-        public string|Optional $ShippingNotes,
-        public string|Optional $BaseCurrency,
-        public string|Optional $CustomerCurrency,
-        public string|Optional $TaxRule,
-        public string|Optional $TaxCalculation,
-        public string|Optional $Terms,
-        public string|Optional $PriceTier,
-        public string|Optional $ShipBy,
-        public string|Optional $Location,
-        public string|Optional $SaleOrderDate,
-        public string|Optional $LastModifiedOn,
-        public string|Optional $Note,
-        public string|Optional $CustomerReference,
-        public float|Optional $COGSAmount,
-        public string|Optional $Status,
-        public string|Optional $CombinedPickingStatus,
-        public string|Optional $CombinedPackingStatus,
-        public string|Optional $CombinedShippingStatus,
-        public string|Optional $FulFilmentStatus,
-        public string|Optional $CombinedInvoiceStatus,
-        public string|Optional $CombinedPaymentStatus,
-        public string|Optional $CombinedTrackingNumbers,
-        public string|Optional $Carrier,
-        public float|Optional $CurrencyRate,
-        public string|Optional $SalesRepresentative,
-        public string|Optional $Type,
-        public string|Optional|null $SourceChannel,
-        public string|Optional|null $ExternalID,
-        public bool|Optional $ServiceOnly,
-        public SaleQuoteData|Optional $Quote,
-        public SaleOrderData|Optional $Order,
+        public ?string $ID = null,
+        public ?string $Customer = null,
+        public ?string $CustomerID = null,
+        public ?string $Contact = null,
+        public ?string $Phone = null,
+        public ?string $Email = null,
+        public ?string $DefaultAccount = null,
+        public ?bool $SkipQuote = null,
+        public ?AddressData $BillingAddress = null,
+        public ?SaleShippingAddressData $ShippingAddress = null,
+        public ?string $ShippingNotes = null,
+        public ?string $BaseCurrency = null,
+        public ?string $CustomerCurrency = null,
+        public ?string $TaxRule = null,
+        public ?string $TaxCalculation = null,
+        public ?string $Terms = null,
+        public ?string $PriceTier = null,
+        public ?string $ShipBy = null,
+        public ?string $Location = null,
+        public ?string $SaleOrderDate = null,
+        public ?string $LastModifiedOn = null,
+        public ?string $Note = null,
+        public ?string $CustomerReference = null,
+        public ?float $COGSAmount = null,
+        public ?string $Status = null,
+        public ?string $CombinedPickingStatus = null,
+        public ?string $CombinedPackingStatus = null,
+        public ?string $CombinedShippingStatus = null,
+        public ?string $FulFilmentStatus = null,
+        public ?string $CombinedInvoiceStatus = null,
+        public ?string $CombinedPaymentStatus = null,
+        public ?string $CombinedTrackingNumbers = null,
+        public ?string $Carrier = null,
+        public ?float $CurrencyRate = null,
+        public ?string $SalesRepresentative = null,
+        public ?string $Type = null,
+        public ?string $SourceChannel = null,
+        public ?string $ExternalID = null,
+        public ?bool $ServiceOnly = null,
+        public ?SaleQuoteData $Quote = null,
+        public ?SaleOrderData $Order = null,
         #[DataCollectionOf(SaleFulfilmentData::class)]
-        public array|Optional $Fulfilments,
+        public ?array $Fulfilments = null,
         #[DataCollectionOf(SaleInvoiceData::class)]
-        public array|Optional $Invoices,
+        public ?array $Invoices = null,
         #[DataCollectionOf(SaleCreditNoteData::class)]
-        public array|Optional $CreditNotes,
-        public SaleManualJournalData|Optional $ManualJournals,
-        public AdditionalAttributeData|Optional $AdditionalAttributes,
+        public ?array $CreditNotes = null,
+        public ?SaleManualJournalData $ManualJournals = null,
+        public ?AdditionalAttributeData $AdditionalAttributes = null,
         #[DataCollectionOf(AttachmentLineData::class)]
-        public array|Optional $Attachments,
+        public ?array $Attachments = null,
         #[DataCollectionOf(InventoryMovementLineData::class)]
-        public array|Optional $InventoryMovements,
+        public ?array $InventoryMovements = null,
         #[DataCollectionOf(SaleTransactionLineData::class)]
-        public array|Optional $Transactions,
+        public ?array $Transactions = null,
     ) {
     }
 }

@@ -68,6 +68,23 @@ class RetryTest extends TestCase
         Sleep::assertSleptTimes(1);
     }
 
+    /**
+     * 429 is the status Cin7 documents for its 60 calls per minute limit.
+     */
+    public function testA429IsRetriedLikeA503(): void
+    {
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::limitReached(), 429),
+            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer()])),
+        ]);
+
+        $response = $this->connector()->send(new GetCustomer);
+
+        $this->assertSame(200, $response->status());
+        $mock->assertSentCount(2);
+        Sleep::assertSequence([Sleep::usleep(5_000_000)]);
+    }
+
     public function testAClientErrorIsNotRetried(): void
     {
         $mock = Saloon::fake([

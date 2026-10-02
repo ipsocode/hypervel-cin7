@@ -16,7 +16,9 @@ use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
-use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPutData;
 use Ipsocode\Cin7\Data\Sale\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\SalePostPutData;
 use Ipsocode\Cin7\Requests\Cin7Request;
@@ -132,26 +134,26 @@ class RequestCatalogueTest extends TestCase
             ],
             PutCustomer::class => [
                 PutCustomer::class,
-                [['ID' => 'guid-1', 'Name' => 'ACME']],
+                [['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'ACME']],
                 Method::PUT,
                 '/ExternalApi/v2/customer',
                 [],
-                ['ID' => 'guid-1', 'Name' => 'ACME'],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'ACME'],
             ],
             DeleteMoneyOperation::class => [
                 DeleteMoneyOperation::class,
-                ['task-1', ['Void' => true]],
+                ['b039f19e-66f8-4309-a4b1-abf928303c88', ['Void' => true]],
                 Method::DELETE,
                 '/ExternalApi/v2/moneyOperation',
-                ['ID' => 'task-1', 'Void' => 'true'],
+                ['ID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'true'],
                 null,
             ],
             GetMoneyOperation::class => [
                 GetMoneyOperation::class,
-                ['task-1'],
+                ['b039f19e-66f8-4309-a4b1-abf928303c88'],
                 Method::GET,
                 '/ExternalApi/v2/moneyOperation',
-                ['TaskID' => 'task-1'],
+                ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
                 null,
             ],
             PostMoneyOperation::class => [
@@ -164,11 +166,11 @@ class RequestCatalogueTest extends TestCase
             ],
             PutMoneyOperation::class => [
                 PutMoneyOperation::class,
-                [['TaskID' => 'task-1', 'Status' => 'COMPLETED']],
+                [['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED']],
                 Method::PUT,
                 '/ExternalApi/v2/moneyOperation',
                 [],
-                ['TaskID' => 'task-1', 'Status' => 'COMPLETED'],
+                ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED'],
             ],
             GetMoneyTaskList::class => [
                 GetMoneyTaskList::class,
@@ -196,11 +198,11 @@ class RequestCatalogueTest extends TestCase
             ],
             PutProduct::class => [
                 PutProduct::class,
-                [['ID' => 'guid-1', 'Name' => 'Widget']],
+                [['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'Widget']],
                 Method::PUT,
                 '/ExternalApi/v2/product',
                 [],
-                ['ID' => 'guid-1', 'Name' => 'Widget'],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'Widget'],
             ],
             GetCustomerCredits::class => [
                 GetCustomerCredits::class,
@@ -228,11 +230,11 @@ class RequestCatalogueTest extends TestCase
             ],
             PutTax::class => [
                 PutTax::class,
-                [['ID' => 'guid-1', 'Name' => 'VAT']],
+                [['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT']],
                 Method::PUT,
                 '/ExternalApi/v2/ref/tax',
                 [],
-                ['ID' => 'guid-1', 'Name' => 'VAT'],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT'],
             ],
             GetSaleList::class => [
                 GetSaleList::class,
@@ -244,123 +246,123 @@ class RequestCatalogueTest extends TestCase
             ],
             DeleteSaleCreditNote::class => [
                 DeleteSaleCreditNote::class,
-                ['task-1', ['Void' => false]],
+                ['b039f19e-66f8-4309-a4b1-abf928303c88', ['Void' => false]],
                 Method::DELETE,
                 '/ExternalApi/v2/sale/creditnote',
-                ['TaskID' => 'task-1', 'Void' => 'false'],
+                ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'false'],
                 null,
             ],
             GetSaleCreditNote::class => [
                 GetSaleCreditNote::class,
-                ['sale-1', ['IncludePaymentInfo' => true]],
+                ['916ab4c0-6ccb-4c93-873d-0603859050e4', ['IncludePaymentInfo' => true]],
                 Method::GET,
                 '/ExternalApi/v2/sale/creditnote',
-                ['SaleID' => 'sale-1', 'IncludePaymentInfo' => 'true'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'IncludePaymentInfo' => 'true'],
                 null,
             ],
             PostSaleCreditNote::class => [
                 PostSaleCreditNote::class,
-                [['SaleID' => 'sale-1']],
+                [['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4']],
                 Method::POST,
                 '/ExternalApi/v2/sale/creditnote',
                 [],
-                ['SaleID' => 'sale-1'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
             ],
             DeleteSale::class => [
                 DeleteSale::class,
-                ['guid-1', ['Void' => true]],
+                ['0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['Void' => true]],
                 Method::DELETE,
                 '/ExternalApi/v2/sale',
-                ['ID' => 'guid-1', 'Void' => 'true'],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Void' => 'true'],
                 null,
             ],
             GetSale::class => [
                 GetSale::class,
-                ['guid-1', ['IncludeTransactions' => true]],
+                ['0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['IncludeTransactions' => true]],
                 Method::GET,
                 '/ExternalApi/v2/sale',
-                ['ID' => 'guid-1', 'IncludeTransactions' => 'true'],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'IncludeTransactions' => 'true'],
                 null,
             ],
             DeleteSaleInvoice::class => [
                 DeleteSaleInvoice::class,
-                ['task-1', ['Void' => true]],
+                ['b039f19e-66f8-4309-a4b1-abf928303c88', ['Void' => true]],
                 Method::DELETE,
                 '/ExternalApi/v2/sale/invoice',
-                ['TaskID' => 'task-1', 'Void' => 'true'],
+                ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'true'],
                 null,
             ],
             GetSaleInvoice::class => [
                 GetSaleInvoice::class,
-                ['sale-1', ['CombineAdditionalCharges' => true]],
+                ['916ab4c0-6ccb-4c93-873d-0603859050e4', ['CombineAdditionalCharges' => true]],
                 Method::GET,
                 '/ExternalApi/v2/sale/invoice',
-                ['SaleID' => 'sale-1', 'CombineAdditionalCharges' => 'true'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => 'true'],
                 null,
             ],
             PostSaleInvoice::class => [
                 PostSaleInvoice::class,
-                [['SaleID' => 'sale-1', 'TaskID' => '00000000-0000-0000-0000-000000000000']],
+                [['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000']],
                 Method::POST,
                 '/ExternalApi/v2/sale/invoice',
                 [],
-                ['SaleID' => 'sale-1', 'TaskID' => '00000000-0000-0000-0000-000000000000'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000'],
             ],
             PutSaleInvoice::class => [
                 PutSaleInvoice::class,
-                [['SaleID' => 'sale-1', 'TaskID' => 'task-1']],
+                [['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88']],
                 Method::PUT,
                 '/ExternalApi/v2/sale/invoice',
                 [],
-                ['SaleID' => 'sale-1', 'TaskID' => 'task-1'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
             ],
             GetSaleOrder::class => [
                 GetSaleOrder::class,
-                ['sale-1', ['IncludeProductInfo' => true]],
+                ['916ab4c0-6ccb-4c93-873d-0603859050e4', ['IncludeProductInfo' => true]],
                 Method::GET,
                 '/ExternalApi/v2/sale/order',
-                ['SaleID' => 'sale-1', 'IncludeProductInfo' => 'true'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'IncludeProductInfo' => 'true'],
                 null,
             ],
             PostSaleOrder::class => [
                 PostSaleOrder::class,
-                [['SaleID' => 'sale-1', 'AutoPickPackShipMode' => 'NOPICK']],
+                [['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'AutoPickPackShipMode' => 'NOPICK']],
                 Method::POST,
                 '/ExternalApi/v2/sale/order',
                 [],
-                ['SaleID' => 'sale-1', 'AutoPickPackShipMode' => 'NOPICK'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'AutoPickPackShipMode' => 'NOPICK'],
             ],
             DeleteSalePayment::class => [
                 DeleteSalePayment::class,
-                ['pay-1'],
+                ['ee093a0c-d177-9728-1df5-628a61a939e4'],
                 Method::DELETE,
                 '/ExternalApi/v2/sale/payment',
-                ['ID' => 'pay-1'],
+                ['ID' => 'ee093a0c-d177-9728-1df5-628a61a939e4'],
                 null,
             ],
             GetSalePayment::class => [
                 GetSalePayment::class,
-                ['sale-1'],
+                ['916ab4c0-6ccb-4c93-873d-0603859050e4'],
                 Method::GET,
                 '/ExternalApi/v2/sale/payment',
-                ['SaleID' => 'sale-1'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
                 null,
             ],
             PostSalePayment::class => [
                 PostSalePayment::class,
-                [['SaleID' => 'sale-1', 'Amount' => 10.5]],
+                [['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Amount' => 10.5]],
                 Method::POST,
                 '/ExternalApi/v2/sale/payment',
                 [],
-                ['SaleID' => 'sale-1', 'Amount' => 10.5],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Amount' => 10.5],
             ],
             PutSalePayment::class => [
                 PutSalePayment::class,
-                [['ID' => 'pay-1', 'Amount' => 12.5]],
+                [['ID' => 'ee093a0c-d177-9728-1df5-628a61a939e4', 'Amount' => 12.5]],
                 Method::PUT,
                 '/ExternalApi/v2/sale/payment',
                 [],
-                ['ID' => 'pay-1', 'Amount' => 12.5],
+                ['ID' => 'ee093a0c-d177-9728-1df5-628a61a939e4', 'Amount' => 12.5],
             ],
             PostSale::class => [
                 PostSale::class,
@@ -372,11 +374,11 @@ class RequestCatalogueTest extends TestCase
             ],
             PutSale::class => [
                 PutSale::class,
-                [['ID' => 'guid-1', 'Note' => 'Rush']],
+                [['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Note' => 'Rush']],
                 Method::PUT,
                 '/ExternalApi/v2/sale',
                 [],
-                ['ID' => 'guid-1', 'Note' => 'Rush'],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Note' => 'Rush'],
             ],
             PostTax::class . ' with data' => [
                 PostTax::class,
@@ -388,59 +390,59 @@ class RequestCatalogueTest extends TestCase
             ],
             PutTax::class . ' with data' => [
                 PutTax::class,
-                [fn (): TaxData => TaxData::from(['ID' => 'guid-1', 'Name' => 'VAT'])],
+                [fn (): TaxData => TaxData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT'])],
                 Method::PUT,
                 '/ExternalApi/v2/ref/tax',
                 [],
-                ['ID' => 'guid-1', 'Name' => 'VAT'],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT'],
             ],
             PostSaleOrder::class . ' with data' => [
                 PostSaleOrder::class,
-                [fn (): SaleOrderData => SaleOrderData::from(['SaleID' => 'sale-1', 'Memo' => 'Rush'])],
+                [fn (): SaleOrderData => SaleOrderData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Memo' => 'Rush'])],
                 Method::POST,
                 '/ExternalApi/v2/sale/order',
                 [],
-                ['SaleID' => 'sale-1', 'Memo' => 'Rush'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Memo' => 'Rush'],
             ],
             PostSaleInvoice::class . ' with data' => [
                 PostSaleInvoice::class,
-                [fn (): SaleInvoicePostData => SaleInvoicePostData::from(['SaleID' => 'sale-1', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'Memo' => 'Rush'])],
+                [fn (): SaleInvoicePostData => SaleInvoicePostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'Memo' => 'Rush', 'Status' => 'DRAFT', 'InvoiceDate' => '2017-11-22T00:00:00', 'InvoiceDueDate' => '2017-12-22T00:00:00'])],
                 Method::POST,
                 '/ExternalApi/v2/sale/invoice',
                 [],
-                ['SaleID' => 'sale-1', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'Memo' => 'Rush'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'Status' => 'DRAFT', 'InvoiceDate' => '2017-11-22T00:00:00', 'InvoiceDueDate' => '2017-12-22T00:00:00', 'Memo' => 'Rush'],
             ],
             PutSaleInvoice::class . ' with data' => [
                 PutSaleInvoice::class,
-                [fn (): SaleInvoicePostData => SaleInvoicePostData::from(['SaleID' => 'sale-1', 'TaskID' => 'task-1', 'Lines' => []])],
+                [fn (): SaleInvoicePutData => SaleInvoicePutData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Lines' => []])],
                 Method::PUT,
                 '/ExternalApi/v2/sale/invoice',
                 [],
-                ['SaleID' => 'sale-1', 'TaskID' => 'task-1', 'Lines' => []],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Lines' => []],
             ],
             PostSaleCreditNote::class . ' with data' => [
                 PostSaleCreditNote::class,
-                [fn (): SaleCreditNotePostData => SaleCreditNotePostData::from(['SaleID' => 'sale-1', 'Memo' => 'Damaged'])],
+                [fn (): SaleCreditNotePostData => SaleCreditNotePostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Memo' => 'Damaged', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00'])],
                 Method::POST,
                 '/ExternalApi/v2/sale/creditnote',
                 [],
-                ['SaleID' => 'sale-1', 'Memo' => 'Damaged'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00', 'Memo' => 'Damaged'],
             ],
             PostSalePayment::class . ' with data' => [
                 PostSalePayment::class,
-                [fn (): SalePaymentLinePartialData => SalePaymentLinePartialData::from(['SaleID' => 'sale-1', 'Amount' => 10.5])],
+                [fn (): SalePaymentPostData => SalePaymentPostData::from(['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Type' => 'Payment', 'Amount' => 10.5, 'DatePaid' => '2017-11-30T00:00:00', 'Account' => '718', 'CurrencyRate' => 1.0])],
                 Method::POST,
                 '/ExternalApi/v2/sale/payment',
                 [],
-                ['SaleID' => 'sale-1', 'Amount' => 10.5],
+                ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Type' => 'Payment', 'Amount' => 10.5, 'DatePaid' => '2017-11-30T00:00:00', 'Account' => '718', 'CurrencyRate' => 1.0],
             ],
             PutSalePayment::class . ' with data' => [
                 PutSalePayment::class,
-                [fn (): SalePaymentLinePartialData => SalePaymentLinePartialData::from(['ID' => 'pay-1', 'Amount' => 12.5])],
+                [fn (): SalePaymentPutData => SalePaymentPutData::from(['ID' => 'ee093a0c-d177-9728-1df5-628a61a939e4', 'Amount' => 12.5])],
                 Method::PUT,
                 '/ExternalApi/v2/sale/payment',
                 [],
-                ['ID' => 'pay-1', 'Amount' => 12.5],
+                ['ID' => 'ee093a0c-d177-9728-1df5-628a61a939e4', 'Amount' => 12.5],
             ],
             PostCustomer::class . ' with data' => [
                 PostCustomer::class,
@@ -452,11 +454,11 @@ class RequestCatalogueTest extends TestCase
             ],
             PutCustomer::class . ' with data' => [
                 PutCustomer::class,
-                [fn (): CustomerData => CustomerData::from(['ID' => 'guid-1', 'TaxNumber' => null])],
+                [fn (): CustomerData => CustomerData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null])],
                 Method::PUT,
                 '/ExternalApi/v2/customer',
                 [],
-                ['ID' => 'guid-1', 'TaxNumber' => null],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'],
             ],
             PostProduct::class . ' with data' => [
                 PostProduct::class,
@@ -468,11 +470,11 @@ class RequestCatalogueTest extends TestCase
             ],
             PutProduct::class . ' with data' => [
                 PutProduct::class,
-                [fn (): ProductData => ProductData::from(['ID' => 'guid-1', 'Sellable' => false])],
+                [fn (): ProductData => ProductData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Sellable' => false])],
                 Method::PUT,
                 '/ExternalApi/v2/product',
                 [],
-                ['ID' => 'guid-1', 'Sellable' => false],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Sellable' => false],
             ],
             PostSale::class . ' with data' => [
                 PostSale::class,
@@ -484,11 +486,11 @@ class RequestCatalogueTest extends TestCase
             ],
             PutSale::class . ' with data' => [
                 PutSale::class,
-                [fn (): SalePostPutData => SalePostPutData::from(['ID' => 'guid-1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']])],
+                [fn (): SalePostPutData => SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']])],
                 Method::PUT,
                 '/ExternalApi/v2/sale',
                 [],
-                ['ID' => 'guid-1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']],
             ],
             PostMoneyOperation::class . ' with data' => [
                 PostMoneyOperation::class,
@@ -500,11 +502,11 @@ class RequestCatalogueTest extends TestCase
             ],
             PutMoneyOperation::class . ' with data' => [
                 PutMoneyOperation::class,
-                [fn (): MoneyTaskData => MoneyTaskData::from(['TaskID' => 'task-1', 'Status' => 'COMPLETED'])],
+                [fn (): MoneyTaskData => MoneyTaskData::from(['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED'])],
                 Method::PUT,
                 '/ExternalApi/v2/moneyOperation',
                 [],
-                ['TaskID' => 'task-1', 'Status' => 'COMPLETED'],
+                ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED'],
             ],
         ];
     }
@@ -530,7 +532,7 @@ class RequestCatalogueTest extends TestCase
         $customer = ['Name' => 'ACME', 'LastModifiedOn' => '2020-01-01', 'ChildCustomers' => [['ID' => 'c']], 'ProductPrices' => [['Price' => 1, 'ProductName' => 'Bread'], 'raw']];
         $customerSent = ['Name' => 'ACME', 'ProductPrices' => [['Price' => 1], 'raw']];
         $product = [
-            'ID' => 'guid-1',
+            'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1',
             'Type' => 'Stock',
             'SKU' => 'Bread',
             'AverageCost' => 1.5,
@@ -551,9 +553,9 @@ class RequestCatalogueTest extends TestCase
             PostCustomer::class => [PostCustomer::class, $customer, $customerSent],
             PutCustomer::class => [PutCustomer::class, $customer, $customerSent],
             PostProduct::class => [PostProduct::class, $product, ['Type' => 'Stock'] + $productSent],
-            PutProduct::class => [PutProduct::class, $product, ['ID' => 'guid-1'] + $productSent],
+            PutProduct::class => [PutProduct::class, $product, ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'] + $productSent],
             PostTax::class => [PostTax::class, ['Name' => 'VAT', 'TaxPercent' => 20], ['Name' => 'VAT']],
-            PutTax::class => [PutTax::class, ['ID' => 'guid-1', 'TaxPercent' => 20], ['ID' => 'guid-1']],
+            PutTax::class => [PutTax::class, ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxPercent' => 20], ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1']],
             PostSaleOrder::class => [
                 PostSaleOrder::class,
                 ['SaleID' => 's', 'Lines' => [['SKU' => 'A', 'BackorderQuantity' => 2]]],
@@ -561,12 +563,12 @@ class RequestCatalogueTest extends TestCase
             ],
             PostSalePayment::class => [
                 PostSalePayment::class,
-                ['ID' => 'p', 'TaskID' => 't', 'Type' => 'PAYMENT', 'CreditID' => 'c', 'Amount' => 1],
-                ['TaskID' => 't', 'Type' => 'PAYMENT', 'Amount' => 1],
+                ['ID' => 'p', 'TaskID' => 't', 'Type' => 'Payment', 'CreditID' => 'c', 'Amount' => 1],
+                ['TaskID' => 't', 'Type' => 'Payment', 'Amount' => 1],
             ],
             PutSalePayment::class => [
                 PutSalePayment::class,
-                ['ID' => 'p', 'TaskID' => 't', 'Type' => 'PAYMENT', 'CreditID' => 'c', 'Amount' => 1],
+                ['ID' => 'p', 'TaskID' => 't', 'Type' => 'Payment', 'CreditID' => 'c', 'Amount' => 1],
                 ['ID' => 'p', 'CreditID' => 'c', 'Amount' => 1],
             ],
             'a non-list value is left alone' => [PostProduct::class, ['Suppliers' => 'raw'], ['Suppliers' => 'raw']],
@@ -575,11 +577,11 @@ class RequestCatalogueTest extends TestCase
 
     public function testPutSaleLeavesThePostOnlySaleTypeOutOfTheBody(): void
     {
-        $this->connector()->send(new PutSale(['ID' => 'guid-1', 'SaleType' => 'Advanced']));
-        $this->assertSame(['ID' => 'guid-1'], $this->mock->lastPendingRequest()?->body());
+        $this->connector()->send(new PutSale(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SaleType' => 'Advanced']));
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $this->mock->lastPendingRequest()?->body());
 
-        $this->connector()->send(new PutSale(SalePostPutData::from(['ID' => 'guid-1', 'SaleType' => 'Advanced'])));
-        $this->assertSame(['ID' => 'guid-1'], $this->mock->lastPendingRequest()?->body());
+        $this->connector()->send(new PutSale(SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SaleType' => 'Advanced'])));
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $this->mock->lastPendingRequest()?->body());
     }
 
     public function testPostSaleKeepsTheSaleType(): void
@@ -590,10 +592,10 @@ class RequestCatalogueTest extends TestCase
 
     public function testPostProductLeavesTheIgnoredIdOutOfTheBody(): void
     {
-        $this->connector()->send(new PostProduct(['ID' => 'guid-1', 'SKU' => 'Bread']));
+        $this->connector()->send(new PostProduct(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SKU' => 'Bread']));
         $this->assertSame(['SKU' => 'Bread'], $this->mock->lastPendingRequest()?->body());
 
-        $this->connector()->send(new PostProduct(ProductData::from(['ID' => 'guid-1', 'SKU' => 'Bread'])));
+        $this->connector()->send(new PostProduct(ProductData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SKU' => 'Bread'])));
         $this->assertSame(['SKU' => 'Bread'], $this->mock->lastPendingRequest()?->body());
     }
 

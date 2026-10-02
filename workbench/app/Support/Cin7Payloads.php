@@ -1192,13 +1192,27 @@ final class Cin7Payloads
     }
 
     /**
-     * Sale Invoice Partial Model, copied from the `sale` example's first invoice.
+     * Sale Invoice Partial Model, the invoice of the reference's `sale/invoice` GET example.
      *
      * @return array<string, mixed>
      */
     public static function saleInvoicePartial(): array
     {
-        return ['CombineAdditionalCharges' => false] + self::sale()['Invoices'][0];
+        return [
+            'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88',
+            'CombineAdditionalCharges' => false,
+            'InvoiceNumber' => 'INV-00001',
+            'Memo' => '',
+            'Status' => 'DRAFT',
+            'InvoiceDate' => '2017-11-22T00:00:00',
+            'InvoiceDueDate' => '2017-12-22T00:00:00',
+            'CurrencyConversionRate' => 1,
+            'BillingAddressLine1' => '3 Park Street Industrial Village Southbank',
+            'BillingAddressLine2' => 'Melbourne VIC 3331',
+            'LinkedFulfillmentNumber' => '1',
+            'Lines' => [self::saleDocumentLine() + ['AverageCost' => 5]],
+            'AdditionalCharges' => [self::saleDocumentCharge()],
+        ];
     }
 
     /**
@@ -1212,39 +1226,79 @@ final class Cin7Payloads
     }
 
     /**
-     * Sale Invoice POST Model: the invoice's own fields plus `SaleID`, and an empty-GUID `TaskID`.
+     * Sale Invoice POST Model, the reference's `sale/invoice` POST example.
      *
      * @return array<string, mixed>
      */
     public static function saleInvoicePost(): array
     {
-        $invoice = self::saleInvoicePartial();
-        unset($invoice['Payments'], $invoice['TotalBeforeTax'], $invoice['Tax'], $invoice['Total'], $invoice['Paid']);
-
-        return ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4']
-            + ['TaskID' => '00000000-0000-0000-0000-000000000000'] + $invoice;
+        return [
+            'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4',
+            'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88',
+            'CombineAdditionalCharges' => false,
+            'Memo' => '',
+            'Status' => 'DRAFT',
+            'InvoiceDate' => '2017-11-22T00:00:00',
+            'InvoiceDueDate' => '2017-12-22T00:00:00',
+            'CurrencyConversionRate' => 1,
+            'BillingAddressLine1' => '3 Park Street Industrial Village Southbank',
+            'BillingAddressLine2' => 'Melbourne VIC 3331',
+            'LinkedFulfillmentNumber' => '1',
+            'Lines' => [self::saleDocumentLine()],
+            'AdditionalCharges' => [self::saleDocumentCharge()],
+        ];
     }
 
     /**
-     * Sale Credit Note Partial Model: the `sale` example's first credit note, with the
-     * `CreditNoteBalance` and `Payments` the GET response adds.
+     * The reference's `sale/invoice` PUT example, its trailing comma removed.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleInvoicePut(): array
+    {
+        return [
+            'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4',
+            'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88',
+            'Memo' => '123',
+            'Status' => 'AUTHORISED',
+        ];
+    }
+
+    /**
+     * Sale Credit Note Invoice Partial Model, the credit note of the reference's `sale/creditnote`
+     * GET example, with the `CreditNoteBalance` and `Payments` that `IncludePaymentInfo` adds.
      *
      * @return array<string, mixed>
      */
     public static function saleCreditNotePartial(): array
     {
-        return self::sale()['CreditNotes'][0] + [
+        return [
+            'TaskID' => '280fba91-281c-4416-ad43-674ae2d17355',
             'CombineAdditionalCharges' => false,
-            'CreditNoteBalance' => 0,
+            'CreditNoteInvoiceNumber' => 'INV-00001',
+            'Memo' => '',
+            'Status' => 'DRAFT',
+            'CreditNoteDate' => '2017-11-22T00:00:00',
+            'CreditNoteNumber' => 'CR-00001',
+            'CreditNoteConversionRate' => 1,
+            'Lines' => [self::saleDocumentLine() + ['AverageCost' => 5]],
+            'AdditionalCharges' => [self::saleDocumentCharge()],
+            'Restock' => [self::saleRestockLine()],
+            'CreditNoteBalance' => 1,
             'Payments' => [
                 [
-                    'ID' => '20d5ff25-afa2-cd74-96d7-c7f0dd1fa1c1',
+                    'ID' => '99a4191c-1f12-5c53-f0fa-54ecd750fa71',
+                    'SaleOrderNumber' => 'SO-00040',
+                    'InvoiceNumber' => null,
+                    'CreditNoteNumber' => 'CR-00001',
+                    'Type' => 'Refund',
                     'Reference' => '',
-                    'Amount' => 358,
-                    'DatePaid' => '2017-11-23T00:00:00',
-                    'Account' => '718',
+                    'Amount' => 3,
+                    'DatePaid' => '2022-03-05T00:00:00',
+                    'Account' => '712',
                     'CurrencyRate' => 1,
-                    'DateCreated' => '2017-11-22T06:58:21.8882229Z',
+                    'DateCreated' => '2022-03-05T12:48:49.3946257Z',
+                    'CreditID' => null,
                 ],
             ],
         ];
@@ -1261,40 +1315,113 @@ final class Cin7Payloads
     }
 
     /**
-     * Sale Credit Note POST Model: the credit note's own fields plus `SaleID`.
+     * Sale Credit Note POST Model, the reference's `sale/creditnote` POST example, its unquoted
+     * `SaleID` key and trailing comma fixed.
      *
      * @return array<string, mixed>
      */
     public static function saleCreditNotePost(): array
     {
-        $creditNote = self::sale()['CreditNotes'][0];
-        unset($creditNote['TotalBeforeTax'], $creditNote['Tax'], $creditNote['Total']);
-
-        return ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'] + $creditNote;
+        return [
+            'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4',
+            'TaskID' => '529511e7-6ed6-4a99-a2a7-fab1d32198eb',
+            'CombineAdditionalCharges' => false,
+            'CreditNoteInvoiceNumber' => 'INV-00005',
+            'Memo' => '',
+            'Status' => 'AUTHORISED',
+            'CreditNoteDate' => '2017-11-22T00:00:00',
+            'CreditNoteConversionRate' => 1,
+            'Lines' => [self::saleDocumentLine() + ['AverageCost' => 5]],
+            'AdditionalCharges' => [self::saleDocumentCharge()],
+            'Restock' => [self::saleRestockLine()],
+        ];
     }
 
     /**
-     * Sale Payment Line Partial Model, one payment of `sale/payment`.
+     * Sale Payment Line Partial Model, the payment of the reference's `sale/payment` GET example.
      *
      * @return array<string, mixed>
      */
     public static function salePayment(): array
     {
         return [
-            'ID' => '20d5ff25-afa2-cd74-96d7-c7f0dd1fa1c1',
             'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4',
             'TaskID' => '4733ba69-21c5-48f5-95e5-307aa9889747',
+            'ID' => 'ee093a0c-d177-9728-1df5-628a61a939e4',
             'SaleOrderNumber' => 'SO-00001',
             'InvoiceNumber' => 'INV-00005',
             'CreditNoteNumber' => null,
             'Type' => 'Payment',
-            'Reference' => 'BANK-1',
+            'Reference' => '',
             'Amount' => 358,
-            'DatePaid' => '2017-11-23T00:00:00',
+            'DatePaid' => '2017-11-30T00:00:00',
             'Account' => '718',
             'CurrencyRate' => 1,
-            'DateCreated' => '2017-11-22T06:58:21.8882229Z',
+            'DateCreated' => '2017-11-28T05:08:30.6407568Z',
             'CreditID' => null,
+        ];
+    }
+
+    /**
+     * The bare array `sale/payment` GET answers with: the reference's example, a payment and a refund.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public static function salePayments(): array
+    {
+        return [
+            self::salePayment(),
+            [
+                'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4',
+                'TaskID' => '529511e7-6ed6-4a99-a2a7-fab1d32198eb',
+                'ID' => 'bbd45356-8aeb-6108-bd9c-a5e23162d209',
+                'SaleOrderNumber' => 'SO-00001',
+                'InvoiceNumber' => null,
+                'CreditNoteNumber' => 'CR-00004',
+                'Type' => 'Refund',
+                'Reference' => '',
+                'Amount' => 358,
+                'DatePaid' => '2017-11-21T00:00:00',
+                'Account' => '718',
+                'CurrencyRate' => 1,
+                'DateCreated' => '2017-11-28T04:53:43.9825081Z',
+                'CreditID' => null,
+            ],
+        ];
+    }
+
+    /**
+     * The reference's `sale/payment` POST example, without the PUT-only `CreditID`.
+     *
+     * @return array<string, mixed>
+     */
+    public static function salePaymentPost(): array
+    {
+        return [
+            'TaskID' => '4733ba69-21c5-48f5-95e5-307aa9889747',
+            'Type' => 'Payment',
+            'Reference' => '',
+            'Amount' => 1,
+            'DatePaid' => '2017-11-30T00:00:00',
+            'Account' => '718',
+            'CurrencyRate' => 1,
+        ];
+    }
+
+    /**
+     * The reference's `sale/payment` PUT example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function salePaymentPut(): array
+    {
+        return [
+            'ID' => 'ee093a0c-d177-9728-1df5-628a61a939e4',
+            'Reference' => '',
+            'Amount' => 357,
+            'DatePaid' => '2017-11-30T00:00:00',
+            'Account' => '718',
+            'CurrencyRate' => 1,
         ];
     }
 
@@ -1397,22 +1524,96 @@ final class Cin7Payloads
     }
 
     /**
-     * The body of the 503 Cin7 returns when throttling; it carries no `Retry-After` header.
+     * A Sale Invoice Line as the `sale/invoice` and `sale/creditnote` examples send it.
+     *
+     * @return array<string, mixed>
+     */
+    private static function saleDocumentLine(): array
+    {
+        return [
+            'ProductID' => '4aadd8f6-4d3d-46ca-acbb-1a9a662f9bc1',
+            'SKU' => 'Bread',
+            'Name' => 'Baked Bread',
+            'Quantity' => 1,
+            'Price' => 8,
+            'Discount' => 0,
+            'Tax' => 0,
+            'Total' => 8,
+            'TaxRule' => 'Tax on Sales',
+            'Account' => '200',
+            'Comment' => '',
+        ];
+    }
+
+    /**
+     * A Sale Invoice Additional Charge as the `sale/invoice` and `sale/creditnote` examples send it.
+     *
+     * @return array<string, mixed>
+     */
+    private static function saleDocumentCharge(): array
+    {
+        return [
+            'Description' => 'Desktop/network support via phone. Per month fixed fee for minimum 20 hours/month.',
+            'Quantity' => 1,
+            'Price' => 350,
+            'Discount' => 0,
+            'Tax' => 0,
+            'Total' => 350,
+            'TaxRule' => 'Tax on Sales',
+            'Account' => '200',
+            'Comment' => '',
+        ];
+    }
+
+    /**
+     * A credit note's restock line as the `sale/creditnote` examples send it.
+     *
+     * @return array<string, mixed>
+     */
+    private static function saleRestockLine(): array
+    {
+        return [
+            'ProductID' => '4aadd8f6-4d3d-46ca-acbb-1a9a662f9bc1',
+            'SKU' => 'Bread',
+            'Name' => 'Baked Bread',
+            'Location' => 'Main Warehouse',
+            'LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb',
+            'Quantity' => 1,
+            'BatchSN' => 'PO-00001-1',
+            'ExpiryDate' => '2017-11-30T00:00:00',
+            'RestockLocation' => 'Main Warehouse2',
+            'RestockLocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2c2',
+        ];
+    }
+
+    /**
+     * An Error Model body for the 503 Cin7 returns when throttling; it carries no `Retry-After`
+     * header.
      *
      * @return array<string, mixed>
      */
     public static function throttled(): array
     {
-        return ['Errors' => ['Service Unavailable']];
+        return self::error('Service Unavailable', 503);
     }
 
     /**
-     * The body Cin7 returns for a rejected request.
+     * An Error Model body for the 429 Cin7 documents for its 60 calls per minute limit.
      *
      * @return array<string, mixed>
      */
-    public static function error(string $message = 'Request is invalid'): array
+    public static function limitReached(): array
     {
-        return ['Errors' => [$message]];
+        return self::error('You reached 60 calls per minute API limit', 429);
+    }
+
+    /**
+     * Error Model, `{ErrorCode, Exception}`, the body Cin7 returns for a failed call.
+     *
+     * @return array<string, mixed>
+     */
+    public static function error(string $message = 'Request is invalid', int $code = 400): array
+    {
+        return ['ErrorCode' => $code, 'Exception' => $message];
     }
 }

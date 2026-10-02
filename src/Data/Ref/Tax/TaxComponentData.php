@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Ref\Tax;
 
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 
 /**
  * Tax Component Model, one entry of a tax rule's `Components`.
@@ -18,12 +17,12 @@ use Hypervel\Data\Optional;
 final class TaxComponentData extends Data
 {
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $Name,
-        public float|string|Optional $Percent,
-        public string|Optional $AccountCode,
-        public string|int|Optional $Compound,
-        public int|string|Optional $ComponentOrder,
+        public ?string $ID = null,
+        public ?string $Name = null,
+        public float|string|null $Percent = null,
+        public ?string $AccountCode = null,
+        public string|int|null $Compound = null,
+        public int|string|null $ComponentOrder = null,
     ) {
     }
 }

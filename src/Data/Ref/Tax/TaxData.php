@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Data\Ref\Tax;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Optional;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 
@@ -20,19 +19,19 @@ final class TaxData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param list<TaxComponentData>|Optional $Components
+     * @param null|list<TaxComponentData> $Components
      */
     public function __construct(
-        public string|Optional $ID,
-        public string|Optional $Name,
-        public string|Optional $Account,
-        public bool|Optional $IsActive,
-        public bool|Optional $TaxInclusive,
-        public float|Optional $TaxPercent,
-        public bool|Optional $IsTaxForSale,
-        public bool|Optional $IsTaxForPurchase,
+        public ?string $ID = null,
+        public ?string $Name = null,
+        public ?string $Account = null,
+        public ?bool $IsActive = null,
+        public ?bool $TaxInclusive = null,
+        public ?float $TaxPercent = null,
+        public ?bool $IsTaxForSale = null,
+        public ?bool $IsTaxForPurchase = null,
         #[DataCollectionOf(TaxComponentData::class)]
-        public array|Optional $Components,
+        public ?array $Components = null,
     ) {
     }
 }
