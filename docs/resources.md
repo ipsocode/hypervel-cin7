@@ -65,6 +65,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->me()->addresses()` | `Me\AddressesResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeAddressPostData $body)`, `put(array\|MeAddressPutData $body)`, `delete(string $id)` |
 | `$cin7->me()->contacts()` | `Me\ContactsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeContactPostData $body)`, `put(array\|MeContactPutData $body)`, `delete(string $id)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
+| `$cin7->bankTransfer()` | `BankTransferResource` | `get(string $taskId)`, `post(array\|BankTransferPostData $body)`, `put(array\|BankTransferPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
@@ -312,6 +313,27 @@ a `PaymentTermPutData`, which requires `ID`; `delete($id)` sends `ref/paymentter
 use Ipsocode\Cin7\Enums\PaymentTermMethod;
 
 $terms = $this->cin7->ref()->paymentTerm()->get(method: PaymentTermMethod::NumberOfDays, isActive: true)->dto(); // list<PaymentTermData>
+```
+
+## Bank transfer
+
+`$cin7->bankTransfer()` is `bankTransfer`, a transfer between two bank accounts, and the Money
+Task's twin: keyed by `TaskID` (`get($taskId)`), with no list action, since `moneyTaskList` lists
+the transfers. `post()` takes a `BankTransferPostData` and `put()` a `BankTransferPutData`, which
+requires `TaskID`, as well as an array. Every action answers with the transfer, so `dto()` is a
+`BankTransferData`, with `Transactions` (`TransactionStockLineData`) and `Attachments`
+(`AttachmentLineData`). `delete($id, void: true)` voids it. Cin7 works out the
+`CurrencyConversionRate` itself.
+
+```php
+$transfer = $this->cin7->bankTransfer()->post(BankTransferPostData::from([
+    'Status' => 'DRAFT',
+    'FromAccount' => '198489',
+    'ToAccount' => '713',
+    'FromAmount' => 3,
+    'ToAmount' => 6,
+    'Date' => '2018-01-17T00:00:00',
+]))->dto(); // BankTransferData
 ```
 
 ## Journal and transactions

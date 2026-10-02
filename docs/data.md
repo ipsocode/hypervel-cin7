@@ -185,6 +185,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
 | `me/addresses` | POST: `MeAddressPostData`; PUT: `MeAddressPutData`, which also requires `AddressID` (Me Address) | GET: `list<MeAddressData>`; POST, PUT: `MeAddressData`, the saved address (`MeAddressesList.0`); DELETE: `{Success}`, left to `json()` |
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
+| `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
@@ -575,6 +576,16 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
+
+`bankTransfer` is the Money Task's twin, with a class per verb because `TaskID` is taken by PUT and
+the response only; `TransactionStockLineData` moved to `src/Data/Other/` when it gained a second
+family. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `BankTransferData` (response) | `src/Data/BankTransfer/` | `Status`, `FromAccount`, `ToAccount`, `FromAmount`, `ToAmount`, `Date` |
+| `BankTransferPostData` | `src/Data/BankTransfer/` | the same |
+| `BankTransferPutData` | `src/Data/BankTransfer/` | the same, and `TaskID` |
 
 `journal` has a class per verb because `TaskID` is taken by PUT and the response only. Each class
 requires:
