@@ -116,6 +116,9 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetStockTransfer` | **`taskId`** |
 | `DeleteStockTransfer` | **`id`**, `void` |
 | `GetStockTransferOrder` | **`taskId`** |
+| `GetInventoryWriteOffList` | `page`, `limit`, `status` (`CompletionStatus`), `search` |
+| `GetInventoryWriteOff` | **`taskId`** |
+| `DeleteInventoryWriteOff` | **`id`**, `void` |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
 | `DeleteJournal` | **`id`**, `void` |
 | `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
@@ -275,6 +278,13 @@ are `StockTransferPostData` and `StockTransferPutData`; every one's `dto()` is a
 (keyed `TaskID`) and `PostStockTransferOrder` (body `StockTransferOrderPostData`), whose `dto()` is a
 `StockTransferOrderData`. `GetStockTransferList` (`src/Requests/StockTransferList/`) lists transfers,
 filtered by `status` and `search`.
+The `inventoryWriteOff` actions live under `src/Requests/InventoryWriteOff/`, the same four again:
+`GetInventoryWriteOff` (V2 marks `TaskID` optional, but the write-offs are listed at
+`inventoryWriteOffList`, so it is required here), `DeleteInventoryWriteOff`, `PostInventoryWriteOff`
+and `PutInventoryWriteOff`, whose bodies are `InventoryWriteOffPostData` and
+`InventoryWriteOffPutData`; every one's `dto()` is an `InventoryWriteOffData`.
+`GetInventoryWriteOffList` (`src/Requests/InventoryWriteOffList/`) lists them under
+`InventoryWriteOffs`, filtered by `status` and `search`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed

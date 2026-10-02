@@ -17,6 +17,8 @@ use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
+use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
@@ -376,5 +378,21 @@ final class Cin7Connector extends Connector implements HasPagination
     public function stockTransfer(): StockTransferResource
     {
         return new StockTransferResource($this);
+    }
+
+    /**
+     * The `inventoryWriteOffList` resource.
+     */
+    public function inventoryWriteOffList(): InventoryWriteOffListResource
+    {
+        return new InventoryWriteOffListResource($this);
+    }
+
+    /**
+     * The `inventoryWriteOff` resource.
+     */
+    public function inventoryWriteOff(): InventoryWriteOffResource
+    {
+        return new InventoryWriteOffResource($this);
     }
 }
