@@ -392,6 +392,10 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->ref()->unit(), $connector->ref()->unit());
         $this->assertNotSame($connector->ref()->category(), $connector->ref()->category());
         $this->assertNotSame($connector->ref()->brand(), $connector->ref()->brand());
+        $this->assertNotSame($connector->ref()->location(), $connector->ref()->location());
+        $this->assertNotSame($connector->ref()->carrier(), $connector->ref()->carrier());
+        $this->assertNotSame($connector->ref()->templates(), $connector->ref()->templates());
+        $this->assertNotSame($connector->ref()->customer()->templates(), $connector->ref()->customer()->templates());
         $this->assertNotSame($connector->ref()->account()->bank(), $connector->ref()->account()->bank());
         $this->assertNotSame($connector->ref()->fixedAssetType(), $connector->ref()->fixedAssetType());
         $this->assertNotSame($connector->ref()->paymentTerm(), $connector->ref()->paymentTerm());

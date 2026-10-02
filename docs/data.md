@@ -202,6 +202,10 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/account/bank` | none | GET: `list<BankAccountData>` (Bank Accounts) |
 | `ref/attributeset` | POST: `AttributeSetPostData`; PUT: `AttributeSetPutData`, which also requires `ID` (Attribute Set, with `Attributes`: `AttributeSetLineData`, Attribute Set Line Model) | GET: `list<AttributeSetData>`; POST, PUT: `AttributeSetData`, the saved set, a bare object; DELETE: `{Success}`, left to `json()` |
 | `ref/brand` | POST: `BrandPostData`; PUT: `BrandPutData`, which also requires `ID` (Brand) | GET: `list<BrandData>`; POST, PUT: `BrandData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
+| `ref/location` | POST: `LocationPostData`; PUT: `LocationPutData`, which also requires `ID` (Location, with `Bins`: `LocationBinData`) | GET: `list<LocationData>`; POST, PUT: `LocationData`, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
+| `ref/carrier` | POST: `CarrierPostData`; PUT: `CarrierPutData`, which also requires `CarrierID` (Carrier) | GET, POST, PUT: `list<CarrierData>`, read from `CarrierList`; DELETE: `{Success}`, left to `json()` |
+| `ref/templates` | none | GET: `list<TemplateData>`, read from `Templates` |
+| `ref/customer/templates` | POST: `CustomerDefaultTemplatesPostData`, a list of `CustomerDefaultTemplateData` | GET, POST, DELETE: `list<CustomerDefaultTemplateData>`, read from `CustomerTemplates` |
 | `ref/category` | POST: `ProductCategoryPostData`; PUT: `ProductCategoryPutData`, which also requires `ID` (Product Category) | GET: `list<ProductCategoryData>`; POST, PUT: `ProductCategoryData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/unit` | POST: `UnitOfMeasurePostData`; PUT: `UnitOfMeasurePutData`, which also requires `ID` (Unit of Measure) | GET: `list<UnitOfMeasureData>`; POST, PUT: `UnitOfMeasureData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/priceTier` | none | GET: `list<PriceTierData>` (Price Tier), read from `PriceTiers` |
@@ -1046,6 +1050,27 @@ the ID is taken by PUT and the response only:
 | `UnitOfMeasureData`, `UnitOfMeasurePostData` | `src/Data/Ref/Unit/` | `Name` |
 | `UnitOfMeasurePutData` | `src/Data/Ref/Unit/` | `Name`, `ID` |
 
+`ref/location` and `ref/carrier` are the same shape as the brand, with a class per verb because the ID
+is taken by PUT and the response only:
+
+| Class | Folder | Required |
+|---|---|---|
+| `LocationData`, `LocationPostData` | `src/Data/Ref/Location/` | `Name` |
+| `LocationPutData` | `src/Data/Ref/Location/` | `Name`, `ID` |
+| `CarrierData`, `CarrierPostData` | `src/Data/Ref/Carrier/` | `Description` |
+| `CarrierPutData` | `src/Data/Ref/Carrier/` | `Description`, `CarrierID` |
+| `TemplateData` | `src/Data/Ref/Templates/` | nothing |
+| `CustomerDefaultTemplateData` | `src/Data/Ref/Customer/Templates/` | `CustomerID`, `TemplateID` |
+| `CustomerDefaultTemplatesPostData` | `src/Data/Ref/Customer/Templates/` | `CustomerTemplates` |
+
+- **Location's `Deprecated` and `IsDeprecated`.** The table names `Deprecated`, the responses and
+  the bins send `IsDeprecated`; the class has both.
+- **Location's `Bins`.** The table says "Array (ID, Name)"; the examples add `IsDeprecated` and
+  `IsStaging`, so `LocationBinData` has all four.
+- **Carrier responses.** POST and PUT answer a `CarrierList`, not the carrier alone, unlike the
+  brand and the location.
+- **Customer default template.** Both ids are "Yes*" and required in a list, which is the only way
+  the reference uses them.
 `bankTransfer` is the Money Task's twin, with a class per verb because `TaskID` is taken by PUT and
 the response only; `TransactionStockLineData` moved to `src/Data/Other/` when it gained a second
 family. Each class requires:

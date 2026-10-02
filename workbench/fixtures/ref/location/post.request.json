@@ -1,0 +1,12 @@
+{
+    "Name": "Test new location",
+    "AddressLine1": "Test address line",
+    "AddressLine2": "Test address line 2",
+    "AddressCitySuburb": "Test address city",
+    "AddressStateProvince": "Test address state",
+    "AddressZipPostCode": "Test address ZIP",
+    "AddressCountry": "Test address country",
+    "IsShopfloor": false,
+    "IsCoMan": false,
+    "IsStaging": false
+}
