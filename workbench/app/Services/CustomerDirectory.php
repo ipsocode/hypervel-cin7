@@ -22,21 +22,21 @@ final class CustomerDirectory
     }
 
     /**
-     * Every customer, across all pages.
+     * Every customer, across all pages of `$limit`, optionally only those whose name starts with
+     * `$name`.
      *
-     * @param array<string, mixed> $filters
      * @return list<array<string, mixed>>
      */
-    public function all(array $filters = []): array
+    public function all(?int $limit = null, ?string $name = null): array
     {
-        $paginator = $this->connector->customer()->paginate($filters);
+        $paginator = $this->connector->customer()->paginate(limit: $limit, name: $name);
 
         return iterator_to_array($paginator->items(), false);
     }
 
     public function find(string $guid): ?CustomerData
     {
-        return $this->connector->customer()->get(['ID' => $guid])->dto()[0] ?? null;
+        return $this->connector->customer()->get(id: $guid)->dto()[0] ?? null;
     }
 
     public function create(CustomerData $customer): CustomerData

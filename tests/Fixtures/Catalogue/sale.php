@@ -36,7 +36,7 @@ return [
     'requests' => [
         DeleteSale::class => [
             DeleteSale::class,
-            ['0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['Void' => true]],
+            ['0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'void' => true],
             Method::DELETE,
             '/ExternalApi/v2/sale',
             ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Void' => 'true'],
@@ -44,7 +44,7 @@ return [
         ],
         GetSale::class => [
             GetSale::class,
-            ['0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['IncludeTransactions' => true]],
+            ['0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'includeTransactions' => true],
             Method::GET,
             '/ExternalApi/v2/sale',
             ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'IncludeTransactions' => 'true'],
@@ -85,7 +85,7 @@ return [
     ],
     'resources' => [
         'sale get' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->sale()->get('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['CombineAdditionalCharges' => true]),
+            fn (Cin7Connector $cin7): mixed => $cin7->sale()->get('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', combineAdditionalCharges: true),
             GetSale::class,
             Method::GET,
             '/ExternalApi/v2/sale',
@@ -113,7 +113,7 @@ return [
             DeleteSale::class,
             Method::DELETE,
             '/ExternalApi/v2/sale',
-            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Void' => 'false'],
+            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'],
             null,
         ],
         'sale delete with void' => [

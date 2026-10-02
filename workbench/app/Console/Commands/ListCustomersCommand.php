@@ -25,14 +25,11 @@ class ListCustomersCommand extends Command
 
     public function handle(CustomerDirectory $customers): int
     {
-        $filters = ['limit' => (int) $this->option('limit')];
-
-        if ($name = $this->option('name')) {
-            $filters['Name'] = $name;
-        }
+        $name = $this->option('name');
+        $name = is_string($name) && $name !== '' ? $name : null;
 
         try {
-            $rows = $customers->all($filters);
+            $rows = $customers->all(limit: (int) $this->option('limit'), name: $name);
         } catch (RequestException $exception) {
             // AlwaysThrowOnErrors throws on any non-2xx, so a 403 or 503 lands here
             // rather than as an empty list.

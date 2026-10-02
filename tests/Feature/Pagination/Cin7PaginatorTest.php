@@ -119,10 +119,10 @@ class Cin7PaginatorTest extends TestCase
     }
 
     /**
-     * `Page`/`Limit` go out lowercase, so the paginator's page overrides, never joins, the
-     * caller's, and a Total of 7 at the caller's Limit of 5 is two pages.
+     * The paginator's page overrides the request's, and a Total of 7 at the request's limit of
+     * 5 is two pages.
      */
-    public function testACapitalisedPageAndLimitDoNotDuplicateOrHideTheSentLimit(): void
+    public function testThePaginatorsPageOverridesTheRequestsAndItsLimitIsKept(): void
     {
         $mock = Saloon::fake([
             MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a', 'ACME')], page: 1, total: 7)),
@@ -130,7 +130,7 @@ class Cin7PaginatorTest extends TestCase
         ]);
 
         $items = iterator_to_array(
-            $this->connector()->customer()->paginate(['Page' => 5, 'Limit' => 5])->items(),
+            $this->connector()->paginate(new GetCustomer(page: 5, limit: 5))->items(),
             false,
         );
 
@@ -182,7 +182,7 @@ class Cin7PaginatorTest extends TestCase
         $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
 
         try {
-            $this->connector()->customer()->get(['limit' => 5000]);
+            $this->connector()->customer()->get(limit: 5000);
             $this->fail('A limit above the maximum should have thrown.');
         } catch (InvalidArgumentException) {
             $mock->assertNothingSent();
@@ -233,7 +233,7 @@ class Cin7PaginatorTest extends TestCase
         ]);
 
         $items = iterator_to_array(
-            $this->connector()->paginate(new GetCustomer(['limit' => 5]))->items(),
+            $this->connector()->customer()->paginate(limit: 5)->items(),
             false,
         );
 

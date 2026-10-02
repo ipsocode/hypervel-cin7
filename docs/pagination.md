@@ -1,6 +1,6 @@
 # Pagination
 
-A [`ListRequest`](requests.md#the-three-bases) is the only paginatable
+A [`ListRequest`](requests.md#the-bases) is the only paginatable
 request. `Cin7Connector` implements Saloon's `HasPagination`, and its
 `paginate()` returns a [`Cin7Paginator`](../src/Pagination/Cin7Paginator.php)
 that reads Cin7's list envelope and works out the last page from it, so a
@@ -22,16 +22,16 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 }
 ```
 
-Filters go in the resource method's parameters, and every page carries them:
+Filters are the resource method's named arguments, and every page carries them:
 
 ```php
-$paginator = $this->cin7->customer()->paginate(['Name' => 'ACME']);
+$paginator = $this->cin7->customer()->paginate(name: 'ACME');
 ```
 
 ## Page size
 
 `perPageLimit()` sends `limit` (lowercase, the spelling Cin7 reads) on every
-page, and takes precedence over a `limit` passed in the request's parameters. It
+page, and takes precedence over the request's `limit` argument. It
 takes 1 to `PageDefaults::LIMIT_MAX` (1000), the largest page Cin7 serves, and
 `startPage()` a page of at least 1; anything else throws an
 `InvalidArgumentException` before the first page is sent:
@@ -41,8 +41,8 @@ $paginator = $this->cin7->customer()->paginate()->perPageLimit(250);
 ```
 
 Without `perPageLimit()`, `applyPagination()` sets only `page` and leaves
-`limit` alone, so the request's own value stands: a `limit` in its parameters,
-or `PageDefaults::LIMIT` (100) when there is none.
+`limit` alone, so the request's own value stands: its `limit` argument, or
+`PageDefaults::LIMIT` (100) when there is none.
 
 ## Fetching pages concurrently
 

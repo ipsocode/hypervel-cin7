@@ -55,7 +55,7 @@ class ListCustomersCommandTest extends TestCase
         $this->artisan('cin7:customers --limit=5 --name=ACME')->assertExitCode(0);
 
         $this->assertSame(
-            ['limit' => 5, 'Name' => 'ACME', 'page' => 1],
+            ['Name' => 'ACME', 'limit' => 5, 'page' => 1],
             $mock->lastPendingRequest()->queryParameters(),
         );
     }

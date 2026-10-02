@@ -19,7 +19,7 @@ return [
     'requests' => [
         DeleteSaleCreditNote::class => [
             DeleteSaleCreditNote::class,
-            ['b039f19e-66f8-4309-a4b1-abf928303c88', ['Void' => false]],
+            ['b039f19e-66f8-4309-a4b1-abf928303c88', 'void' => false],
             Method::DELETE,
             '/ExternalApi/v2/sale/creditnote',
             ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'false'],
@@ -27,7 +27,7 @@ return [
         ],
         GetSaleCreditNote::class => [
             GetSaleCreditNote::class,
-            ['916ab4c0-6ccb-4c93-873d-0603859050e4', ['IncludePaymentInfo' => true]],
+            ['916ab4c0-6ccb-4c93-873d-0603859050e4', 'includePaymentInfo' => true],
             Method::GET,
             '/ExternalApi/v2/sale/creditnote',
             ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'IncludePaymentInfo' => 'true'],
@@ -52,7 +52,7 @@ return [
     ],
     'resources' => [
         'sale creditNote get' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->get('916ab4c0-6ccb-4c93-873d-0603859050e4', ['IncludePaymentInfo' => true]),
+            fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->get('916ab4c0-6ccb-4c93-873d-0603859050e4', includePaymentInfo: true),
             GetSaleCreditNote::class,
             Method::GET,
             '/ExternalApi/v2/sale/creditnote',

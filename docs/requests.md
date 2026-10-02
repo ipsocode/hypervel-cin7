@@ -2,25 +2,24 @@
 
 Every call to Cin7 is a request class in `Ipsocode\Cin7\Requests`, one per API
 action, grouped under a [resource](resources.md) such as `CustomerResource`.
-Three bases cover the shapes Cin7's V2 API needs; all three extend
-[`Cin7Request`](../src/Requests/Cin7Request.php), which sets the bounded retry
-policy for Cin7's throttling responses (429 and 503) and maps boolean and date
-query values to the strings Cin7 expects.
+Every request extends [`Cin7Request`](../src/Requests/Cin7Request.php), which sets the bounded
+retry policy for Cin7's throttling responses (429 and 503) and maps query values to the strings
+Cin7 expects. Lists and write bodies have a base of their own; a read or delete of one record
+extends `Cin7Request` itself.
 
-## The three bases
+## The bases
 
 | Base | Verb | Constructor | Request line |
 |---|---|---|---|
-| [`ListRequest`](../src/Requests/ListRequest.php) | GET | `(array $filters = [])` | `GET <path>?<filters>&page=1&limit=100` |
-| [`KeyedRequest`](../src/Requests/KeyedRequest.php) | GET or DELETE | `(string $id, array $parameters = [])` | `<verb> <path>?<idKey>=<id>&<parameters>` |
+| [`ListRequest`](../src/Requests/ListRequest.php) | GET | `(?int $page = null, ?int $limit = null)`, then the list's filters | `GET <path>?<filters>&page=1&limit=100` |
+| [`Cin7Request`](../src/Requests/Cin7Request.php) | GET or DELETE of one record | the identifier, then the other parameters | `<verb> <path>?<identifier key>=<id>&<parameters>` |
 | [`WriteRequest`](../src/Requests/WriteRequest.php) | POST or PUT | `(array\|Data $body = [])` | `<verb> <path>`, an array body as JSON verbatim, a data object as described in [data](data.md#write-bodies) |
 
-A subclass declares its verb as a property default, its path through
-`resolveEndpoint()`, and, for `ListRequest`, the envelope key its items sit
-under (`protected string $listKey`). `KeyedRequest` declares `protected
-string $idKey = 'ID'` only when the resource's identifier is not `ID` (e.g.
-`SaleID`). None of the three bases are paginatable or keyed by default beyond
-what their name says: only `ListRequest` implements `Paginatable`.
+A subclass declares its verb as a property default and its path through `resolveEndpoint()`. A
+`ListRequest` also declares the envelope key its items sit under (`protected string $listKey`)
+and returns its filters by wire key from `filters()`. A read or delete of one record returns its
+parameters by wire key from `defaultQuery()`, through `queryValues()`. Only `ListRequest`
+implements `Paginatable`.
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
@@ -44,6 +43,62 @@ never constructed directly by application code; go through the
 [resource](resources.md) accessor instead. Walking every page of a
 `ListRequest` is covered in [pagination](pagination.md).
 
+## Query parameters
+
+Every query parameter the reference documents is a typed constructor argument, and the resource
+method that sends the request takes the same arguments in the same order:
+
+- **Names.** An argument is its wire key in camelCase: `CombineAdditionalCharges` is
+  `combineAdditionalCharges`, `OrderLocationID` is `orderLocationId` and `IncludeBOM` is
+  `includeBom`.
+- **Types.** A GUID or text is a `string`, a Boolean a `bool`, a date a
+  `DateTimeInterface|string`, and a documented value list its enum (see [data](data.md#conventions)).
+- **Required first.** A required parameter, the identifier of a read or delete, comes first and
+  has no default. The optional ones default to `null`, and a `null` one is not sent, so Cin7
+  applies its own default: a `DELETE` without `void` is sent without `Void`, which the reference
+  defaults to `false`.
+- **Order.** Parameters are sent in the order the reference lists them, identifier first, and a
+  list's filters come before `page` and `limit`.
+
+```php
+use Ipsocode\Cin7\Enums\SaleStatus;
+
+// GET sale?ID=…&IncludeTransactions=true
+$sale = $this->cin7->sale()->get($saleId, includeTransactions: true)->dto();
+
+// GET saleList?Status=ORDERED&ReadyForShipping=true&page=1&limit=100
+$orders = $this->cin7->saleList()->get(status: SaleStatus::Ordered, readyForShipping: true)->dto();
+
+// DELETE sale?ID=…&Void=true
+$this->cin7->sale()->delete($saleId, void: true);
+```
+
+The arguments of each request; a required one is in bold, and an enum's type follows its name:
+
+| Request | Arguments |
+|---|---|
+| `GetCustomer` | `page`, `limit`, `id`, `name`, `modifiedSince`, `includeDeprecated`, `includeProductPrices`, `contactFilter` |
+| `GetProduct` | `page`, `limit`, `id`, `name`, `sku`, `modifiedSince`, `includeDeprecated`, `includeBom`, `includeSuppliers`, `includeMovements`, `includeAttachments`, `includeReorderLevels`, `includeCustomPrices` |
+| `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
+| `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
+| `GetMoneyTaskList` | `page`, `limit`, `status` (`CompletionStatus`), `search`, `taskType` (`MoneyTaskType`) |
+| `GetMoneyOperation` | **`taskId`** |
+| `DeleteMoneyOperation` | **`id`**, `void` |
+| `GetSaleList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `shipBy`, `quoteStatus` (`TaskStatus`), `orderStatus` (`OrderStatus`), `combinedPickStatus` (`PickingStatus`), `combinedPackStatus` (`PackingStatus`), `combinedShippingStatus` (`ShippingStatus`), `combinedInvoiceStatus`, `creditNoteStatus` (`TaskStatus`), `externalId`, `status` (`SaleStatus`), `readyForShipping`, `orderLocationId` |
+| `GetSale` | **`id`**, `combineAdditionalCharges`, `hideInventoryMovements`, `includeTransactions`, `countryFormat` (`CountryFormat`) |
+| `DeleteSale` | **`id`**, `void` |
+| `GetSaleOrder` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo` |
+| `GetSaleInvoice` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo` |
+| `DeleteSaleInvoice` | **`taskId`**, `void` |
+| `GetSaleCreditNote` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo`, `includePaymentInfo` |
+| `DeleteSaleCreditNote` | **`taskId`**, `void` |
+| `GetSalePayment` | **`saleId`** |
+| `DeleteSalePayment` | **`id`** |
+
+`CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
+examples return (see
+[data](data.md#where-the-references-tables-and-examples-disagree)).
+
 The `product` actions follow the same shape: `GetProduct` (a `ListRequest`
 keyed `Products`), `PostProduct` and `PutProduct` (`WriteRequest`s; the PUT body
 must carry `ID`, and `PutProduct` throws an `InvalidArgumentException` without one, while
@@ -57,22 +112,22 @@ on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`)
 `ref/customer/credits`.
 
 The `moneyOperation` actions live under `src/Requests/MoneyOperation/`: `GetMoneyOperation`
-(a `KeyedRequest` keyed `TaskID`), `DeleteMoneyOperation` (a `KeyedRequest` keyed `ID`; it takes
-`Void` as a parameter), and `PostMoneyOperation` and `PutMoneyOperation` (`WriteRequest`s; the
-PUT body carries `TaskID`), all on `moneyOperation`. Every one's `dto()` is a `MoneyTaskData`.
+(keyed `TaskID`), `DeleteMoneyOperation` (keyed `ID`, with `Void`), and `PostMoneyOperation` and
+`PutMoneyOperation` (`WriteRequest`s; the PUT body carries `TaskID`), all on `moneyOperation`.
+Every one's `dto()` is a `MoneyTaskData`.
 
 `GetMoneyTaskList` (a `ListRequest` keyed `MoneyTasks`) is on `moneyTaskList`, under
 `src/Requests/MoneyTaskList/`; its `dto()` is a `list<MoneyTaskListData>`.
 
-The `sale` actions live under `src/Requests/Sale/`: `GetSale` and `DeleteSale` (`KeyedRequest`s
-keyed `ID`; the DELETE takes `Void` as a parameter) and `PostSale` and `PutSale`
+The `sale` actions live under `src/Requests/Sale/`: `GetSale` and `DeleteSale` (keyed `ID`; the
+DELETE takes `Void`) and `PostSale` and `PutSale`
 (`WriteRequest`s; the PUT body carries `ID`, and `PutSale` leaves the POST-only `SaleType` out of it), all on `sale`. `sale` has no list action:
 `GetSaleList` (a `ListRequest` keyed `SaleList`) is on `saleList`, under `src/Requests/SaleList/`.
 Every `sale` request's `dto()` is a `SaleData`; `GetSaleList`'s is a `list<SaleListData>`.
 
 The `sale/…` documents live under `src/Requests/Sale/`, one folder per path, 13 classes in all:
 
-| Folder | Classes (`KeyedRequest` key, or `WriteRequest`) | `dto()` |
+| Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
 |---|---|---|
 | `Order/` | `GetSaleOrder` (`SaleID`), `PostSaleOrder` | `SaleOrderData` |
 | `Invoice/` | `GetSaleInvoice` (`SaleID`), `PostSaleInvoice`, `PutSaleInvoice`, `DeleteSaleInvoice` (`TaskID`) | `SaleInvoicesData` |
@@ -98,28 +153,25 @@ These are the requests Cin7 receives.
   POST and PUT carry theirs as a raw JSON body and send no query string.
 - **Page defaults.** `page=1` and `limit=100` are added to the
   query string of every `ListRequest` when the caller has not set them. They
-  are never added to a `KeyedRequest` or a `WriteRequest`. A page below 1 or a
+  are never added to a read or delete of one record, or a `WriteRequest`. A page below 1 or a
   limit outside 1 to 1000 throws before anything is sent; see
   [page defaults](#page-defaults).
-- **Boolean query values.** A `true`/`false` filter value goes out as the
-  string `'true'`/`'false'`, not PHP's `1`/empty string, through
+- **Unset parameters.** A `null` argument is left out of the query string, through
   `Cin7Request::queryValues()`.
-- **Date query values.** A `DateTimeInterface` filter or parameter goes out in
+- **Boolean query values.** A `true`/`false` argument goes out as the
+  string `'true'`/`'false'`, not PHP's `1`/empty string, through the same method.
+- **Enum query values.** An enum argument goes out as its value: `SaleStatus::Ordered` as
+  `ORDERED`.
+- **Date query values.** A `DateTimeInterface` argument goes out in
   the reference's date format, ISO 8601 converted to UTC with milliseconds
   (`yyyy-MM-ddTHH:mm:ss.fff`, e.g. `2012-11-14T13:28:33.363`), through the same
   method. A date string is sent as given.
-- **Identifier placement.** A `KeyedRequest` sends its identifier in the query
-  string under `idKey` (`ID` by default). A `WriteRequest` sends no identifier
-  of its own; the caller merges it into the body, as in
+- **Identifier placement.** A read or delete of one record sends its identifier first in the
+  query string, under the key the reference documents for it (`ID`, `SaleID` or `TaskID`). A
+  `WriteRequest` sends no identifier of its own; the caller merges it into the body, as in
   [PUT identifiers](resources.md#put-identifiers).
 - **Empty write.** `new PostCustomer()` with no body still sends a JSON body,
   the encoding of an empty array (`[]`), not a bodyless POST.
-
-Query parameters on a `KeyedRequest` go out identifier first, then the
-caller's own keys: `[$idKey => $id] + $parameters`, so the identifier wins
-over a caller-supplied value under the same key. For example, a
-`KeyedRequest` constructed with `('guid', ['ID' => 'ignored', 'Force' => 'true'])`
-sends `ID=guid&Force=true`.
 
 ## Fields left out of write bodies
 
@@ -148,10 +200,7 @@ sends them. [`PageDefaults::apply()`](../src/PageDefaults.php):
 - Sets `page` to `PageDefaults::PAGE` (`1`) and `limit` to
   `PageDefaults::LIMIT` (`100`) only when the caller has not. Caller values
   win.
-- Sends lowercase keys. Cin7 also accepts `Page` and `Limit`; a caller's are
-  renamed to the lowercase spelling, so `['Page' => 5, 'Limit' => 20]` is sent as
-  `page=5&limit=20`, never with both spellings, and `paginate()` reads the limit
-  it sent.
+- Sends lowercase keys, the spelling the paginator reads the sent limit from.
 - Treats a `null` value as absent, so the default is used.
 - Enforces Cin7's bounds: `page` must be a whole number of at least 1, and
   `limit` one from 1 to `PageDefaults::LIMIT_MAX` (1000), the largest page Cin7
@@ -160,7 +209,7 @@ sends them. [`PageDefaults::apply()`](../src/PageDefaults.php):
   call: the paginator counts pages by the limit it sent, so a limit Cin7 cut
   short would end the walk early. `Cin7Paginator` applies the same checks to
   `perPageLimit()` and `startPage()`.
-- Appends the defaults after the caller's keys, which keep their order.
+- Appends the defaults after the list's filters, which keep their order.
 - Exposes `PAGE` and `LIMIT` as public constants, so code paging by hand can
   read them instead of hard-coding `1` and `100`.
 - Never mutates the caller's array.
@@ -263,6 +312,46 @@ final class PutProduct extends WriteRequest
     }
 }
 ```
+
+A read or delete of one record extends `Cin7Request` itself. Its constructor takes the
+identifier, then each documented parameter as a typed argument, and `defaultQuery()` sends them
+by wire key through `queryValues()`:
+
+```php
+use Hypervel\Saloon\Enums\Method;
+use Ipsocode\Cin7\Requests\Cin7Request;
+
+final class GetSaleOrder extends Cin7Request
+{
+    protected Method $method = Method::GET;
+
+    public function __construct(
+        protected readonly string $saleId,
+        protected readonly ?bool $combineAdditionalCharges = null,
+        protected readonly ?bool $includeProductInfo = null,
+    ) {
+        parent::__construct();
+    }
+
+    public function resolveEndpoint(): string
+    {
+        return 'sale/order';
+    }
+
+    protected function defaultQuery(): array
+    {
+        return $this->queryValues([
+            'SaleID' => $this->saleId,
+            'CombineAdditionalCharges' => $this->combineAdditionalCharges,
+            'IncludeProductInfo' => $this->includeProductInfo,
+        ]);
+    }
+}
+```
+
+A list request takes `?int $page = null, ?int $limit = null` first and passes them to
+`parent::__construct($page, $limit)`, then returns its filters by wire key from `filters()`;
+`ListRequest` maps them and adds the page defaults.
 
 `Cin7Request`'s constructor reads `cin7.retry.*`, so a subclass that adds
 constructor parameters must call `parent::__construct()`. PHP initializes
