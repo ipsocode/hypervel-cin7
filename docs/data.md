@@ -59,6 +59,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractTaxData` | `TaxData`, `TaxPostData`, `TaxPutData` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
   | `AbstractProductData` | `ProductData`, `ProductPostData`, `ProductPutData` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`; and `QuantityToProduce` and `AssemblyCostEstimationMethod` on a write body with a bill of materials (see [products](#products)) |
   | `AbstractSaleListData` | `SaleListData`, `SaleCreditNoteListData` | the 19 fields both list tables require but `QuoteStatus` and `CombinedTrackingNumbers` (see [below](#where-the-references-tables-and-examples-disagree)) |
+  | `AbstractPurchaseListData` | `PurchaseListData`, `PurchaseCreditNoteListData`, which add no field of their own (see [below](#where-the-references-tables-and-examples-disagree)) | `CombinedReceivingStatus`, `CombinedInvoiceStatus`, `CombinedPaymentStatus`, `Type` |
   | `AbstractSaleQuoteData` | `SaleQuoteData`, `SaleQuotePostData` | `Memo`, `Status`, `Lines` |
   | `AbstractSaleManualJournalData` | `SaleManualJournalData`, `SaleManualJournalPostData` | `Status` |
   | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
@@ -206,6 +207,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `sale/manualJournal` | POST: `SaleManualJournalPostData` (Sale Manual Journal, with `Lines`: `SaleManualJournalLineData`) | GET, POST: `SaleManualJournalData` |
 | `sale/attachment` | POST: `SaleAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `SaleAttachmentsData` (`{SaleID, Lines}`, with `Lines`: `AttachmentLineData`) |
 | `sale/payment` | POST: `SalePaymentPostData`; PUT: `SalePaymentPutData` (the Sale Payment Line Partial Model's fields for each verb) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
+| `purchaseList` | none | GET: `list<PurchaseListData>` (Purchase List) |
+| `purchaseCreditNoteList` | none | GET: `list<PurchaseCreditNoteListData>` (Purchase Credit Note List), read from `PurchaseList` |
 | `purchase/order` | POST: `PurchaseOrderPostData` (Available Fields for Purchase Order, with `Lines`: `PurchaseOrderLineData` and `AdditionalCharges`: `PurchaseAdditionalChargeData`) | GET, POST: `PurchaseOrderData` |
 | `purchase/stock` | POST: `PurchaseStockPostData` (Available Fields for Purchase Stock Received, with `Lines`: `PurchaseStockLineData`) | GET, POST: `PurchaseStockData` |
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
@@ -444,6 +447,31 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `QuoteStatus` as `""`, outside the quote statuses, and `CombinedTrackingNumbers` as `null`, so
   its `QuoteStatus` is a string and its `CombinedTrackingNumbers` optional; `RestockStatus`
   appears only in its example. Both tables type `Customer` as `Date`; it is the customer's name.
+- **Purchase List and Purchase Credit Note List.** The two tables are one, field for field, so
+  `PurchaseListData` and `PurchaseCreditNoteListData` share `AbstractPurchaseListData`, which holds
+  every field. Only the values listed for `Type` differ: the credit note list adds
+  `Purchase Credit Note` and `Credit Note` to `Simple Purchase`, `Advanced Purchase` and
+  `Service Purchase`, and both rows take `PurchaseType`, which has all five, as both sale lists take
+  `SaleType`. The credit note list's example returns its rows under `PurchaseList`, as
+  `purchaseList` does, so `GetPurchaseCreditNoteList` reads that key. Both tables type `Supplier` as
+  `Date`; it is the supplier's name, a string of 256.
+- **Purchase list `Status`.** Both tables point `Status` to the Available Purchase Statuses
+  (`DRAFT` to `COMPLETED`), but the credit note list's example sends
+  `COMPLETED / CREDIT NOTE CLOSED`, which that list does not have. The list is not closed, so
+  `Status` stays a string on both rows, and both lists' `status` filter is a string.
+- **Purchase list statuses.** `OrderStatus`, `StockReceivedStatus`, `UnstockStatus` and
+  `CreditNoteStatus` list `VOIDED`, `DRAFT`, `AUTHORISED` and `NOT AVAILABLE`, and are `TaskStatus`;
+  the `OrderStatus` row misses a backtick, which garbles all but `VOIDED`. `InvoiceStatus` lists the
+  same four, but the examples send `PAID`, an invoice status, so it is `InvoiceStatus`, which has all
+  five. The notes of `UnstockStatus` and `InvoiceStatus` are swapped ("Invoice status" and "Purchase
+  unstock status"); each key is the status it names. The combined statuses are `ReceivingStatus`,
+  `InvoicingStatus` and `PurchasePaymentStatus` (the sale's `SalePaymentStatus` has `NOT REFUNDED`
+  where a purchase has `OVERPAID / CREDITED`); `CombinedInvoiceStatus`'s Length of 20 is shorter
+  than its `PARTIALLY INVOICED / CREDITED`, and an enum carries no length rule. The filters take the
+  same enums; `RestockReceivedStatus` filters by `StockReceivedStatus`.
+- **Purchase list `LastUpdatedDate`.** Both list tables type it `Date`, but its notes say "date and
+  time", the purchase tables type the same field `DateTime`, and the examples send a time
+  (`2018-04-19T04:03:06.52Z`), so it carries `#[DateTime]`.
 - **Sale quote and manual journal.** As with the order, the Sale Quote and Sale Manual Journal
   tables of `sale/quote` and `sale/manualJournal` add `SaleID` (and the quote
   `CombineAdditionalCharges`) to the models a sale embeds, so `SaleQuoteData` and

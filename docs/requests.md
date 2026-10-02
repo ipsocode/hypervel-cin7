@@ -107,6 +107,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetSaleManualJournal`, `GetSaleAttachment` | **`saleId`** |
 | `DeleteSaleAttachment` | **`id`** |
 | `GetSaleCreditNoteList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` (`SaleStatus`) |
+| `GetPurchaseList` | `page`, `limit`, `search`, `requiredBy`, `updatedSince`, `updatedUntil`, `orderStatus` (`TaskStatus`), `restockReceivedStatus` (`TaskStatus`), `invoiceStatus` (`InvoiceStatus`), `creditNoteStatus` (`TaskStatus`), `unstockStatus` (`TaskStatus`), `status`, `dropShipTaskId` |
+| `GetPurchaseCreditNoteList` | `page`, `limit`, `search`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` |
 | `GetPurchaseOrder` | **`taskId`**, `combineAdditionalCharges` |
 | `GetPurchaseStock` | **`taskId`** |
 | `GetPurchasePayment` | **`taskId`** |
@@ -115,6 +117,12 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
 [data](data.md#where-the-references-tables-and-examples-disagree)).
+
+The purchase lists' `status` is a string as well, since the credit note list's example returns a
+purchase status the reference's list does not have (see
+[data](data.md#where-the-references-tables-and-examples-disagree)). Both lists' URI templates leave
+out `UpdatedUntil` and write `Status{Status}` without its `=`; the requests send every parameter the
+operations document, under its key.
 
 The `product` actions follow the same shape: `GetProduct` (a `ListRequest`
 keyed `Products`), `PostProduct` and `PutProduct` (`WriteRequest`s; the PUT body
@@ -190,6 +198,12 @@ The write bodies are per verb where the reference's fields differ: `SaleInvoiceP
 `SalePaymentPostData` and `SalePaymentPutData` for `sale/payment`, and a POST and a PUT class for
 the fulfilment's pick, pack and ship. Each makes the fields the reference requires for that verb
 mandatory; see [data](data.md).
+
+`GetPurchaseList` (a `ListRequest` keyed `PurchaseList`) is on `purchaseList`, under
+`src/Requests/PurchaseList/`, and `GetPurchaseCreditNoteList` (keyed `PurchaseList` too, as its
+example is) on `purchaseCreditNoteList`, under `src/Requests/PurchaseCreditNoteList/`.
+`GetPurchaseList`'s `dto()` is a `list<PurchaseListData>` and `GetPurchaseCreditNoteList`'s a
+`list<PurchaseCreditNoteListData>`.
 
 The `purchase/…` documents live under `src/Requests/Purchase/`, one folder per path:
 

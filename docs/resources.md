@@ -78,6 +78,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->purchaseList()` | `PurchaseListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->purchaseCreditNoteList()` | `PurchaseCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
@@ -462,6 +464,27 @@ $this->cin7->purchase()->stock()->post(PurchaseStockPostData::from([
     'Status' => 'AUTHORISED',
     'Lines' => [],
 ])); // authorises the stock received
+```
+
+`$cin7->purchaseList()` is `purchaseList`, the purchases, simple, advanced and service ones, listed
+under `PurchaseList` (`{Total, Page, PurchaseList}`). Its filters are named arguments of `get()` and
+`paginate()`: `search`, the dates (`requiredBy`, `updatedSince`, `updatedUntil`), the documents'
+statuses (`orderStatus`, `restockReceivedStatus`, `creditNoteStatus` and `unstockStatus`, each a
+`TaskStatus`, and `invoiceStatus`, an `InvoiceStatus`), `status`, a string (see
+[data](data.md#where-the-references-tables-and-examples-disagree)), and `dropShipTaskId`, the sale
+task a drop-ship purchase was created by. `$cin7->purchaseCreditNoteList()` is
+`purchaseCreditNoteList`, the purchases with a credit note, from the same `PurchaseList` envelope,
+filtered by `search`, `updatedSince`, `updatedUntil`, `creditNoteStatus` and `status`. Their `dto()`
+is a `list<PurchaseListData>` and a `list<PurchaseCreditNoteListData>`.
+
+```php
+use Ipsocode\Cin7\Enums\InvoiceStatus;
+
+foreach ($this->cin7->purchaseList()->paginate(invoiceStatus: InvoiceStatus::Paid)->items() as $row) {
+    // $row is one entry of PurchaseList
+}
+
+$credited = $this->cin7->purchaseCreditNoteList()->get(updatedSince: '2021-09-01T00:00:00')->dto(); // list<PurchaseCreditNoteListData>
 ```
 
 `$cin7->purchase()->payment()` is `purchase/payment`, a purchase's payments, which the reference
