@@ -14,6 +14,7 @@ use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\CustomPricesResource;
 use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
 use Ipsocode\Cin7\Resources\Me\ContactsResource;
@@ -25,6 +26,7 @@ use Ipsocode\Cin7\Resources\Product\MarkupPricesResource;
 use Ipsocode\Cin7\Resources\ProductFamily\AttachmentsResource as ProductFamilyAttachmentsResource;
 use Ipsocode\Cin7\Resources\ProductFamilyResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\ProductSuppliersResource;
 use Ipsocode\Cin7\Resources\Purchase\AttachmentResource as PurchaseAttachmentResource;
 use Ipsocode\Cin7\Resources\Purchase\CreditNoteResource as PurchaseCreditNoteResource;
 use Ipsocode\Cin7\Resources\Purchase\InvoiceResource as PurchaseInvoiceResource;
@@ -275,6 +277,16 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(TransactionsResource::class, $connector->transactions());
         $this->assertNotSame($connector->journal(), $connector->journal());
         $this->assertNotSame($connector->transactions(), $connector->transactions());
+    }
+
+    public function testCustomPricesAndProductSuppliersReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(CustomPricesResource::class, $connector->customPrices());
+        $this->assertNotSame($connector->customPrices(), $connector->customPrices());
+        $this->assertInstanceOf(ProductSuppliersResource::class, $connector->productSuppliers());
+        $this->assertNotSame($connector->productSuppliers(), $connector->productSuppliers());
     }
 
     public function testMeReturnsAFreshMeResource(): void

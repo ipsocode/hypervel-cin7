@@ -65,6 +65,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->me()->addresses()` | `Me\AddressesResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeAddressPostData $body)`, `put(array\|MeAddressPutData $body)`, `delete(string $id)` |
 | `$cin7->me()->contacts()` | `Me\ContactsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeContactPostData $body)`, `put(array\|MeContactPutData $body)`, `delete(string $id)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)`; `attachments()`, `markupPrices()` |
+| `$cin7->customPrices()` | `CustomPricesResource` | `post(array\|CustomPricesData $body)`, `put(array\|CustomPricesData $body)`, `delete(string $productId, string $customerId)` |
+| `$cin7->productSuppliers()` | `ProductSuppliersResource` | `get(string $productId)`, `post(array\|ProductSuppliersData $body)`, `put(array\|ProductSuppliersData $body)`, `delete(string $productId, string $supplierId)` |
 | `$cin7->bankTransfer()` | `BankTransferResource` | `get(string $taskId)`, `post(array\|BankTransferPostData $body)`, `put(array\|BankTransferPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -850,6 +852,28 @@ $attachments = $this->cin7->purchase()->attachment()->post(PurchaseAttachmentPos
 $this->cin7->purchase()->attachment()->delete($attachments->Lines[0]->ID); // DELETE purchase/attachment?ID=…
 ```
 
+## Custom prices and product suppliers
+
+`$cin7->customPrices()` is `custom-prices`, the prices set for one customer. It has no GET: a
+product's are in its `CustomPrices`, and a customer's in its `ProductPrices`. `post()` and `put()`
+take a `CustomPricesData`, a list of `CustomPrices` (`ProductPriceData`: a `Price`, a product by
+`ProductID` or `ProductSKU` and a customer by `CustomerID` or `CustomerName`), as well as an array;
+`delete($productId, $customerId)` removes one. A POST or PUT answers `{Errors}` and a DELETE
+`{Success}`, which `json()` reads.
+
+`$cin7->productSuppliers()` is `product-suppliers`: `get($productId)->dto()` is a
+`ProductSuppliersData`, its `ProductSuppliers` each a `ProductSupplierData` with its
+`ProductSupplierOptions`. `post()` and `put()` take the same `ProductSuppliersData` as well as an array,
+and `delete($productId, $supplierId)` removes one supplier. An empty `ProductSupplierOptions` on a
+PUT deletes the options, as every empty collection does.
+
+```php
+$this->cin7->customPrices()->post(CustomPricesData::from([
+    'CustomPrices' => [['CustomerID' => '201a76af-9da8-4cb0-ab85-5570f36edff6', 'ProductSKU' => 'Screws-SKU - 001', 'Price' => 1.1]],
+]));
+
+$suppliers = $this->cin7->productSuppliers()->get($productId)->dto()->ProductSuppliers; // list<ProductSupplierData>
+```
 ## Advanced sale
 
 `$cin7->advancedSale()` reads the advanced sale the way `advancedPurchase()` reads the advanced

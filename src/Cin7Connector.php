@@ -17,12 +17,14 @@ use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\CustomPricesResource;
 use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductFamilyResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\ProductSuppliersResource;
 use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
 use Ipsocode\Cin7\Resources\PurchaseListResource;
 use Ipsocode\Cin7\Resources\PurchaseResource;
@@ -322,5 +324,21 @@ final class Cin7Connector extends Connector implements HasPagination
             503 => self::THROTTLE_COOLDOWN,
             default => null,
         };
+    }
+
+    /**
+     * The `custom-prices` resource.
+     */
+    public function customPrices(): CustomPricesResource
+    {
+        return new CustomPricesResource($this);
+    }
+
+    /**
+     * The `product-suppliers` resource.
+     */
+    public function productSuppliers(): ProductSuppliersResource
+    {
+        return new ProductSuppliersResource($this);
     }
 }
