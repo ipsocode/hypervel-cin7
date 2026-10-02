@@ -136,6 +136,28 @@ foreach ($this->cin7->saleList()->paginate(['Status' => 'ORDERED'])->items() as 
 $this->cin7->sale()->delete($guid, void: true);
 ```
 
+### Sale order, invoice, credit note and payment
+
+`sale` also has four sub-resources, mirroring the V2 paths: `$cin7->sale()->order()`,
+`->invoice()`, `->creditNote()` and `->payment()`. Their `get()` takes the sale's GUID
+(`SaleID`) and optional parameters; they send `sale/order`, `sale/invoice`, `sale/creditnote`
+and `sale/payment`.
+
+| Resource | Methods | Body and `dto()` |
+|---|---|---|
+| `sale()->order()` (Sale Order Model) | `get(string $saleId, array $parameters = [])` (`CombineAdditionalCharges`, `IncludeProductInfo`), `post(array\|SaleOrderData $body)` | `SaleOrderData` |
+| `sale()->invoice()` (Sale Invoice Partial and POST Models) | `get($saleId, …)`, `post(array\|SaleInvoicePostData)`, `put(array\|SaleInvoicePostData)`, `delete(string $taskId, bool $void = false)` | `SaleInvoicesData`, the `{SaleID, Invoices}` envelope |
+| `sale()->creditNote()` (Sale Credit Note Partial and POST Models) | `get($saleId, …)` (also `IncludePaymentInfo`), `post(array\|SaleCreditNotePostData)`, `delete(string $taskId, bool $void = false)` | `SaleCreditNotesData`, the `{SaleID, CreditNotes}` envelope |
+| `sale()->payment()` (Sale Payment Line Partial Model) | `get(string $saleId)`, `post(array\|SalePaymentLinePartialData)`, `put(array\|SalePaymentLinePartialData)`, `delete(string $id)` | `GET`: `list<SalePaymentLinePartialData>`; POST, PUT: one line; DELETE answers `{Success}` |
+
+Invoice and credit note deletes go by `TaskID` and take `Void`; a payment delete goes by `ID`
+and has no `Void`. An invoice POST needs `SaleID` and an empty-GUID `TaskID`.
+
+```php
+$this->cin7->sale()->invoice()->delete($taskId, void: true); // DELETE sale/invoice?TaskID=…&Void=true
+$payments = $this->cin7->sale()->payment()->get($saleId)->dto(); // list<SalePaymentLinePartialData>
+```
+
 ## PUT identifiers
 
 A PUT body carries the identifier V2 documents for that resource. The caller
@@ -148,6 +170,8 @@ key:
 | `product` | `ID` |
 | `ref/tax` | `ID` |
 | `sale` | `ID` |
+| `sale/invoice` | `SaleID` and `TaskID` |
+| `sale/payment` | `ID` |
 
 ```php
 $attributes['ID'] = $guid;

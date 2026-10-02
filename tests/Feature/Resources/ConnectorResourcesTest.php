@@ -10,6 +10,10 @@ use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\RefResource;
+use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
+use Ipsocode\Cin7\Resources\Sale\InvoiceResource;
+use Ipsocode\Cin7\Resources\Sale\OrderResource;
+use Ipsocode\Cin7\Resources\Sale\PaymentResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -54,6 +58,17 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(SaleListResource::class, $connector->saleList());
         $this->assertNotSame($connector->sale(), $connector->sale());
         $this->assertNotSame($connector->saleList(), $connector->saleList());
+    }
+
+    public function testSaleReturnsItsNestedResources(): void
+    {
+        $sale = $this->connector()->sale();
+
+        $this->assertInstanceOf(OrderResource::class, $sale->order());
+        $this->assertInstanceOf(InvoiceResource::class, $sale->invoice());
+        $this->assertInstanceOf(CreditNoteResource::class, $sale->creditNote());
+        $this->assertInstanceOf(PaymentResource::class, $sale->payment());
+        $this->assertNotSame($sale->order(), $sale->order());
     }
 
     public function testRefReturnsARefResourceWithItsGroupings(): void

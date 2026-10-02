@@ -10,6 +10,10 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
+use Ipsocode\Cin7\Data\Sale\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\SalePostPutData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
@@ -22,8 +26,21 @@ use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
+use Ipsocode\Cin7\Requests\Sale\CreditNote\DeleteSaleCreditNote;
+use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
+use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\DeleteSale;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Requests\Sale\Invoice\DeleteSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Invoice\GetSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
+use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
+use Ipsocode\Cin7\Requests\Sale\Payment\DeleteSalePayment;
+use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;
+use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
+use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
@@ -176,6 +193,30 @@ class RequestCatalogueTest extends TestCase
                 ['Status' => 'ORDERED', 'ReadyForShipping' => 'true', 'page' => 1, 'limit' => 100],
                 null,
             ],
+            DeleteSaleCreditNote::class => [
+                DeleteSaleCreditNote::class,
+                ['task-1', ['Void' => false]],
+                Method::DELETE,
+                '/ExternalApi/v2/sale/creditnote',
+                ['TaskID' => 'task-1', 'Void' => 'false'],
+                null,
+            ],
+            GetSaleCreditNote::class => [
+                GetSaleCreditNote::class,
+                ['sale-1', ['IncludePaymentInfo' => true]],
+                Method::GET,
+                '/ExternalApi/v2/sale/creditnote',
+                ['SaleID' => 'sale-1', 'IncludePaymentInfo' => 'true'],
+                null,
+            ],
+            PostSaleCreditNote::class => [
+                PostSaleCreditNote::class,
+                [['SaleID' => 'sale-1']],
+                Method::POST,
+                '/ExternalApi/v2/sale/creditnote',
+                [],
+                ['SaleID' => 'sale-1'],
+            ],
             DeleteSale::class => [
                 DeleteSale::class,
                 ['guid-1', ['Void' => true]],
@@ -191,6 +232,86 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/sale',
                 ['ID' => 'guid-1', 'IncludeTransactions' => 'true'],
                 null,
+            ],
+            DeleteSaleInvoice::class => [
+                DeleteSaleInvoice::class,
+                ['task-1', ['Void' => true]],
+                Method::DELETE,
+                '/ExternalApi/v2/sale/invoice',
+                ['TaskID' => 'task-1', 'Void' => 'true'],
+                null,
+            ],
+            GetSaleInvoice::class => [
+                GetSaleInvoice::class,
+                ['sale-1', ['CombineAdditionalCharges' => true]],
+                Method::GET,
+                '/ExternalApi/v2/sale/invoice',
+                ['SaleID' => 'sale-1', 'CombineAdditionalCharges' => 'true'],
+                null,
+            ],
+            PostSaleInvoice::class => [
+                PostSaleInvoice::class,
+                [['SaleID' => 'sale-1', 'TaskID' => '00000000-0000-0000-0000-000000000000']],
+                Method::POST,
+                '/ExternalApi/v2/sale/invoice',
+                [],
+                ['SaleID' => 'sale-1', 'TaskID' => '00000000-0000-0000-0000-000000000000'],
+            ],
+            PutSaleInvoice::class => [
+                PutSaleInvoice::class,
+                [['SaleID' => 'sale-1', 'TaskID' => 'task-1']],
+                Method::PUT,
+                '/ExternalApi/v2/sale/invoice',
+                [],
+                ['SaleID' => 'sale-1', 'TaskID' => 'task-1'],
+            ],
+            GetSaleOrder::class => [
+                GetSaleOrder::class,
+                ['sale-1', ['IncludeProductInfo' => true]],
+                Method::GET,
+                '/ExternalApi/v2/sale/order',
+                ['SaleID' => 'sale-1', 'IncludeProductInfo' => 'true'],
+                null,
+            ],
+            PostSaleOrder::class => [
+                PostSaleOrder::class,
+                [['SaleID' => 'sale-1', 'AutoPickPackShipMode' => 'NOPICK']],
+                Method::POST,
+                '/ExternalApi/v2/sale/order',
+                [],
+                ['SaleID' => 'sale-1', 'AutoPickPackShipMode' => 'NOPICK'],
+            ],
+            DeleteSalePayment::class => [
+                DeleteSalePayment::class,
+                ['pay-1'],
+                Method::DELETE,
+                '/ExternalApi/v2/sale/payment',
+                ['ID' => 'pay-1'],
+                null,
+            ],
+            GetSalePayment::class => [
+                GetSalePayment::class,
+                ['sale-1'],
+                Method::GET,
+                '/ExternalApi/v2/sale/payment',
+                ['SaleID' => 'sale-1'],
+                null,
+            ],
+            PostSalePayment::class => [
+                PostSalePayment::class,
+                [['SaleID' => 'sale-1', 'Amount' => 10.5]],
+                Method::POST,
+                '/ExternalApi/v2/sale/payment',
+                [],
+                ['SaleID' => 'sale-1', 'Amount' => 10.5],
+            ],
+            PutSalePayment::class => [
+                PutSalePayment::class,
+                [['ID' => 'pay-1', 'Amount' => 12.5]],
+                Method::PUT,
+                '/ExternalApi/v2/sale/payment',
+                [],
+                ['ID' => 'pay-1', 'Amount' => 12.5],
             ],
             PostSale::class => [
                 PostSale::class,
@@ -223,6 +344,54 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/ref/tax',
                 [],
                 ['ID' => 'guid-1', 'Name' => 'VAT'],
+            ],
+            PostSaleOrder::class . ' with data' => [
+                PostSaleOrder::class,
+                [fn (): SaleOrderData => SaleOrderData::from(['SaleID' => 'sale-1', 'Memo' => 'Rush'])],
+                Method::POST,
+                '/ExternalApi/v2/sale/order',
+                [],
+                ['SaleID' => 'sale-1', 'Memo' => 'Rush'],
+            ],
+            PostSaleInvoice::class . ' with data' => [
+                PostSaleInvoice::class,
+                [fn (): SaleInvoicePostData => SaleInvoicePostData::from(['SaleID' => 'sale-1', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'Memo' => 'Rush'])],
+                Method::POST,
+                '/ExternalApi/v2/sale/invoice',
+                [],
+                ['SaleID' => 'sale-1', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'Memo' => 'Rush'],
+            ],
+            PutSaleInvoice::class . ' with data' => [
+                PutSaleInvoice::class,
+                [fn (): SaleInvoicePostData => SaleInvoicePostData::from(['SaleID' => 'sale-1', 'TaskID' => 'task-1', 'Lines' => []])],
+                Method::PUT,
+                '/ExternalApi/v2/sale/invoice',
+                [],
+                ['SaleID' => 'sale-1', 'TaskID' => 'task-1', 'Lines' => []],
+            ],
+            PostSaleCreditNote::class . ' with data' => [
+                PostSaleCreditNote::class,
+                [fn (): SaleCreditNotePostData => SaleCreditNotePostData::from(['SaleID' => 'sale-1', 'Memo' => 'Damaged'])],
+                Method::POST,
+                '/ExternalApi/v2/sale/creditnote',
+                [],
+                ['SaleID' => 'sale-1', 'Memo' => 'Damaged'],
+            ],
+            PostSalePayment::class . ' with data' => [
+                PostSalePayment::class,
+                [fn (): SalePaymentLinePartialData => SalePaymentLinePartialData::from(['SaleID' => 'sale-1', 'Amount' => 10.5])],
+                Method::POST,
+                '/ExternalApi/v2/sale/payment',
+                [],
+                ['SaleID' => 'sale-1', 'Amount' => 10.5],
+            ],
+            PutSalePayment::class . ' with data' => [
+                PutSalePayment::class,
+                [fn (): SalePaymentLinePartialData => SalePaymentLinePartialData::from(['ID' => 'pay-1', 'Amount' => 12.5])],
+                Method::PUT,
+                '/ExternalApi/v2/sale/payment',
+                [],
+                ['ID' => 'pay-1', 'Amount' => 12.5],
             ],
             PostSale::class . ' with data' => [
                 PostSale::class,

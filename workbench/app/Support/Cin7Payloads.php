@@ -846,6 +846,116 @@ final class Cin7Payloads
     }
 
     /**
+     * The Sale Order of the `sale` GET example, as `sale/order` answers it.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleOrder(): array
+    {
+        return ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'] + self::sale()['Order'];
+    }
+
+    /**
+     * Sale Invoice Partial Model, copied from the `sale` example's first invoice.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleInvoicePartial(): array
+    {
+        return self::sale()['Invoices'][0];
+    }
+
+    /**
+     * The `{SaleID, Invoices}` envelope `sale/invoice` answers with.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleInvoices(): array
+    {
+        return ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Invoices' => [self::saleInvoicePartial()]];
+    }
+
+    /**
+     * Sale Invoice POST Model: the invoice's own fields plus `SaleID`, and an empty-GUID `TaskID`.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleInvoicePost(): array
+    {
+        $invoice = self::saleInvoicePartial();
+        unset($invoice['Payments'], $invoice['TotalBeforeTax'], $invoice['Tax'], $invoice['Total'], $invoice['Paid']);
+
+        return ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4']
+            + ['TaskID' => '00000000-0000-0000-0000-000000000000'] + $invoice;
+    }
+
+    /**
+     * Sale Credit Note Partial Model: the `sale` example's first credit note, with the
+     * `CreditNoteBalance` and `Payments` the GET response adds.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleCreditNotePartial(): array
+    {
+        return self::sale()['CreditNotes'][0] + [
+            'CreditNoteBalance' => 0,
+            'Payments' => [
+                [
+                    'ID' => '20d5ff25-afa2-cd74-96d7-c7f0dd1fa1c1',
+                    'Reference' => '',
+                    'Amount' => 358,
+                    'DatePaid' => '2017-11-23T00:00:00',
+                    'Account' => '718',
+                    'CurrencyRate' => 1,
+                    'DateCreated' => '2017-11-22T06:58:21.8882229Z',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * The `{SaleID, CreditNotes}` envelope `sale/creditnote` answers with.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleCreditNotes(): array
+    {
+        return ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CreditNotes' => [self::saleCreditNotePartial()]];
+    }
+
+    /**
+     * Sale Credit Note POST Model: the credit note's own fields plus `SaleID`.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleCreditNotePost(): array
+    {
+        $creditNote = self::sale()['CreditNotes'][0];
+        unset($creditNote['TotalBeforeTax'], $creditNote['Tax'], $creditNote['Total']);
+
+        return ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'] + $creditNote;
+    }
+
+    /**
+     * Sale Payment Line Partial Model, one payment of `sale/payment`.
+     *
+     * @return array<string, mixed>
+     */
+    public static function salePayment(): array
+    {
+        return [
+            'ID' => '20d5ff25-afa2-cd74-96d7-c7f0dd1fa1c1',
+            'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4',
+            'Reference' => 'BANK-1',
+            'Amount' => 358,
+            'DatePaid' => '2017-11-23T00:00:00',
+            'Account' => '718',
+            'CurrencyRate' => 1,
+            'DateCreated' => '2017-11-22T06:58:21.8882229Z',
+        ];
+    }
+
+    /**
      * The body of the 503 Cin7 returns when throttling; it carries no `Retry-After` header.
      *
      * @return array<string, mixed>
