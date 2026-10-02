@@ -1,0 +1,64 @@
+{
+    "Total": 2,
+    "Page": 1,
+    "LeadList": [
+        {
+            "ID": "f192e2ce-6e06-4173-bb90-fb372f07366f",
+            "Name": "new lead",
+            "Currency": "AMD",
+            "LeadStatus": "NEW",
+            "CloseChance": 20,
+            "PaymentTerm": "COD",
+            "TaxRule": "GST Free Income",
+            "SalesRepresentative": "Nikolay Kuznetsov",
+            "Comments": "",
+            "PriceTier": "Tier 1",
+            "CloseDate": "2021-06-19T00:00:00",
+            "Amount": 0,
+            "Addresses": [],
+            "Contacts": [
+                {
+                    "ID": "354d9f7f-76af-4170-9476-084c54c77622",
+                    "Name": "David Musk",
+                    "JobTitle": "Developer",
+                    "Phone": "+11234567987",
+                    "MobilePhone": "+148444654",
+                    "Fax": "",
+                    "Email": "dmusk@aol.com",
+                    "Website": "",
+                    "Default": false,
+                    "Comment": "",
+                    "IncludeInEmail": true
+                }
+            ]
+        },
+        {
+            "ID": "e14192b1-5344-4ad1-8d20-e5a9e5b399af",
+            "Name": "Test lead 1",
+            "Currency": "USD",
+            "LeadStatus": "NEW",
+            "CloseChance": 20,
+            "PaymentTerm": "COD",
+            "TaxRule": "GST Free Income",
+            "SalesRepresentative": "Nikolay Kuznetsov",
+            "Comments": "",
+            "PriceTier": "Tier 1",
+            "CloseDate": "2021-06-19T00:00:00",
+            "Amount": 0,
+            "Addresses": [
+                {
+                    "ID": "a209b023-9eed-4e86-88de-16d66750ec05",
+                    "Type": "Billing",
+                    "Line1": "Baskov Pereulok",
+                    "Line2": "Tsentralnyy rayon",
+                    "City": "Sankt-Peterburg",
+                    "State": "",
+                    "Postcode": "191014",
+                    "Country": "Russia",
+                    "DefaultForType": false
+                }
+            ],
+            "Contacts": []
+        }
+    ]
+}

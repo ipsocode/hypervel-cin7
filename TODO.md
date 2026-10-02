@@ -189,23 +189,6 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] WorkCenterLocation: `WorkCenterLocationData`
   - [ ] WorkCenterSupplier: `WorkCenterSupplierData`
 
-### `reference/crm/**` CRM (6 resources, 16 operations)
-
-- [ ] `lead` · `crm/lead` · GET POST PUT
-  - [ ] Lead: `LeadData`
-- [ ] `opportunity` · `crm/opportunity` · GET POST PUT
-  - [ ] Opportunity: `OpportunityData`
-  - [ ] Opportunity Line: `OpportunityLineData`
-  - [ ] Opportunity Opportunity Additional Charge: `OpportunityAdditionalChargeData`
-- [ ] `task` · `crm/task` · GET POST PUT
-  - [ ] Task: `TaskData`
-- [ ] `task-category` · `crm/taskcategory` · GET POST PUT
-  - [ ] Task Category: `TaskCategoryData`
-- [ ] `workflow` · `crm/workflow` · GET POST PUT
-  - [ ] Workflow: `WorkflowData`
-  - [ ] WorkflowStep: `WorkflowStepData`
-- [ ] `start-a-workflow` · `crm/workflowstart` · POST
-
 ### `reference/other-models/**` Shared models for the low groups only
 
 Each is built with the first resource here that uses it; a ticked one is built, and moves to
@@ -496,3 +479,20 @@ Every resource in these groups is in.
 
 - [x] `webhooks` · `webhooks` · GET POST PUT DELETE
   - [x] Webhooks: `WebhookData`
+
+### `reference/crm/**` CRM (6 resources, 16 operations)
+
+- [x] `lead` · `crm/lead` · GET POST PUT
+  - [x] Lead: `LeadData`
+- [x] `opportunity` · `crm/opportunity` · GET POST PUT
+  - [x] Opportunity: `OpportunityData`
+  - [x] Opportunity Line: `OpportunityLineData`
+  - [x] Opportunity Opportunity Additional Charge: `OpportunityAdditionalChargeData`
+- [x] `task` · `crm/task` · GET POST PUT
+  - [x] Task: `TaskData`
+- [x] `task-category` · `crm/taskcategory` · GET POST PUT
+  - [x] Task Category: `TaskCategoryData`
+- [x] `workflow` · `crm/workflow` · GET POST PUT
+  - [x] Workflow: `WorkflowData`
+  - [x] WorkflowStep: `WorkflowStepData`
+- [x] `start-a-workflow` · `crm/workflowstart` · POST

@@ -320,6 +320,17 @@ and `PutInventoryWriteOff`, whose bodies are `InventoryWriteOffPostData` and
 `InventoryWriteOffPutData`; every one's `dto()` is an `InventoryWriteOffData`.
 `GetInventoryWriteOffList` (`src/Requests/InventoryWriteOffList/`) lists them under
 `InventoryWriteOffs`, filtered by `status` and `search`.
+The `crm/…` actions live under `src/Requests/Crm/`, one folder each: `Lead/`, `Opportunity/`, `Task/`,
+`TaskCategory/` and `Workflow/` each have a `GetCrm…` (a `ListRequest`, keyed `LeadList`,
+`opportunityList`, `Tasks`, `Categories` and `Workflows`), a `PostCrm…` and a `PutCrm…` (bodies
+`LeadPostData` and `LeadPutData`, and so on; the PUT body carries `ID`). There is no DELETE, and every
+action answers a list, so `dto()` is a `list<LeadData>` and so on. `GetCrmLead` and
+`GetCrmOpportunity` filter by `modifiedSince`, and `GetCrmTask` by the start, end and completion
+dates (`startDateFrom`, `startDateTo` and so on), `assignedTo` and `category`.
+`PostCrmWorkflowStart` (`WorkflowStart/`) sends everything in the query and nothing in the body:
+`StartDate`, `EnityType` (the reference's spelling, kept), `EntityID`, and the workflow by `ID` or
+`Name`. It answers `{Success}`, left to `json()`.
+
 The `webhooks` actions live under `src/Requests/Webhooks/`: `GetWebhooks` (a plain `Cin7Request`, as the
 reference takes no page or limit), `PostWebhooks` and `PutWebhooks` (bodies `WebhookPostData` and
 `WebhookPutData`, which carries `ID`) and `DeleteWebhooks` (keyed `ID`). A GET, POST or PUT answers a
@@ -457,7 +468,8 @@ These are the requests Cin7 receives.
   `api-auth-accountid` and `api-auth-applicationkey`, the last two from
   [configuration](configuration.md).
 - **Parameters.** GET and DELETE carry their parameters in the query string.
-  POST and PUT carry theirs as a raw JSON body and send no query string.
+  POST and PUT carry theirs as a raw JSON body and send no query string, except
+  `PostCrmWorkflowStart`, which sends everything in the query string and no body.
 - **Page defaults.** `page=1` and `limit=100` are added to the
   query string of every `ListRequest` when the caller has not set them. They
   are never added to a read or delete of one record, or a `WriteRequest`. A page below 1 or a
@@ -478,7 +490,8 @@ These are the requests Cin7 receives.
   `TaskID`). A `WriteRequest` sends no identifier of its own; the caller merges it into the body,
   as in [PUT identifiers](resources.md#put-identifiers).
 - **Empty write.** `new PostCustomer()` with no body still sends a JSON body,
-  the encoding of an empty array (`[]`), not a bodyless POST.
+  the encoding of an empty array (`[]`), not a bodyless POST. `PostCrmWorkflowStart` is a
+  `Cin7Request`, not a `WriteRequest`, and sends no body at all.
 
 ## Fields left out of write bodies
 
