@@ -267,9 +267,10 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   and contact, and `JobTitle` on each contact; the classes model them.
 - **One class for two price models.** Product's Custom Price and Customer's Product Price are
   the same Customer specific Product Price Model, so `ProductPriceData` serves both. Its
-  footnote requires `ProductID` or `ProductSKU`, and `CustomerID` or `CustomerName`; nested in
-  a customer the customer is the parent, nested in a product the product is, and the examples
-  nested in either carry no customer, so the class requires only `Price`.
+  footnote requires `ProductID` or `ProductSKU`, and `CustomerID` or `CustomerName`, and a write
+  body is checked for both pairs wherever the price is nested, in a customer or a product. The
+  response examples nested in either carry no customer; they still become data objects, since
+  the rules are checked on write bodies only.
 - **Product `PriceTiers`.** The Price Tier Model's one row is named after the account's tier
   (`Tier 1`, or whatever the account renamed it), so it cannot be a set of properties. It is
   an `array<string, float>`, and there is no `PriceTierData`. `PriceTier1` to `PriceTier10`
@@ -358,7 +359,7 @@ required on different verbs. Each class requires:
 | `CustomerPutData` | `src/Data/Customer/` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule`, `ID` |
 | `CustomerAddressData` | `src/Data/Customer/` | `Line1`, `Country`, `Type` |
 | `CustomerContactData` | `src/Data/Customer/` | `Name` |
-| `ProductPriceData` | `src/Data/` | `Price` |
+| `ProductPriceData` | `src/Data/` | `Price`; and on a write body `ProductID` or `ProductSKU`, and `CustomerID` or `CustomerName` (`#[RequiredWithout]`) |
 
 `LastModifiedOn` (read-only) and `ChildCustomers` (responses only) are on `CustomerData` alone.
 A response missing a required field fails `dto()` with a `CannotCreateData`.

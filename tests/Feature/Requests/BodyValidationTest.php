@@ -8,7 +8,9 @@ use Closure;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
+use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
+use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackPostData;
@@ -21,6 +23,7 @@ use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PostSaleFulfilmentPack;
@@ -288,7 +291,29 @@ class BodyValidationTest extends TestCase
             'reorder level location' => [['ReorderLevels' => [['PickZones' => 'A']]], ['ReorderLevels.0.LocationID', 'ReorderLevels.0.LocationName']],
             'component' => [['BillOfMaterialsProducts' => [['Quantity' => 1]]], ['BillOfMaterialsProducts.0.ComponentProductID', 'BillOfMaterialsProducts.0.ProductCode']],
             'service' => [['BillOfMaterialsServices' => [['Quantity' => 1]]], ['BillOfMaterialsServices.0.ComponentProductID', 'BillOfMaterialsServices.0.Name']],
+            'custom price product' => [['CustomPrices' => [['Price' => 1.1, 'CustomerName' => 'ACME']]], ['CustomPrices.0.ProductID', 'CustomPrices.0.ProductSKU']],
+            'custom price customer' => [['CustomPrices' => [['Price' => 1.1, 'ProductSKU' => 'Bread']]], ['CustomPrices.0.CustomerID', 'CustomPrices.0.CustomerName']],
         ];
+    }
+
+    /**
+     * A price needs a product and a customer wherever it is nested, a customer's prices too.
+     */
+    public function testACustomersPriceNeedsItsCustomerAsWell(): void
+    {
+        $customer = Arr::except(Cin7Payloads::customer(), 'ID') + ['ProductPrices' => [['Price' => 1.1, 'ProductSKU' => 'Bread']]];
+
+        try {
+            $this->connector()->send(new PostCustomer(CustomerPostData::from($customer)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['ProductPrices.0.CustomerID', 'ProductPrices.0.CustomerName'], array_keys($exception->errors()));
+        }
+
+        $customer['ProductPrices'][0]['CustomerName'] = 'ACME';
+        $this->connector()->send(new PostCustomer(CustomerPostData::from($customer)));
+
+        $this->mock->assertSentCount(1);
     }
 
     /**
