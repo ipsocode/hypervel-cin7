@@ -1,0 +1,53 @@
+{
+    "SaleID": "916ab4c0-6ccb-4c93-873d-0603859050e4",
+    "TaskID": "529511e7-6ed6-4a99-a2a7-fab1d32198eb",
+    "CombineAdditionalCharges": false,
+    "CreditNoteInvoiceNumber": "INV-00005",
+    "Memo": "",
+    "Status": "AUTHORISED",
+    "CreditNoteDate": "2017-11-22T00:00:00",
+    "CreditNoteConversionRate": 1,
+    "Lines": [
+        {
+            "ProductID": "4aadd8f6-4d3d-46ca-acbb-1a9a662f9bc1",
+            "SKU": "Bread",
+            "Name": "Baked Bread",
+            "Quantity": 1,
+            "Price": 8,
+            "Discount": 0,
+            "Tax": 0,
+            "Total": 8,
+            "TaxRule": "Tax on Sales",
+            "Account": "200",
+            "Comment": "",
+            "AverageCost": 5
+        }
+    ],
+    "AdditionalCharges": [
+        {
+            "Description": "Desktop/network support via phone. Per month fixed fee for minimum 20 hours/month.",
+            "Quantity": 1,
+            "Price": 350,
+            "Discount": 0,
+            "Tax": 0,
+            "Total": 350,
+            "TaxRule": "Tax on Sales",
+            "Account": "200",
+            "Comment": ""
+        }
+    ],
+    "Restock": [
+        {
+            "ProductID": "4aadd8f6-4d3d-46ca-acbb-1a9a662f9bc1",
+            "SKU": "Bread",
+            "Name": "Baked Bread",
+            "Location": "Main Warehouse",
+            "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Quantity": 1,
+            "BatchSN": "PO-00001-1",
+            "ExpiryDate": "2017-11-30T00:00:00",
+            "RestockLocation": "Main Warehouse2",
+            "RestockLocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2c2"
+        }
+    ]
+}

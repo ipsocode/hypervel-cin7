@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Data;
 
+use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
 use Hypervel\Data\Exceptions\CannotCreateData;
 use Hypervel\Data\Support\Validation\ValidationPath;
@@ -25,125 +26,40 @@ use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\AbstractAddressData;
 use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
 use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
-use Ipsocode\Cin7\Data\Sale\AddressData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
-use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePartialData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePaymentData;
-use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
 use Ipsocode\Cin7\Data\Sale\Invoice\AbstractSaleInvoiceData;
-use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePartialData;
-use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
-use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
-use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
-use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPutData;
-use Ipsocode\Cin7\Data\Sale\SaleAdditionalChargeData;
-use Ipsocode\Cin7\Data\Sale\SaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceAdditionalChargeData;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceData;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceLineData;
 use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
 use Ipsocode\Cin7\Data\Sale\SaleOrderData;
-use Ipsocode\Cin7\Data\Sale\SaleOrderLineData;
-use Ipsocode\Cin7\Data\Sale\SalePostPutData;
-use Ipsocode\Cin7\Data\Sale\SaleQuoteLineData;
-use Ipsocode\Cin7\Data\Sale\SaleShippingAddressData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
-use Ipsocode\Cin7\Requests\Customer\GetCustomer;
-use Ipsocode\Cin7\Requests\Customer\PostCustomer;
-use Ipsocode\Cin7\Requests\Customer\PutCustomer;
-use Ipsocode\Cin7\Requests\MoneyOperation\DeleteMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\GetMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyTaskList\GetMoneyTaskList;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
-use Ipsocode\Cin7\Requests\Product\PostProduct;
-use Ipsocode\Cin7\Requests\Product\PutProduct;
-use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
-use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
-use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
-use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
-use Ipsocode\Cin7\Requests\Sale\CreditNote\DeleteSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
-use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
-use Ipsocode\Cin7\Requests\Sale\DeleteSale;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
-use Ipsocode\Cin7\Requests\Sale\Invoice\DeleteSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\GetSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
-use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
-use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;
-use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
-use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
-use Ipsocode\Cin7\Requests\Sale\PostSale;
-use Ipsocode\Cin7\Requests\Sale\PutSale;
-use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
+use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionProperty;
+use ReflectionUnionType;
 use SplFileInfo;
 use Workbench\App\Support\Cin7Payloads;
 
 /**
- * One row per request with a response body, plus the conventions every class in `src/Data/`
- * is held to.
+ * One row per request with a response body, from the per-path files under
+ * `tests/Fixtures/Catalogue/`, plus the conventions every class in `src/Data/` is held to.
  *
  * @see docs/data.md
  */
 class DataCatalogueTest extends TestCase
 {
-    /**
-     * The properties the reference marks required, per class: not nullable, and with no default.
-     * A field every child of a parent requires is declared on the parent's constructor.
-     *
-     * @var array<class-string<Data>, list<string>>
-     */
-    private const array REQUIRED = [
-        SaleQuoteLineData::class => self::LINE_REQUIRED,
-        SaleOrderLineData::class => self::LINE_REQUIRED,
-        SaleInvoiceLineData::class => self::LINE_REQUIRED,
-        SaleAdditionalChargeData::class => self::CHARGE_REQUIRED,
-        SaleInvoiceAdditionalChargeData::class => self::CHARGE_REQUIRED,
-        AddressData::class => ['Line1', 'Country'],
-        SaleShippingAddressData::class => ['Line1', 'Country'],
-        SaleData::class => ['Location', 'CurrencyRate'],
-        SalePostPutData::class => ['Location', 'CurrencyRate'],
-        SaleInvoiceData::class => ['TaskID'],
-        SaleCreditNoteData::class => ['TaskID', 'Status', 'CreditNoteDate'],
-        SaleInvoicePartialData::class => ['TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
-        SaleInvoicePostData::class => ['SaleID', 'TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
-        SaleInvoicePutData::class => ['SaleID', 'TaskID'],
-        SaleCreditNotePartialData::class => ['TaskID', 'CombineAdditionalCharges', 'Status', 'CreditNoteDate'],
-        SaleCreditNotePostData::class => ['SaleID', 'TaskID', 'CombineAdditionalCharges', 'CreditNoteInvoiceNumber', 'Status', 'CreditNoteDate'],
-        SalePaymentLinePartialData::class => ['ID', 'TaskID', 'Type', 'Amount', 'DatePaid', 'Account', 'CurrencyRate'],
-        SalePaymentPostData::class => ['TaskID', 'Type', 'Amount', 'DatePaid', 'Account', 'CurrencyRate'],
-        SalePaymentPutData::class => ['ID'],
-    ];
-
-    /**
-     * The fields every product line table requires, declared on `AbstractLineData`.
-     *
-     * @var list<string>
-     */
-    private const array LINE_REQUIRED = ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule'];
-
-    /**
-     * The fields every additional charge table requires, declared on `AbstractChargeData`.
-     *
-     * @var list<string>
-     */
-    private const array CHARGE_REQUIRED = ['Description', 'Quantity', 'Price', 'Tax', 'TaxRule'];
-
     /**
      * @param class-string<Cin7Request> $class
      * @param list<mixed> $args
@@ -184,58 +100,7 @@ class DataCatalogueTest extends TestCase
      */
     public static function dtoProvider(): array
     {
-        return [
-            GetCustomer::class => [GetCustomer::class, [], Cin7Payloads::customerExample(), CustomerData::class, 'CustomerList'],
-            PostCustomer::class => [PostCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
-            PutCustomer::class => [PutCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
-            GetProduct::class => [GetProduct::class, [], Cin7Payloads::productExample(), ProductData::class, 'Products'],
-            PostProduct::class => [PostProduct::class, [[]], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
-            PutProduct::class => [PutProduct::class, [['ID' => 'guid-1']], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
-            GetTax::class => [GetTax::class, [], Cin7Payloads::taxList(), TaxData::class, 'TaxRuleList'],
-            PostTax::class => [PostTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
-            PutTax::class => [PutTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
-            GetCustomerCredits::class => [
-                GetCustomerCredits::class,
-                [],
-                Cin7Payloads::customerCreditsExample(),
-                CustomerCreditData::class,
-                'CustomerCredits',
-            ],
-            GetMoneyOperation::class => [GetMoneyOperation::class, ['task-1'], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
-            PostMoneyOperation::class => [PostMoneyOperation::class, [[]], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
-            PutMoneyOperation::class => [PutMoneyOperation::class, [[]], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
-            DeleteMoneyOperation::class => [DeleteMoneyOperation::class, ['task-1'], Cin7Payloads::moneyTask(), MoneyTaskData::class, ''],
-            GetSale::class => [GetSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
-            PostSale::class => [PostSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
-            PutSale::class => [PutSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
-            DeleteSale::class => [DeleteSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
-            GetSaleOrder::class => [GetSaleOrder::class, ['sale-1'], Cin7Payloads::saleOrder(), SaleOrderData::class, ''],
-            PostSaleOrder::class => [PostSaleOrder::class, [[]], Cin7Payloads::saleOrder(), SaleOrderData::class, ''],
-            GetSaleInvoice::class => [GetSaleInvoice::class, ['sale-1'], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
-            PostSaleInvoice::class => [PostSaleInvoice::class, [[]], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
-            PutSaleInvoice::class => [PutSaleInvoice::class, [[]], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
-            DeleteSaleInvoice::class => [DeleteSaleInvoice::class, ['task-1'], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
-            GetSaleCreditNote::class => [GetSaleCreditNote::class, ['sale-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
-            PostSaleCreditNote::class => [PostSaleCreditNote::class, [[]], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
-            DeleteSaleCreditNote::class => [DeleteSaleCreditNote::class, ['task-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
-            GetSalePayment::class => [GetSalePayment::class, ['sale-1'], Cin7Payloads::salePayments(), SalePaymentLinePartialData::class, ''],
-            PostSalePayment::class => [PostSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
-            PutSalePayment::class => [PutSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
-            GetMoneyTaskList::class => [
-                GetMoneyTaskList::class,
-                [],
-                Cin7Payloads::moneyTaskList(),
-                MoneyTaskListData::class,
-                'MoneyTasks',
-            ],
-            GetSaleList::class => [
-                GetSaleList::class,
-                [],
-                Cin7Payloads::saleList(),
-                SaleListData::class,
-                'SaleList',
-            ],
-        ];
+        return Catalogue::rows('dtos');
     }
 
     /**
@@ -337,14 +202,62 @@ class DataCatalogueTest extends TestCase
      */
     public static function bodyProvider(): array
     {
-        return [
-            SaleInvoicePostData::class => [SaleInvoicePostData::class, Cin7Payloads::saleInvoicePost()],
-            SaleInvoicePutData::class => [SaleInvoicePutData::class, Cin7Payloads::saleInvoicePut()],
-            SaleCreditNotePostData::class => [SaleCreditNotePostData::class, Cin7Payloads::saleCreditNotePost()],
-            SalePaymentPostData::class => [SalePaymentPostData::class, Cin7Payloads::salePaymentPost()],
-            SalePaymentPutData::class => [SalePaymentPutData::class, Cin7Payloads::salePaymentPut()],
-            ErrorData::class => [ErrorData::class, Cin7Payloads::error()],
+        return Catalogue::rows('bodies');
+    }
+
+    /**
+     * Every model is reached from a catalogue row: it is a `dto()` class or a body class, or a
+     * property of one of those, at any depth. The Error Model is read from failed responses.
+     */
+    public function testEveryDataClassIsReachedFromACatalogueRow(): void
+    {
+        $queue = [
+            ErrorData::class,
+            ...array_column(self::dtoProvider(), 3),
+            ...array_column(self::bodyProvider(), 0),
+            ...array_column(self::missingRequiredFieldProvider(), 0),
+            ...array_keys(Catalogue::rows('required')),
         ];
+        $reached = [];
+
+        while ($queue !== []) {
+            $class = array_shift($queue);
+
+            if (isset($reached[$class])) {
+                continue;
+            }
+
+            $reached[$class] = true;
+
+            foreach (new ReflectionClass($class)->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+                $type = $property->getType();
+                $types = $type instanceof ReflectionUnionType ? $type->getTypes() : [$type];
+
+                foreach ($types as $named) {
+                    if ($named instanceof ReflectionNamedType && ! $named->isBuiltin() && is_a($named->getName(), Data::class, true)) {
+                        $queue[] = $named->getName();
+                    }
+                }
+
+                foreach ($property->getAttributes(DataCollectionOf::class) as $attribute) {
+                    $queue[] = $attribute->newInstance()->class;
+                }
+            }
+        }
+
+        foreach (self::dataClasses() as $class) {
+            if (! new ReflectionClass($class)->isAbstract()) {
+                $this->assertArrayHasKey($class, $reached, "No catalogue row reaches {$class}.");
+            }
+        }
+    }
+
+    /**
+     * The Error Model is read from a failed response, not from a path's `dto()`.
+     */
+    public function testTheErrorModelRoundTrips(): void
+    {
+        $this->assertRoundTrips(Cin7Payloads::error(), ErrorData::from(Cin7Payloads::error())->toArray());
     }
 
     /**
@@ -364,19 +277,7 @@ class DataCatalogueTest extends TestCase
      */
     public static function missingRequiredFieldProvider(): array
     {
-        return [
-            'invoice POST without Status' => [SaleInvoicePostData::class, Arr::except(Cin7Payloads::saleInvoicePost(), 'Status')],
-            'invoice PUT without TaskID' => [SaleInvoicePutData::class, Arr::except(Cin7Payloads::saleInvoicePut(), 'TaskID')],
-            'invoice without InvoiceDate' => [SaleInvoicePartialData::class, Arr::except(Cin7Payloads::saleInvoicePartial(), 'InvoiceDate')],
-            'credit note POST without CreditNoteInvoiceNumber' => [
-                SaleCreditNotePostData::class,
-                Arr::except(Cin7Payloads::saleCreditNotePost(), 'CreditNoteInvoiceNumber'),
-            ],
-            'credit note without CreditNoteDate' => [SaleCreditNotePartialData::class, Arr::except(Cin7Payloads::saleCreditNotePartial(), 'CreditNoteDate')],
-            'payment POST without Type' => [SalePaymentPostData::class, Arr::except(Cin7Payloads::salePaymentPost(), 'Type')],
-            'payment PUT without ID' => [SalePaymentPutData::class, Arr::except(Cin7Payloads::salePaymentPut(), 'ID')],
-            'payment without TaskID' => [SalePaymentLinePartialData::class, Arr::except(Cin7Payloads::salePayment(), 'TaskID')],
-        ];
+        return Catalogue::rows('missing');
     }
 
     /**
@@ -455,7 +356,7 @@ class DataCatalogueTest extends TestCase
                 continue;
             }
 
-            $required = self::REQUIRED[$class] ?? [];
+            $required = Catalogue::rows('required')[$class] ?? [];
             $parameters = [];
 
             foreach ($reflection->getConstructor()?->getParameters() ?? [] as $parameter) {

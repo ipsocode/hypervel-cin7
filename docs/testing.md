@@ -34,10 +34,11 @@ assert on its `headers()`, `queryParameters()` and `body()`.
   Model, `{ErrorCode, Exception}`; a fake with any other shape tests code
   against a body Cin7 never sends. A faked Error Model throws even with a 200,
   as the real one does (see [errors](requests.md#errors)).
-- **Fixtures for the typed bodies.** `Cin7Payloads::taxList()`, `taxSaved()` and
-  `customerCreditsExample()` are the V2 reference's examples, one per response shape;
-  `DataCatalogueTest` asserts each `dto()` round-trips its fixture, so every key is
-  modelled under its wire name. Testbench does not auto-discover
+- **Fixtures for the typed bodies.** The V2 reference's examples are JSON files under
+  `workbench/fixtures/`, one folder per API path: `Cin7Payloads::load('ref/tax',
+  'get.response')` reads `workbench/fixtures/ref/tax/get.response.json`, and named helpers
+  such as `Cin7Payloads::taxList()` wrap the older ones. `DataCatalogueTest` asserts each
+  `dto()` round-trips its fixture, so every key is modelled under its wire name. Testbench does not auto-discover
   `Hypervel\Data\DataServiceProvider`, so `testbench.yaml` lists it, as it does Saloon's.
 - **Nothing to reset.** The package keeps no static state, so there is nothing
   to register for the framework's between-test reset. The mock client lives on
@@ -103,6 +104,29 @@ Every send in the suite goes through Saloon's mock client; nothing reaches the
 live Cin7 API. The request tests assert on the `PendingRequest` the connector
 built (headers, URL, query and body as they would have gone out) rather than on
 the request object's own accessors.
+
+### The catalogue
+
+`RequestCatalogueTest`, `ResourceCatalogueTest` and `DataCatalogueTest` run the same
+assertions over one row per request, resource method and data class. The rows live in one
+file per API path under `tests/Fixtures/Catalogue/`: `sale/invoice.php` holds the rows for
+`sale/invoice`. Each file returns its rows by kind, and
+[`Catalogue::rows()`](../tests/Catalogue.php) merges every file's rows of a kind:
+
+| Kind | A row is |
+|---|---|
+| `requests` | a request class, its arguments, and the method, path, query and body it sends; `… with data` rows send a data object body |
+| `resources` | a resource call, keyed `<resource path> <method>` (`sale payment put`), and the request it sends |
+| `dtos` | a request, its fixture and the data class `dto()` returns, with where the record sits in the fixture |
+| `bodies` | a body class and the reference's request example it round-trips |
+| `missing` | a class and a payload without one of its required fields, which cannot be built |
+| `required` | the fields of a class the reference requires |
+| `omitted` | a request, the body given, and the body sent without its `$omit` fields |
+
+A key two files share throws, and three tests prove nothing is left out: every concrete
+request class has a `requests` row, every resource method that sends a request has a
+`resources` row, and every model is reached from a `dtos`, `bodies` or `required` row,
+directly or through a property at any depth.
 
 ### The test environment
 
@@ -179,7 +203,7 @@ the seam a consuming application has:
 | Piece | Purpose |
 |---|---|
 | [`CustomerDirectory`](../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's singleton resolves as a dependency of an application's own service, not only through `$app->make()`. |
-| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies, taken from the V2 reference's examples: `customerList()` (the `Total`/`Page`/`CustomerList` envelope), `customer()`, `sale()` (the Sale example, keyed by `ID`), `saleList()`, the `sale/invoice`, `sale/creditnote` and `sale/payment` examples (`saleInvoices()`, `saleInvoicePost()`, `saleCreditNotes()`, `salePayments()`, `salePaymentPost()` and the rest), and Error Model bodies: `error()`, `throttled()` (the 503, which comes with no `Retry-After`) and `limitReached()` (the 429). A test asserting on `CustomerList` asserts on a key Cin7 actually sends. |
+| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies. `load($path, $name)` reads the V2 reference's examples from `workbench/fixtures/<api path>/<verb>.<request\|response>.json`, and named helpers wrap them: `sale()` (the Sale example, keyed by `ID`), `saleList()`, `saleInvoices()`, `saleInvoicePost()`, `salePayments()` and the rest. Builders make bodies a test shapes itself: `customerList()` (the `Total`/`Page`/`CustomerList` envelope), `customer()`, `products()`, `customerCredits()`, and the Error Model bodies `error()`, `throttled()` (the 503, which comes with no `Retry-After`) and `limitReached()` (the 429). A test asserting on `CustomerList` asserts on a key Cin7 actually sends. |
 | [`cin7:customers`](../workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for calling the live API by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
 
 `cin7:customers` lists customers through `CustomerDirectory::all()`, which
