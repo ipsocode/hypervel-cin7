@@ -111,6 +111,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetPurchaseCreditNoteList` | `page`, `limit`, `search`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` |
 | `GetPurchaseOrder` | **`taskId`**, `combineAdditionalCharges` |
 | `GetPurchaseStock` | **`taskId`** |
+| `GetPurchaseInvoice` | **`taskId`**, `combineAdditionalCharges` |
 | `GetPurchasePayment` | **`taskId`** |
 | `DeletePurchasePayment` | **`id`**, `deleteAllocation` |
 | `GetPurchaseManualJournal` | **`taskId`** |
@@ -216,6 +217,7 @@ The `purchase/…` documents live under `src/Requests/Purchase/`, one folder per
 |---|---|---|
 | `Order/` | `GetPurchaseOrder` (`TaskID`), `PostPurchaseOrder` | `PurchaseOrderData` |
 | `Stock/` | `GetPurchaseStock` (`TaskID`), `PostPurchaseStock` | `PurchaseStockData` |
+| `Invoice/` | `GetPurchaseInvoice` (`TaskID`), `PostPurchaseInvoice` | `PurchaseInvoiceData` |
 | `Payment/` | `GetPurchasePayment` (`TaskID`), `PostPurchasePayment`, `PutPurchasePayment`, `DeletePurchasePayment` (`ID`, with `DeleteAllocation`) | `list<PurchasePaymentData>` for the GET, a bare array, `PurchasePaymentData` for POST and PUT; none for the DELETE, whose `{Success}` is left to `json()` |
 | `ManualJournal/` | `GetPurchaseManualJournal` (`TaskID`), `PostPurchaseManualJournal` | `PurchaseManualJournalData` |
 | `Attachment/` | `GetPurchaseAttachment` (`TaskID`), `PostPurchaseAttachment`, `DeletePurchaseAttachment` (`ID`) | `PurchaseAttachmentsData` |
@@ -239,6 +241,8 @@ path:
 The stock received's write bodies are `AdvancedPurchaseStockPostData` and
 `AdvancedPurchaseStockPutData`, the PUT one carrying the task's `TaskID` as well as the
 `PurchaseID`.
+
+The invoice's write body is `PurchaseInvoicePostData`, which carries the purchase's `TaskID`.
 
 ## Wire protocol
 

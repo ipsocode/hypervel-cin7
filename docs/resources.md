@@ -71,9 +71,10 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
-| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `payment()`, `manualJournal()`, `attachment()` |
+| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `invoice()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->purchase()->order()` | `Purchase\OrderResource` | `get(string $taskId, ?bool $combineAdditionalCharges = null)`, `post(array\|PurchaseOrderPostData $body)` |
 | `$cin7->purchase()->stock()` | `Purchase\StockResource` | `get(string $taskId)`, `post(array\|PurchaseStockPostData $body)` |
+| `$cin7->purchase()->invoice()` | `Purchase\InvoiceResource` | `get(string $taskId, …)`, `post(array\|PurchaseInvoicePostData $body)` |
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
@@ -489,6 +490,28 @@ foreach ($this->cin7->purchaseList()->paginate(invoiceStatus: InvoiceStatus::Pai
 }
 
 $credited = $this->cin7->purchaseCreditNoteList()->get(updatedSince: '2021-09-01T00:00:00')->dto(); // list<PurchaseCreditNoteListData>
+```
+
+`$cin7->purchase()->invoice()` is `purchase/invoice`, a purchase's invoice, which the reference
+marks deprecated: it supports only simple purchases, and an advanced purchase's invoices are on
+`advanced-purchase/invoice`. `get($taskId)` sends `purchase/invoice?TaskID=…`, and
+`combineAdditionalCharges: true` lists the additional charges in `Lines`. `post()` takes a
+`PurchaseInvoicePostData` as well as an array. Both answer with the invoice, so `dto()` is a
+`PurchaseInvoiceData`. An invoice POST needs `TaskID`, `CombineAdditionalCharges`, `InvoiceDate`,
+`InvoiceDueDate`, a `Status` of `DRAFT` or `AUTHORISED` and `Lines`, but no totals; each line needs
+its `Account` and `Total`, and each additional charge its `Account`. Cin7 rejects it unless the order
+is `AUTHORISED` and the invoice is `DRAFT` or `NOT AVAILABLE`, and, for a purchase whose `Approach`
+is `STOCK`, the stock received is `AUTHORISED`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
+
+$invoice = $this->cin7->purchase()->invoice()->get($taskId)->dto(); // PurchaseInvoiceData
+
+$this->cin7->purchase()->invoice()->post(PurchaseInvoicePostData::from([
+    ...$invoice->toArray(),
+    'Status' => 'AUTHORISED',
+]));
 ```
 
 `$cin7->purchase()->payment()` is `purchase/payment`, a purchase's payments, which the reference
