@@ -28,7 +28,9 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   (`src/Data/Sale/Order/SaleOrderData.php`, the fulfilment's ship model in
   `src/Data/Sale/Fulfilment/Ship/`). A model several paths of one family share lives in
   their common folder (`SaleAdditionalChargeData` in `src/Data/Sale/`), and one shared
-  across families in `src/Data/` itself. The Money Task's classes are in
+  across families in `src/Data/Other/`, after the reference's Other Models
+  (`ProductPriceData`, `AttachmentLineData`, `ErrorData`). An abstract parent whose children
+  span families stays in `src/Data/` itself (`AbstractLineData`). The Money Task's classes are in
   `src/Data/MoneyTask/`, like its requests (see [resources](resources.md#conventions)).
   `src/Data/` holds nothing else: the traits the models share are in `src/Concerns/` and the
   validation attribute in `src/Attributes/`.
@@ -196,7 +198,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `Invoices` | `SaleInvoiceData`, with `Lines` (`SaleInvoiceLineData`), `AdditionalCharges` (`SaleInvoiceAdditionalChargeData`) and `Payments` (`SalePaymentLineData`) | `src/Data/Sale/Invoice/` |
 | `CreditNotes` | `SaleCreditNoteData`, with the invoice's lines plus `Refunds` (`SalePaymentLineData`) and `Restock` (`SaleFulfilmentPickPackLineData`) | `src/Data/Sale/CreditNote/` |
 | `ManualJournals` | `SaleManualJournalData`, with `Lines` (`SaleManualJournalLineData`) | `src/Data/Sale/ManualJournal/` |
-| `Attachments` | `AttachmentLineData`, shared across families | `src/Data/` |
+| `Attachments` | `AttachmentLineData`, shared across families | `src/Data/Other/` |
 | `InventoryMovements`, `Transactions` | `InventoryMovementLineData`, `SaleTransactionLineData` | `src/Data/Sale/` |
 
 The payment line, additional charge and address classes stay in `src/Data/Sale/` because
@@ -380,7 +382,7 @@ required on different verbs. Each class requires:
 | `CustomerPutData` | `src/Data/Customer/` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule`, `ID` |
 | `CustomerAddressData` | `src/Data/Customer/` | `Line1`, `Country`, `Type` |
 | `CustomerContactData` | `src/Data/Customer/` | `Name` |
-| `ProductPriceData` | `src/Data/` | `Price`; and on a write body `ProductID` or `ProductSKU`, and `CustomerID` or `CustomerName` (`#[RequiredWithout]`) |
+| `ProductPriceData` | `src/Data/Other/` | `Price`; and on a write body `ProductID` or `ProductSKU`, and `CustomerID` or `CustomerName` (`#[RequiredWithout]`) |
 
 `LastModifiedOn` (read-only) and `ChildCustomers` (responses only) are on `CustomerData` alone.
 A response missing a required field fails `dto()` with a `CannotCreateData`.

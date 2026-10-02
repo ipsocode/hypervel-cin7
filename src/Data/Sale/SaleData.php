@@ -9,7 +9,7 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
-use Ipsocode\Cin7\Data\AttachmentLineData;
+use Ipsocode\Cin7\Data\Other\AttachmentLineData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceData;

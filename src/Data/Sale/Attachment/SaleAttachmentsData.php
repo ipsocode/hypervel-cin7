@@ -9,7 +9,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
-use Ipsocode\Cin7\Data\AttachmentLineData;
+use Ipsocode\Cin7\Data\Other\AttachmentLineData;
 
 /**
  * Sale Attachments, the `{SaleID, Lines}` envelope every `sale/attachment` action answers with.

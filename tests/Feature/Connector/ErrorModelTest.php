@@ -8,7 +8,7 @@ use Hypervel\Saloon\Exceptions\Request\ClientException;
 use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
-use Ipsocode\Cin7\Data\ErrorData;
+use Ipsocode\Cin7\Data\Other\ErrorData;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Sale\Payment\DeleteSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;

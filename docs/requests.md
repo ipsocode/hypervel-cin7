@@ -258,11 +258,11 @@ Cin7 reports a failure with its Error Model, `{"ErrorCode": 400, "Exception": "â
 list starting with one, and sometimes with a 200. The connector fails any response whose body
 carries `ErrorCode`, so it throws like a 4xx or 5xx: a 4xx or 5xx keeps its `ClientException` or
 `ServerException`, and a 2xx throws a plain `RequestException` whose `status()` is the 2xx. Read
-the error with `Ipsocode\Cin7\Data\ErrorData`:
+the error with `Ipsocode\Cin7\Data\Other\ErrorData`:
 
 ```php
 use Hypervel\Saloon\Exceptions\Request\RequestException;
-use Ipsocode\Cin7\Data\ErrorData;
+use Ipsocode\Cin7\Data\Other\ErrorData;
 
 try {
     $this->cin7->sale()->payment()->get($saleId);
