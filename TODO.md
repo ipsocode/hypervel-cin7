@@ -19,7 +19,7 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations, 16 left)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 15 left)
 
 - [ ] `purchase-list` · `purchaseList` · GET
   - [ ] Purchase List: `PurchaseListData`
@@ -30,8 +30,8 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [x] product fields: `trait HasProductFields`
   - [ ] Purchase POST/PUT body: `PurchasePostData`
   - [ ] Purchase POST/PUT body: `PurchasePutData`
-- [ ] `purchase-order` · `purchase/order` · GET POST
-  - [ ] Purchase Order: `PurchaseOrderData`
+- [x] `purchase-order` · `purchase/order` · GET POST
+  - [x] Purchase Order: `PurchaseOrderData`
 - [ ] `purchase-stock-received` · `purchase/stock` · GET POST
   - [ ] Purchase Stock Received: `PurchaseStockData`
 - [ ] `purchase-invoice` · `purchase/invoice` · GET POST
@@ -80,9 +80,9 @@ Each is built with the first resource here that uses it; a ticked one is built, 
 - [x] InventoryMovementLineModel: `InventoryMovementLineData` · used by purchase, advanced-purchase, sale
 - [ ] PurchaseManualJournalModel: `PurchaseManualJournalData` · used by purchase
 - [ ] PurchaseManualJournalLineModel: `PurchaseManualJournalLineData` · used by purchase, purchase-manual-journals, advanced-purchase, advanced-purchase-manual-journals
-- [ ] PurchaseOrderModel: `PurchaseOrderData` · used by purchase, advanced-purchase
-- [ ] PurchaseOrderLineModel: `PurchaseOrderLineData` · used by purchase, purchase-order, advanced-purchase
-- [ ] PurchaseAdditionalChargeModel: `PurchaseAdditionalChargeData` · used by purchase, purchase-order, advanced-purchase
+- [x] PurchaseOrderModel: `PurchaseOrderData` · used by purchase, advanced-purchase
+- [x] PurchaseOrderLineModel: `PurchaseOrderLineData` · used by purchase, purchase-order, advanced-purchase
+- [x] PurchaseAdditionalChargeModel: `PurchaseAdditionalChargeData` · used by purchase, purchase-order, advanced-purchase
 - [ ] PurchaseStockModel: `PurchaseStockData` · used by purchase
 - [ ] PurchaseStockLineModel: `PurchaseStockLineData` · used by purchase, purchase-stock-received
 - [ ] PurchaseUnStockLineModel: `PurchaseUnStockLineData` · used by purchase, purchase-credit-note, advanced-purchase, advanced-purchase-credit-note
