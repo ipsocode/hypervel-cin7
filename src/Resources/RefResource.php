@@ -9,14 +9,17 @@ use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\Ref\AccountResource;
 use Ipsocode\Cin7\Resources\Ref\AttributeSetResource;
 use Ipsocode\Cin7\Resources\Ref\BrandResource;
+use Ipsocode\Cin7\Resources\Ref\CarrierResource;
 use Ipsocode\Cin7\Resources\Ref\CategoryResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource;
 use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
+use Ipsocode\Cin7\Resources\Ref\LocationResource;
 use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
 use Ipsocode\Cin7\Resources\Ref\PriceTierResource;
 use Ipsocode\Cin7\Resources\Ref\ProductAvailabilityResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
+use Ipsocode\Cin7\Resources\Ref\TemplatesResource;
 use Ipsocode\Cin7\Resources\Ref\UnitResource;
 
 /**
@@ -120,5 +123,29 @@ final class RefResource extends BaseResource
     public function attributeSet(): AttributeSetResource
     {
         return new AttributeSetResource($this->connector);
+    }
+
+    /**
+     * The `ref/location` resource.
+     */
+    public function location(): LocationResource
+    {
+        return new LocationResource($this->connector);
+    }
+
+    /**
+     * The `ref/carrier` resource.
+     */
+    public function carrier(): CarrierResource
+    {
+        return new CarrierResource($this->connector);
+    }
+
+    /**
+     * The `ref/templates` resource.
+     */
+    public function templates(): TemplatesResource
+    {
+        return new TemplatesResource($this->connector);
     }
 }

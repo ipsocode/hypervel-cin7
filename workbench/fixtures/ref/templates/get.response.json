@@ -1,0 +1,61 @@
+{
+    "Page": 1,
+    "Templates": [
+        {
+            "TemplateID": "43dacd9f-ad0a-4cfc-b391-e85bb8bccca4",
+            "Type": "Expense Claim Receipt",
+            "Name": "Expense claim receipt",
+            "EmailSubject": "",
+            "CustomEmail": null
+        },
+        {
+            "TemplateID": "402982a4-3d26-4b90-bf71-9bd09ad4010b",
+            "Type": "Opportunity",
+            "Name": "Opportunity",
+            "EmailSubject": "",
+            "CustomEmail": null
+        },
+        {
+            "TemplateID": "48e4329a-8a58-4d7a-bae1-7b26d9bbf4eb",
+            "Type": "Production Order",
+            "Name": "Production Order",
+            "EmailSubject": null,
+            "CustomEmail": null
+        },
+        {
+            "TemplateID": "0b96ac1f-86f4-483e-a516-9af93fe18e9d",
+            "Type": "Purchase Order",
+            "Name": "Purchase order",
+            "EmailSubject": "",
+            "CustomEmail": null
+        },
+        {
+            "TemplateID": "354e21b5-5354-4ad1-af12-fc5a82c10b9d",
+            "Type": "Receipt",
+            "Name": "Receipt",
+            "EmailSubject": "",
+            "CustomEmail": null
+        },
+        {
+            "TemplateID": "01439c5e-6d02-459c-85b8-e66a0151c831",
+            "Type": "Sale Quote",
+            "Name": "Sale Quote",
+            "EmailSubject": null,
+            "CustomEmail": null
+        },
+        {
+            "TemplateID": "0a3c1651-9ab3-495d-9d87-2cb7fa2d0f7d",
+            "Type": "Sale Quote Matrix",
+            "Name": "Sale quote matrix",
+            "EmailSubject": "",
+            "CustomEmail": null
+        },
+        {
+            "TemplateID": "0d10f43b-c5f0-4c37-a999-e9078ceded71",
+            "Type": "Stock Adjustment",
+            "Name": "Stock adjustment",
+            "EmailSubject": "",
+            "CustomEmail": null
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "ID": "7e1e7cdc-eb4a-45d4-ae7f-e8999bb9dd8a",
+    "Name": "Test new location",
+    "IsDefault": false,
+    "AllowReorder": false,
+    "Bins": [],
+    "PickZones": null,
+    "IsDeprecated": false,
+    "IsShopfloor": false,
+    "IsCoMan": false,
+    "IsStaging": false
+}

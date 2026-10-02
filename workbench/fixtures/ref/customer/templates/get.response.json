@@ -1,0 +1,17 @@
+{
+    "Page": 1,
+    "CustomerTemplates": [
+        {
+            "CustomerID": "ce607b9a-dc9b-4ef4-9ed3-495434e90467",
+            "TemplateID": "5bafe3f7-738c-459d-9a01-6337f15decbb"
+        },
+        {
+            "CustomerID": "ce607b9a-dc9b-4ef4-9ed3-495434e90467",
+            "TemplateID": "0a3c1651-9ab3-495d-9d87-2cb7fa2d0f7d"
+        },
+        {
+            "CustomerID": "047d59f1-19dd-4bd9-9f75-5bff1431d100",
+            "TemplateID": "344eaab7-c7f5-4b1e-a7b6-d29ebf6cf7b6"
+        }
+    ]
+}
