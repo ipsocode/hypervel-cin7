@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Enums;
 
 /**
- * The type of a money operation.
+ * The type of a money task.
  *
  * @see docs/data.md
  */

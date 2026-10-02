@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Ipsocode\Cin7\Resources\CustomerResource;
-use Ipsocode\Cin7\Resources\MoneyOperationResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
+use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
@@ -40,12 +40,12 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->customer(), $connector->customer());
     }
 
-    public function testMoneyOperationReturnsAFreshMoneyOperationResource(): void
+    public function testMoneyTaskReturnsAFreshMoneyTaskResource(): void
     {
         $connector = $this->connector();
 
-        $this->assertInstanceOf(MoneyOperationResource::class, $connector->moneyOperation());
-        $this->assertNotSame($connector->moneyOperation(), $connector->moneyOperation());
+        $this->assertInstanceOf(MoneyTaskResource::class, $connector->moneyTask());
+        $this->assertNotSame($connector->moneyTask(), $connector->moneyTask());
     }
 
     public function testProductReturnsAProductResource(): void

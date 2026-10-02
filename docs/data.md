@@ -27,7 +27,8 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   (`src/Data/Sale/Order/SaleOrderData.php`, the fulfilment's ship model in
   `src/Data/Sale/Fulfilment/Ship/`). A model several paths of one family share lives in
   their common folder (`SaleAdditionalChargeData` in `src/Data/Sale/`), and one shared
-  across families in `src/Data/` itself.
+  across families in `src/Data/` itself. The Money Task's classes are in
+  `src/Data/MoneyTask/`, like its requests (see [resources](resources.md#conventions)).
 - **One class per model name.** Where the reference documents one name twice with
   different fields, the class carries the union. A request body gets its own class
   only where the reference documents one, or where the verbs need different fields.

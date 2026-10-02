@@ -331,7 +331,7 @@ final class Cin7Payloads
      */
     public static function moneyTask(): array
     {
-        return self::load('moneyOperation', 'get.response');
+        return self::load('moneyTask', 'get.response');
     }
 
     /**

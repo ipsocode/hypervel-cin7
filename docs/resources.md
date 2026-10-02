@@ -36,6 +36,10 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
   `sale/invoice` is `src/Resources/Sale/InvoiceResource.php`.
 - **The accessor chain spells the path.** `$cin7->customer()`,
   `$cin7->sale()->invoice()`.
+- **One path is named after its model.** `moneyOperation` serves the Money Task, which also
+  names the reference's group of money endpoints, so its folders, classes and accessor say
+  `MoneyTask`: `src/Requests/MoneyTask/GetMoneyTask.php`, `MoneyTaskResource` and
+  `$cin7->moneyTask()`. The requests still send `moneyOperation`.
 - **Methods are HTTP verbs.** `get()`, `post()`, `put()`, `delete()`, plus
   `paginate()` on list endpoints.
 - **Query parameters are typed named arguments.** A keyed `get()` or `delete()` takes the
@@ -57,7 +61,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductData $body)`, `put(array\|ProductData $body)` |
-| `$cin7->moneyOperation()` | `MoneyOperationResource` | `get(string $taskId)`, `post(array\|MoneyTaskData $body)`, `put(array\|MoneyTaskData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskData $body)`, `put(array\|MoneyTaskData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -154,9 +158,10 @@ foreach ($this->cin7->ref()->customer()->credits()->paginate(customerId: $guid)-
 }
 ```
 
-## Money Operation
+## Money Task
 
-`moneyOperation` is keyed by `TaskID`: `get($taskId)` sends `moneyOperation?TaskID=…`. V2 marks
+`$cin7->moneyTask()` is the Money Task, on `moneyOperation`. It is keyed by `TaskID`:
+`get($taskId)` sends `moneyOperation?TaskID=…`. V2 marks
 `TaskID` optional on GET, but the package requires it, because the list lives at
 `moneyTaskList`, which is `$cin7->moneyTaskList()` (`get()` and `paginate()`, filtered by
 `status`, a `CompletionStatus`, `search` and `taskType`, a `MoneyTaskType`, and answering a
@@ -169,15 +174,15 @@ accept a `MoneyTaskData` as well as an array (see [data](data.md)); a PUT body c
 `TaskID`.
 
 ```php
-$task = $this->cin7->moneyOperation()->get($taskId)->dto(); // MoneyTaskData
+$task = $this->cin7->moneyTask()->get($taskId)->dto(); // MoneyTaskData
 
-$this->cin7->moneyOperation()->post(MoneyTaskData::from([
+$this->cin7->moneyTask()->post(MoneyTaskData::from([
     'TaskType' => 'Receive Money',
     'Status' => 'DRAFT',
     'BankAccount' => '198489',
     'Date' => '2018-01-17T00:00:00',
 ]));
-$this->cin7->moneyOperation()->delete($taskId, void: true);
+$this->cin7->moneyTask()->delete($taskId, void: true);
 ```
 
 ## Sale

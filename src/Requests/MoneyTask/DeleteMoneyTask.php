@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Requests\MoneyOperation;
+namespace Ipsocode\Cin7\Requests\MoneyTask;
 
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
-use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
 /**
@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Cin7Request;
  *
  * @extends Cin7Request<MoneyTaskData>
  */
-final class DeleteMoneyOperation extends Cin7Request
+final class DeleteMoneyTask extends Cin7Request
 {
     protected Method $method = Method::DELETE;
 

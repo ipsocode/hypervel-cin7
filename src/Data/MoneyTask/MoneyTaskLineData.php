@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\MoneyOperation;
+namespace Ipsocode\Cin7\Data\MoneyTask;
 
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Data;
