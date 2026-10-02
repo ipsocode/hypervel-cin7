@@ -9,6 +9,7 @@ use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
+use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
@@ -19,6 +20,10 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
+use Ipsocode\Cin7\Requests\MoneyOperation\DeleteMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\GetMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
+use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
@@ -128,6 +133,38 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/customer',
                 [],
                 ['ID' => 'guid-1', 'Name' => 'ACME'],
+            ],
+            DeleteMoneyOperation::class => [
+                DeleteMoneyOperation::class,
+                ['task-1', ['Void' => true]],
+                Method::DELETE,
+                '/ExternalApi/v2/moneyOperation',
+                ['ID' => 'task-1', 'Void' => 'true'],
+                null,
+            ],
+            GetMoneyOperation::class => [
+                GetMoneyOperation::class,
+                ['task-1'],
+                Method::GET,
+                '/ExternalApi/v2/moneyOperation',
+                ['TaskID' => 'task-1'],
+                null,
+            ],
+            PostMoneyOperation::class => [
+                PostMoneyOperation::class,
+                [['TaskType' => 'Receive Money']],
+                Method::POST,
+                '/ExternalApi/v2/moneyOperation',
+                [],
+                ['TaskType' => 'Receive Money'],
+            ],
+            PutMoneyOperation::class => [
+                PutMoneyOperation::class,
+                [['TaskID' => 'task-1', 'Status' => 'COMPLETED']],
+                Method::PUT,
+                '/ExternalApi/v2/moneyOperation',
+                [],
+                ['TaskID' => 'task-1', 'Status' => 'COMPLETED'],
             ],
             GetProduct::class => [
                 GetProduct::class,
@@ -408,6 +445,22 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/sale',
                 [],
                 ['ID' => 'guid-1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']],
+            ],
+            PostMoneyOperation::class . ' with data' => [
+                PostMoneyOperation::class,
+                [fn (): MoneyTaskData => MoneyTaskData::from(['TaskType' => 'Receive Money', 'Lines' => [['Name' => 'Bread', 'Quantity' => 3]]])],
+                Method::POST,
+                '/ExternalApi/v2/moneyOperation',
+                [],
+                ['TaskType' => 'Receive Money', 'Lines' => [['Name' => 'Bread', 'Quantity' => 3.0]]],
+            ],
+            PutMoneyOperation::class . ' with data' => [
+                PutMoneyOperation::class,
+                [fn (): MoneyTaskData => MoneyTaskData::from(['TaskID' => 'task-1', 'Status' => 'COMPLETED'])],
+                Method::PUT,
+                '/ExternalApi/v2/moneyOperation',
+                [],
+                ['TaskID' => 'task-1', 'Status' => 'COMPLETED'],
             ],
         ];
     }
