@@ -64,7 +64,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractPurchaseListData` | `PurchaseListData`, `PurchaseCreditNoteListData`, which add no field of their own (see [below](#where-the-references-tables-and-examples-disagree)) | `CombinedReceivingStatus`, `CombinedInvoiceStatus`, `CombinedPaymentStatus`, `Type` |
   | `AbstractSaleQuoteData` | `SaleQuoteData`, `SaleQuotePostData` | `Memo`, `Status`, `Lines` |
   | `AbstractSaleManualJournalData` | `SaleManualJournalData`, `SaleManualJournalPostData` | `Status` |
-  | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
+  | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData`, `AdvancedSalePostData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
   | `AbstractSaleFulfilmentPickPackTaskData` | `SaleFulfilmentPickData`, `SaleFulfilmentPickPostData`, `SaleFulfilmentPickPutData`, `SaleFulfilmentPackData`, `SaleFulfilmentPackPostData` | `TaskID` |
   | `AbstractSaleFulfilmentShipTaskData` | `SaleFulfilmentShipPostData`, `SaleFulfilmentShipPutData` | `TaskID`, `Status` (`DRAFT`, `PARTIALLY AUTHORISED` or `AUTHORISED`) |
@@ -221,6 +221,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
+| `advancedSale` (the `sale` endpoint) | POST: `AdvancedSalePostData`, the `SalePostData` fields with `SaleType` fixed to `Advanced`; PUT: `SalePutData` | GET, POST, PUT, DELETE: `SaleData` (`Type`: `Advanced Sale`) |
 | `saleList` | none | GET: `list<SaleListData>` (Sale List) |
 | `saleCreditNoteList` | none | GET: `list<SaleCreditNoteListData>` (Sale Credit Note List) |
 | `sale/quote` | POST: `SaleQuotePostData` (Sale Quote, with `Lines`: `SaleQuoteLineData`, `AdditionalCharges`: `SaleAdditionalChargeData` and `Prepayments`: `SalePaymentLineData`) | GET, POST: `SaleQuoteData` |
