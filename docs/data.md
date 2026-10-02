@@ -218,6 +218,15 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
 | `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
+| `stockadjustmentList` | none | GET: `list<StockAdjustmentListData>` (Stock Adjustment List), read from `StockAdjustmentList` |
+| `stockadjustment` | POST: `StockAdjustmentPostData`; PUT: `StockAdjustmentPutData`, which also requires `TaskID` (Stock Adjustment POST/PUT, with `Lines`: `NewStockLineData`, New Stock Line Model) | GET, POST, PUT, DELETE: `StockAdjustmentData` (Stock Adjustment, with `ExistingStockLines`: `ExistingStockLineData`, `NewStockLines`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
+| `stockTakeList` | none | GET: `list<StockTakeListData>` (Stock Take List), read from `StockAdjustmentList` |
+| `stocktake` | POST: `StockTakePostData`; PUT: `StockTakePutData`, which also requires `TaskID` and `Status` (Stock Take, with `Categories`, `Brands` and `Bins`: `IdNameData`, IDName Model) | GET, POST, PUT, DELETE: `StockTakeData` (Stock Take, with `NonZeroStockOnHandProducts`: `ExistingStockLineData`, `ZeroStockOnHandProducts`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
+| `stockTransferList` | none | GET: `list<StockTransferListData>` (Stock Transfer List), read from `StockTransferList` |
+| `stockTransfer` | POST: `StockTransferPostData`; PUT: `StockTransferPutData`, which also requires `TaskID` (Stock Transfer, with `Lines`: `StockTransferLineData`, Stock Transfer Line Model) | GET, POST, PUT, DELETE: `StockTransferData` (Stock Transfer, with `Order`: `StockTransferOrderData`, Stock Transfer Order Model, whose `Lines` are `StockTransferOrderLineData`) |
+| `stockTransfer/order` | POST: `StockTransferOrderPostData` (Stock Transfer Order) | GET, POST: `StockTransferOrderData` |
+| `inventoryWriteOffList` | none | GET: `list<InventoryWriteOffListData>` (Inventory Write-Off List), read from `InventoryWriteOffs` |
+| `inventoryWriteOff` | POST: `InventoryWriteOffPostData`; PUT: `InventoryWriteOffPutData`, which also requires `TaskID` (Inventory Write-Off POST/PUT, with `Lines`: `InventoryWriteOffLineData`, Inventory Write-Off Line Model) | GET, POST, PUT, DELETE: `InventoryWriteOffData` (Inventory Write-Off, with `Transactions`: `TransactionStockLineData` and `Errors`: `ErrorData`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
 | `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
@@ -1426,3 +1435,95 @@ purchase's `PurchaseID` and limits `Status` (see
 The lines are the purchase's `PurchaseManualJournalLineData`. A journal's `TaskID` is the purchase
 invoice task it belongs to. The reference's examples need no correction; the fixtures are the three
 of them, unchanged.
+
+## Stock
+
+`stockadjustment` has a class per verb because `TaskID` is taken by PUT and the response only, and
+`Lines` and `UpdateOnHand` by the bodies only. `ExistingStockLineData` and `NewStockLineData` are
+shared with the stock take, so they live in `src/Data/Other/`; both carry the product fields
+(`HasProductFields`) and the stock take's (`HasStockLineProductFields`: `Image`, `Barcode`,
+`StockLocator`, `Unit`, `CostingMethod`). Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `StockAdjustmentData` (response) | `src/Data/StockAdjustment/` | `EffectiveDate`, `Status` |
+| `StockAdjustmentPostData` | `src/Data/StockAdjustment/` | `EffectiveDate`, `Status`, `Lines` |
+| `StockAdjustmentPutData` | `src/Data/StockAdjustment/` | `EffectiveDate`, `Status`, `Lines`, `TaskID` |
+| `NewStockLineData` | `src/Data/Other/` | `Quantity`, `UnitCost`; and `ProductID` or `SKU`, `LocationID` or `Location` (`#[RequiredWithout]`) |
+| `ExistingStockLineData` | `src/Data/Other/` | nothing: it is in responses only |
+| `StockAdjustmentListData` | `src/Data/StockAdjustmentList/` | nothing |
+
+- **Response statuses.** `Status` is a `CompletionStatus` (`DRAFT`, `COMPLETED`, `VOIDED`), and a
+  POST or PUT takes `DRAFT` or `COMPLETED`.
+- **`StocktakeNumber` on a body.** It is auto-generated, but both examples send it, so the bodies
+  take it as an optional string.
+- **The group's "Additional fields" table** lists the product fields for objects with a `ProductID`:
+  the lines have them, and the list, which has no `ProductID`, does not.
+- **`BatchSN` and `ExpiryDate` on a new line** are "Yes*" and depend on the product's costing
+  method, so they stay optional.
+- **Examples.** The examples send `null` for `BatchSN`, `ExpiryDate` and the product custom fields;
+  the fixtures are the six of them, unchanged.
+
+`stocktake` has a class per verb because `TaskID` is taken by PUT and the response only, and the
+table requires `Status` on PUT only. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `StockTakeData` (response) | `src/Data/StockTake/` | `EffectiveDate`, `Account` |
+| `StockTakePostData` | `src/Data/StockTake/` | `EffectiveDate`, `Account`; and `LocationID` or `Location` (`#[RequiredWithout]`) |
+| `StockTakePutData` | `src/Data/StockTake/` | `EffectiveDate`, `Account`, `TaskID`, `Status`; and `LocationID` or `Location` |
+| `IdNameData` | `src/Data/StockTake/` | nothing |
+| `StockTakeListData` | `src/Data/StockTakeList/` | nothing |
+
+- **`Status`** is a `StockTakeStatus` (`DRAFT`, `IN PROGRESS`, `COMPLETED`, `VOIDED`), optional in
+  the response and a POST body, required on PUT.
+- **`StockTakeListData`** keeps the filters as the comma delimited strings the table says, where
+  `StockTakeData` has lists of strings and of `IdNameData`. The list example returns its entries
+  under `StockAdjustmentList`, copied from the adjustment list: use the example's key.
+- **`UseRelativeQuantity`** is a Boolean in the table, but the PUT example sends `1`. The fixture
+  sends `true`.
+- **`LocationID`** is a String in the stock take tables, not a Guid, so it is not checked as one.
+
+`stockTransfer` has a class per verb because `TaskID` is taken by PUT and the response only. Each class
+requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `StockTransferData` (response) | `src/Data/StockTransfer/` | `Status`, `CompletionDate`, `Lines` |
+| `StockTransferPostData` | `src/Data/StockTransfer/` | the same; and `From` or `FromLocation`, `To` or `ToLocation` (`#[RequiredWithout]`), `InTransitAccount` and `DepartureDate` when `Status` is `IN TRANSIT` (`#[RequiredIf]`) |
+| `StockTransferPutData` | `src/Data/StockTransfer/` | the same, and `TaskID` |
+| `StockTransferLineData` | `src/Data/StockTransfer/` | `TransferQuantity`; and `ProductID` or `SKU` |
+| `StockTransferOrderData` | `src/Data/StockTransfer/Order/` | `Status` |
+| `StockTransferOrderPostData` | `src/Data/StockTransfer/Order/` | `TaskID`, `Status`, `Lines` |
+| `StockTransferOrderLineData` | `src/Data/StockTransfer/Order/` | `TransferQuantity`; and `ProductID` or `SKU` |
+| `StockTransferListData` | `src/Data/StockTransferList/` | nothing |
+
+- **One order class.** The reference names both the `stockTransfer/order` table and the Stock
+  Transfer Order Model `StockTransferOrderData`, and they are the same two fields and lines: one class
+  serves both, with `TaskID` and `LastModifiedOn` optional, since the nested `Order` carries neither.
+- **`ManualJournals`.** All six transfer examples send `"ManualJournals": []`, in no table and with
+  no model. It stays a list of whatever the reference puts in it.
+- **PUT request example.** `names.py example` does not find it (the blueprint's `PUT` request is
+  formatted differently); the fixture is the example copied as it stands.
+- **`DepartureDate` and `InTransitAccount`** are "Yes*" for `IN TRANSIT` only, so they are
+  `#[RequiredIf('Status', …)]`; `BatchSN` and `ExpiryDate` depend on the product's costing method and
+  stay optional.
+- **Examples.** The examples need no correction.
+
+`inventoryWriteOff` has a class per verb because `TaskID` is taken by PUT and the response only. Each
+class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `InventoryWriteOffData` (response) | `src/Data/InventoryWriteOff/` | `Status`, `Account` |
+| `InventoryWriteOffPostData` | `src/Data/InventoryWriteOff/` | `Status`, `Account`; and `LocationID` or `Location` (`#[RequiredWithout]`), `EffectiveDate` when `Status` is `COMPLETED` (`#[RequiredIf]`) |
+| `InventoryWriteOffPutData` | `src/Data/InventoryWriteOff/` | the same, and `TaskID` |
+| `InventoryWriteOffLineData` | `src/Data/InventoryWriteOff/` | `Quantity`; and `ProductID` or `ProductCode` |
+| `InventoryWriteOffListData` | `src/Data/InventoryWriteOffList/` | nothing |
+
+- **`Location`** is typed Decimal in the POST/PUT table, copied from the field above it: it is the
+  location's name, a string.
+- **`ExpenseAccount` and `Cost`** on a line are "Yes*", required for a service product, which a line
+  cannot tell, so they stay optional; `TotalCost` is read-only.
+- **Examples.** The examples send `""` and `null` for fields they leave out; the fixtures are the
+  seven of them, unchanged.

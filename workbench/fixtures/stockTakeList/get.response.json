@@ -1,0 +1,25 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "StockAdjustmentList": [
+        {
+            "TaskID": "de796b9c-a1c1-4a27-b9e6-eed777c78d0a",
+            "EffectiveDate": "2017-12-06T00:00:00",
+            "StocktakeNumber": "ST-00025",
+            "Status": "COMPLETED",
+            "Account": "404",
+            "LocationID": "9558f49c-ba8c-484a-8a14-5e83048cce90",
+            "Location": "Main Warehouse",
+            "Tags": "bread, AutoCost, beaded",
+            "PickZones": "",
+            "StockLocators": "",
+            "Categories": "Other",
+            "Brands": "",
+            "Bins": "",
+            "Reference": "",
+            "CreatedDate": "2018-04-27T08:21:41.72Z",
+            "LastUpdatedDate": "2018-04-27T00:00:00",
+            "LastUpdatedBy": "someUser@gmail.com"
+        }
+    ]
+}

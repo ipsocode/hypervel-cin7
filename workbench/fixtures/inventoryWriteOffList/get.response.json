@@ -1,0 +1,15 @@
+{
+    "Total": 5,
+    "Page": 1,
+    "InventoryWriteOffs": [
+        {
+            "TaskID": "97a2a4d4-7130-4281-becc-c319f0ecf67d",
+            "InventoryWriteOffNumber": "FG-00028",
+            "Status": "DRAFT",
+            "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Location": "Main Warehouse",
+            "Date": "2018-01-12T07:29:33.457Z",
+            "Notes": "Test"
+        }
+    ]
+}

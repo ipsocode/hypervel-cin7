@@ -19,6 +19,7 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPostData;
 use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
@@ -46,6 +47,9 @@ use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentPostData;
+use Ipsocode\Cin7\Data\StockTake\StockTakePostData;
+use Ipsocode\Cin7\Data\StockTransfer\StockTransferPostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
@@ -55,6 +59,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\InventoryWriteOff\PostInventoryWriteOff;
 use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
@@ -82,6 +87,9 @@ use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
+use Ipsocode\Cin7\Requests\StockAdjustment\PostStockAdjustment;
+use Ipsocode\Cin7\Requests\StockTake\PostStockTake;
+use Ipsocode\Cin7\Requests\StockTransfer\PostStockTransfer;
 use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -385,6 +393,98 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PutDiscount(ProductDiscountRulePutData::from($rule + ['DiscountLines' => [['DiscountType' => 'FreeShipping', 'OrderExceeds' => 100]]])));
 
         $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A new stock line needs its product, by `ProductID` or `SKU`, and its location, by `LocationID`
+     * or `Location`: a body with a line that has neither of either is not sent, and one of each
+     * is enough.
+     */
+    public function testANewStockLineNeedsItsProductAndItsLocation(): void
+    {
+        $body = ['EffectiveDate' => '2017-12-01T00:00:00', 'Status' => 'DRAFT'];
+        $line = ['Quantity' => 1, 'UnitCost' => 2];
+
+        try {
+            $this->connector()->send(new PostStockAdjustment(StockAdjustmentPostData::from($body + ['Lines' => [$line]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Lines.0.ProductID', 'Lines.0.SKU', 'Lines.0.LocationID', 'Lines.0.Location'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostStockAdjustment(StockAdjustmentPostData::from($body + ['Lines' => [$line + ['SKU' => 'AF308', 'Location' => 'Main Warehouse']]])));
+        $this->connector()->send(new PostStockAdjustment(StockAdjustmentPostData::from($body + ['Lines' => [$line + ['ProductID' => 'ccb7d97b-a638-4b34-833e-4c348b81f40d', 'LocationID' => 'cd3ed3bb-673a-4d48-b47b-5f92a973ae8c']]])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A stock take needs a location, by `LocationID` or `Location`; a body with neither is not sent.
+     */
+    public function testAStockTakeWithoutALocationIsNotSent(): void
+    {
+        $body = ['EffectiveDate' => '2018-04-27T00:00:00', 'Account' => '403'];
+
+        try {
+            $this->connector()->send(new PostStockTake(StockTakePostData::from($body)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['LocationID', 'Location'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostStockTake(StockTakePostData::from($body + ['Location' => 'Main Warehouse'])));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A stock transfer needs both locations, by ID or by name, and, in transit, the account holding
+     * the stock and the date it left; a body without them is not sent.
+     */
+    public function testAStockTransferNeedsItsLocationsAndItsInTransitFields(): void
+    {
+        $body = ['Status' => 'DRAFT', 'CompletionDate' => '2017-12-19T00:00:00', 'Lines' => [['SKU' => 'Bread', 'TransferQuantity' => 1]]];
+        $locations = ['FromLocation' => 'Main Warehouse', 'ToLocation' => 'Bin 1'];
+
+        try {
+            $this->connector()->send(new PostStockTransfer(StockTransferPostData::from($body)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['From', 'FromLocation', 'To', 'ToLocation'], array_keys($exception->errors()));
+        }
+
+        try {
+            $this->connector()->send(new PostStockTransfer(StockTransferPostData::from([...$body, ...$locations, 'Status' => 'IN TRANSIT'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['InTransitAccount', 'DepartureDate'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostStockTransfer(StockTransferPostData::from([...$body, ...$locations])));
+        $this->connector()->send(new PostStockTransfer(StockTransferPostData::from([...$body, ...$locations, 'Status' => 'IN TRANSIT', 'InTransitAccount' => '715', 'DepartureDate' => '2018-03-12T00:00:00'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * An inventory write-off needs a location, by `LocationID` or `Location`, and a completed one
+     * its `EffectiveDate`; a body without them is not sent, and each line needs its product.
+     */
+    public function testAnInventoryWriteOffNeedsItsLocationItsDateAndItsLineProducts(): void
+    {
+        $body = ['Status' => 'COMPLETED', 'Account' => '404'];
+
+        try {
+            $this->connector()->send(new PostInventoryWriteOff(InventoryWriteOffPostData::from($body + ['Lines' => [['Quantity' => 1]]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['LocationID', 'Location', 'EffectiveDate', 'Lines.0.ProductID', 'Lines.0.ProductCode'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostInventoryWriteOff(InventoryWriteOffPostData::from($body + ['Location' => 'Main Warehouse', 'EffectiveDate' => '2018-01-12T00:00:00', 'Lines' => [['Quantity' => 1, 'ProductCode' => 'Bread']]])));
+        $this->connector()->send(new PostInventoryWriteOff(InventoryWriteOffPostData::from(['Status' => 'DRAFT', 'Account' => '404', 'LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb'])));
+
+        $this->mock->assertSentCount(2);
     }
 
     /**

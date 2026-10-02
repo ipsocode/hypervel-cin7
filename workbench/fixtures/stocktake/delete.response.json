@@ -1,0 +1,28 @@
+{
+    "TaskID": "328c0f87-d87f-4f87-b503-251e820f4b3c",
+    "EffectiveDate": "2018-04-27T00:00:00",
+    "StocktakeNumber": "ST-00024",
+    "Status": "VOIDED",
+    "Account": "403",
+    "LocationID": "9558f49c-ba8c-484a-8a14-5e83048cce90",
+    "Location": "Main Warehouse",
+    "Tags": [
+        "bread",
+        "AutoCost",
+        "beaded"
+    ],
+    "PickZones": [],
+    "StockLocators": [],
+    "Categories": [
+        {
+            "ID": "ae180bfb-802f-4d5a-9a04-af3aebfc3d4a",
+            "Name": "Other"
+        }
+    ],
+    "Brands": [],
+    "Bins": [],
+    "Reference": "",
+    "NonZeroStockOnHandProducts": [],
+    "ZeroStockOnHandProducts": [],
+    "Transactions": []
+}

@@ -18,6 +18,8 @@ use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\CustomPricesResource;
+use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
+use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
@@ -33,6 +35,12 @@ use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
+use Ipsocode\Cin7\Resources\StockAdjustmentListResource;
+use Ipsocode\Cin7\Resources\StockAdjustmentResource;
+use Ipsocode\Cin7\Resources\StockTakeListResource;
+use Ipsocode\Cin7\Resources\StockTakeResource;
+use Ipsocode\Cin7\Resources\StockTransferListResource;
+use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use UnitEnum;
@@ -349,5 +357,69 @@ final class Cin7Connector extends Connector implements HasPagination
     public function reference(): ReferenceResource
     {
         return new ReferenceResource($this);
+    }
+
+    /**
+     * The `stockadjustmentList` resource.
+     */
+    public function stockAdjustmentList(): StockAdjustmentListResource
+    {
+        return new StockAdjustmentListResource($this);
+    }
+
+    /**
+     * The `stockadjustment` resource.
+     */
+    public function stockAdjustment(): StockAdjustmentResource
+    {
+        return new StockAdjustmentResource($this);
+    }
+
+    /**
+     * The `stockTakeList` resource.
+     */
+    public function stockTakeList(): StockTakeListResource
+    {
+        return new StockTakeListResource($this);
+    }
+
+    /**
+     * The `stocktake` resource.
+     */
+    public function stockTake(): StockTakeResource
+    {
+        return new StockTakeResource($this);
+    }
+
+    /**
+     * The `stockTransferList` resource.
+     */
+    public function stockTransferList(): StockTransferListResource
+    {
+        return new StockTransferListResource($this);
+    }
+
+    /**
+     * The `stockTransfer` resource.
+     */
+    public function stockTransfer(): StockTransferResource
+    {
+        return new StockTransferResource($this);
+    }
+
+    /**
+     * The `inventoryWriteOffList` resource.
+     */
+    public function inventoryWriteOffList(): InventoryWriteOffListResource
+    {
+        return new InventoryWriteOffListResource($this);
+    }
+
+    /**
+     * The `inventoryWriteOff` resource.
+     */
+    public function inventoryWriteOff(): InventoryWriteOffResource
+    {
+        return new InventoryWriteOffResource($this);
     }
 }
