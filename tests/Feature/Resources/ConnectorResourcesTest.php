@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
+use Ipsocode\Cin7\Resources\AdvancedPurchase\CreditNoteResource as AdvancedPurchaseCreditNoteResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\InvoiceResource as AdvancedPurchaseInvoiceResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\ManualJournalResource as AdvancedPurchaseManualJournalResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\PaymentResource as AdvancedPurchasePaymentResource;
@@ -201,6 +202,8 @@ class ConnectorResourcesTest extends TestCase
 
         $this->assertInstanceOf(AdvancedPurchasePaymentResource::class, $advancedPurchase->payment());
         $this->assertNotSame($advancedPurchase->payment(), $advancedPurchase->payment());
+        $this->assertInstanceOf(AdvancedPurchaseCreditNoteResource::class, $advancedPurchase->creditNote());
+        $this->assertNotSame($advancedPurchase->creditNote(), $advancedPurchase->creditNote());
     }
 
     public function testSupplierReturnsAFreshSupplierResource(): void

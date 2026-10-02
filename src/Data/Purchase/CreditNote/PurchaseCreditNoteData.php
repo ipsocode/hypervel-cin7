@@ -8,6 +8,7 @@ use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
+use Ipsocode\Cin7\Data\AbstractPurchaseCreditNoteData;
 use Ipsocode\Cin7\Data\Other\PurchaseUnStockLineData;
 use Ipsocode\Cin7\Data\Other\SalePaymentLineData;
 use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceLineData;

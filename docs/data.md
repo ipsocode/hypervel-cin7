@@ -34,8 +34,8 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   `InventoryMovementLineData` a sale and a purchase both carry, and the
   `PurchaseAdditionalChargeData` and `PurchaseUnStockLineData` the simple and the advanced
   purchase share). An abstract parent whose children span families stays in `src/Data/` itself
-  (`AbstractLineData`, `AbstractChargeData`, `AbstractAddressData`,
-  `AbstractSalePaymentLineData`). The Money Task's classes are in `src/Data/MoneyTask/`, like its
+  (`AbstractLineData`, `AbstractChargeData`, `AbstractAddressData`, `AbstractSalePaymentLineData`,
+  `AbstractPurchaseCreditNoteData`). The Money Task's classes are in `src/Data/MoneyTask/`, like its
   requests (see [resources](resources.md#conventions)). `src/Data/` holds nothing else: the traits
   the models share are in `src/Concerns/` and the validation attribute in `src/Attributes/`.
 - **One class per model name.** Where the reference documents one name twice with
@@ -69,7 +69,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
   | `AbstractPurchaseOrderData` | `PurchaseOrderData`, `PurchaseOrderPostData` | `Memo`, `Status`, `Lines` |
   | `AbstractPurchaseStockData` | `PurchaseStockData`, `PurchaseStockPostData` | `Status`, `Lines` |
-  | `AbstractPurchaseCreditNoteData` | `PurchaseCreditNoteData`, `PurchaseCreditNotePostData` | `CreditNoteNumber`, `CreditNoteDate`, `Status`, `Lines`, `Unstock` |
+  | `AbstractPurchaseCreditNoteData` | `PurchaseCreditNoteData`, `PurchaseCreditNotePostData`, `AdvancedPurchasePartialCreditNoteData`, `AdvancedPurchasePartialCreditNotePostData` | `CreditNoteNumber`, `CreditNoteDate`, `Status`, `Lines`, `Unstock` |
   | `AbstractPurchaseInvoiceData` | `PurchaseInvoiceData`, `PurchaseInvoicePostData`, `AdvancedPurchasePartialInvoiceData`, `AdvancedPurchasePartialInvoicePostData`; in `src/Data/` itself, as its children span the purchase and advanced purchase families | `InvoiceDate`, `InvoiceDueDate`, `Status`, `Lines` |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData`, `AdvancedPurchasePaymentData`, `AdvancedPurchasePaymentPostData`, `AdvancedPurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
   | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData`, `AdvancedPurchasePartialManualJournalData`, `AdvancedPurchasePartialManualJournalPostData` | `Status` |
@@ -227,6 +227,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `advanced-purchase/invoice` | POST: `AdvancedPurchasePartialInvoicePostData` (Advanced purchase invoice partial model, plus the purchase's `PurchaseID`, with `Lines`: `PurchaseInvoiceLineData` and `AdditionalCharges`: `PurchaseInvoiceAdditionalChargeData`) | GET, POST, DELETE: `AdvancedPurchaseInvoicesData` (Available Fields for Purchase Invoice, `{PurchaseID, Invoices}`, with `Invoices`: `AdvancedPurchasePartialInvoiceData`, Advanced purchase invoice partial model) |
 | `advanced-purchase/put-away` | POST: `AdvancedPurchasePutAwayPostData` (Available Fields for Purchase Put Away, with `Lines`: `AdvancedPurchasePutAwayLineData`, Advanced Purchase Put Away Line Model) | GET, POST: `AdvancedPurchasePutAwaysData` (`{PurchaseID, PutAway}`, with `PutAway`: `AdvancedPurchasePutAwayData`, Advanced Purchase Put Away Model) |
 | `advanced-purchase/payment` | POST: `AdvancedPurchasePaymentPostData`; PUT: `AdvancedPurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the `purchase/payment` table, the fields each verb takes) | GET: `list<AdvancedPurchasePaymentData>`, a bare array; POST, PUT: `AdvancedPurchasePaymentData`, the saved payment, with the `PurchaseID` the examples add; DELETE: sent to `purchase/payment` (`DeletePurchasePayment`), its `{Success}` left to `json()` |
+| `advanced-purchase/creditnote` | POST: `AdvancedPurchasePartialCreditNotePostData` (one Advanced purchase credit note partial model plus the purchase's `PurchaseID`, with `Lines`: `PurchaseInvoiceLineData`, `AdditionalCharges`: `PurchaseInvoiceAdditionalChargeData` and `Unstock`: `PurchaseUnStockLineData`) | GET, POST, DELETE: `AdvancedPurchaseCreditNotesData` (`{PurchaseID, CreditNotes}`, Available Fields for Purchase Credit Note, with `CreditNotes`: `AdvancedPurchasePartialCreditNoteData`, Advanced purchase credit note partial model) |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
 `SaleData` nests one class per model, each in the folder of the sale path it belongs to:
@@ -570,6 +571,26 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   sends them. `PurchaseUnStockLineData` models them, and `PostPurchaseCreditNote` leaves them out
   of the body, which keeps the stock batch (`CardID`), `Date` and `Quantity`. The line carries a
   `ProductID`, so it takes the product fields too (`HasProductFields`).
+- **Advanced purchase credit note.** The Available Fields for Purchase Credit Note table of
+  `advanced-purchase/creditnote` is the `{PurchaseID, CreditNotes}` envelope every action answers
+  with, `AdvancedPurchaseCreditNotesData`, a keyed envelope named in the plural; the table requires
+  both fields. Its `CreditNotes` are the Advanced purchase credit note partial model,
+  `AdvancedPurchasePartialCreditNoteData`, whose fields and requirements are the purchase credit
+  note table's plus a required `CreditNoteInvoiceNumber`, so it extends
+  `AbstractPurchaseCreditNoteData`, which now spans both families and so moved to the `src/Data/`
+  root. The table names the envelope's list "[] Advanced Purchase Credit Note Model" but links the
+  partial model; the Advanced Purchase Credit Note Model an advanced purchase embeds as its
+  `CreditNote` (with `Refunds`) is a model of its own, `AdvancedPurchaseCreditNoteData`, which comes
+  with the `advanced-purchase` resource. No table documents the POST body: the example sends one
+  partial credit note flattened with the envelope's `PurchaseID`, so
+  `AdvancedPurchasePartialCreditNotePostData` is the partial model plus a required `PurchaseID`,
+  with `Status` limited to `DRAFT` and `AUTHORISED` and the totals, "Not required for POST",
+  optional. The table requires `TaskID`, and the example sends the empty GUID to create a credit
+  note, so the POST body requires it. The POST example sends the unstock lines' read-only fields,
+  so `PostAdvancedPurchaseCreditNote` leaves them out as `PostPurchaseCreditNote` does. The DELETE
+  documents only `TaskID` ("ID of Credit Note Purchase to Void"), and no `Void` flag, unlike the
+  stock received's and the sale credit note's: `DeleteAdvancedPurchaseCreditNote` takes only
+  `taskId`, and its example answers with the credit note `VOIDED`.
 - **Fulfilment pick and pack.** The Sale Fulfilment Pick and Pack tables, `sale/fulfilment/pick`
   and `/pack`, add the fulfilment's `TaskID` to the Pick Pack Model a fulfilment embeds;
   `SaleFulfilmentPickData` and `SaleFulfilmentPackData` model them and require it, and
@@ -968,3 +989,20 @@ Each class requires what its `purchase/payment` twin does:
 The response adds the `PurchaseID` every example carries, as an optional GUID. A payment needs an
 authorised invoice, and a refund an authorised credit note. The reference's examples need no
 correction; the fixtures are the five of them, unchanged.
+
+`advanced-purchase/creditnote` follows the Available Fields for Purchase Credit Note table of its
+path and the Advanced purchase credit note partial model, with a POST class because the POST body
+adds the purchase's `PurchaseID` and takes only a `DRAFT` or `AUTHORISED` `Status` (see
+[above](#where-the-references-tables-and-examples-disagree)). Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `AdvancedPurchaseCreditNotesData` (response) | `src/Data/AdvancedPurchase/CreditNote/` | `PurchaseID`, `CreditNotes` |
+| `AdvancedPurchasePartialCreditNoteData` | `src/Data/AdvancedPurchase/CreditNote/` | `CreditNoteNumber`, `CreditNoteDate`, `Status`, `Lines`, `Unstock`, `TaskID`, `CombineAdditionalCharges`, `CreditNoteInvoiceNumber` |
+| `AdvancedPurchasePartialCreditNotePostData` | `src/Data/AdvancedPurchase/CreditNote/` | `CreditNoteNumber`, `CreditNoteDate`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `Unstock`, `PurchaseID`, `TaskID`, `CombineAdditionalCharges`, `CreditNoteInvoiceNumber` |
+
+`Status` is a `TaskStatus`, and `AbstractPurchaseCreditNoteData`, at the `src/Data/` root, holds the
+fields the simple and the advanced purchase's credit notes share. The lines, additional charges and
+unstock lines are the purchase credit note's `PurchaseInvoiceLineData`,
+`PurchaseInvoiceAdditionalChargeData` and `PurchaseUnStockLineData` (see above). The reference's
+examples need no correction; the fixtures are the four of them, unchanged.
