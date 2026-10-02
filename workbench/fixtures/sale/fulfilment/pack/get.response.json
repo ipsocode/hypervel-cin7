@@ -1,0 +1,19 @@
+{
+    "TaskID": "cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57",
+    "Status": "NOT AVAILABLE",
+    "Lines": [
+        {
+            "ProductID": "4aadd8f6-4d3d-46ca-acbb-1a9a662f9bc1",
+            "SKU": "Bread",
+            "Name": "Baked Bread",
+            "Location": "Main Warehouse",
+            "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Box": "Box 1",
+            "Quantity": 1,
+            "BatchSN": "PO-00001-1",
+            "ExpiryDate": "2017-11-30T00:00:00",
+            "NonInventory": false,
+            "WarrantyRegistrationNumber": null
+        }
+    ]
+}

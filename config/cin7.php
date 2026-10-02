@@ -22,8 +22,8 @@ return [
     'account_id' => env('CIN7_ACCOUNT_ID'),
     'application_key' => env('CIN7_APPLICATION_KEY'),
 
-    // Local throttle for Cin7's limit of roughly 60 calls per minute per account.
-    // Set `max` or `period` to 0 to remove the window; the 503 cooldown still applies.
+    // Local throttle for Cin7's limit of 60 calls per minute per API application.
+    // Set `max` or `period` to 0 to remove the window; the throttling cooldown still applies.
     'rate_limit' => [
         'max' => (int) env('CIN7_RATE_MAX', 60),
         'period' => (int) env('CIN7_RATE_PERIOD', 60),
@@ -33,7 +33,7 @@ return [
         'store' => env('CIN7_RATE_STORE'),
     ],
 
-    // Bounded retries on HTTP 503; `times` is the total number of attempts.
+    // Bounded retries on HTTP 429 and 503; `times` is the total number of attempts.
     'retry' => [
         'times' => (int) env('CIN7_RETRY_TIMES', 4),
         'delay_ms' => (int) env('CIN7_RETRY_DELAY_MS', 5000),

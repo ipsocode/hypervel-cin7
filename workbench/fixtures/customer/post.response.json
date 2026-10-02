@@ -1,0 +1,78 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "CustomerList": [
+        {
+            "ID": "0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1",
+            "Name": "Human Test",
+            "DisplayName": "Mary Jane",
+            "Currency": "AUD",
+            "PaymentTerm": "30 days",
+            "Discount": 0,
+            "TaxRule": "BAS Excluded",
+            "Carrier": "DEFAULT Carrier",
+            "SalesRepresentative": null,
+            "Location": "Main Warehouse",
+            "Comments": "",
+            "AccountReceivable": "610",
+            "RevenueAccount": "200",
+            "PriceTier": "Tier 1",
+            "TaxNumber": "",
+            "AdditionalAttribute1": "",
+            "AdditionalAttribute2": "",
+            "AdditionalAttribute3": "",
+            "AdditionalAttribute4": "",
+            "AdditionalAttribute5": "",
+            "AdditionalAttribute6": "",
+            "AdditionalAttribute7": "",
+            "AdditionalAttribute8": "",
+            "AdditionalAttribute9": "",
+            "AdditionalAttribute10": "",
+            "AttributeSet": null,
+            "Tags": "",
+            "Status": "Active",
+            "CreditLimit": 0,
+            "IsOnCreditHold": false,
+            "IsLegalEntity": false,
+            "CustomerParentID": null,
+            "CustomerParentName": null,
+            "IsBillParent": false,
+            "LastModifiedOn": "2018-01-24T05:07:23.917Z",
+            "Addresses": [
+                {
+                    "Line1": "P O Box 456",
+                    "Line2": "Southbank",
+                    "City": "Melbourne GPO",
+                    "State": "VIC",
+                    "Postcode": "3331",
+                    "Country": "Uruguay",
+                    "Type": "Billing",
+                    "DefaultForType": true,
+                    "ID": "fc8ca28e-7f91-4ac3-8fff-deb86395b494"
+                }
+            ],
+            "Contacts": [
+                {
+                    "Name": "Nick Wakefield",
+                    "JobTitle": null,
+                    "Phone": "03 3014556",
+                    "MobilePhone": null,
+                    "Fax": null,
+                    "Email": null,
+                    "Website": null,
+                    "Default": true,
+                    "Comment": null,
+                    "IncludeInEmail": false,
+                    "MarketingConsent": 1,
+                    "ID": "c650db26-2fca-4fe4-837d-ffd0f4d97200"
+                }
+            ],
+            "ChildCustomers": [
+                {
+                    "CustomerID": "4f36c2a6-f736-450f-be41-28372bde80f6",
+                    "CustomerName": "Child Customer"
+                }
+            ]
+        }
+    ]
+}

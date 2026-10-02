@@ -20,13 +20,16 @@ use Ipsocode\Cin7\PageDefaults;
 class Cin7Paginator extends PagedPaginator
 {
     /**
-     * Apply the page number and, when set, the page limit to the request.
+     * Apply the page number and, when set, the page limit to the request, within Cin7's bounds:
+     * `startPage()` and `perPageLimit()` bypass `PageDefaults::apply()`.
      */
     protected function applyPagination(Request $request): Request
     {
+        PageDefaults::ensureValidPage($this->pageNumber);
         $parameters = ['page' => $this->pageNumber];
 
         if ($this->perPageLimit !== null) {
+            PageDefaults::ensureValidLimit($this->perPageLimit);
             $parameters['limit'] = $this->perPageLimit;
         }
 

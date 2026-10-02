@@ -1,0 +1,26 @@
+{
+    "TaskID": "2fff0881-baf1-4b0a-a8fa-4e4fe73ff628",
+    "TaskType": "Receive Money",
+    "Status": "COMPLETED",
+    "BankAccount": "198489",
+    "CurrencyConversionRate": 45.35668,
+    "SupplierID": null,
+    "CustomerID": null,
+    "Reference": "",
+    "Date": "2018-01-17T00:00:00",
+    "TaxInclusive": false,
+    "Note": null,
+    "Lines": [
+        {
+            "Name": "G4059114:Gund Ginger Bear 15 Inches",
+            "Comment": "",
+            "Quantity": 3,
+            "Price": 2,
+            "Discount": 0,
+            "Tax": 0.6,
+            "TaxRuleName": "Tax Exempt",
+            "AccountCode": "800",
+            "Total": 6
+        }
+    ]
+}

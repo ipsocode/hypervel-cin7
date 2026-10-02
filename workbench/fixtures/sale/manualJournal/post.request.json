@@ -1,0 +1,13 @@
+{
+    "SaleID": "916ab4c0-6ccb-4c93-873d-0603859050e4",
+    "Status": "DRAFT",
+    "Lines": [
+        {
+            "Reference": "Quick3",
+            "Amount": 2,
+            "Date": "2017-11-28T00:00:00",
+            "Debit": "403",
+            "Credit": "433"
+        }
+    ]
+}

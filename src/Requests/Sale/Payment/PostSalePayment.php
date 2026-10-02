@@ -10,13 +10,19 @@ use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `POST sale/payment`, body is a Sale Payment Line; the response is the saved line.
+ * `POST sale/payment`, body is a `SalePaymentPostData` or an array; the response is the saved line.
+ * `ID` and `CreditID` are available only for PUT, so both are left out of an array body.
  *
  * @extends WriteRequest<SalePaymentLinePartialData>
  */
 final class PostSalePayment extends WriteRequest
 {
     protected Method $method = Method::POST;
+
+    /**
+     * @var list<string>
+     */
+    protected array $omit = ['ID', 'CreditID'];
 
     public function resolveEndpoint(): string
     {

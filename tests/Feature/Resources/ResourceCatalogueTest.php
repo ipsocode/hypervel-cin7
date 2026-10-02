@@ -6,57 +6,24 @@ namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Customer\CustomerData;
-use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
-use Ipsocode\Cin7\Data\Product\ProductData;
-use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
-use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
-use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
-use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
-use Ipsocode\Cin7\Data\Sale\SaleOrderData;
-use Ipsocode\Cin7\Data\Sale\SalePostPutData;
-use Ipsocode\Cin7\Requests\Customer\GetCustomer;
-use Ipsocode\Cin7\Requests\Customer\PostCustomer;
-use Ipsocode\Cin7\Requests\Customer\PutCustomer;
-use Ipsocode\Cin7\Requests\MoneyOperation\DeleteMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\GetMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\PostMoneyOperation;
-use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
-use Ipsocode\Cin7\Requests\Product\GetProduct;
-use Ipsocode\Cin7\Requests\Product\PostProduct;
-use Ipsocode\Cin7\Requests\Product\PutProduct;
-use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
-use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
-use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
-use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
-use Ipsocode\Cin7\Requests\Sale\CreditNote\DeleteSaleCreditNote;
-use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
-use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
-use Ipsocode\Cin7\Requests\Sale\DeleteSale;
-use Ipsocode\Cin7\Requests\Sale\GetSale;
-use Ipsocode\Cin7\Requests\Sale\Invoice\DeleteSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\GetSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
-use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
-use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
-use Ipsocode\Cin7\Requests\Sale\Payment\DeleteSalePayment;
-use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;
-use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
-use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
-use Ipsocode\Cin7\Requests\Sale\PostSale;
-use Ipsocode\Cin7\Requests\Sale\PutSale;
-use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
+use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionNamedType;
+use SplFileInfo;
 use Workbench\App\Support\Cin7Payloads;
 
 /**
- * One row per resource method, asserting on the request it builds and the PendingRequest
- * it sends.
+ * One row per resource method, from the per-path files under `tests/Fixtures/Catalogue/`,
+ * asserting on the request it builds and the PendingRequest it sends.
  *
  * @see docs/resources.md
  */
@@ -102,455 +69,57 @@ class ResourceCatalogueTest extends TestCase
      */
     public static function resourceProvider(): array
     {
-        return [
-            'customer get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->customer()->get(),
-                GetCustomer::class,
-                Method::GET,
-                '/ExternalApi/v2/customer',
-                ['page' => 1, 'limit' => 100],
-                null,
-            ],
-            'customer paginate' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->customer()->paginate()->current(),
-                GetCustomer::class,
-                Method::GET,
-                '/ExternalApi/v2/customer',
-                ['page' => 1, 'limit' => 100],
-                null,
-            ],
-            'customer post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->customer()->post(['Name' => 'ACME']),
-                PostCustomer::class,
-                Method::POST,
-                '/ExternalApi/v2/customer',
-                [],
-                ['Name' => 'ACME'],
-            ],
-            'customer post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->customer()->post(CustomerData::from(['Name' => 'ACME'])),
-                PostCustomer::class,
-                Method::POST,
-                '/ExternalApi/v2/customer',
-                [],
-                ['Name' => 'ACME'],
-            ],
-            'customer put with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->customer()->put(CustomerData::from(['ID' => 'guid-1', 'Name' => 'ACME'])),
-                PutCustomer::class,
-                Method::PUT,
-                '/ExternalApi/v2/customer',
-                [],
-                ['ID' => 'guid-1', 'Name' => 'ACME'],
-            ],
-            'product post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->product()->post(ProductData::from(['SKU' => 'Bread'])),
-                PostProduct::class,
-                Method::POST,
-                '/ExternalApi/v2/product',
-                [],
-                ['SKU' => 'Bread'],
-            ],
-            'product put with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->product()->put(ProductData::from(['ID' => 'guid-1', 'SKU' => 'Bread'])),
-                PutProduct::class,
-                Method::PUT,
-                '/ExternalApi/v2/product',
-                [],
-                ['ID' => 'guid-1', 'SKU' => 'Bread'],
-            ],
-            'customer put' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->customer()->put(['ID' => 'guid-1', 'Name' => 'ACME']),
-                PutCustomer::class,
-                Method::PUT,
-                '/ExternalApi/v2/customer',
-                [],
-                ['ID' => 'guid-1', 'Name' => 'ACME'],
-            ],
-            'product get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->product()->get(),
-                GetProduct::class,
-                Method::GET,
-                '/ExternalApi/v2/product',
-                ['page' => 1, 'limit' => 100],
-                null,
-            ],
-            'product paginate' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->product()->paginate()->current(),
-                GetProduct::class,
-                Method::GET,
-                '/ExternalApi/v2/product',
-                ['page' => 1, 'limit' => 100],
-                null,
-            ],
-            'product post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->product()->post(['Name' => 'Widget']),
-                PostProduct::class,
-                Method::POST,
-                '/ExternalApi/v2/product',
-                [],
-                ['Name' => 'Widget'],
-            ],
-            'product put' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->product()->put(['ID' => 'guid-1', 'Name' => 'Widget']),
-                PutProduct::class,
-                Method::PUT,
-                '/ExternalApi/v2/product',
-                [],
-                ['ID' => 'guid-1', 'Name' => 'Widget'],
-            ],
-            'ref tax get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->get(),
-                GetTax::class,
-                Method::GET,
-                '/ExternalApi/v2/ref/tax',
-                ['page' => 1, 'limit' => 100],
-                null,
-            ],
-            'ref tax paginate' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->paginate()->current(),
-                GetTax::class,
-                Method::GET,
-                '/ExternalApi/v2/ref/tax',
-                ['page' => 1, 'limit' => 100],
-                null,
-            ],
-            'ref tax post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->post(['Name' => 'VAT']),
-                PostTax::class,
-                Method::POST,
-                '/ExternalApi/v2/ref/tax',
-                [],
-                ['Name' => 'VAT'],
-            ],
-            'ref tax put' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->put(['ID' => 'guid-1', 'Name' => 'VAT']),
-                PutTax::class,
-                Method::PUT,
-                '/ExternalApi/v2/ref/tax',
-                [],
-                ['ID' => 'guid-1', 'Name' => 'VAT'],
-            ],
-            'ref customer credits get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->credits()->get(['CustomerID' => 'guid-1', 'ShowUsedCredits' => true]),
-                GetCustomerCredits::class,
-                Method::GET,
-                '/ExternalApi/v2/ref/customer/credits',
-                ['CustomerID' => 'guid-1', 'ShowUsedCredits' => 'true', 'page' => 1, 'limit' => 100],
-                null,
-            ],
-            'ref customer credits paginate' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->credits()->paginate()->current(),
-                GetCustomerCredits::class,
-                Method::GET,
-                '/ExternalApi/v2/ref/customer/credits',
-                ['page' => 1, 'limit' => 100],
-                null,
-            ],
-            'moneyOperation get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->get('task-1'),
-                GetMoneyOperation::class,
-                Method::GET,
-                '/ExternalApi/v2/moneyOperation',
-                ['TaskID' => 'task-1'],
-                null,
-            ],
-            'moneyOperation post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->post(['TaskType' => 'Receive Money']),
-                PostMoneyOperation::class,
-                Method::POST,
-                '/ExternalApi/v2/moneyOperation',
-                [],
-                ['TaskType' => 'Receive Money'],
-            ],
-            'moneyOperation put' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->put(['TaskID' => 'task-1', 'Status' => 'COMPLETED']),
-                PutMoneyOperation::class,
-                Method::PUT,
-                '/ExternalApi/v2/moneyOperation',
-                [],
-                ['TaskID' => 'task-1', 'Status' => 'COMPLETED'],
-            ],
-            'moneyOperation delete' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->delete('task-1'),
-                DeleteMoneyOperation::class,
-                Method::DELETE,
-                '/ExternalApi/v2/moneyOperation',
-                ['ID' => 'task-1', 'Void' => 'false'],
-                null,
-            ],
-            'moneyOperation delete with void' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->delete('task-1', void: true),
-                DeleteMoneyOperation::class,
-                Method::DELETE,
-                '/ExternalApi/v2/moneyOperation',
-                ['ID' => 'task-1', 'Void' => 'true'],
-                null,
-            ],
-            'moneyOperation post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->post(MoneyTaskData::from(['TaskType' => 'Spend Money', 'Note' => null])),
-                PostMoneyOperation::class,
-                Method::POST,
-                '/ExternalApi/v2/moneyOperation',
-                [],
-                ['TaskType' => 'Spend Money', 'Note' => null],
-            ],
-            'moneyOperation put with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->moneyOperation()->put(MoneyTaskData::from(['TaskID' => 'task-1', 'Status' => 'VOIDED'])),
-                PutMoneyOperation::class,
-                Method::PUT,
-                '/ExternalApi/v2/moneyOperation',
-                [],
-                ['TaskID' => 'task-1', 'Status' => 'VOIDED'],
-            ],
-            'sale get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->get('guid-1', ['CombineAdditionalCharges' => true]),
-                GetSale::class,
-                Method::GET,
-                '/ExternalApi/v2/sale',
-                ['ID' => 'guid-1', 'CombineAdditionalCharges' => 'true'],
-                null,
-            ],
-            'sale post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(['Customer' => 'ACME']),
-                PostSale::class,
-                Method::POST,
-                '/ExternalApi/v2/sale',
-                [],
-                ['Customer' => 'ACME'],
-            ],
-            'sale put' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(['ID' => 'guid-1', 'Note' => 'Rush']),
-                PutSale::class,
-                Method::PUT,
-                '/ExternalApi/v2/sale',
-                [],
-                ['ID' => 'guid-1', 'Note' => 'Rush'],
-            ],
-            'sale delete' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->delete('guid-1'),
-                DeleteSale::class,
-                Method::DELETE,
-                '/ExternalApi/v2/sale',
-                ['ID' => 'guid-1', 'Void' => 'false'],
-                null,
-            ],
-            'sale delete with void' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->delete('guid-1', void: true),
-                DeleteSale::class,
-                Method::DELETE,
-                '/ExternalApi/v2/sale',
-                ['ID' => 'guid-1', 'Void' => 'true'],
-                null,
-            ],
-            'sale order get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->order()->get('sale-1', ['IncludeProductInfo' => true]),
-                GetSaleOrder::class,
-                Method::GET,
-                '/ExternalApi/v2/sale/order',
-                ['SaleID' => 'sale-1', 'IncludeProductInfo' => 'true'],
-                null,
-            ],
-            'sale order post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->order()->post(['SaleID' => 'sale-1']),
-                PostSaleOrder::class,
-                Method::POST,
-                '/ExternalApi/v2/sale/order',
-                [],
-                ['SaleID' => 'sale-1'],
-            ],
-            'sale order post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->order()->post(SaleOrderData::from(['SaleID' => 'sale-1', 'AutoPickPackShipMode' => 'NOPICK'])),
-                PostSaleOrder::class,
-                Method::POST,
-                '/ExternalApi/v2/sale/order',
-                [],
-                ['SaleID' => 'sale-1', 'AutoPickPackShipMode' => 'NOPICK'],
-            ],
-            'sale invoice get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->get('sale-1'),
-                GetSaleInvoice::class,
-                Method::GET,
-                '/ExternalApi/v2/sale/invoice',
-                ['SaleID' => 'sale-1'],
-                null,
-            ],
-            'sale invoice post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->post(['SaleID' => 'sale-1']),
-                PostSaleInvoice::class,
-                Method::POST,
-                '/ExternalApi/v2/sale/invoice',
-                [],
-                ['SaleID' => 'sale-1'],
-            ],
-            'sale invoice post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->post(SaleInvoicePostData::from(['SaleID' => 'sale-1', 'Memo' => 'Rush'])),
-                PostSaleInvoice::class,
-                Method::POST,
-                '/ExternalApi/v2/sale/invoice',
-                [],
-                ['SaleID' => 'sale-1', 'Memo' => 'Rush'],
-            ],
-            'sale invoice put' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->put(['SaleID' => 'sale-1', 'TaskID' => 'task-1']),
-                PutSaleInvoice::class,
-                Method::PUT,
-                '/ExternalApi/v2/sale/invoice',
-                [],
-                ['SaleID' => 'sale-1', 'TaskID' => 'task-1'],
-            ],
-            'sale invoice put with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->put(SaleInvoicePostData::from(['SaleID' => 'sale-1', 'TaskID' => 'task-1'])),
-                PutSaleInvoice::class,
-                Method::PUT,
-                '/ExternalApi/v2/sale/invoice',
-                [],
-                ['SaleID' => 'sale-1', 'TaskID' => 'task-1'],
-            ],
-            'sale invoice delete' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->delete('task-1'),
-                DeleteSaleInvoice::class,
-                Method::DELETE,
-                '/ExternalApi/v2/sale/invoice',
-                ['TaskID' => 'task-1', 'Void' => 'false'],
-                null,
-            ],
-            'sale invoice delete with void' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->delete('task-1', void: true),
-                DeleteSaleInvoice::class,
-                Method::DELETE,
-                '/ExternalApi/v2/sale/invoice',
-                ['TaskID' => 'task-1', 'Void' => 'true'],
-                null,
-            ],
-            'sale creditNote get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->get('sale-1', ['IncludePaymentInfo' => true]),
-                GetSaleCreditNote::class,
-                Method::GET,
-                '/ExternalApi/v2/sale/creditnote',
-                ['SaleID' => 'sale-1', 'IncludePaymentInfo' => 'true'],
-                null,
-            ],
-            'sale creditNote post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->post(['SaleID' => 'sale-1']),
-                PostSaleCreditNote::class,
-                Method::POST,
-                '/ExternalApi/v2/sale/creditnote',
-                [],
-                ['SaleID' => 'sale-1'],
-            ],
-            'sale creditNote post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->post(SaleCreditNotePostData::from(['SaleID' => 'sale-1', 'Memo' => 'Damaged'])),
-                PostSaleCreditNote::class,
-                Method::POST,
-                '/ExternalApi/v2/sale/creditnote',
-                [],
-                ['SaleID' => 'sale-1', 'Memo' => 'Damaged'],
-            ],
-            'sale creditNote delete' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->delete('task-1', void: true),
-                DeleteSaleCreditNote::class,
-                Method::DELETE,
-                '/ExternalApi/v2/sale/creditnote',
-                ['TaskID' => 'task-1', 'Void' => 'true'],
-                null,
-            ],
-            'sale payment get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->payment()->get('sale-1'),
-                GetSalePayment::class,
-                Method::GET,
-                '/ExternalApi/v2/sale/payment',
-                ['SaleID' => 'sale-1'],
-                null,
-            ],
-            'sale payment post' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->payment()->post(['SaleID' => 'sale-1', 'Amount' => 10.5]),
-                PostSalePayment::class,
-                Method::POST,
-                '/ExternalApi/v2/sale/payment',
-                [],
-                ['SaleID' => 'sale-1', 'Amount' => 10.5],
-            ],
-            'sale payment post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->payment()->post(SalePaymentLinePartialData::from(['SaleID' => 'sale-1', 'Amount' => 10.5])),
-                PostSalePayment::class,
-                Method::POST,
-                '/ExternalApi/v2/sale/payment',
-                [],
-                ['SaleID' => 'sale-1', 'Amount' => 10.5],
-            ],
-            'sale payment put' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->payment()->put(['ID' => 'pay-1', 'Amount' => 12.5]),
-                PutSalePayment::class,
-                Method::PUT,
-                '/ExternalApi/v2/sale/payment',
-                [],
-                ['ID' => 'pay-1', 'Amount' => 12.5],
-            ],
-            'sale payment put with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->payment()->put(SalePaymentLinePartialData::from(['ID' => 'pay-1', 'Amount' => 12.5])),
-                PutSalePayment::class,
-                Method::PUT,
-                '/ExternalApi/v2/sale/payment',
-                [],
-                ['ID' => 'pay-1', 'Amount' => 12.5],
-            ],
-            'sale payment delete' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->payment()->delete('pay-1'),
-                DeleteSalePayment::class,
-                Method::DELETE,
-                '/ExternalApi/v2/sale/payment',
-                ['ID' => 'pay-1'],
-                null,
-            ],
-            'saleList get' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->saleList()->get(['Status' => 'ORDERED']),
-                GetSaleList::class,
-                Method::GET,
-                '/ExternalApi/v2/saleList',
-                ['Status' => 'ORDERED', 'page' => 1, 'limit' => 100],
-                null,
-            ],
-            'saleList paginate' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->saleList()->paginate()->current(),
-                GetSaleList::class,
-                Method::GET,
-                '/ExternalApi/v2/saleList',
-                ['page' => 1, 'limit' => 100],
-                null,
-            ],
-            'sale post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(SalePostPutData::from(['Customer' => 'ACME'])),
-                PostSale::class,
-                Method::POST,
-                '/ExternalApi/v2/sale',
-                [],
-                ['Customer' => 'ACME'],
-            ],
-            'sale put with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(SalePostPutData::from(['ID' => 'guid-1', 'Note' => 'Rush'])),
-                PutSale::class,
-                Method::PUT,
-                '/ExternalApi/v2/sale',
-                [],
-                ['ID' => 'guid-1', 'Note' => 'Rush'],
-            ],
-            'ref tax post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT'])),
-                PostTax::class,
-                Method::POST,
-                '/ExternalApi/v2/ref/tax',
-                [],
-                ['Name' => 'VAT'],
-            ],
-            'ref tax put with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->put(TaxData::from(['ID' => 'guid-1', 'Name' => 'VAT'])),
-                PutTax::class,
-                Method::PUT,
-                '/ExternalApi/v2/ref/tax',
-                [],
-                ['ID' => 'guid-1', 'Name' => 'VAT'],
-            ],
-        ];
+        return Catalogue::rows('resources');
+    }
+
+    /**
+     * Each resource method that sends a request has a row keyed `<resource path> <method>`, or
+     * that key and a variant (`… with data`): `sale payment put` for `Sale\PaymentResource::put()`.
+     * Accessors, which return a resource, are covered by ConnectorResourcesTest.
+     */
+    public function testEveryResourceMethodHasARow(): void
+    {
+        $keys = array_keys(self::resourceProvider());
+
+        foreach (self::resourceClasses() as $class) {
+            $segments = explode('\\', substr($class, strlen('Ipsocode\Cin7\Resources\\'), -strlen('Resource')));
+            $path = implode(' ', array_map(lcfirst(...), $segments));
+
+            foreach (new ReflectionClass($class)->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                $returns = $method->getReturnType();
+
+                if ($method->getDeclaringClass()->getName() !== $class
+                    || ($returns instanceof ReflectionNamedType && is_a($returns->getName(), BaseResource::class, true))) {
+                    continue;
+                }
+
+                $key = $path . ' ' . $method->getName();
+                $covered = array_filter($keys, static fn (string $row): bool => $row === $key || str_starts_with($row, $key . ' '));
+
+                $this->assertNotEmpty($covered, "No resource row for {$class}::{$method->getName()}() ('{$key}').");
+            }
+        }
+    }
+
+    /**
+     * Every class under `src/Resources/`.
+     *
+     * @return list<class-string<BaseResource>>
+     */
+    private static function resourceClasses(): array
+    {
+        $root = __DIR__ . '/../../../src/Resources';
+        $classes = [];
+
+        /** @var SplFileInfo $file */
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root)) as $file) {
+            if ($file->getExtension() === 'php') {
+                $classes[] = 'Ipsocode\Cin7\Resources\\' . str_replace(['/', '.php'], ['\\', ''], substr($file->getPathname(), strlen($root) + 1));
+            }
+        }
+
+        sort($classes);
+
+        return $classes;
     }
 }

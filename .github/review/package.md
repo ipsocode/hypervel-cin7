@@ -4,7 +4,7 @@ Swoole), built on hypervel/saloon.
 In src/, in order:
 1. The resource and request that reach Cin7: the endpoint path, the identifier key, query
    string versus JSON body, the page/limit defaults, and pagination, the rate limit and the
-   503 retry policy. Everything in the Wire protocol section of docs/requests.md reaches
+   429/503 retry policy. Everything in the Wire protocol section of docs/requests.md reaches
    Cin7: flag any change to it that the pull request does not call out as deliberate.
 2. Coroutine safety: one Cin7Connector is a worker-lifetime singleton shared by every
    coroutine. New static or mutable state on it or on the requests; native

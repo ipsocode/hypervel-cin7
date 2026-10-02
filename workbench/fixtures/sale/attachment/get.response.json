@@ -1,0 +1,11 @@
+{
+    "SaleID": "916ab4c0-6ccb-4c93-873d-0603859050e4",
+    "Lines": [
+        {
+            "ID": "1a103e3e-9837-4294-8cc3-640ebb4fc387",
+            "ContentType": "image/jpeg",
+            "FileName": "1471081716149.jpg",
+            "DownloadUrl": "https://example.api.url/Attachment/Download?ID=1a103e3e-9837-4294-8cc3-640ebb4fc387&ContentType=image/jpeg&FileName=1471081716149.jpg"
+        }
+    ]
+}

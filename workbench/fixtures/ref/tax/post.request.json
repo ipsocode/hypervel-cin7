@@ -1,0 +1,25 @@
+{
+    "Name": "Post test",
+    "Account": "800",
+    "IsActive": true,
+    "TaxInclusive": false,
+    "TaxPercent": 35,
+    "IsTaxForSale": true,
+    "IsTaxForPurchase": true,
+    "Components": [
+        {
+            "Name": "Tax 1st",
+            "Percent": "10.0000000000",
+            "AccountCode": "800",
+            "Compound": "1",
+            "ComponentOrder": "1"
+        },
+        {
+            "Name": "Tax 2nd",
+            "Percent": "15.0000000000",
+            "AccountCode": "800",
+            "Compound": "0",
+            "ComponentOrder": "2"
+        }
+    ]
+}

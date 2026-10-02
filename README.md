@@ -27,8 +27,9 @@ $customers = $this->cin7->customer()->get()->json();
 
 Cin7 Core — formerly DEAR Inventory — exposes a REST API at
 `inventory.dearsystems.com`. This package is a client for it that is safe to run
-in long-lived Swoole workers: one shared connector, a bounded 503 retry, and
-throttling through the framework's rate limiter, all on `hypervel/saloon`.
+in long-lived Swoole workers: one shared connector, a bounded retry when Cin7
+throttles (429 or 503), and rate limiting through the framework's rate limiter,
+all on `hypervel/saloon`.
 
 This is an independent package. It is not affiliated with or endorsed by Cin7.
 
@@ -110,7 +111,7 @@ worker's lifetime is safe.
   every resource and request follows, and adding a new resource method.
 - [docs/requests.md](docs/requests.md) — the three request bases and the
   request lines they send, the wire protocol, the exceptions a failed call
-  throws, and the bounded 503 retry.
+  throws, and the bounded throttling retry.
 - [docs/data.md](docs/data.md) — the typed request and response bodies: the
   conventions every data class follows, the class behind each path, and the
   empty-collection rule.
@@ -118,7 +119,7 @@ worker's lifetime is safe.
   sending the pages concurrently, and how the last page is worked out from
   Cin7's list envelope.
 - [docs/connector.md](docs/connector.md) — the shared connector, its transport
-  and timeouts, rate limiting and the choice of limiter store, and the 503
+  and timeouts, rate limiting and the choice of limiter store, and the throttling
   cooldown.
 - [docs/testing.md](docs/testing.md) — faking Cin7 in the tests of an
   application that uses the package, and how the package's own suite is built.
@@ -133,10 +134,18 @@ worker's lifetime is safe.
   top ([docs/data.md](docs/data.md)), shown here for a customer:
 
   ```php
-  use Ipsocode\Cin7\Data\Customer\CustomerData;
+  use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 
-  // Only the keys you set are sent.
-  $response = $cin7->customer()->post(CustomerData::from(['Name' => 'ACME', 'Currency' => 'GBP']));
+  // The fields the reference requires must be given; of the rest, only the keys you set are sent.
+  $response = $cin7->customer()->post(CustomerPostData::from([
+      'Name' => 'ACME',
+      'Status' => 'Active',
+      'Currency' => 'GBP',
+      'PaymentTerm' => '30 days',
+      'AccountReceivable' => '610',
+      'RevenueAccount' => '200',
+      'TaxRule' => 'Tax Exempt',
+  ]));
 
   $customer = $response->dto();                      // CustomerData
   $customers = $cin7->customer()->get()->dto();      // list<CustomerData>
