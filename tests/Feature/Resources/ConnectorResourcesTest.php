@@ -36,6 +36,7 @@ use Ipsocode\Cin7\Resources\PurchaseListResource;
 use Ipsocode\Cin7\Resources\PurchaseResource;
 use Ipsocode\Cin7\Resources\Ref\Account\BankResource;
 use Ipsocode\Cin7\Resources\Ref\AccountResource;
+use Ipsocode\Cin7\Resources\Ref\AttributeSetResource;
 use Ipsocode\Cin7\Resources\Ref\BrandResource;
 use Ipsocode\Cin7\Resources\Ref\CategoryResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
@@ -291,6 +292,7 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(RefSupplierResource::class, $ref->supplier());
         $this->assertInstanceOf(DepositsResource::class, $ref->supplier()->deposits());
         $this->assertInstanceOf(AccountResource::class, $ref->account());
+        $this->assertInstanceOf(AttributeSetResource::class, $ref->attributeSet());
         $this->assertInstanceOf(ProductAvailabilityResource::class, $ref->productAvailability());
         $this->assertInstanceOf(PriceTierResource::class, $ref->priceTier());
         $this->assertInstanceOf(UnitResource::class, $ref->unit());
@@ -309,6 +311,7 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->ref()->customer(), $connector->ref()->customer());
         $this->assertNotSame($connector->ref()->supplier(), $connector->ref()->supplier());
         $this->assertNotSame($connector->ref()->account(), $connector->ref()->account());
+        $this->assertNotSame($connector->ref()->attributeSet(), $connector->ref()->attributeSet());
         $this->assertNotSame($connector->ref()->productAvailability(), $connector->ref()->productAvailability());
         $this->assertNotSame($connector->ref()->priceTier(), $connector->ref()->priceTier());
         $this->assertNotSame($connector->ref()->unit(), $connector->ref()->unit());

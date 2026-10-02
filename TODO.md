@@ -23,11 +23,6 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
 
 Every group not ranked yet: move a group up or down as issues are planned.
 
-### `reference/attribute-set/**` Attribute Set (1 resource, 4 operations)
-
-- [ ] `attribute-set` · `ref/attributeset` · GET POST PUT DELETE
-  - [ ] Attribute Set: `AttributeSetData`
-
 ### `reference/customer/**` Customer (3 resources, 7 operations, 1 left)
 
 - [x] `customer` · `customer` · GET POST PUT
@@ -132,7 +127,7 @@ Built with the first resource that uses it.
 - [x] BillOfMaterialServiceModel: `BillOfMaterialServiceData` · used by product
 - [x] ProductMovementModel: `ProductMovementData` · used by product
 - [x] ErrorModel: `ErrorData` · used by disassembly, finished-goods, inventory-write-off
-- [ ] AttributeSetLineModel: `AttributeSetLineData` · used by attribute-set
+- [x] AttributeSetLineModel: `AttributeSetLineData` · used by attribute-set
 - [ ] InventoryWriteOffLineModel: `InventoryWriteOffLineData` · used by inventory-write-off
 - [x] TaxComponentModel: `TaxComponentData` · used by tax
 - [x] MoneyTaskLineModel: `MoneyTaskLineData` · used by money-operation
@@ -307,6 +302,11 @@ Built with the first resource that uses it.
 ## Done
 
 Every resource in these groups is in.
+
+### `reference/attribute-set/**` Attribute Set (1 resource, 4 operations)
+
+- [x] `attribute-set` · `ref/attributeset` · GET POST PUT DELETE
+  - [x] Attribute Set: `AttributeSetData`
 
 ### `reference/bank-accounts/**` Bank Accounts (1 resource, 1 operation)
 

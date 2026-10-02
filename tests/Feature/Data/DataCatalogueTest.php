@@ -71,6 +71,7 @@ use Ipsocode\Cin7\Data\PurchaseList\PurchaseListData;
 use Ipsocode\Cin7\Data\Ref\Account\AbstractAccountData;
 use Ipsocode\Cin7\Data\Ref\Account\AccountData;
 use Ipsocode\Cin7\Data\Ref\Account\Bank\BankAccountData;
+use Ipsocode\Cin7\Data\Ref\AttributeSet\AbstractAttributeSetData;
 use Ipsocode\Cin7\Data\Ref\Brand\AbstractBrandData;
 use Ipsocode\Cin7\Data\Ref\Brand\BrandData;
 use Ipsocode\Cin7\Data\Ref\Category\AbstractProductCategoryData;
@@ -481,6 +482,7 @@ class DataCatalogueTest extends TestCase
             AbstractPurchaseOrderData::class,
             AbstractPurchaseStockData::class,
             AbstractAccountData::class,
+            AbstractAttributeSetData::class,
             AbstractBrandData::class,
             AbstractProductCategoryData::class,
             AbstractFixedAssetTypeData::class,
