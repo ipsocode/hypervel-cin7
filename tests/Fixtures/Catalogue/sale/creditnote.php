@@ -47,7 +47,7 @@ return [
             Method::POST,
             '/ExternalApi/v2/sale/creditnote',
             [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Memo' => 'Damaged', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00'],
+            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Status' => 'AUTHORISED', 'Memo' => 'Damaged', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CreditNoteDate' => '2017-11-22T00:00:00'],
         ],
     ],
     'resources' => [
@@ -73,7 +73,7 @@ return [
             Method::POST,
             '/ExternalApi/v2/sale/creditnote',
             [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Memo' => 'Damaged', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00'],
+            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Status' => 'AUTHORISED', 'Memo' => 'Damaged', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CreditNoteDate' => '2017-11-22T00:00:00'],
         ],
         'sale creditNote delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->delete('b039f19e-66f8-4309-a4b1-abf928303c88', void: true),

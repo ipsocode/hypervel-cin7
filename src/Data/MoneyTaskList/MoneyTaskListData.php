@@ -9,6 +9,8 @@ use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Enums\CompletionStatus;
+use Ipsocode\Cin7\Enums\MoneyTaskType;
 
 /**
  * Money Task List, one entry of `MoneyTasks`.
@@ -24,8 +26,8 @@ final class MoneyTaskListData extends Data implements WithResponse
         public ?string $TaskID = null,
         #[DateTime]
         public ?string $Date = null,
-        public ?string $TaskType = null,
-        public ?string $Status = null,
+        public ?MoneyTaskType $TaskType = null,
+        public ?CompletionStatus $Status = null,
         public ?string $SupplierCustomerName = null,
         #[Uuid]
         public ?string $SupplierID = null,

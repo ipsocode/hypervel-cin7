@@ -70,8 +70,23 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   key for every field, `null` where the response had none or sent `null`.
 - **Types follow the reference's tables:** `Guid`, `String`, `Date` and `DateTime` are
   `string`; `Decimal` is `float`; `Int` is `int`; `Bool` is `bool`; a `[] … Model` is a
-  `list` of that class. There are no casts, so a date read from a response can be sent
+  `list` of that class. There are no date casts, so a date read from a response can be sent
   back unchanged.
+- **A closed list of values is an enum.** A field whose values the reference lists, in a
+  named list (Sale Statuses, Order Statuses, …) or in its notes ("Possible values are …"),
+  is typed with a string-backed enum from `src/Enums/`: `?SaleStatus $Status = null`, or
+  `TaskStatus $Status` when required. Case names are PascalCase and the values are the wire
+  strings verbatim (`TaskStatus::NotAvailable` is `'NOT AVAILABLE'`), so `toArray()` sends
+  what Cin7 expects. Fields with the same list share one enum, and a field whose list is a
+  subset of another's uses the larger enum. A response value outside its enum fails `dto()`
+  with a `Hypervel\Data\Exceptions\CannotCastEnum`; the fix is a new case. Where the
+  examples contradict a list, the field stays a string (see
+  [below](#where-the-references-tables-and-examples-disagree)).
+- **A verb that takes fewer values says so.** Where a table limits a write ("for POST
+  available values are `DRAFT`, `AUTHORISED`"), the write class carries
+  `#[In(TaskStatus::Draft, TaskStatus::Authorised)]`, checked with the other rules before
+  the body is sent. A field inherited from a parent is redeclared on the write class to
+  carry the rule.
 - **String fields carry the reference's rules** as validation attributes: `#[Max(n)]` for
   its Length column, `#[Uuid]` for a `Guid`, `#[DateTime]`
   (`Ipsocode\Cin7\Data\Attributes\DateTime`) for a `DateTime`, and `#[Date]` for a `Date`.
@@ -229,7 +244,15 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   and a batch or serial number is not a quantity, so it is a nullable string.
 - **Payment `Type`.** The Sale Payment Line Partial table lists `PREPAYMENT`, `PAYMENT` and
   `REFUND`; every example sends `Payment` or `Refund`, and the notes write `Prepayment`. The
-  classes document the examples' spelling and do not restrict the value.
+  classes document the examples' spelling and do not restrict the value, so it is a string,
+  not an enum.
+- **Sale `CombinedInvoiceStatus`.** The Sale and Sale List tables list the invoice statuses
+  (`DRAFT`, `AUTHORISED`, `PAID`, …), but the examples send `INVOICED`, `NOT INVOICED` and
+  `INVOICED / CREDITED`, the values the purchase tables list for their combined invoice
+  status. It stays a string.
+- **Product movement `Type`.** The Product Movement Available Types list spells one value
+  `Purchase Cost Chang`, so the wire spelling of the list is uncertain; the field stays a
+  string.
 - **Credit note payments.** The payments of a `sale/creditnote` GET with `IncludePaymentInfo`
   carry `SaleOrderNumber`, `InvoiceNumber`, `CreditNoteNumber`, `Type` and `CreditID` besides
   the Sale Payment Line Model's fields, and no model names them; they are

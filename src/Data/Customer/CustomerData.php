@@ -13,6 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Concerns\HasAdditionalAttributes;
 use Ipsocode\Cin7\Data\ProductPriceData;
+use Ipsocode\Cin7\Enums\RecordStatus;
 
 /**
  * Customer, the body of `customer` POST and PUT and the entries of `CustomerList` in every `customer` response.
@@ -41,7 +42,7 @@ final class CustomerData extends Data implements WithResponse
         public ?string $Name = null,
         #[Max(256)]
         public ?string $DisplayName = null,
-        public ?string $Status = null,
+        public ?RecordStatus $Status = null,
         public ?string $Currency = null,
         public ?string $PaymentTerm = null,
         public ?string $AccountReceivable = null,

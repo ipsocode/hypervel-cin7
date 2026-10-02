@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Ipsocode\Cin7\Data\Sale\SalePaymentLineData;
+use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
  * Sale Credit Note Model.
@@ -19,7 +20,7 @@ final class SaleCreditNoteData extends AbstractSaleCreditNoteData
      */
     public function __construct(
         string $TaskID,
-        string $Status,
+        TaskStatus $Status,
         string $CreditNoteDate,
         public ?string $CreditNoteInvoiceNumber = null,
         public ?string $CreditNoteNumber = null,

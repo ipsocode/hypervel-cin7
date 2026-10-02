@@ -4,18 +4,26 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Requests;
 
+use Closure;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\Product\ProductData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\SalePostPutData;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
+use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Workbench\App\Support\Cin7Payloads;
@@ -120,6 +128,37 @@ class BodyValidationTest extends TestCase
         }
 
         $this->mock->assertNothingSent();
+    }
+
+    /**
+     * POST takes only `DRAFT` and `AUTHORISED`, though the status enums have more values.
+     *
+     * @param Closure(): WriteRequest $request
+     */
+    #[DataProvider('postOnlyStatusProvider')]
+    public function testAStatusOutsideThePostValuesIsNotSent(Closure $request): void
+    {
+        try {
+            $this->connector()->send($request());
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Status'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * @return array<string, array{Closure(): WriteRequest}>
+     */
+    public static function postOnlyStatusProvider(): array
+    {
+        return [
+            'invoice POST' => [fn (): WriteRequest => new PostSaleInvoice(SaleInvoicePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::saleInvoicePost()))],
+            'invoice PUT' => [fn (): WriteRequest => new PutSaleInvoice(SaleInvoicePutData::from(['Status' => 'PAID'] + Cin7Payloads::saleInvoicePut()))],
+            'credit note POST' => [fn (): WriteRequest => new PostSaleCreditNote(SaleCreditNotePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::saleCreditNotePost()))],
+            'order POST' => [fn (): WriteRequest => new PostSaleOrder(SaleOrderData::from(['Status' => 'CLOSED'] + Cin7Payloads::saleOrder()))],
+        ];
     }
 
     /**

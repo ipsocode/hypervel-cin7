@@ -14,6 +14,10 @@ use Ipsocode\Cin7\Data\AttachmentLineData;
 use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Concerns\HasAdditionalAttributes;
 use Ipsocode\Cin7\Data\ProductPriceData;
+use Ipsocode\Cin7\Enums\CostingMethod;
+use Ipsocode\Cin7\Enums\DropShipMode;
+use Ipsocode\Cin7\Enums\ProductStatus;
+use Ipsocode\Cin7\Enums\ProductType;
 
 /**
  * Product, the body of `product` POST and PUT and the entries of `Products` in every `product` response.
@@ -50,10 +54,9 @@ final class ProductData extends Data implements WithResponse
         public ?string $Category = null,
         #[Max(50)]
         public ?string $Brand = null,
-        public ?string $Type = null,
-        #[Max(50)]
-        public ?string $CostingMethod = null,
-        public ?string $DropShipMode = null,
+        public ?ProductType $Type = null,
+        public ?CostingMethod $CostingMethod = null,
+        public ?DropShipMode $DropShipMode = null,
         #[Max(50)]
         public ?string $DefaultLocation = null,
         public ?float $Length = null,
@@ -98,7 +101,7 @@ final class ProductData extends Data implements WithResponse
         public ?string $DiscountRule = null,
         #[Max(256)]
         public ?string $Tags = null,
-        public ?string $Status = null,
+        public ?ProductStatus $Status = null,
         #[Max(256)]
         public ?string $StockLocator = null,
         #[Max(50)]

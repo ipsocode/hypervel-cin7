@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Data\Customer;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
+use Ipsocode\Cin7\Enums\AddressType;
 
 /**
  * Customer Address Model (the reference's Supplier/Customer Address Model), one entry of a customer's `Addresses`.
@@ -32,7 +33,7 @@ final class CustomerAddressData extends Data
         #[Max(20)]
         public ?string $Postcode = null,
         public ?string $Country = null,
-        public ?string $Type = null,
+        public ?AddressType $Type = null,
         public ?bool $DefaultForType = null,
     ) {
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale\Invoice;
 
 use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Enums\InvoiceStatus;
 
 /**
  * Sale Invoice Partial Model, one entry of `Invoices` in the `sale/invoice` responses. The fields
@@ -17,7 +18,7 @@ final class SaleInvoicePartialData extends AbstractSaleInvoiceData
     public function __construct(
         string $TaskID,
         public bool $CombineAdditionalCharges,
-        public string $Status,
+        public InvoiceStatus $Status,
         #[DateTime]
         public string $InvoiceDate,
         #[DateTime]

@@ -9,6 +9,7 @@ use Hypervel\Data\Attributes\Validation\Date;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Data\Sale\SaleShippingAddressData;
+use Ipsocode\Cin7\Enums\ShipmentStatus;
 
 /**
  * Sale Fulfilment Ship Model.
@@ -21,7 +22,7 @@ final class SaleFulfilmentShipData extends Data
      * @param null|list<SaleFulfilmentShipLineData> $Lines
      */
     public function __construct(
-        public ?string $Status = null,
+        public ?ShipmentStatus $Status = null,
         #[Date]
         public ?string $RequireBy = null,
         public ?SaleShippingAddressData $ShippingAddress = null,
