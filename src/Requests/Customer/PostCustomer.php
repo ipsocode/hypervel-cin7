@@ -11,12 +11,18 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
  * `POST customer`, body is a Customer; the response is the saved Customer.
+ * Cin7 marks `LastModifiedOn`, `ChildCustomers` (response only) and the price's `ProductName` read-only, so they are left out of the body.
  *
  * @extends WriteRequest<CustomerData>
  */
 final class PostCustomer extends WriteRequest
 {
     protected Method $method = Method::POST;
+
+    /**
+     * @var list<string>
+     */
+    protected array $omit = ['LastModifiedOn', 'ChildCustomers', 'ProductPrices.*.ProductName'];
 
     public function resolveEndpoint(): string
     {

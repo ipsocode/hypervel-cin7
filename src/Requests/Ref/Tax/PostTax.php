@@ -11,12 +11,18 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
  * `POST ref/tax`, body is a Tax rule; the response is the list envelope holding the saved rule.
+ * Cin7 marks `TaxPercent` read-only, so it is left out of the body.
  *
  * @extends WriteRequest<TaxData>
  */
 final class PostTax extends WriteRequest
 {
     protected Method $method = Method::POST;
+
+    /**
+     * @var list<string>
+     */
+    protected array $omit = ['TaxPercent'];
 
     public function resolveEndpoint(): string
     {

@@ -13,7 +13,9 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
  * `PUT product`, body is a Product, and must carry a non-empty `ID`, which Cin7 requires on PUT;
- * the response is the saved Product.
+ * the response is the saved Product. `Type` is read-only for PUT, and the fields read-only on
+ * POST too (`AverageCost`, `LastModifiedOn`, `BOMType`, the supplier `Currency`, the BOM `Name`,
+ * the custom-price `ProductName`) are left out of the body.
  *
  * @throws InvalidArgumentException when the body has no `ID`
  *
@@ -22,6 +24,19 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 final class PutProduct extends WriteRequest
 {
     protected Method $method = Method::PUT;
+
+    /**
+     * @var list<string>
+     */
+    protected array $omit = [
+        'Type',
+        'AverageCost',
+        'LastModifiedOn',
+        'BOMType',
+        'Suppliers.*.Currency',
+        'BillOfMaterialsProducts.*.Name',
+        'CustomPrices.*.ProductName',
+    ];
 
     /**
      * @param array<string, mixed>|ProductData $body

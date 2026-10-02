@@ -14,6 +14,10 @@ use Hypervel\Saloon\Traits\Body\HasJsonBody;
  * The caller supplies the identifier a PUT body needs; writes never carry the
  * page/limit defaults.
  *
+ * A subclass lists in `$omit` the fields Cin7's reference marks read-only, response-only or
+ * available for the other method; they are left out of the body. A path is dot-separated, and
+ * `*` stands for every item of a list, e.g. `ProductPrices.*.ProductName`.
+ *
  * @see docs/requests.md
  *
  * @template TDto
@@ -22,6 +26,11 @@ use Hypervel\Saloon\Traits\Body\HasJsonBody;
 abstract class WriteRequest extends Cin7Request
 {
     use HasJsonBody;
+
+    /**
+     * @var list<string>
+     */
+    protected array $omit = [];
 
     /**
      * @param array<string, mixed>|Data $body
@@ -36,6 +45,41 @@ abstract class WriteRequest extends Cin7Request
      */
     protected function defaultBody(): array
     {
-        return $this->body instanceof Data ? $this->body->toArray() : $this->body;
+        $body = $this->body instanceof Data ? $this->body->toArray() : $this->body;
+
+        foreach ($this->omit as $path) {
+            $body = self::omitPath($body, explode('.', $path));
+        }
+
+        return $body;
+    }
+
+    /**
+     * @param array<array-key, mixed> $data
+     * @param list<string> $path
+     * @return array<array-key, mixed>
+     */
+    private static function omitPath(array $data, array $path): array
+    {
+        $key = array_shift($path);
+
+        if ($path === []) {
+            unset($data[$key]);
+
+            return $data;
+        }
+
+        if ($key === '*') {
+            return array_map(
+                static fn (mixed $item): mixed => is_array($item) ? self::omitPath($item, $path) : $item,
+                $data,
+            );
+        }
+
+        if (isset($data[$key]) && is_array($data[$key])) {
+            $data[$key] = self::omitPath($data[$key], $path);
+        }
+
+        return $data;
     }
 }

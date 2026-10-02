@@ -11,12 +11,18 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
  * `PUT sale/payment`, body carries `ID`; the response is the saved line.
+ * `TaskID` and `Type` are available only for POST, so both are left out of the body.
  *
  * @extends WriteRequest<SalePaymentLinePartialData>
  */
 final class PutSalePayment extends WriteRequest
 {
     protected Method $method = Method::PUT;
+
+    /**
+     * @var list<string>
+     */
+    protected array $omit = ['TaskID', 'Type'];
 
     public function resolveEndpoint(): string
     {
