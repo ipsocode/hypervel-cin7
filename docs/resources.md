@@ -71,7 +71,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
-| `$cin7->purchase()` | `PurchaseResource` | `payment()` |
+| `$cin7->purchase()` | `PurchaseResource` | `order()`, `payment()` |
+| `$cin7->purchase()->order()` | `Purchase\OrderResource` | `get(string $taskId, ?bool $combineAdditionalCharges = null)`, `post(array\|PurchaseOrderPostData $body)` |
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -390,7 +391,39 @@ $this->cin7->sale()->fulfilment()->pick()->post(SaleFulfilmentPickPostData::from
 ## Purchase
 
 `$cin7->purchase()` is `purchase`, the simple purchase, and its documents are sub-resources below
-it, as the paths are.
+it, as the paths are: `->order()` and `->payment()` send `purchase/order` and `purchase/payment`.
+Each is read by the purchase's `TaskID`.
+
+`$cin7->purchase()->order()` is `purchase/order`, a purchase's order. `get($taskId)` sends
+`purchase/order?TaskID=…`, and `combineAdditionalCharges: true` lists the additional charges in
+`Lines`; its `dto()` is a `PurchaseOrderData`, with `Lines` (`PurchaseOrderLineData`) and
+`AdditionalCharges` (`PurchaseAdditionalChargeData`). `post()` takes a `PurchaseOrderPostData` as
+well as an array and answers with the saved order, a `PurchaseOrderData`. An order POST needs
+`TaskID`, `CombineAdditionalCharges`, `Memo`, a `Status` of `DRAFT` or `AUTHORISED` and `Lines`,
+but no totals; Cin7 rejects it when the order is neither `DRAFT` nor `NOT AVAILABLE`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
+
+$order = $this->cin7->purchase()->order()->get($taskId)->dto(); // PurchaseOrderData
+
+$saved = $this->cin7->purchase()->order()->post(PurchaseOrderPostData::from([
+    'TaskID' => $taskId,
+    'CombineAdditionalCharges' => false,
+    'Memo' => '',
+    'Status' => 'DRAFT',
+    'Lines' => [[
+        'ProductID' => $productId,
+        'SKU' => 'Bread',
+        'Name' => 'Baked Bread',
+        'Quantity' => 2.0,
+        'Price' => 2.0,
+        'Tax' => 0.0,
+        'TaxRule' => 'Sales Tax on Imports',
+        'Total' => 4.0,
+    ]],
+]))->dto(); // PurchaseOrderData
+```
 
 `$cin7->purchase()->payment()` is `purchase/payment`, a purchase's payments, which the reference
 marks deprecated: it supports only simple purchases, and an advanced purchase's payments are on

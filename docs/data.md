@@ -30,13 +30,14 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   their common folder (`SaleAdditionalChargeData` in `src/Data/Sale/`), and one shared
   across families in `src/Data/Other/`, after the reference's Other Models
   (`ProductPriceData`, `CustomerAddressData`, `CustomerContactData`, `AttachmentLineData`,
-  `ErrorData`, and the `AddressData`, `AdditionalAttributeData`, `SalePaymentLineData` and
-  `InventoryMovementLineData` a sale and a purchase both carry). An abstract parent whose
-  children span families stays in `src/Data/` itself (`AbstractLineData`,
-  `AbstractAddressData`, `AbstractSalePaymentLineData`). The Money Task's classes are in
-  `src/Data/MoneyTask/`, like its requests (see [resources](resources.md#conventions)).
-  `src/Data/` holds nothing else: the traits the models share are in `src/Concerns/` and the
-  validation attribute in `src/Attributes/`.
+  `ErrorData`, the `AddressData`, `AdditionalAttributeData`, `SalePaymentLineData` and
+  `InventoryMovementLineData` a sale and a purchase both carry, and the
+  `PurchaseAdditionalChargeData` the simple and the advanced purchase share). An abstract
+  parent whose children span families stays in `src/Data/` itself (`AbstractLineData`,
+  `AbstractChargeData`, `AbstractAddressData`, `AbstractSalePaymentLineData`). The Money
+  Task's classes are in `src/Data/MoneyTask/`, like its requests (see
+  [resources](resources.md#conventions)). `src/Data/` holds nothing else: the traits the
+  models share are in `src/Concerns/` and the validation attribute in `src/Attributes/`.
 - **One class per model name.** Where the reference documents one name twice with
   different fields, the class carries the union. A request body gets its own class
   only where the reference documents one, or where the verbs need different fields.
@@ -65,15 +66,18 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractSaleFulfilmentPickPackTaskData` | `SaleFulfilmentPickData`, `SaleFulfilmentPickPostData`, `SaleFulfilmentPickPutData`, `SaleFulfilmentPackData`, `SaleFulfilmentPackPostData` | `TaskID` |
   | `AbstractSaleFulfilmentShipTaskData` | `SaleFulfilmentShipPostData`, `SaleFulfilmentShipPutData` | `TaskID`, `Status` (`DRAFT`, `PARTIALLY AUTHORISED` or `AUTHORISED`) |
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
+  | `AbstractPurchaseOrderData` | `PurchaseOrderData`, `PurchaseOrderPostData` | `Memo`, `Status`, `Lines` |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
-  | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`; shaped to serve the purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
-  | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`; shaped to serve the purchase charge models too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
+  | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`, `PurchaseOrderLineData`; shaped to serve the other purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
+  | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`, `PurchaseAdditionalChargeData`; shaped to serve the purchase invoice charge model too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` | none |
   | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData` | `Line1`, `Country` |
 
   The line and charge requirements hold in the purchase tables as well, so a purchase model
-  can extend those parents unchanged. `Account`, which the purchase invoice tables require
-  and the sale invoice tables do not, belongs on the children.
+  can extend those parents. `Account`, which the purchase invoice tables require and the sale
+  invoice tables do not, belongs on the children, and so does `Total`: the Purchase Order Line
+  and Purchase Additional Charge Models require it and the sale charge tables do not, so each
+  line and charge class declares its own.
 
   Two field sets several unrelated models carry are traits in `src/Concerns/`:
   `HasProductFields` (the product fields of every line with a `ProductID`) and
@@ -201,6 +205,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `sale/manualJournal` | POST: `SaleManualJournalPostData` (Sale Manual Journal, with `Lines`: `SaleManualJournalLineData`) | GET, POST: `SaleManualJournalData` |
 | `sale/attachment` | POST: `SaleAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `SaleAttachmentsData` (`{SaleID, Lines}`, with `Lines`: `AttachmentLineData`) |
 | `sale/payment` | POST: `SalePaymentPostData`; PUT: `SalePaymentPutData` (the Sale Payment Line Partial Model's fields for each verb) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
+| `purchase/order` | POST: `PurchaseOrderPostData` (Available Fields for Purchase Order, with `Lines`: `PurchaseOrderLineData` and `AdditionalCharges`: `PurchaseAdditionalChargeData`) | GET, POST: `PurchaseOrderData` |
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
@@ -252,14 +257,26 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `SaleOrderData` carries the union. Its `Lines` are `SaleOrderLineData`, a superset of the
   Sale Quote Line the first table names: it adds `BackorderQuantity` and `DropShip`, and the
   examples also send `Backorder`.
+- **Purchase Order.** As with the sale order, the reference documents the model twice: the
+  Purchase Order Model a purchase embeds as its `Order` (with `Prepayments`, Sale Payment Line
+  Models), and `purchase/order`'s Available Fields for Purchase Order (which adds `TaskID` and
+  `CombineAdditionalCharges`). `PurchaseOrderData` carries the union, with those three optional,
+  as only one table has each. The POST body is `PurchaseOrderPostData`, as the quote's is: it
+  requires `TaskID` and `CombineAdditionalCharges`, limits `Status` to `DRAFT` and `AUTHORISED`,
+  leaves the totals optional ("Not required for POST"; the POST example sends none), and takes no
+  `Prepayments`, which the `purchase/order` table does not list.
+- **Purchase charge `Total`.** The Purchase Additional Charge Model requires the charge's `Total`,
+  which the sale and purchase invoice charge tables leave optional; `AbstractChargeData` no longer
+  declares it, `PurchaseAdditionalChargeData` requires it, and the sale charge classes keep it
+  optional.
 - **Sale POST/PUT.** The POST example sends `AutoPickPackShipMode`, which no Sale table
   lists; it is modelled on `SalePostData`. The example also sends `"SkipQuote": "false"`,
   `"TaxInclusive": "false"` and `"CurrencyRate": "1"` as strings; the properties are `bool`
   and `float`, following the tables.
 - **Product fields on lines.** "All objects that contain `ProductID` also contain additional
   fields": `ProductLength`, `ProductWidth`, `ProductHeight`, `ProductWeight`, `WeightUnits`,
-  `DimensionsUnits` and `ProductCustomField1`–`10`. The sale line, pick and pack line and
-  inventory movement classes take them from the `HasProductFields` trait.
+  `DimensionsUnits` and `ProductCustomField1`–`10`. The sale and purchase order line, pick and
+  pack line and inventory movement classes take them from the `HasProductFields` trait.
 - **Nulls.** `ExternalID`, `SourceChannel`, `Ship.RequireBy` and the invoice, due and ship
   dates and numbers of a Sale List row are `null` in the examples, so those properties admit
   `null`.
@@ -582,6 +599,22 @@ missing a required field fails `dto()` with a `CannotCreateData`.
   credit note POST example an unquoted `SaleID:` key; the fixtures are the corrected JSON.
 
 ## Purchases
+
+`purchase/order` follows the Purchase Order Model and the Available Fields for Purchase Order
+table, with a POST class because POST requires `TaskID` and `CombineAdditionalCharges` but not the
+totals (see [above](#where-the-references-tables-and-examples-disagree)). Its lines and
+additional charges are the Purchase Order Line and Purchase Additional Charge Models, which the
+purchase and the advanced purchase embed too.
+
+| Class | Folder | Required |
+|---|---|---|
+| `PurchaseOrderData` (response) | `src/Data/Purchase/Order/` | `Memo`, `Status`, `Lines`, `TotalBeforeTax`, `Tax`, `Total` |
+| `PurchaseOrderPostData` | `src/Data/Purchase/Order/` | `Memo`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `TaskID`, `CombineAdditionalCharges` |
+| `PurchaseOrderLineData` | `src/Data/Purchase/Order/` | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Total` |
+| `PurchaseAdditionalChargeData` | `src/Data/Other/` | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Total` |
+
+`Status` is a `TaskStatus`. A line also takes `SupplierSKU`, `Comment` and the product fields, and
+a charge a `Reference`.
 
 `purchase/payment` follows the Available Fields for Purchase Payments table, with a class per verb
 because `ID`, `Type`, `DepositID`, `Amount` and `Account` are taken by different verbs (see
