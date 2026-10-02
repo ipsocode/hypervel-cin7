@@ -58,6 +58,15 @@ keyed `ID`; the DELETE takes `Void` as a parameter) and `PostSale` and `PutSale`
 `GetSaleList` (a `ListRequest` keyed `SaleList`) is on `saleList`, under `src/Requests/SaleList/`.
 Every `sale` request's `dto()` is a `SaleData`; `GetSaleList`'s is a `list<SaleListData>`.
 
+The `sale/…` documents live under `src/Requests/Sale/`, one folder per path, 13 classes in all:
+
+| Folder | Classes (`KeyedRequest` key, or `WriteRequest`) | `dto()` |
+|---|---|---|
+| `Order/` | `GetSaleOrder` (`SaleID`), `PostSaleOrder` | `SaleOrderData` |
+| `Invoice/` | `GetSaleInvoice` (`SaleID`), `PostSaleInvoice`, `PutSaleInvoice`, `DeleteSaleInvoice` (`TaskID`) | `SaleInvoicesData` |
+| `CreditNote/` | `GetSaleCreditNote` (`SaleID`), `PostSaleCreditNote`, `DeleteSaleCreditNote` (`TaskID`) | `SaleCreditNotesData` |
+| `Payment/` | `GetSalePayment` (`SaleID`), `PostSalePayment`, `PutSalePayment`, `DeleteSalePayment` (`ID`) | `list<SalePaymentLinePartialData>` for the GET, `SalePaymentLinePartialData` for POST and PUT; none for the DELETE |
+
 ## Wire protocol
 
 These are the requests Cin7 receives.

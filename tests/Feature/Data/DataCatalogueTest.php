@@ -12,16 +12,34 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
 use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
+use Ipsocode\Cin7\Data\Sale\SaleOrderData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
+use Ipsocode\Cin7\Requests\Sale\CreditNote\DeleteSaleCreditNote;
+use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
+use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\DeleteSale;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Requests\Sale\Invoice\DeleteSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Invoice\GetSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
+use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
+use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
+use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;
+use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
+use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
@@ -98,6 +116,18 @@ class DataCatalogueTest extends TestCase
             PostSale::class => [PostSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
             PutSale::class => [PutSale::class, [[]], Cin7Payloads::sale(), SaleData::class, ''],
             DeleteSale::class => [DeleteSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
+            GetSaleOrder::class => [GetSaleOrder::class, ['sale-1'], Cin7Payloads::saleOrder(), SaleOrderData::class, ''],
+            PostSaleOrder::class => [PostSaleOrder::class, [[]], Cin7Payloads::saleOrder(), SaleOrderData::class, ''],
+            GetSaleInvoice::class => [GetSaleInvoice::class, ['sale-1'], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
+            PostSaleInvoice::class => [PostSaleInvoice::class, [[]], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
+            PutSaleInvoice::class => [PutSaleInvoice::class, [[]], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
+            DeleteSaleInvoice::class => [DeleteSaleInvoice::class, ['task-1'], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
+            GetSaleCreditNote::class => [GetSaleCreditNote::class, ['sale-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
+            PostSaleCreditNote::class => [PostSaleCreditNote::class, [[]], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
+            DeleteSaleCreditNote::class => [DeleteSaleCreditNote::class, ['task-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
+            GetSalePayment::class => [GetSalePayment::class, ['sale-1'], [Cin7Payloads::salePayment()], SalePaymentLinePartialData::class, ''],
+            PostSalePayment::class => [PostSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
+            PutSalePayment::class => [PutSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
             GetSaleList::class => [
                 GetSaleList::class,
                 [],
@@ -123,6 +153,18 @@ class DataCatalogueTest extends TestCase
 
         $this->assertInstanceOf(SaleManualJournalLineData::class, $dto->ManualJournals->Lines[0]);
         $this->assertEquals($sale, $dto->toArray());
+    }
+
+    /**
+     * The POST models are bodies, not responses, so their fixtures round-trip through the class.
+     */
+    public function testThePostModelsRoundTripTheirFixtures(): void
+    {
+        $invoice = Cin7Payloads::saleInvoicePost();
+        $creditNote = Cin7Payloads::saleCreditNotePost();
+
+        $this->assertEquals($invoice, SaleInvoicePostData::from($invoice)->toArray());
+        $this->assertEquals($creditNote, SaleCreditNotePostData::from($creditNote)->toArray());
     }
 
     public function testEveryDataClassIsFinalAndExtendsData(): void
@@ -151,7 +193,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([TaxData::class, CustomerCreditData::class, SaleData::class, SaleListData::class] as $class) {
+        foreach ([TaxData::class, CustomerCreditData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }
