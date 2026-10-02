@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Tests\TestCase;
 
 /**
@@ -25,5 +26,17 @@ class ConnectorResourcesTest extends TestCase
         $connector = $this->connector();
 
         $this->assertNotSame($connector->customer(), $connector->customer());
+    }
+
+    public function testProductReturnsAProductResource(): void
+    {
+        $this->assertInstanceOf(ProductResource::class, $this->connector()->product());
+    }
+
+    public function testProductReturnsAFreshInstanceEveryCall(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertNotSame($connector->product(), $connector->product());
     }
 }

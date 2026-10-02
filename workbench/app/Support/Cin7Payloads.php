@@ -46,6 +46,22 @@ final class Cin7Payloads
     }
 
     /**
+     * One page of products. Unlike the other lists, the V2 envelope is keyed `Products`
+     * (`{Total, Page, Products}`), not `ProductList`.
+     *
+     * @param list<array<string, mixed>> $products
+     * @return array<string, mixed>
+     */
+    public static function products(array $products = [], int $page = 1, ?int $total = null): array
+    {
+        return [
+            'Total' => $total ?? count($products),
+            'Page' => $page,
+            'Products' => $products,
+        ];
+    }
+
+    /**
      * A sale, which Cin7 keys by `SaleID` rather than `ID`.
      *
      * @return array<string, mixed>
