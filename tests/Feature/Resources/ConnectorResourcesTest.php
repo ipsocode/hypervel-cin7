@@ -14,6 +14,8 @@ use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
+use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
 use Ipsocode\Cin7\Resources\Me\ContactsResource;
@@ -65,6 +67,13 @@ use Ipsocode\Cin7\Resources\Sale\QuoteResource;
 use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
+use Ipsocode\Cin7\Resources\StockAdjustmentListResource;
+use Ipsocode\Cin7\Resources\StockAdjustmentResource;
+use Ipsocode\Cin7\Resources\StockTakeListResource;
+use Ipsocode\Cin7\Resources\StockTakeResource;
+use Ipsocode\Cin7\Resources\StockTransfer\OrderResource as StockTransferOrderResource;
+use Ipsocode\Cin7\Resources\StockTransferListResource;
+use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -275,6 +284,48 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(TransactionsResource::class, $connector->transactions());
         $this->assertNotSame($connector->journal(), $connector->journal());
         $this->assertNotSame($connector->transactions(), $connector->transactions());
+    }
+
+    public function testStockAdjustmentResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(StockAdjustmentResource::class, $connector->stockAdjustment());
+        $this->assertNotSame($connector->stockAdjustment(), $connector->stockAdjustment());
+        $this->assertInstanceOf(StockAdjustmentListResource::class, $connector->stockAdjustmentList());
+        $this->assertNotSame($connector->stockAdjustmentList(), $connector->stockAdjustmentList());
+    }
+
+    public function testStockTakeResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(StockTakeResource::class, $connector->stockTake());
+        $this->assertNotSame($connector->stockTake(), $connector->stockTake());
+        $this->assertInstanceOf(StockTakeListResource::class, $connector->stockTakeList());
+        $this->assertNotSame($connector->stockTakeList(), $connector->stockTakeList());
+    }
+
+    public function testStockTransferResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(StockTransferResource::class, $connector->stockTransfer());
+        $this->assertNotSame($connector->stockTransfer(), $connector->stockTransfer());
+        $this->assertInstanceOf(StockTransferListResource::class, $connector->stockTransferList());
+        $this->assertNotSame($connector->stockTransferList(), $connector->stockTransferList());
+        $this->assertInstanceOf(StockTransferOrderResource::class, $connector->stockTransfer()->order());
+        $this->assertNotSame($connector->stockTransfer()->order(), $connector->stockTransfer()->order());
+    }
+
+    public function testInventoryWriteOffResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(InventoryWriteOffResource::class, $connector->inventoryWriteOff());
+        $this->assertNotSame($connector->inventoryWriteOff(), $connector->inventoryWriteOff());
+        $this->assertInstanceOf(InventoryWriteOffListResource::class, $connector->inventoryWriteOffList());
+        $this->assertNotSame($connector->inventoryWriteOffList(), $connector->inventoryWriteOffList());
     }
 
     public function testMeReturnsAFreshMeResource(): void

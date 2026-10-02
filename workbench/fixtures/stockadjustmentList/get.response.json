@@ -1,0 +1,33 @@
+{
+    "Total": 22,
+    "Page": 1,
+    "StockAdjustmentList": [
+        {
+            "TaskID": "e129e1bc-d8df-41a0-8a3b-68aee2dbd344",
+            "EffectiveDate": "2017-12-07T00:00:00",
+            "StocktakeNumber": "ST-00001",
+            "Status": "COMPLETED",
+            "Account": "403",
+            "Reference": "",
+            "Comment": "Test Comment"
+        },
+        {
+            "TaskID": "8a39a117-ec0b-44d6-b303-bd997baa8560",
+            "EffectiveDate": "2017-12-12T00:00:00",
+            "StocktakeNumber": "ST-00002",
+            "Status": "COMPLETED",
+            "Account": "403",
+            "Reference": "",
+            "Comment": "Test Comment"
+        },
+        {
+            "TaskID": "d1dede0c-b7c4-476c-a437-f83524025b85",
+            "EffectiveDate": "2017-12-01T00:00:00",
+            "StocktakeNumber": "ST-00003",
+            "Status": "DRAFT",
+            "Account": "403",
+            "Reference": "",
+            "Comment": "Test Comment"
+        }
+    ]
+}

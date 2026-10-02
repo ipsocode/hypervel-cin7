@@ -67,6 +67,15 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)`; `attachments()`, `markupPrices()` |
 | `$cin7->bankTransfer()` | `BankTransferResource` | `get(string $taskId)`, `post(array\|BankTransferPostData $body)`, `put(array\|BankTransferPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->stockAdjustmentList()` | `StockAdjustmentListResource` | `get($page, $limit, ?CompletionStatus $status)`, `paginate($limit, ?CompletionStatus $status): Cin7Paginator` |
+| `$cin7->stockAdjustment()` | `StockAdjustmentResource` | `get(string $taskId)`, `post(array\|StockAdjustmentPostData $body)`, `put(array\|StockAdjustmentPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->stockTakeList()` | `StockTakeListResource` | `get($page, $limit, ?StockTakeStatus $status)`, `paginate($limit, ?StockTakeStatus $status): Cin7Paginator` |
+| `$cin7->stockTake()` | `StockTakeResource` | `get(string $taskId)`, `post(array\|StockTakePostData $body)`, `put(array\|StockTakePutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->stockTransferList()` | `StockTransferListResource` | `get($page, $limit, ?StockTransferStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->stockTransfer()` | `StockTransferResource` | `get(string $taskId)`, `post(array\|StockTransferPostData $body)`, `put(array\|StockTransferPutData $body)`, `delete(string $id, ?bool $void = null)`; `order()` |
+| `$cin7->stockTransfer()->order()` | `StockTransfer\OrderResource` | `get(string $taskId)`, `post(array\|StockTransferOrderPostData $body)` |
+| `$cin7->inventoryWriteOffList()` | `InventoryWriteOffListResource` | `get($page, $limit, ?CompletionStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->inventoryWriteOff()` | `InventoryWriteOffResource` | `get(string $taskId)`, `post(array\|InventoryWriteOffPostData $body)`, `put(array\|InventoryWriteOffPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
@@ -1130,3 +1139,100 @@ request:
    [`ConnectorResourcesTest`](../tests/Feature/Resources/ConnectorResourcesTest.php),
    only when it is new.
 5. Document the resource here and the request in [requests](requests.md).
+
+## Stock
+
+`$cin7->stockAdjustmentList()` is `stockadjustmentList`, filtered by `status` (a `CompletionStatus`),
+and its `get()->dto()` is a `list<StockAdjustmentListData>`.
+
+`$cin7->stockAdjustment()` is `stockadjustment`, keyed by `TaskID` (`get($taskId)`), with no list
+action of its own. `post()` takes a `StockAdjustmentPostData` and `put()` a `StockAdjustmentPutData`,
+which requires `TaskID`, as well as an array. A body needs its `EffectiveDate`, `Status` (`DRAFT` or
+`COMPLETED`) and `Lines`, each a `NewStockLineData`: a `Quantity` and `UnitCost`, its product by
+`ProductID` or `SKU` and its location by `LocationID` or `Location`. `UpdateOnHand: true` adjusts the
+quantity on hand and not the available quantity. Every action answers with the adjustment, so
+`dto()` is a `StockAdjustmentData`, with the lines it changed (`ExistingStockLines`, in non-zero stock,
+and `NewStockLines`, in zero stock) and the `Transactions` they created. `delete($id, void: true)`
+voids it.
+
+```php
+$adjustment = $this->cin7->stockAdjustment()->post(StockAdjustmentPostData::from([
+    'EffectiveDate' => '2017-12-01T00:00:00',
+    'Status' => 'DRAFT',
+    'Lines' => [['SKU' => 'AF308', 'Quantity' => 600, 'UnitCost' => 1, 'Location' => 'Main Warehouse']],
+]))->dto(); // StockAdjustmentData
+```
+
+`$cin7->stockTakeList()` is `stockTakeList`, filtered by `status` (a `StockTakeStatus`: `DRAFT`,
+`IN PROGRESS`, `COMPLETED`, `VOIDED`); its `dto()` is a `list<StockTakeListData>`, read from
+`StockAdjustmentList`, the key the reference's example uses.
+
+`$cin7->stockTake()` is `stocktake`, keyed by `TaskID`. `post()` takes a `StockTakePostData` and
+`put()` a `StockTakePutData`, which requires `TaskID` and `Status`, as well as an array. A body
+needs its `EffectiveDate`, `Account` and a location, by `LocationID` or `Location`. The filters
+(`Tags`, `PickZones`, `StockLocators`, `Categories`, `Brands`, `Bins`) choose the products Cin7 puts
+in `NonZeroStockOnHandProducts` on a POST, or on a PUT that moves `Status` from `DRAFT` to
+`IN PROGRESS`; `ZeroStockOnHandProducts` are the `NewStockLineData` you add, and
+`UseRelativeQuantity` says whether zero-stock products are included. Every action answers with the
+stock take, so `dto()` is a `StockTakeData`. `delete($id, void: true)` voids it.
+
+```php
+$take = $this->cin7->stockTake()->post(StockTakePostData::from([
+    'EffectiveDate' => '2018-04-27T00:00:00',
+    'Account' => '403',
+    'Location' => 'Main Warehouse',
+    'Tags' => ['bread'],
+]))->dto(); // StockTakeData
+```
+
+`$cin7->stockTransferList()` is `stockTransferList`, filtered by `status` (a `StockTransferStatus`:
+`DRAFT`, `IN TRANSIT`, `COMPLETED`, `VOIDED`) and `search`.
+
+`$cin7->stockTransfer()` is `stockTransfer`, keyed by `TaskID`. `post()` takes a
+`StockTransferPostData` and `put()` a `StockTransferPutData`, which requires `TaskID`, as well as an
+array. A body needs its `Status`, `CompletionDate` and `Lines` (`StockTransferLineData`: a
+`TransferQuantity` and a product by `ProductID` or `SKU`), the location it moves stock from, by
+`From` or `FromLocation`, and the one it moves it to, by `To` or `ToLocation`; an `IN TRANSIT`
+transfer also needs its `InTransitAccount` and `DepartureDate`. `SkipOrder` skips the transfer
+order, and `CostDistributionType` (`Cost`, `Quantity`, `Weight` or `Volume`) says how additional
+journals are capitalised. Every action answers with the transfer, so `dto()` is a
+`StockTransferData`, with its `Number`, its `Order` and `LastModifiedOn`. `delete($id, void: true)`
+voids it.
+
+`$cin7->stockTransfer()->order()` is `stockTransfer/order`: `get($taskId)` reads the order of a
+transfer, and `post()` takes a `StockTransferOrderPostData` (`TaskID`, `Status` and `Lines`) as well
+as an array. The order's `Status` is `NOT AVAILABLE`, `DRAFT` or `AUTHORISED`, and `dto()` is a
+`StockTransferOrderData`.
+
+```php
+$transfer = $this->cin7->stockTransfer()->post(StockTransferPostData::from([
+    'Status' => 'DRAFT',
+    'CompletionDate' => '2017-12-19T00:00:00',
+    'FromLocation' => 'Main Warehouse',
+    'ToLocation' => 'Main Warehouse: Bin 1',
+    'Lines' => [['SKU' => 'Bread', 'TransferQuantity' => 100]],
+]))->dto(); // StockTransferData
+```
+
+## Inventory write-off
+
+`$cin7->inventoryWriteOffList()` is `inventoryWriteOffList`, filtered by `status` (a
+`CompletionStatus`) and `search`; its `dto()` is a `list<InventoryWriteOffListData>`.
+
+`$cin7->inventoryWriteOff()` is `inventoryWriteOff`, keyed by `TaskID`. `post()` takes an
+`InventoryWriteOffPostData` and `put()` an `InventoryWriteOffPutData`, which requires `TaskID`, as
+well as an array. A body needs its `Status` (`DRAFT` or `COMPLETED`), its `Account`, a location by
+`LocationID` or `Location`, and an `EffectiveDate` when it is `COMPLETED`; each line
+(`InventoryWriteOffLineData`) needs its `Quantity` and a product by `ProductID` or `ProductCode`.
+Every action answers with the write-off, so `dto()` is an `InventoryWriteOffData`, with its
+`InventoryWriteOffNumber`, its `Transactions` and the `Errors` of a POST or PUT that created the task
+despite them. `delete($id, void: true)` voids it.
+
+```php
+$writeOff = $this->cin7->inventoryWriteOff()->post(InventoryWriteOffPostData::from([
+    'Status' => 'DRAFT',
+    'Account' => '404',
+    'Location' => 'Main Warehouse',
+    'Lines' => [['ProductCode' => 'Bread', 'Quantity' => 2]],
+]))->dto(); // InventoryWriteOffData
+```

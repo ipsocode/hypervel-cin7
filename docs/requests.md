@@ -106,6 +106,19 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
 | `GetBankTransfer` | **`taskId`** |
 | `DeleteBankTransfer` | **`id`**, `void` |
+| `GetStockAdjustmentList` | `page`, `limit`, `status` (`CompletionStatus`) |
+| `GetStockAdjustment` | **`taskId`** |
+| `DeleteStockAdjustment` | **`id`**, `void` |
+| `GetStockTakeList` | `page`, `limit`, `status` (`StockTakeStatus`) |
+| `GetStockTake` | **`taskId`** |
+| `DeleteStockTake` | **`id`**, `void` |
+| `GetStockTransferList` | `page`, `limit`, `status` (`StockTransferStatus`), `search` |
+| `GetStockTransfer` | **`taskId`** |
+| `DeleteStockTransfer` | **`id`**, `void` |
+| `GetStockTransferOrder` | **`taskId`** |
+| `GetInventoryWriteOffList` | `page`, `limit`, `status` (`CompletionStatus`), `search` |
+| `GetInventoryWriteOff` | **`taskId`** |
+| `DeleteInventoryWriteOff` | **`id`**, `void` |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
 | `DeleteJournal` | **`id`**, `void` |
 | `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
@@ -247,6 +260,31 @@ The `bankTransfer` actions live under `src/Requests/BankTransfer/`, and follow t
 `BankTransferPostData` and `BankTransferPutData`; the PUT body carries `TaskID`). Every one's
 `dto()` is a `BankTransferData`.
 
+The `stockadjustment` actions live under `src/Requests/StockAdjustment/`: `GetStockAdjustment` (keyed
+`TaskID`), `DeleteStockAdjustment` (keyed `ID`, with `Void`), and `PostStockAdjustment` and
+`PutStockAdjustment` (`WriteRequest`s, whose data object bodies are `StockAdjustmentPostData` and
+`StockAdjustmentPutData`; the PUT body carries `TaskID`). Every one's `dto()` is a
+`StockAdjustmentData`. `GetStockAdjustmentList` (`src/Requests/StockAdjustmentList/`, a `ListRequest`
+for `stockadjustmentList`, keyed `StockAdjustmentList`) lists them, filtered by `status`.
+The `stocktake` actions live under `src/Requests/StockTake/`, the same four as `stockadjustment`:
+`GetStockTake` (keyed `TaskID`), `DeleteStockTake` (keyed `ID`, with `Void`), and `PostStockTake` and
+`PutStockTake` (`WriteRequest`s, whose bodies are `StockTakePostData` and `StockTakePutData`). Every
+one's `dto()` is a `StockTakeData`. `GetStockTakeList` (`src/Requests/StockTakeList/`) lists them,
+filtered by `status`, and reads the list from `StockAdjustmentList`, the key its example uses.
+The `stockTransfer` actions live under `src/Requests/StockTransfer/`, the same four again:
+`GetStockTransfer`, `DeleteStockTransfer`, `PostStockTransfer` and `PutStockTransfer`, whose bodies
+are `StockTransferPostData` and `StockTransferPutData`; every one's `dto()` is a
+`StockTransferData`. Its order is `src/Requests/StockTransfer/Order/`: `GetStockTransferOrder`
+(keyed `TaskID`) and `PostStockTransferOrder` (body `StockTransferOrderPostData`), whose `dto()` is a
+`StockTransferOrderData`. `GetStockTransferList` (`src/Requests/StockTransferList/`) lists transfers,
+filtered by `status` and `search`.
+The `inventoryWriteOff` actions live under `src/Requests/InventoryWriteOff/`, the same four again:
+`GetInventoryWriteOff` (V2 marks `TaskID` optional, but the write-offs are listed at
+`inventoryWriteOffList`, so it is required here), `DeleteInventoryWriteOff`, `PostInventoryWriteOff`
+and `PutInventoryWriteOff`, whose bodies are `InventoryWriteOffPostData` and
+`InventoryWriteOffPutData`; every one's `dto()` is an `InventoryWriteOffData`.
+`GetInventoryWriteOffList` (`src/Requests/InventoryWriteOffList/`) lists them under
+`InventoryWriteOffs`, filtered by `status` and `search`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed
