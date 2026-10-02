@@ -85,6 +85,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetSupplierDeposits` | `page`, `limit`, `supplierId`, `showUsedDeposits` |
 | `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
 | `DeleteAccount` | **`code`** |
+| `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
 | `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
 | `GetMeContacts` | `page`, `limit`, `id`, `name`, `type` (`ContactType`), `defaultForType`, `phone`, `fax`, `email` |
 | `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
@@ -151,7 +152,8 @@ and `PutAccount` (`WriteRequest`s, whose data object bodies are `AccountPostData
 `AccountPutData`; the PUT body's `Code` names the account) and `DeleteAccount` (keyed `Code`), all
 on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountData>`, the POST
 and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
-to `json()`.
+to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
+`ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
 
 The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
 model they serve: `GetMoneyTask`

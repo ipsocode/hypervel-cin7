@@ -80,7 +80,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()->supplier()` | `Ref\SupplierResource` | `deposits()`; also a pure grouping |
 | `$cin7->ref()->supplier()->deposits()` | `Ref\Supplier\DepositsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
-| `$cin7->ref()->account()` | `Ref\AccountResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|AccountPostData $body)`, `put(array\|AccountPutData $body)`, `delete(string $code)` |
+| `$cin7->ref()->account()` | `Ref\AccountResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|AccountPostData $body)`, `put(array\|AccountPutData $body)`, `delete(string $code)`; `bank()` |
+| `$cin7->ref()->account()->bank()` | `Ref\Account\BankResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 
 `…` stands for the optional query parameters, listed per request in
 [query parameters](requests.md#query-parameters).
@@ -231,7 +232,8 @@ $saved = $this->cin7->product()->put(ProductPutData::from([
 
 The reference data lives under `ref/…`, so the chain spells the path:
 `$cin7->ref()->tax()`, `$cin7->ref()->customer()->credits()`,
-`$cin7->ref()->supplier()->deposits()` and `$cin7->ref()->account()`.
+`$cin7->ref()->supplier()->deposits()`, `$cin7->ref()->account()` and
+`$cin7->ref()->account()->bank()`.
 
 `ref/tax` lists under `TaxRuleList` (`{Total, Page, TaxRuleList}`). Its data classes are
 `TaxData` and `TaxComponentData`; `get()->dto()` is a `list<TaxData>`. `post()` takes a
@@ -281,6 +283,16 @@ $saved = $this->cin7->ref()->account()->post(AccountPostData::from([
 ]))->dto(); // AccountData
 
 $this->cin7->ref()->account()->delete('091'); // DELETE ref/account?Code=091
+```
+
+`ref/account/bank` lists the bank accounts under `BankAccountsList`, filtered by `id`, `name`
+(bank accounts whose name starts with it) and `bank`; `get()->dto()` is a
+`list<BankAccountData>`. It is read-only.
+
+```php
+foreach ($this->cin7->ref()->account()->bank()->paginate()->items() as $bankAccount) {
+    // $bankAccount is one entry of BankAccountsList
+}
 ```
 
 ## Money Task
