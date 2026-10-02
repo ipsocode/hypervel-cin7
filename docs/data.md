@@ -53,6 +53,10 @@ Send `[]` only to delete on purpose, by setting the property to an empty list.
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `sale` | `SalePostPutData` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
 | `saleList` | none | GET: `list<SaleListData>` (Sale List) |
+| `sale/order` | `SaleOrderData` (Sale Order, plus `AutoPickPackShipMode`, which the reference documents only in prose) | GET, POST: `SaleOrderData` |
+| `sale/invoice` | `SaleInvoicePostData` (Sale Invoice POST Model: POST needs `SaleID` and an empty-GUID `TaskID`, PUT needs `SaleID` and `TaskID`) | GET, POST, PUT, DELETE: `SaleInvoicesData` (`{SaleID, Invoices}`, with `Invoices`: `SaleInvoicePartialData`) |
+| `sale/creditnote` | `SaleCreditNotePostData` (Sale Credit Note POST Model) | GET, POST, DELETE: `SaleCreditNotesData` (`{SaleID, CreditNotes}`, with `CreditNotes`: `SaleCreditNotePartialData`) |
+| `sale/payment` | `SalePaymentLinePartialData` (Sale Payment Line Partial Model) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
 
 `SaleData` nests one class per model, all under `src/Data/Sale/` beside it and reused by the
 later sale paths:
@@ -112,3 +116,18 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   pick keys, and the others stay unset.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim.
+
+## Sale invoices, credit notes and payments
+
+`SaleInvoicePartialData`, `SaleCreditNotePartialData` and their POST models live under
+`src/Data/Sale/Invoice/` and `src/Data/Sale/CreditNote/`; `SalePaymentLinePartialData` is
+in `src/Data/Sale/Payment/`. They reuse the line, additional-charge and payment-line classes
+from `src/Data/Sale/`.
+
+- The Partial tables do not list `CreditNoteInvoiceNumber` on credit notes, nor
+  `CreditNoteBalance` and `Payments` on the GET; `SaleCreditNotePartialData` models them from
+  the reference's examples.
+- On `sale/invoice` PUT, an empty collection deletes the existing records (see
+  [the empty-collection rule](#the-empty-collection-rule)).
+- The reference's `sale/invoice` and `sale/creditnote` examples carry trailing commas, and the
+  credit note POST example an unquoted `SaleID:` key; the fixtures are the corrected JSON.
