@@ -1,0 +1,10 @@
+{
+    "Name": "Third FixedAssetType",
+    "DepreciationMethod": "No Depreciation",
+    "AveragingMethod": "Full Month",
+    "Rate": 10,
+    "EffectiveLife": null,
+    "AssetAccountCode": "710",
+    "AccumulatedDepreciationAccountCode": "710",
+    "DepreciationExpenseAccountCode": "400"
+}
