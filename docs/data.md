@@ -208,6 +208,12 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/customer/templates` | POST: `CustomerDefaultTemplatesPostData`, a list of `CustomerDefaultTemplateData` | GET, POST, DELETE: `list<CustomerDefaultTemplateData>`, read from `CustomerTemplates` |
 | `ref/category` | POST: `ProductCategoryPostData`; PUT: `ProductCategoryPutData`, which also requires `ID` (Product Category) | GET: `list<ProductCategoryData>`; POST, PUT: `ProductCategoryData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/unit` | POST: `UnitOfMeasurePostData`; PUT: `UnitOfMeasurePutData`, which also requires `ID` (Unit of Measure) | GET: `list<UnitOfMeasureData>`; POST, PUT: `UnitOfMeasureData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
+| `custom-prices` | POST, PUT: `CustomPricesData`, a list of `ProductPriceData` (Customer specific Product Price Model) | POST, PUT: `{Errors}`; DELETE: `{Success}`, left to `json()` |
+| `product-suppliers` | POST, PUT: `ProductSuppliersData`, a list of `ProductSupplierData` (Product Supplier Model, with `ProductSupplierOptions`: `ProductSupplierOptionData`, whose `SupplyIntervals` are `ProductSupplierOptionIntervalData`) | GET: `ProductSuppliersData`; POST, PUT, DELETE: `{Success}`, left to `json()` |
+| `reference/shipZones` | POST: `ShippingZonePostData`; PUT: `ShippingZonePutData`, which also requires `ZoneID` (Shipping Zone, with `AppliesTo`: `ShipZoneAppliesToData` and `Conditions`: `ShipZoneConditionData`) | GET: `list<ShippingZoneData>`; POST, PUT: `ShippingZoneData`, the saved zone, read from `ShipZones.0`; DELETE: `{Success}`, left to `json()` |
+| `reference/shipZonesEnabled` | PUT: `ShipZonesEnabledData` | GET, PUT: `ShipZonesEnabledData` |
+| `reference/discount` | POST: `ProductDiscountRulesPostData`, a list of `ProductDiscountRulePostData`; PUT: `ProductDiscountRulePutData`, one bare rule, which also requires `ID` (Product Discount Rule, with `DiscountLines`: `DiscountLineData`, Discount Line Model) | GET: `list<ProductDiscountRuleData>`; POST, PUT: `ProductDiscountRuleData`, the saved rule, read from `DiscountRules.0` |
+| `reference/deals` | POST: `ProductDealPostData`; PUT: `ProductDealPutData`, which also requires `ID` (Product Deal, with `DealCustomers`: `ProductDealCustomerData`, `DealCustomerTags`: `ProductDealTagData` and `DealDiscounts`: `ProductDealDiscountData`, whose brands, categories, tags and products are `ProductDealDiscountBrandData`, `ProductDealDiscountCategoryData`, `ProductDealDiscountTagData` and `ProductDealDiscountProductData`) | GET: `list<ProductDealData>`; POST, PUT: `ProductDealData`, the saved deal, read from `Deals.0` |
 | `ref/priceTier` | none | GET: `list<PriceTierData>` (Price Tier), read from `PriceTiers` |
 | `ref/fixedassettype` | POST: `FixedAssetTypePostData`; PUT: `FixedAssetTypePutData`, which also requires `FixedAssetTypeID` (Fixed Asset Types) | GET: `list<FixedAssetTypeData>`; POST, PUT: `FixedAssetTypeData`, the saved type (`FixedAssetTypeList.0`) |
 | `ref/paymentterm` | POST: `PaymentTermPostData`; PUT: `PaymentTermPutData`, which also requires `ID` (Payment Term) | GET: `list<PaymentTermData>`; POST, PUT: `PaymentTermData`, the saved term (`PaymentTermList.0`); DELETE: `{Success}`, left to `json()` |
@@ -1133,6 +1139,80 @@ missing a required field fails `dto()` with a `CannotCreateData`.
 - The reference's `sale/invoice` and `sale/creditnote` examples carry trailing commas, and the
   credit note POST example an unquoted `SaleID:` key; the fixtures are the corrected JSON.
 
+## Reference books
+
+`custom-prices` and `product-suppliers` have no table of their own: they use the Customer specific
+Product Price Model and the Product Supplier models. Each is a wrapper of one list, and its POST and
+PUT bodies are the same, so one class serves both:
+
+| Class | Folder | Required |
+|---|---|---|
+| `CustomPricesData` | `src/Data/CustomPrices/` | `CustomPrices` |
+| `ProductSuppliersData` | `src/Data/ProductSuppliers/` | `ProductSuppliers` |
+
+- **`PurchaseCost`** is in the `product-suppliers` examples but in no table, so `ProductSupplierData`
+  takes it as an optional number.
+- **Responses.** A POST or PUT of custom prices answers `{Errors}`, with no element shape in the
+  reference, and the other writes `{Success}`: they have no data class.
+- **Examples.** The custom prices examples need no correction. The product suppliers POST and PUT
+  examples send `DeliveryMethod` as `"interval"` and `"fixed"`, where the table says `'Fixed'` and
+  `'Interval'`: the fixtures capitalise them.
+`reference/shipZones` has a class per verb, because the table's required fields cannot all hold for
+every verb. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `ShippingZoneData` (response) | `src/Data/Reference/ShipZones/` | `ZoneID`, `Name`, `IsRestZone`, `PricesInclTax`, `Negative`, `DefaultShippingCost` |
+| `ShippingZonePostData` | `src/Data/Reference/ShipZones/` | `Name`, `IsRestZone`, `PricesInclTax`, `Negative` |
+| `ShippingZonePutData` | `src/Data/Reference/ShipZones/` | `Name`, `ZoneID` |
+| `ShipZoneAppliesToData` | `src/Data/Reference/ShipZones/` | `ShippingRate` |
+| `ShipZoneConditionData` | `src/Data/Reference/ShipZones/` | `ShippingCost`, `ConditionType` (`ShipZoneConditionType`: `Price` or `Weight`) |
+| `ShipZonesEnabledData` | `src/Data/Reference/ShipZonesEnabled/` | `IsEnabled` |
+
+- **What the examples drop.** The table requires `DefaultShippingCost`, but the POST example sends
+  none, and the PUT example sends only `ZoneID`, `Name` and `Conditions`: so POST makes
+  `DefaultShippingCost` optional, and PUT every field but `ZoneID` and `Name`.
+- **`ID` and `ZoneConditionID`** are required in the table, but the examples send none for an area or
+  a condition they add, so they are optional.
+- **`ShortDesc`** is a Bool in the table and a string in every example ("Andorra"): a string.
+- **`ShipZoneConditionsModel`.** The table's link names it so; the model is `ShipZoneConditionModel`,
+  which `ShipZoneConditionData` follows.
+- **`reference/shipZonesEnabled`** has no table, only examples.
+- **Examples.** The examples need no correction.
+`reference/discount` splits by verb the same way, and its POST body is a list while its PUT body is one
+bare rule. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `ProductDiscountRuleData` (response) | `src/Data/Reference/Discount/` | `ID`, `Name`, `IsActive`, `Type` |
+| `ProductDiscountRulesPostData` | `src/Data/Reference/Discount/` | `DiscountRules` |
+| `ProductDiscountRulePostData` | `src/Data/Reference/Discount/` | `Name`, `IsActive`, `Type` |
+| `ProductDiscountRulePutData` | `src/Data/Reference/Discount/` | `Name`, `ID` |
+| `DiscountLineData` | `src/Data/Reference/Discount/` | nothing; `OrderExceeds` when `DiscountType` is `FreeShipping` (`#[RequiredIf]`) |
+
+- **The PUT example** sends only the `ID`, `Name` and `DiscountLines`, so `IsActive` and `Type`, which
+  the table requires, are optional there. `ID` on a line is required in the table, but the POST
+  example sends none for a line it adds.
+- **`Type`** is a `DiscountRuleType` and a line's `DiscountType` a `DiscountLineType`, from the values
+  the table lists.
+- **Examples.** The examples need no correction.
+`reference/deals` splits by verb the same way. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `ProductDealData` (response) | `src/Data/Reference/Deals/` | `ID`, `Name`, `IsActive`, `AllowCoupons`, `SingleCouponCodeUsage` |
+| `ProductDealPostData` | `src/Data/Reference/Deals/` | `Name` |
+| `ProductDealPutData` | `src/Data/Reference/Deals/` | `Name`, `ID` |
+| `ProductDealDiscountData` | `src/Data/Reference/Deals/` | `DiscountType` (a `DiscountRuleType`), `IsOrderLevel` |
+| `ProductDealCustomerData`, `ProductDealTagData` and the four discount filters | `src/Data/Reference/Deals/` | nothing |
+
+- **What the examples drop.** The table requires `IsActive`, `AllowCoupons` and
+  `SingleCouponCodeUsage`, but the POST and PUT examples send none, so a body makes them optional.
+  The discount's brand, category, tag and product entries require a `Type` (and a product its
+  `IsFamily`), which no example sends, so those stay optional.
+- **`CategoryID`** is sent by the examples for a discount's category, and is in no table.
+- **`BuyMore`** is listed twice in the Product Deal Discount table; it is one field.
+- **Examples.** The examples need no correction.
 ## Purchases
 
 `purchase` follows the Available Fields for Purchase table and the Purchase POST/PUT Attributes,

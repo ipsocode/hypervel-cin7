@@ -1,0 +1,45 @@
+{
+    "Name": "Shipping Zone test",
+    "IsRestZone": false,
+    "PricesInclTax": false,
+    "Negative": false,
+    "TaxRuleID": "cd3b41ce-e4ba-4fc4-a615-18ca17e7a4c7",
+    "AppliesTo": [
+        {
+            "Country2": "DZ",
+            "StateID": null,
+            "StateName": null,
+            "PostCodeFrom": "",
+            "PostCodeTo": "",
+            "PostCodesList": "",
+            "ShippingRate": 7000
+        },
+        {
+            "ID": "4820bb61-bc4b-47d8-9dc1-c8222408919f",
+            "Country2": "AF",
+            "StateID": null,
+            "StateName": null,
+            "PostCodeFrom": "",
+            "PostCodeTo": "",
+            "PostCodesList": "",
+            "ShippingRate": 8000
+        }
+    ],
+    "Conditions": [
+        {
+            "MinValue": 700,
+            "MaxValue": 0,
+            "ShippingCost": 0,
+            "ConditionType": "Price",
+            "ConditionDescription": "New Rule pb111"
+        },
+        {
+            "ZoneConditionID": "5f948569-8917-4293-8eb7-7e428e3a6cee",
+            "MinValue": 800,
+            "MaxValue": 0,
+            "ShippingCost": 0,
+            "ConditionType": "Weight",
+            "ConditionDescription": "New Rule v2"
+        }
+    ]
+}

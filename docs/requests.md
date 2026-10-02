@@ -104,6 +104,13 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
 | `GetMeContacts` | `page`, `limit`, `id`, `name`, `type` (`ContactType`), `defaultForType`, `phone`, `fax`, `email` |
 | `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
+| `GetProductSuppliers` | **`productId`** |
+| `DeleteCustomPrices` | **`productId`**, **`customerId`** |
+| `DeleteProductSuppliers` | **`productId`**, **`supplierId`** |
+| `GetShipZones` | `page`, `limit`, `id`, `search` |
+| `DeleteShipZones` | **`shipZoneId`** (sent as `ShipZoneID`) |
+| `GetDiscount` | `page`, `limit`, `id`, `search` |
+| `GetDeals` | `page`, `limit`, `id`, `search` |
 | `GetBankTransfer` | **`taskId`** |
 | `DeleteBankTransfer` | **`id`**, `void` |
 | `GetStockAdjustmentList` | `page`, `limit`, `status` (`CompletionStatus`) |
@@ -270,6 +277,23 @@ The `bankTransfer` actions live under `src/Requests/BankTransfer/`, and follow t
 `PostBankTransfer` and `PutBankTransfer` (`WriteRequest`s, whose data object bodies are
 `BankTransferPostData` and `BankTransferPutData`; the PUT body carries `TaskID`). Every one's
 `dto()` is a `BankTransferData`.
+
+The `custom-prices` actions live under `src/Requests/CustomPrices/`: `PostCustomPrices` and
+`PutCustomPrices` (`WriteRequest`s with the same body, `CustomPricesData`) and `DeleteCustomPrices`
+(keyed `ProductID` and `CustomerID`). The `product-suppliers` actions live under
+`src/Requests/ProductSuppliers/`: `GetProductSuppliers` (keyed `ProductID`, whose `dto()` is a
+`ProductSuppliersData`), `PostProductSuppliers` and `PutProductSuppliers` (the same body) and
+`DeleteProductSuppliers` (keyed `ProductID` and `SupplierID`). The reference answers a POST or PUT of
+custom prices `{Errors}`, and the others `{Success}`, so those have no `dto()`: read `json()`.
+The `reference/…` actions live under `src/Requests/Reference/`. `GetShipZones` (a `ListRequest` keyed
+`ShipZones`) lists the shipping zones, and `PostShipZones` and `PutShipZones` (bodies
+`ShippingZonePostData` and `ShippingZonePutData`) answer the saved zone, read from `ShipZones.0`;
+`DeleteShipZones` sends `ShipZoneID` (the reference documents the key with a trailing space).
+`GetDiscount` (keyed `DiscountRules`), `PostDiscount` (body `ProductDiscountRulesPostData`, a list of
+rules) and `PutDiscount` (body `ProductDiscountRulePutData`, one bare rule) are the discount rules. `GetDeals`, `PostDeals` and `PutDeals` (bodies `ProductDealPostData` and
+`ProductDealPutData`, bare deals) are the product deals, and answer the saved deal from `Deals.0`.
+`GetShipZonesEnabled` and `PutShipZonesEnabled` (body `ShipZonesEnabledData`) read and set
+`IsEnabled`.
 
 The `stockadjustment` actions live under `src/Requests/StockAdjustment/`: `GetStockAdjustment` (keyed
 `TaskID`), `DeleteStockAdjustment` (keyed `ID`, with `Void`), and `PostStockAdjustment` and

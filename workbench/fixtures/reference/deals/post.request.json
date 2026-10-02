@@ -1,0 +1,83 @@
+{
+    "Name": "Product Deal 1",
+    "CustomersGroup": "POS",
+    "DealDiscounts": [
+        {
+            "DiscountName": "Test 12555",
+            "DiscountType": "Simple",
+            "DiscountID": "da9bdb07-484e-4a1b-bfdb-5ab49c252d8b",
+            "Sequence": 2,
+            "IsOrderLevel": false,
+            "BuyType": "",
+            "BuyValue": null,
+            "BuyValueType": "",
+            "BuyMore": false,
+            "GetType": "",
+            "GetValue": null,
+            "GetValueType": "",
+            "DealDiscountBrands": [],
+            "DealDiscountCategories": [],
+            "DealDiscountTags": [],
+            "DealDiscountProducts": [
+                {
+                    "ProductID": "1cd995b0-a8f1-456c-9784-ecf3a8fc2804",
+                    "ProductName": "Screws Drive Cross",
+                    "IsFamily": false
+                },
+                {
+                    "ProductSKU": "Screws-SKU - 001"
+                }
+            ]
+        },
+        {
+            "DiscountName": "Alles fur Freunde",
+            "DiscountType": "Simple",
+            "DiscountID": "98fcb436-988d-437c-b135-7dcf19c94719",
+            "Sequence": 1,
+            "IsOrderLevel": false,
+            "BuyType": "",
+            "BuyValue": null,
+            "BuyValueType": "",
+            "BuyMore": false,
+            "GetType": "",
+            "GetValue": null,
+            "GetValueType": "",
+            "DealDiscountBrands": [
+                {
+                    "BrandID": "9a04feb2-fee6-48de-9cbb-fbd4679adb8f",
+                    "BrandName": "Microsoft"
+                }
+            ],
+            "DealDiscountCategories": [
+                {
+                    "CategoryID": "b749d1be-01e6-49ee-8a3e-5bc75d9fea93",
+                    "CategoryName": "Other"
+                }
+            ],
+            "DealDiscountTags": [
+                {
+                    "TagName": "Kuku1"
+                }
+            ],
+            "DealDiscountProducts": []
+        },
+        {
+            "DiscountName": "Free shiping",
+            "DiscountType": "FreeShipping",
+            "DiscountID": "7ba8cd3f-db4a-4a28-8f79-9246a027ef0a",
+            "Sequence": 0,
+            "IsOrderLevel": true,
+            "BuyType": "brand",
+            "BuyValue": null,
+            "BuyValueType": "",
+            "BuyMore": false,
+            "GetType": "brand",
+            "GetValue": null,
+            "GetValueType": "",
+            "DealDiscountBrands": [],
+            "DealDiscountCategories": [],
+            "DealDiscountTags": [],
+            "DealDiscountProducts": []
+        }
+    ]
+}

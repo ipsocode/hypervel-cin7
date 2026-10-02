@@ -10,7 +10,7 @@ import blueprint as bp
 
 
 def case_name(value):
-    return ''.join(w[:1].upper() + w[1:].lower() for w in re.split(r'[^A-Za-z0-9]+', value) if w)
+    return ''.join(w[:1].upper() + (w[1:] if w != w.upper() and w != w.lower() else w[1:].lower()) for w in re.split(r'[^A-Za-z0-9]+', value) if w)
 
 
 def write(name, summary, values):
