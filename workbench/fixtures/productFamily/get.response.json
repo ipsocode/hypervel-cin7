@@ -1,0 +1,67 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "ProductFamilies": [
+        {
+            "Products": [
+                {
+                    "ID": "ce9a6504-4207-4001-b430-749bf11fdc4f",
+                    "SKU": "GB1-White",
+                    "Name": "Golf balls - white single",
+                    "Option1": "3",
+                    "Option2": "4",
+                    "Option3": "5"
+                }
+            ],
+            "ID": "2aa3892d-5006-438b-a94c-bcfcca020ea4",
+            "SKU": "Test",
+            "Name": "Test",
+            "Category": "Other",
+            "DefaultLocation": "Main Warehouse",
+            "Brand": null,
+            "CostingMethod": "FIFO",
+            "UOM": "Item",
+            "MinimumBeforeReorder": 0,
+            "ReorderQuantity": 0,
+            "PriceTier1": 0,
+            "PriceTier2": 0,
+            "PriceTier3": 0,
+            "PriceTier4": 0,
+            "PriceTier5": 0,
+            "PriceTier6": 0,
+            "PriceTier7": 0,
+            "PriceTier8": 0,
+            "PriceTier9": 0,
+            "PriceTier10": 0,
+            "ShortDescription": null,
+            "Description": null,
+            "AttributeSet": null,
+            "DiscountRule": null,
+            "Tags": "",
+            "COGSAccount": null,
+            "RevenueAccount": null,
+            "InventoryAccount": null,
+            "PurchaseTaxRule": null,
+            "SaleTaxRule": null,
+            "DropShipMode": "No Drop Ship",
+            "Option1Name": "Test 1",
+            "Option2Name": "",
+            "Option3Name": "",
+            "Option1Values": "Test 1,Test 2,Test 1",
+            "Option2Values": "",
+            "Option3Values": "",
+            "LastModifiedOn": "2017-12-29T05:49:44.36Z",
+            "Attachments": [
+                {
+                    "ID": "1172db1d-ae89-4c50-9842-1d7668b46280",
+                    "ContentType": "image/jpeg",
+                    "FileName": "1471081716149.jpg",
+                    "DownloadUrl": "https://inventory.dearsystems.com/Attachment/Download?ID=1172db1d-ae89-4c50-9842-1d7668b46280&ContentType=image/jpeg&FileName=1471081716149.jpg&isPublic=True"
+                }
+            ],
+            "HSCode": "123456",
+            "CountryOfOrigin": "Angola",
+            "CountryOfOriginCode": "AGO"
+        }
+    ]
+}
