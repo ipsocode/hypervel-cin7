@@ -49,6 +49,8 @@ Send `[]` only to delete on purpose, by setting the property to an empty list.
 
 | Path | Request body (POST/PUT) | `dto()` |
 |---|---|---|
+| `customer` | `CustomerData` (Customer, with `Addresses`: `CustomerAddressData`, `Contacts`: `CustomerContactData` and `ProductPrices`: `ProductPriceData`, Customer specific Product Price Model) | GET: `list<CustomerData>`; POST, PUT: `CustomerData`, the saved customer (`CustomerList.0`); responses add `ChildCustomers`: `ChildCustomerData` |
+| `product` | `ProductData` (Product, with `Suppliers`: `ProductSupplierData` and its `ProductSupplierOptions`: `ProductSupplierOptionData` and `SupplyIntervals`: `ProductSupplierOptionIntervalData`, `ReorderLevels`: `ReorderLevelData`, `BillOfMaterialsProducts`: `BillOfMaterialProductData`, `BillOfMaterialsServices`: `BillOfMaterialServiceData`, `Movements`: `ProductMovementData`, `Attachments`: `AttachmentLineData` and `CustomPrices`: `ProductPriceData`) | GET: `list<ProductData>`; POST, PUT: `ProductData`, the saved product (`Products.0`) |
 | `ref/tax` | `TaxData` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `moneyOperation` | `MoneyTaskData` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
@@ -122,6 +124,24 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   sends `TaxRuleName` and `AccountCode`; `MoneyTaskLineData` models the example keys.
 - **Money Task nulls.** `SupplierID`, `CustomerID` and `Note` are `null` in the examples, so
   those properties admit `null`.
+- **Customer `AdditionalAttribute#`.** The table lists one row, "# - int(1-10)". On the wire
+  these are ten keys, and `CustomerData` (like `ProductData`) has a property for each of
+  `AdditionalAttribute1` to `AdditionalAttribute10`.
+- **Customer `TaxNumber`.** The table types it `Int`, but every example has `""` or `null`, so
+  it is a nullable string. `Discount` and `CreditLimit` are `float`, since a decimal is
+  harmless where an integer is documented.
+- **Customer addresses and contacts.** The examples also send `CustomerID` on each address
+  and contact, and `JobTitle` on each contact; the classes model them.
+- **One class for two price models.** Product's Custom Price and Customer's Product Price are
+  the same Customer specific Product Price Model, so `ProductPriceData` serves both.
+- **Product `PriceTiers`.** The Price Tier Model's one row is named after the account's tier
+  (`Tier 1`, or whatever the account renamed it), so it cannot be a set of properties. It is
+  an `array<string, float>`, and there is no `PriceTierData`. `PriceTier1` to `PriceTier10`
+  are ordinary properties.
+- **Product supplier link.** The table names it `SupplierProductURL`; the POST example sends
+  `URL`. `ProductSupplierData` models the table's name.
+- **Product `Movements.BatchSN`.** The table types it `Decimal`, but the example has `"1"`
+  and a batch or serial number is not a quantity, so it is a nullable string.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim.
 
