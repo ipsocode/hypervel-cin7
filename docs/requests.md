@@ -86,6 +86,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
 | `DeleteAccount` | **`code`** |
 | `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
+| `GetBrand`, `GetCategory`, `GetUnit` | `page`, `limit`, `name` |
+| `DeleteBrand`, `DeleteCategory`, `DeleteUnit` | **`id`** |
 | `GetFixedAssetType` | `page`, `limit`, `fixedAssetTypeId`, `name` |
 | `GetPaymentTerm` | `page`, `limit`, `id`, `name`, `termMethod` (`PaymentTermMethod`; `method` on the resource, since a request already has a `$method`), `isActive`, `isDefault` |
 | `DeletePaymentTerm` | **`id`** |
@@ -193,6 +195,12 @@ on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountDat
 and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
 to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
 `ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
+
+`ref/brand`, `ref/category` and `ref/unit` (under `Brand/`, `Category/` and `Unit/`) each have a
+`Get…` (a `ListRequest` keyed `BrandList`, `CategoryList` and `UnitList`), a `Post…` and a `Put…`
+(the PUT body carries `ID`) and a `Delete…` (keyed `ID`). A GET's `dto()` is a list of `BrandData`,
+`ProductCategoryData` or `UnitOfMeasureData`, and the POST and PUT answer one of them, as the
+whole body.
 
 `ref/fixedassettype` (under `FixedAssetType/`) has `GetFixedAssetType` (a `ListRequest` keyed
 `FixedAssetTypeList`), `PostFixedAssetType` and `PutFixedAssetType` (the PUT body carries

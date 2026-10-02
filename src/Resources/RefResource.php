@@ -7,11 +7,14 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\Ref\AccountResource;
+use Ipsocode\Cin7\Resources\Ref\BrandResource;
+use Ipsocode\Cin7\Resources\Ref\CategoryResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource;
 use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
 use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
+use Ipsocode\Cin7\Resources\Ref\UnitResource;
 
 /**
  * Groups the `ref/…` resources; V2 has no action on `/ref` itself.
@@ -66,5 +69,29 @@ final class RefResource extends BaseResource
     public function paymentTerm(): PaymentTermResource
     {
         return new PaymentTermResource($this->connector);
+    }
+
+    /**
+     * The `ref/brand` resource.
+     */
+    public function brand(): BrandResource
+    {
+        return new BrandResource($this->connector);
+    }
+
+    /**
+     * The `ref/category` resource.
+     */
+    public function category(): CategoryResource
+    {
+        return new CategoryResource($this->connector);
+    }
+
+    /**
+     * The `ref/unit` resource.
+     */
+    public function unit(): UnitResource
+    {
+        return new UnitResource($this->connector);
     }
 }
