@@ -1,0 +1,17 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "MeAddressesList": [
+        {
+            "AddressID": "ded03f44-00fc-4cbd-8b4d-c803c6252788",
+            "Line1": "DEFAULT business address",
+            "Line2": null,
+            "CitySuburb": "DEFAULT City",
+            "StateProvince": "DEFAULT State",
+            "ZipPostCode": "DEFAULT Postcode",
+            "Country": "Russia",
+            "Type": "Business",
+            "DefaultForType": true
+        }
+    ]
+}

@@ -83,6 +83,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
 | `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
 | `GetSupplierDeposits` | `page`, `limit`, `supplierId`, `showUsedDeposits` |
+| `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
+| `DeleteMeAddresses` | **`id`** |
 | `GetMoneyTaskList` | `page`, `limit`, `status` (`CompletionStatus`), `search`, `taskType` (`MoneyTaskType`) |
 | `GetMoneyTask` | **`taskId`** |
 | `DeleteMoneyTask` | **`id`**, `void` |
@@ -124,8 +126,13 @@ The `supplier` actions, under `src/Requests/Supplier/`, are the customer's in sh
 body carries `ID`). `GetSupplier`'s `dto()` is a `list<SupplierData>`, and the POST and PUT
 `dto()` is the saved supplier (`SupplierList.0`).
 
-The `me` action, under `src/Requests/Me/`, is `GetMe`: a `Cin7Request` that takes no parameters,
-on `me`, whose `dto()` is a `MeData`.
+The `me` actions live under `src/Requests/Me/`: `GetMe`, a `Cin7Request` that takes no
+parameters, on `me`, whose `dto()` is a `MeData`; and on `me/addresses`, `GetMeAddresses` (a
+`ListRequest` keyed `MeAddressesList`), `PostMeAddresses` and `PutMeAddresses` (`WriteRequest`s,
+whose data object bodies are `MeAddressPostData` and `MeAddressPutData`; the PUT body carries
+`AddressID`) and `DeleteMeAddresses` (keyed `ID`). `GetMeAddresses`' `dto()` is a
+`list<MeAddressData>`, the POST and PUT `dto()` is the saved address (`MeAddressesList.0`), and
+the DELETE's `{Success}` is left to `json()`.
 
 The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
 `TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are

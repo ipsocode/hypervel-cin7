@@ -19,13 +19,13 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/me/**` Me (3 resources, 9 operations, 2 left)
+### `reference/me/**` Me (3 resources, 9 operations, 1 left)
 
 - [x] `me` · `me` · GET
   - [x] ME: `MeData`
   - [x] RoundingTableModel: `RoundingTableData`
-- [ ] `me-address` · `me/addresses` · GET POST PUT DELETE
-  - [ ] Me Address: `MeAddressData`
+- [x] `me-address` · `me/addresses` · GET POST PUT DELETE
+  - [x] Me Address: `MeAddressData`
 - [ ] `me-contact` · `me/contacts` · GET POST PUT DELETE
   - [ ] Me Contact: `MeContactData`
 
