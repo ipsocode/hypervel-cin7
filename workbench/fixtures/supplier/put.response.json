@@ -1,0 +1,59 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "SupplierList": [
+        {
+            "ID": "57144411-51ce-446f-9c96-db4243c477dc",
+            "Name": "PUT Supplier testing 3",
+            "Currency": "AUD",
+            "PaymentTerm": "30 days",
+            "TaxRule": "BAS Excluded",
+            "Discount": 0,
+            "Comments": "",
+            "AccountPayable": "800",
+            "TaxNumber": "",
+            "AdditionalAttribute1": "Black",
+            "AdditionalAttribute2": "True",
+            "AdditionalAttribute3": "Test string",
+            "AdditionalAttribute4": "",
+            "AdditionalAttribute5": "",
+            "AdditionalAttribute6": "",
+            "AdditionalAttribute7": "",
+            "AdditionalAttribute8": "",
+            "AdditionalAttribute9": "",
+            "AdditionalAttribute10": "",
+            "AttributeSet": "Test set",
+            "Status": "Active",
+            "LastModifiedOn": "2018-02-02T03:37:30.39Z",
+            "Addresses": [
+                {
+                    "ID": "fc0029cb-8449-4588-8b75-6e52625fa593",
+                    "SupplierID": "f45935e6-e77f-4319-ab51-5c2e79153737",
+                    "Line1": "PUT TEST address",
+                    "Line2": "",
+                    "City": null,
+                    "State": null,
+                    "Postcode": null,
+                    "Country": "Australia",
+                    "Type": "Shipping",
+                    "DefaultForType": false
+                }
+            ],
+            "Contacts": [
+                {
+                    "ID": "96af9b70-d9cd-4f05-af47-e404d4ed7129",
+                    "SupplierID": "f45935e6-e77f-4319-ab51-5c2e79153737",
+                    "Name": "PUT TEST contact",
+                    "Phone": "",
+                    "MobilePhone": "",
+                    "Fax": "",
+                    "Email": "",
+                    "Website": "",
+                    "Default": false,
+                    "Comment": "",
+                    "IncludeInEmail": false
+                }
+            ]
+        }
+    ]
+}

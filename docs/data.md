@@ -49,6 +49,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | Parent | Models | Required in every model |
   |---|---|---|
   | `AbstractCustomerData` | `CustomerData`, `CustomerPostData`, `CustomerPutData` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule` |
+  | `AbstractSupplierData` | `SupplierData`, `SupplierPostData`, `SupplierPutData` | `Name`, `Currency`, `PaymentTerm`, `AccountPayable`, `TaxRule` |
   | `AbstractMoneyTaskData` | `MoneyTaskData`, `MoneyTaskPostData`, `MoneyTaskPutData` | `TaskType`, `Status`, `BankAccount`, `Date` |
   | `AbstractTaxData` | `TaxData`, `TaxPostData`, `TaxPutData` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
   | `AbstractProductData` | `ProductData`, `ProductPostData`, `ProductPutData` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`; and `QuantityToProduce` and `AssemblyCostEstimationMethod` on a write body with a bill of materials (see [products](#products)) |
@@ -77,7 +78,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
 - **A required field has no default.** It is not nullable, and the model cannot be built
   without it: `from()` throws a `Hypervel\Data\Exceptions\CannotCreateData`. Required fields
   come first in the constructor. Every class requires the fields its table does (see
-  [customers](#customers), [products](#products), [tax rules and money
+  [customers](#customers), [suppliers](#suppliers), [products](#products), [tax rules and money
   tasks](#tax-rules-and-money-tasks) and
   [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)), as do
   the parents above; the Money Task List and Customer Credits tables require none. Where the
@@ -167,6 +168,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | Path | Request body (POST/PUT) | `dto()` |
 |---|---|---|
 | `customer` | POST: `CustomerPostData`; PUT: `CustomerPutData`, which also requires `ID` (Customer, with `Addresses`: `CustomerAddressData`, `Contacts`: `CustomerContactData` and `ProductPrices`: `ProductPriceData`, Customer specific Product Price Model) | GET: `list<CustomerData>`; POST, PUT: `CustomerData`, the saved customer (`CustomerList.0`); responses add `ChildCustomers`: `ChildCustomerData` |
+| `supplier` | POST: `SupplierPostData`; PUT: `SupplierPutData`, which also requires `ID` (Supplier, with `Addresses`: `CustomerAddressData` and `Contacts`: `CustomerContactData`, the Supplier Address and Contact Models the customer shares) | GET: `list<SupplierData>`; POST, PUT: `SupplierData`, the saved supplier (`SupplierList.0`) |
 | `product` | POST: `ProductPostData`, which also requires `Type`; PUT: `ProductPutData`, which also requires `ID` (Product, with `Suppliers`: `ProductSupplierData` and its `ProductSupplierOptions`: `ProductSupplierOptionData` and `SupplyIntervals`: `ProductSupplierOptionIntervalData`, `ReorderLevels`: `ReorderLevelData`, `BillOfMaterialsProducts`: `BillOfMaterialProductData`, `BillOfMaterialsServices`: `BillOfMaterialServiceData`, `Movements`: `ProductMovementData`, `Attachments`: `AttachmentLineData` and `CustomPrices`: `ProductPriceData`) | GET: `list<ProductData>`; POST, PUT: `ProductData`, the saved product (`Products.0`) |
 | `ref/tax` | POST: `TaxPostData`; PUT: `TaxPutData`, which also requires `ID` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
@@ -265,16 +267,30 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   those properties admit `null`.
 - **Customer `AdditionalAttribute#`.** The table lists one row, "# - int(1-10)", with no
   length. On the wire these are ten keys, `AdditionalAttribute1` to `AdditionalAttribute10`,
-  which the customer classes, `ProductData` and `AdditionalAttributeData` take from the
-  `HasAdditionalAttributes` trait. The Product table and the Additional Attribute Model give
-  each 256 characters, and the trait applies that limit to all three.
+  which the customer and supplier classes, `ProductData` and `AdditionalAttributeData` take from
+  the `HasAdditionalAttributes` trait. The Product table and the Additional Attribute Model give
+  each 256 characters, and the trait applies that limit to all of them. The Supplier table's row
+  is the same.
 - **Customer `TaxNumber`.** The table types it `Int`, but every example has `""` or `null`, so
   it is a nullable string. `Discount` and `CreditLimit` are `int`, as the table types them.
 - **Customer `ID` and `Status`.** The table marks `ID` required, but the POST example has none,
   since Cin7 assigns it, so `CustomerPostData` has no `ID`. `Status` is required for POST only,
   so `CustomerData` and `CustomerPutData` leave it optional.
 - **Customer addresses and contacts.** The examples also send `CustomerID` on each address
-  and contact, and `JobTitle` on each contact; the classes model them.
+  and contact, and `JobTitle` on each contact; the classes model them. The supplier shares
+  them (Supplier Address Model and Supplier Contact Model are one table each, headed
+  Supplier/Customer), and its PUT response sends `SupplierID` on each, which the classes model
+  too.
+- **Supplier `ID` and `Status`.** The table marks `ID` required, but the POST example has none,
+  since Cin7 assigns it, so `SupplierPostData` has no `ID` and `SupplierPutData` requires it.
+  `Status` is `Yes*` with no condition, unlike the customer's "Required for POST", so every
+  supplier class leaves it optional; its values, `Active` and `Deprecated`, are `RecordStatus`.
+- **Supplier `TaxNumber`.** As on the customer, the table types it `Int`, but the examples
+  send `""` and `null`, so it is a nullable string. `Discount` is `int`, as the table types it.
+- **Supplier `LastModifiedOn`.** The table types it `String` and does not mark it read-only,
+  but it is the date of the last change, which Cin7 stamps (the customer's table marks the same
+  field `DateTime`, read-only), and no request example sends it. It is on `SupplierData` alone,
+  with `#[DateTime]`, and `PostSupplier` and `PutSupplier` leave it out of an array body.
 - **One class for two price models.** Product's Custom Price and Customer's Product Price are
   the same Customer specific Product Price Model, so `ProductPriceData` serves both. Its
   footnote requires `ProductID` or `ProductSKU`, and `CustomerID` or `CustomerName`, and a write
@@ -369,7 +385,8 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   a delete names what it deletes, so `DeleteSaleAttachment` requires it. The POST example's base64
   `Content` is a 62 KB image; the fixture keeps its first 32 characters.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
-  `Cin7Payloads`, not copied verbatim.
+  `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
+  removed in its fixture.
 
 ## Customers
 
@@ -387,6 +404,22 @@ required on different verbs. Each class requires:
 
 `LastModifiedOn` (read-only) and `ChildCustomers` (responses only) are on `CustomerData` alone.
 A response missing a required field fails `dto()` with a `CannotCreateData`.
+
+## Suppliers
+
+`supplier` follows the Supplier table, with a class per verb because `ID` is taken by PUT and the
+response only. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `SupplierData` (response) | `src/Data/Supplier/` | `Name`, `Currency`, `PaymentTerm`, `AccountPayable`, `TaxRule`, `ID` |
+| `SupplierPostData` | `src/Data/Supplier/` | `Name`, `Currency`, `PaymentTerm`, `AccountPayable`, `TaxRule` |
+| `SupplierPutData` | `src/Data/Supplier/` | `Name`, `Currency`, `PaymentTerm`, `AccountPayable`, `TaxRule`, `ID` |
+
+Its `Addresses` and `Contacts` are the customer's `CustomerAddressData` and
+`CustomerContactData`, from `src/Data/Other/` (see [customers](#customers)). `LastModifiedOn` is
+on `SupplierData` alone. A response missing a required field fails `dto()` with a
+`CannotCreateData`.
 
 ## Products
 
