@@ -11,6 +11,7 @@ use Ipsocode\Cin7\Resources\AdvancedPurchase\PaymentResource as AdvancedPurchase
 use Ipsocode\Cin7\Resources\AdvancedPurchase\PutAwayResource as AdvancedPurchasePutAwayResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource as AdvancedPurchaseStockResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
+use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -209,6 +210,29 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(PurchaseCreditNoteListResource::class, $connector->purchaseCreditNoteList());
         $this->assertNotSame($connector->purchaseList(), $connector->purchaseList());
         $this->assertNotSame($connector->purchaseCreditNoteList(), $connector->purchaseCreditNoteList());
+    }
+
+    public function testAdvancedSaleReturnsAFreshAdvancedSaleResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(AdvancedSaleResource::class, $connector->advancedSale());
+        $this->assertNotSame($connector->advancedSale(), $connector->advancedSale());
+    }
+
+    /**
+     * The advanced sale has no endpoints of its own: its sub-resources are the `sale/…` ones.
+     */
+    public function testAdvancedSaleReturnsTheSaleResourcesItSendsThrough(): void
+    {
+        $advancedSale = $this->connector()->advancedSale();
+
+        $this->assertInstanceOf(FulfilmentResource::class, $advancedSale->fulfilment());
+        $this->assertInstanceOf(InvoiceResource::class, $advancedSale->invoice());
+        $this->assertInstanceOf(CreditNoteResource::class, $advancedSale->creditNote());
+        $this->assertInstanceOf(PaymentResource::class, $advancedSale->payment());
+        $this->assertInstanceOf(ManualJournalResource::class, $advancedSale->manualJournal());
+        $this->assertNotSame($advancedSale->fulfilment(), $advancedSale->fulfilment());
     }
 
     public function testAdvancedPurchaseReturnsAFreshAdvancedPurchaseResource(): void
