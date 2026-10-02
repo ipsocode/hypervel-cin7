@@ -29,6 +29,7 @@ NAMED_BY_TITLE = {'production/productionBOM'}
 
 # Field tables named apart from their anchor or heading, keyed by (owner, heading): a wrong or
 # generic heading, a plural heading for one record, a keyed envelope (plural), a trait or an enum.
+# The owner is the resource's path, or its anchor where two resources share a path.
 TABLES = {
     ('ref/account/bank', 'Available Fields for Bank Accounts'): ['BankAccountData'],
     ('ref/account', 'Available Fields for Chart of Accounts'): ['AccountData'],
@@ -40,9 +41,10 @@ TABLES = {
     ('product/attachments', 'Available fields for POST Methods'): ['ProductAttachmentPostData'],
     ('productFamily/attachments', 'Available fields for POST Methods'): ['ProductFamilyAttachmentPostData'],
     ('ref/markupprices', 'Markup Prices Model'): ['MarkupPricesData'],
-    ('production/productionBOM', 'Available Fields for Production BOM Operation'): ['ProductFamilyProductionBomOperationData'],
+    ('reference/production/product-family-production-bom', 'Available Fields for Production BOM Operation'): ['ProductFamilyProductionBomOperationData'],
     ('production/orderList', 'Available Fields for Production Order List Item'): ['ProductionOrderListData'],
     ('purchase/stock', 'Available Fields for Purchase Stock Received'): ['PurchaseStockData'],
+    ('advanced-purchase', 'Purchase POST/PUT Attributes'): ['AdvancedPurchasePostData', 'AdvancedPurchasePutData'],
     ('purchase/payment', 'Available Fields for Purchase Payments'): ['PurchasePaymentData'],
     ('purchase/attachment', 'Available fields for Purchase Attachments'): ['PurchaseAttachmentsData'],
     ('purchase/attachment', 'Available fields for POST Methods'): ['PurchaseAttachmentPostData'],
@@ -130,8 +132,10 @@ def subject(heading):
     return re.sub(r'(?i)\s+model$', '', h).strip()
 
 
-def table_classes(table, owner_path, resource_model):
+def table_classes(table, owner_path, resource_model, owner_anchor=None):
     """The classes a field table becomes."""
+    if (owner_anchor, table['heading']) in TABLES:
+        return TABLES[(owner_anchor, table['heading'])]
     key = (owner_path, table['anchors'][0] if owner_path == 'Other Models' and table['anchors'] else table['heading'])
     if key in TABLES:
         return TABLES[key]
@@ -185,7 +189,7 @@ def build():
     for res in resources:
         model = bp.pascal(subject(res['tables'][0]['heading'])) if res['tables'] else bp.pascal(res['title'])
         for t in res['tables']:
-            t['classes'] = table_classes(t, res['path'], model)
+            t['classes'] = table_classes(t, res['path'], model, res['anchor'])
         # Every model the resource's tables and text link to, and theirs in turn.
         seen, todo = set(), [f['ref'] for t in res['tables'] for f in t['fields'] if f['ref']] + sorted(res['links'])
         while todo:
