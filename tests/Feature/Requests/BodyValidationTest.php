@@ -13,6 +13,7 @@ use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
+use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackPostData;
@@ -30,6 +31,7 @@ use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Purchase\Order\PostPurchaseOrder;
+use Ipsocode\Cin7\Requests\Purchase\Stock\PostPurchaseStock;
 use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PostSaleFulfilmentPack;
@@ -193,6 +195,7 @@ class BodyValidationTest extends TestCase
             'quote POST' => [fn (): WriteRequest => new PostSaleQuote(SaleQuotePostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'VOIDED', 'Lines' => []]))],
             'manual journal POST' => [fn (): WriteRequest => new PostSaleManualJournal(SaleManualJournalPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Status' => 'NOT AVAILABLE']))],
             'purchase order POST' => [fn (): WriteRequest => new PostPurchaseOrder(PurchaseOrderPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'VOIDED', 'Lines' => []]))],
+            'purchase stock POST' => [fn (): WriteRequest => new PostPurchaseStock(PurchaseStockPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'NOT AVAILABLE', 'Lines' => []]))],
         ];
     }
 
@@ -228,6 +231,31 @@ class BodyValidationTest extends TestCase
 
         $this->connector()->send(new PostSaleFulfilmentPick(SaleFulfilmentPickPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'AutoPickMode' => 'AUTOPICK'])));
         $this->connector()->send(new PutSaleFulfilmentPick(SaleFulfilmentPickPutData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'AutoPickMode' => 'AUTOPICK'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A received stock line needs its location, by name or by ID; a body with a line with neither
+     * is not sent, and either is enough.
+     */
+    public function testAReceivedStockLineNeedsItsLocation(): void
+    {
+        $stock = static fn (array $line): PurchaseStockPostData => PurchaseStockPostData::from([
+            'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136',
+            'Status' => 'DRAFT',
+            'Lines' => [['Date' => '2017-12-08T00:00:00', 'Quantity' => 3, 'SKU' => 'Bread'] + $line],
+        ]);
+
+        try {
+            $this->connector()->send(new PostPurchaseStock($stock([])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['Lines.0.Location', 'Lines.0.LocationID'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostPurchaseStock($stock(['Location' => 'Main Warehouse'])));
+        $this->connector()->send(new PostPurchaseStock($stock(['LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb'])));
 
         $this->mock->assertSentCount(2);
     }

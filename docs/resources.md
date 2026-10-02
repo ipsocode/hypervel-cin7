@@ -71,8 +71,9 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
-| `$cin7->purchase()` | `PurchaseResource` | `order()`, `payment()` |
+| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `payment()` |
 | `$cin7->purchase()->order()` | `Purchase\OrderResource` | `get(string $taskId, ?bool $combineAdditionalCharges = null)`, `post(array\|PurchaseOrderPostData $body)` |
+| `$cin7->purchase()->stock()` | `Purchase\StockResource` | `get(string $taskId)`, `post(array\|PurchaseStockPostData $body)` |
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -391,8 +392,8 @@ $this->cin7->sale()->fulfilment()->pick()->post(SaleFulfilmentPickPostData::from
 ## Purchase
 
 `$cin7->purchase()` is `purchase`, the simple purchase, and its documents are sub-resources below
-it, as the paths are: `->order()` and `->payment()` send `purchase/order` and `purchase/payment`.
-Each is read by the purchase's `TaskID`.
+it, as the paths are: `->order()`, `->stock()` and `->payment()` send `purchase/order`,
+`purchase/stock` and `purchase/payment`. Each is read by the purchase's `TaskID`.
 
 `$cin7->purchase()->order()` is `purchase/order`, a purchase's order. `get($taskId)` sends
 `purchase/order?TaskID=…`, and `combineAdditionalCharges: true` lists the additional charges in
@@ -423,6 +424,44 @@ $saved = $this->cin7->purchase()->order()->post(PurchaseOrderPostData::from([
         'Total' => 4.0,
     ]],
 ]))->dto(); // PurchaseOrderData
+```
+
+`$cin7->purchase()->stock()` is `purchase/stock`, a purchase's stock received, which the reference
+marks deprecated: it supports only simple purchases, and an advanced purchase's stock is on
+`advanced-purchase/stock` and `advanced-purchase/put-away`. `get($taskId)` sends
+`purchase/stock?TaskID=…`, and its `dto()` is a `PurchaseStockData`, with `Lines`
+(`PurchaseStockLineData`). `post()` takes a `PurchaseStockPostData` as well as an array and answers
+with the saved stock received, a `PurchaseStockData`. A stock POST needs `TaskID`, a `Status` of
+`DRAFT` or `AUTHORISED` and `Lines`, each with its `Date`, `Quantity` and a `Location` or
+`LocationID`; a line's read-only `Name` and `Received` are left out of the body. POST only adds
+lines: duplicates in one body become one line with their quantities summed, and a line matching an
+existing one's product, location, batch and expiry date is an error. `Status` `AUTHORISED` with
+empty `Lines` authorises the stock received. Cin7 rejects the POST unless the order is
+`AUTHORISED` and the stock received `DRAFT` or `NOT AVAILABLE`, and, for a purchase whose
+`Approach` is `INVOICE`, the invoice `AUTHORISED`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
+
+$stock = $this->cin7->purchase()->stock()->get($taskId)->dto(); // PurchaseStockData
+
+$saved = $this->cin7->purchase()->stock()->post(PurchaseStockPostData::from([
+    'TaskID' => $taskId,
+    'Status' => 'DRAFT',
+    'Lines' => [[
+        'Date' => '2017-12-08T00:00:00',
+        'Quantity' => 3.0,
+        'SKU' => 'Bread',
+        'Location' => 'Main Warehouse',
+        'BatchSN' => 'PO-00001-1',
+    ]],
+]))->dto(); // PurchaseStockData
+
+$this->cin7->purchase()->stock()->post(PurchaseStockPostData::from([
+    'TaskID' => $taskId,
+    'Status' => 'AUTHORISED',
+    'Lines' => [],
+])); // authorises the stock received
 ```
 
 `$cin7->purchase()->payment()` is `purchase/payment`, a purchase's payments, which the reference

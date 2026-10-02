@@ -1,0 +1,20 @@
+{
+    "TaskID": "02b08cd2-51d2-41e6-ab97-85bcd13e7136",
+    "Status": "DRAFT",
+    "Lines": [
+        {
+            "Date": "2017-12-08T00:00:00",
+            "Quantity": 3,
+            "ProductID": "c08b3876-89cc-46c4-af52-b77f058fdf81",
+            "SKU": "Bread",
+            "Name": "Baked Bread",
+            "Location": "Main Warehouse",
+            "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Received": false,
+            "BatchSN": "PO-00001-1",
+            "SupplierSKU": "",
+            "ExpiryDate": "2017-11-28T00:00:00",
+            "CardID": "3bc7212b-5ff1-4970-9471-1e6d626065c3"
+        }
+    ]
+}
