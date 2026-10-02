@@ -71,10 +71,11 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
-| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `invoice()`, `payment()`, `manualJournal()`, `attachment()` |
+| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->purchase()->order()` | `Purchase\OrderResource` | `get(string $taskId, ?bool $combineAdditionalCharges = null)`, `post(array\|PurchaseOrderPostData $body)` |
 | `$cin7->purchase()->stock()` | `Purchase\StockResource` | `get(string $taskId)`, `post(array\|PurchaseStockPostData $body)` |
 | `$cin7->purchase()->invoice()` | `Purchase\InvoiceResource` | `get(string $taskId, …)`, `post(array\|PurchaseInvoicePostData $body)` |
+| `$cin7->purchase()->creditNote()` | `Purchase\CreditNoteResource` | `get(string $taskId, …)`, `post(array\|PurchaseCreditNotePostData $body)` |
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
@@ -510,6 +511,29 @@ $invoice = $this->cin7->purchase()->invoice()->get($taskId)->dto(); // PurchaseI
 
 $this->cin7->purchase()->invoice()->post(PurchaseInvoicePostData::from([
     ...$invoice->toArray(),
+    'Status' => 'AUTHORISED',
+]));
+```
+
+`$cin7->purchase()->creditNote()` is `purchase/creditnote`, a purchase's credit note, which the
+reference marks deprecated: it supports only simple purchases, and an advanced purchase's credit
+notes are on `advanced-purchase/creditnote`. `get($taskId)` sends `purchase/creditnote?TaskID=…`,
+and `combineAdditionalCharges: true` lists the additional charges in `Lines`. `post()` takes a
+`PurchaseCreditNotePostData` as well as an array. Both answer with the credit note, so `dto()` is a
+`PurchaseCreditNoteData`. A credit note POST needs `TaskID`, `CombineAdditionalCharges`,
+`CreditNoteNumber`, `CreditNoteDate`, a `Status` of `DRAFT` or `AUTHORISED`, `Lines` and `Unstock`,
+but no totals; each line needs its `Account` and `Total`, each additional charge its `Account`, and
+each unstock line its stock batch's `CardID` and `Quantity`. An unstock line's product, location,
+batch and expiry are read-only and left out of the body. Cin7 rejects the POST unless the invoice is
+`AUTHORISED` or `PAID` and the credit note is `DRAFT` or `NOT AVAILABLE`.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
+
+$creditNote = $this->cin7->purchase()->creditNote()->get($taskId)->dto(); // PurchaseCreditNoteData
+
+$this->cin7->purchase()->creditNote()->post(PurchaseCreditNotePostData::from([
+    ...$creditNote->toArray(),
     'Status' => 'AUTHORISED',
 ]));
 ```

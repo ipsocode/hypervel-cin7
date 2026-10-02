@@ -32,12 +32,12 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   (`ProductPriceData`, `CustomerAddressData`, `CustomerContactData`, `AttachmentLineData`,
   `ErrorData`, the `AddressData`, `AdditionalAttributeData`, `SalePaymentLineData` and
   `InventoryMovementLineData` a sale and a purchase both carry, and the
-  `PurchaseAdditionalChargeData` the simple and the advanced purchase share). An abstract
-  parent whose children span families stays in `src/Data/` itself (`AbstractLineData`,
-  `AbstractChargeData`, `AbstractAddressData`, `AbstractSalePaymentLineData`). The Money
-  Task's classes are in `src/Data/MoneyTask/`, like its requests (see
-  [resources](resources.md#conventions)). `src/Data/` holds nothing else: the traits the
-  models share are in `src/Concerns/` and the validation attribute in `src/Attributes/`.
+  `PurchaseAdditionalChargeData` and `PurchaseUnStockLineData` the simple and the advanced
+  purchase share). An abstract parent whose children span families stays in `src/Data/` itself
+  (`AbstractLineData`, `AbstractChargeData`, `AbstractAddressData`,
+  `AbstractSalePaymentLineData`). The Money Task's classes are in `src/Data/MoneyTask/`, like its
+  requests (see [resources](resources.md#conventions)). `src/Data/` holds nothing else: the traits
+  the models share are in `src/Concerns/` and the validation attribute in `src/Attributes/`.
 - **One class per model name.** Where the reference documents one name twice with
   different fields, the class carries the union. A request body gets its own class
   only where the reference documents one, or where the verbs need different fields.
@@ -69,6 +69,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
   | `AbstractPurchaseOrderData` | `PurchaseOrderData`, `PurchaseOrderPostData` | `Memo`, `Status`, `Lines` |
   | `AbstractPurchaseStockData` | `PurchaseStockData`, `PurchaseStockPostData` | `Status`, `Lines` |
+  | `AbstractPurchaseCreditNoteData` | `PurchaseCreditNoteData`, `PurchaseCreditNotePostData` | `CreditNoteNumber`, `CreditNoteDate`, `Status`, `Lines`, `Unstock` |
   | `AbstractPurchaseInvoiceData` | `PurchaseInvoiceData`, `PurchaseInvoicePostData` | `InvoiceDate`, `InvoiceDueDate`, `Status`, `Lines` |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
   | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData` | `Status` |
@@ -216,6 +217,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `purchase/order` | POST: `PurchaseOrderPostData` (Available Fields for Purchase Order, with `Lines`: `PurchaseOrderLineData` and `AdditionalCharges`: `PurchaseAdditionalChargeData`) | GET, POST: `PurchaseOrderData` |
 | `purchase/stock` | POST: `PurchaseStockPostData` (Available Fields for Purchase Stock Received, with `Lines`: `PurchaseStockLineData`) | GET, POST: `PurchaseStockData` |
 | `purchase/invoice` | POST: `PurchaseInvoicePostData` (Available Fields for Purchase Invoice, with `Lines`: `PurchaseInvoiceLineData` and `AdditionalCharges`: `PurchaseInvoiceAdditionalChargeData`) | GET, POST: `PurchaseInvoiceData`, the invoice (the table and the Purchase Invoice Model a purchase embeds, whose `Payments` are `SalePaymentLineData`) |
+| `purchase/creditnote` | POST: `PurchaseCreditNotePostData` (Available Fields for Purchase Credit Note, with `Lines`: `PurchaseInvoiceLineData`, `AdditionalCharges`: `PurchaseInvoiceAdditionalChargeData` and `Unstock`: `PurchaseUnStockLineData`) | GET, POST: `PurchaseCreditNoteData`, the credit note (the table and the Purchase Credit Note Model a purchase embeds, whose `Refunds` are `SalePaymentLineData`) |
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
 | `purchase/manualJournal` | POST: `PurchaseManualJournalPostData` (Available field for Purchase Manual Journal, with `Lines`: `PurchaseManualJournalLineData`) | GET, POST: `PurchaseManualJournalData` |
 | `purchase/attachment` | POST: `PurchaseAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `PurchaseAttachmentsData` (`{TaskID, Lines}`, with `Lines`: `AttachmentLineData`) |
@@ -472,6 +474,24 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   and has no `Payments` or `Paid`. Its notes call `InvoiceNumber` auto-generated, but, unlike the
   sale invoice's POST table, this table lists it and the POST example sends it, so the POST body
   takes it.
+- **Purchase Credit Note.** The reference documents the model twice: the Purchase Credit Note
+  Model a purchase embeds as its `CreditNote`, with `Refunds` (Sale Payment Line Model), and the
+  Available Fields for Purchase Credit Note table of `purchase/creditnote`, which adds `TaskID` and
+  `CombineAdditionalCharges`. `PurchaseCreditNoteData` carries the union, with the fields only one
+  of them has optional. `PurchaseCreditNotePostData` follows the table: it requires `TaskID` and
+  `CombineAdditionalCharges`, limits `Status` to `DRAFT` and `AUTHORISED`, takes the totals the
+  notes mark "Not required for POST" as optional, and has no `Refunds`. Unlike the sale credit
+  note's POST table, both tables require `CreditNoteNumber`, and the POST example sends it, so
+  every class requires it. Both tables type `Unstock` as a list of Purchase Unstock Line Models,
+  and the `purchase/creditnote` examples send a list, but the four `purchase` examples embed it as
+  an object, `{Status, Lines}`, and three of them send a `null` `CreditNoteDate`.
+  `PurchaseCreditNoteData` follows the tables, so it does not read the embedded credit notes: the
+  `purchase` resource decides how its `CreditNote` is modelled.
+- **Purchase unstock line.** The Purchase Unstock Line Model marks `ProductID`, `SKU`, `Name`,
+  `Location`, `BatchSN` and `ExpiryDate` read-only, but the `purchase/creditnote` POST example
+  sends them. `PurchaseUnStockLineData` models them, and `PostPurchaseCreditNote` leaves them out
+  of the body, which keeps the stock batch (`CardID`), `Date` and `Quantity`. The line carries a
+  `ProductID`, so it takes the product fields too (`HasProductFields`).
 - **Fulfilment pick and pack.** The Sale Fulfilment Pick and Pack tables, `sale/fulfilment/pick`
   and `/pack`, add the fulfilment's `TaskID` to the Pick Pack Model a fulfilment embeds;
   `SaleFulfilmentPickData` and `SaleFulfilmentPackData` model them and require it, and
@@ -761,6 +781,24 @@ deprecated: it supports only simple purchases. Each class requires:
 named for, though the purchase and advanced purchase credit notes and the advanced purchase's
 invoices use them too. A response missing a required field fails `dto()` with a
 `CannotCreateData`.
+
+`purchase/creditnote` follows the Available Fields for Purchase Credit Note table and the
+Purchase Credit Note Model, with a POST class because POST requires `TaskID` and
+`CombineAdditionalCharges` and takes only a `DRAFT` or `AUTHORISED` `Status` (see
+[above](#where-the-references-tables-and-examples-disagree)). The reference marks the endpoint
+deprecated: it supports only simple purchases. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `PurchaseCreditNoteData` (response) | `src/Data/Purchase/CreditNote/` | `CreditNoteNumber`, `CreditNoteDate`, `Status`, `Lines`, `Unstock` |
+| `PurchaseCreditNotePostData` | `src/Data/Purchase/CreditNote/` | `CreditNoteNumber`, `CreditNoteDate`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `Unstock`, `TaskID`, `CombineAdditionalCharges` |
+| `PurchaseUnStockLineData` | `src/Data/Other/` | `CardID`, `Quantity` |
+
+`Status` is a `TaskStatus`, whose values are the table's. The lines and additional charges are the
+invoice's `PurchaseInvoiceLineData` and `PurchaseInvoiceAdditionalChargeData` (see above), and
+`Refunds` the shared `SalePaymentLineData`. `PurchaseUnStockLineData` is in `src/Data/Other/`, as
+the advanced purchase's credit notes use it too. A response missing a required field fails `dto()`
+with a `CannotCreateData`.
 
 `purchase/manualJournal` follows the Purchase Manual Journal Model and the table of its path, with a
 POST class because only POST requires `TaskID` and limits `Status` (see
