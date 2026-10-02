@@ -16,6 +16,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\AbstractAddressData;
 use Ipsocode\Cin7\Data\AbstractChargeData;
 use Ipsocode\Cin7\Data\AbstractLineData;
+use Ipsocode\Cin7\Data\AbstractManualJournalLineData;
 use Ipsocode\Cin7\Data\AbstractPurchaseListData;
 use Ipsocode\Cin7\Data\AbstractSaleListData;
 use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
@@ -33,6 +34,8 @@ use Ipsocode\Cin7\Data\Other\ErrorData;
 use Ipsocode\Cin7\Data\Product\AbstractProductData;
 use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
+use Ipsocode\Cin7\Data\Purchase\ManualJournal\AbstractPurchaseManualJournalData;
+use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalData;
 use Ipsocode\Cin7\Data\Purchase\Order\AbstractPurchaseOrderData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderData;
 use Ipsocode\Cin7\Data\Purchase\Payment\AbstractPurchasePaymentData;
@@ -419,6 +422,7 @@ class DataCatalogueTest extends TestCase
             AbstractAddressData::class,
             AbstractChargeData::class,
             AbstractLineData::class,
+            AbstractManualJournalLineData::class,
             AbstractPurchaseListData::class,
             AbstractSaleListData::class,
             AbstractSalePaymentLineData::class,
@@ -427,6 +431,7 @@ class DataCatalogueTest extends TestCase
             AbstractMeContactData::class,
             AbstractMoneyTaskData::class,
             AbstractProductData::class,
+            AbstractPurchaseManualJournalData::class,
             AbstractPurchaseOrderData::class,
             AbstractPurchasePaymentData::class,
             AbstractPurchaseStockData::class,
@@ -486,7 +491,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }

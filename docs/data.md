@@ -70,9 +70,11 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractPurchaseOrderData` | `PurchaseOrderData`, `PurchaseOrderPostData` | `Memo`, `Status`, `Lines` |
   | `AbstractPurchaseStockData` | `PurchaseStockData`, `PurchaseStockPostData` | `Status`, `Lines` |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
+  | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData` | `Status` |
   | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`, `PurchaseOrderLineData`; shaped to serve the other purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`, `PurchaseAdditionalChargeData`; shaped to serve the purchase invoice charge model too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` | none |
+  | `AbstractManualJournalLineData` | `SaleManualJournalLineData`, `PurchaseManualJournalLineData` | `Amount`, `Date`, `Debit`, `Credit` |
   | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData` | `Line1`, `Country` |
 
   The line and charge requirements hold in the purchase tables as well, so a purchase model
@@ -212,6 +214,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `purchase/order` | POST: `PurchaseOrderPostData` (Available Fields for Purchase Order, with `Lines`: `PurchaseOrderLineData` and `AdditionalCharges`: `PurchaseAdditionalChargeData`) | GET, POST: `PurchaseOrderData` |
 | `purchase/stock` | POST: `PurchaseStockPostData` (Available Fields for Purchase Stock Received, with `Lines`: `PurchaseStockLineData`) | GET, POST: `PurchaseStockData` |
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
+| `purchase/manualJournal` | POST: `PurchaseManualJournalPostData` (Available field for Purchase Manual Journal, with `Lines`: `PurchaseManualJournalLineData`) | GET, POST: `PurchaseManualJournalData` |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
 `SaleData` nests one class per model, each in the folder of the sale path it belongs to:
@@ -422,6 +425,17 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   stamps on the payment record: the POST response's `DateCreated` is not the one its request sent.
   The POST and PUT examples send it, so the classes model it and the requests leave it out of the
   body.
+- **Purchase manual journal.** As with the sale's, the Available field for Purchase Manual Journal
+  table of `purchase/manualJournal` adds the purchase's `TaskID` to the Purchase Manual Journal
+  Model a purchase embeds, so `PurchaseManualJournalData` serves both, with `TaskID` optional.
+  `PurchaseManualJournalPostData` requires it and limits `Status` to `DRAFT` and `AUTHORISED`. A
+  voided purchase's example sends `VOIDED`, which the tables do not list; `Status` is the larger
+  `TaskStatus`, which has it. The line tables agree but for the purchase's read-only `IsSystem`, so
+  `SaleManualJournalLineData` and `PurchaseManualJournalLineData` share
+  `AbstractManualJournalLineData`; the journals key on `SaleID` and `TaskID` and carry different
+  line models, so they keep a parent per family. The POST example sends `IsSystem`, so
+  `PurchaseManualJournalLineData` models it and `PostPurchaseManualJournal` leaves it out of the
+  body. The reference marks the endpoint deprecated (simple purchases only).
 - **Auto-generated numbers.** The invoice and credit note POST tables have no `InvoiceNumber`
   or `CreditNoteNumber` (Cin7 generates them), so the POST classes leave them out.
 - **Fulfilment pick and pack.** The Sale Fulfilment Pick and Pack tables, `sale/fulfilment/pick`
@@ -688,3 +702,16 @@ because `ID`, `Type`, `DepositID`, `Amount` and `Account` are taken by different
 `Type` is a string, and `DepositID`, which takes a payment from a supplier deposit and goes only
 with `Type` `PAYMENT`, is on the response and the POST body. `DateCreated` is on every class and
 never sent. A response missing a required field fails `dto()` with a `CannotCreateData`.
+
+`purchase/manualJournal` follows the Purchase Manual Journal Model and the table of its path, with a
+POST class because only POST requires `TaskID` and limits `Status` (see
+[above](#where-the-references-tables-and-examples-disagree)). Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `PurchaseManualJournalData` (response, and a purchase's `ManualJournals`) | `src/Data/Purchase/ManualJournal/` | `Status` |
+| `PurchaseManualJournalPostData` | `src/Data/Purchase/ManualJournal/` | `Status` (`DRAFT` or `AUTHORISED`), `TaskID` |
+| `PurchaseManualJournalLineData` | `src/Data/Purchase/ManualJournal/` | `Amount`, `Date`, `Debit`, `Credit` |
+
+`PurchaseManualJournalLineData` is the advanced purchase's journal line too. Its `IsSystem` marks a
+line Cin7 posted, which cannot be changed or deleted, and is never sent.

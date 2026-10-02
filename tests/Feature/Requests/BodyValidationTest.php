@@ -12,6 +12,7 @@ use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
@@ -30,6 +31,7 @@ use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Purchase\ManualJournal\PostPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\Purchase\Order\PostPurchaseOrder;
 use Ipsocode\Cin7\Requests\Purchase\Stock\PostPurchaseStock;
 use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
@@ -196,6 +198,7 @@ class BodyValidationTest extends TestCase
             'manual journal POST' => [fn (): WriteRequest => new PostSaleManualJournal(SaleManualJournalPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Status' => 'NOT AVAILABLE']))],
             'purchase order POST' => [fn (): WriteRequest => new PostPurchaseOrder(PurchaseOrderPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'VOIDED', 'Lines' => []]))],
             'purchase stock POST' => [fn (): WriteRequest => new PostPurchaseStock(PurchaseStockPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'NOT AVAILABLE', 'Lines' => []]))],
+            'purchase manual journal POST' => [fn (): WriteRequest => new PostPurchaseManualJournal(PurchaseManualJournalPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'VOIDED']))],
         ];
     }
 
