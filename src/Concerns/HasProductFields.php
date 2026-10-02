@@ -11,6 +11,10 @@ use Hypervel\Data\Attributes\Validation\Max;
  * contain ProductID also contain additional fields". The sale line, pick and pack line and
  * inventory movement classes take them from here.
  *
+ * `WeightUnits` and `DimensionsUnits` take an abbreviation from the reference's Dimension Unit
+ * Available Values (`g`, `kg`, `cm`, `in`, …), but are strings, not enums: most examples send
+ * `""`.
+ *
  * @see docs/data.md
  */
 trait HasProductFields

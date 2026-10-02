@@ -88,7 +88,7 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
 Each is built with the first resource here that uses it; a ticked one is built, and moves to
 `src/Data/Other/` when a second family uses it.
 
-- [ ] DimensionUnitAvailableValues: `enum WeightUnit`, `enum DimensionUnit` · used by me, product, purchase, advanced-purchase, sale
+- [x] DimensionUnitAvailableValues: no enum: `WeightUnits` and `DimensionsUnits` stay strings in `HasProductFields` · used by me, product, purchase, advanced-purchase, sale
 - [x] AddressModel: `AddressData` · used by purchase, advanced-purchase, sale
 - [ ] PurchaseShippingAddressModel: `PurchaseShippingAddressData` · used by purchase, advanced-purchase
 - [x] AdditionalAttributeModel: `AdditionalAttributeData` · used by purchase, advanced-purchase, sale

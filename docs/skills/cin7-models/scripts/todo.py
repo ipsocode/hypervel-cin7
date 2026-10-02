@@ -32,6 +32,7 @@ def label(t, r):
 
 groups, resources, classes = names.build()
 price_tiers_map = 'PriceTiers' in (names.SRC / 'Data/Product/AbstractProductData.php').read_text()
+unit_strings = '?string $WeightUnits' in (names.SRC / 'Concerns/HasProductFields.php').read_text()
 out = [
     '# TODO: the rest of the Cin7 V2 reference',
     '',
@@ -56,10 +57,14 @@ out = [
 def cls_built(c):
     if c.startswith('map'):
         return price_tiers_map
+    if c.startswith('strings'):
+        return unit_strings
     return (c.split(' ', 1)[1] if c.startswith(('trait ', 'enum ')) else c) in classes
 
 
 def cls_label(c):
+    if c.startswith('strings'):
+        return 'no enum: `WeightUnits` and `DimensionsUnits` stay strings in `HasProductFields`'
     return 'no class: a map of tier names to prices' if c.startswith('map') else f'`{c}`'
 
 
@@ -103,6 +108,8 @@ other = groups['Other Models']['models']
 def built(t):
     if t['classes'][0].startswith('map'):
         return price_tiers_map
+    if t['classes'][0].startswith('strings'):
+        return unit_strings
     return all((c.split(' ', 1)[1] if c.startswith(('trait ', 'enum ')) else c) in classes for c in t['classes'])
 
 

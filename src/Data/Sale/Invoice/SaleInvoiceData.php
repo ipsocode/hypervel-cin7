@@ -6,7 +6,7 @@ namespace Ipsocode\Cin7\Data\Sale\Invoice;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Ipsocode\Cin7\Attributes\DateTime;
-use Ipsocode\Cin7\Data\Sale\SalePaymentLineData;
+use Ipsocode\Cin7\Data\Other\SalePaymentLineData;
 use Ipsocode\Cin7\Enums\InvoiceStatus;
 
 /**

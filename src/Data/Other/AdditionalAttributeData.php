@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Sale;
+namespace Ipsocode\Cin7\Data\Other;
 
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Concerns\HasAdditionalAttributes;

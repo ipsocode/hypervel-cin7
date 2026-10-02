@@ -13,9 +13,11 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Data\AbstractAddressData;
 use Ipsocode\Cin7\Data\AbstractChargeData;
 use Ipsocode\Cin7\Data\AbstractLineData;
 use Ipsocode\Cin7\Data\AbstractSaleListData;
+use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
 use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\MoneyTask\AbstractMoneyTaskData;
@@ -28,9 +30,7 @@ use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Data\Ref\Tax\AbstractTaxData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
-use Ipsocode\Cin7\Data\Sale\AbstractAddressData;
 use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
-use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentsData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePaymentData;
@@ -401,16 +401,16 @@ class DataCatalogueTest extends TestCase
         }
 
         $this->assertSame([
+            AbstractAddressData::class,
             AbstractChargeData::class,
             AbstractLineData::class,
             AbstractSaleListData::class,
+            AbstractSalePaymentLineData::class,
             AbstractCustomerData::class,
             AbstractMoneyTaskData::class,
             AbstractProductData::class,
             AbstractTaxData::class,
-            AbstractAddressData::class,
             AbstractSaleData::class,
-            AbstractSalePaymentLineData::class,
             AbstractSaleCreditNoteData::class,
             AbstractSaleFulfilmentPickPackTaskData::class,
             AbstractSaleFulfilmentShipTaskData::class,

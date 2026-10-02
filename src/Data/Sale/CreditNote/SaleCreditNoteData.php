@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
-use Ipsocode\Cin7\Data\Sale\SalePaymentLineData;
+use Ipsocode\Cin7\Data\Other\SalePaymentLineData;
 use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**

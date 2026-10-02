@@ -63,7 +63,7 @@ TABLES = {
     ('transactions', 'Available fields for Transactions'): ['TransactionData'],
     ('webhooks', 'Available fields for Webhooks'): ['WebhookData'],
     ('crm/opportunity', 'Available Fields for Opportunity Opportunity Additional Charge'): ['OpportunityAdditionalChargeData'],
-    ('Other Models', 'DimensionUnitAvailableValues'): ['enum WeightUnit', 'enum DimensionUnit'],
+    ('Other Models', 'DimensionUnitAvailableValues'): ['strings: HasProductFields\' WeightUnits and DimensionsUnits; no enum, the examples send ""'],
     ('Other Models', 'PriceTierModel'): ['map: the product\'s PriceTiers, tier name to price; no class'],
     ('Other Models', 'SupplierAddressModel'): ['CustomerAddressData'],
     ('Other Models', 'SupplierContactModel'): ['CustomerContactData'],
