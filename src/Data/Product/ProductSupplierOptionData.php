@@ -6,11 +6,14 @@ namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
- * Product Supplier Options Model, one entry of a product supplier's `ProductSupplierOptions`.
+ * Product Supplier Options Model, one entry of a product supplier's `ProductSupplierOptions`. Its
+ * location is named by `LocationID` or `LocationName`, so a write body without either fails
+ * validation.
  *
  * @see docs/data.md
  */
@@ -22,8 +25,10 @@ final class ProductSupplierOptionData extends Data
     public function __construct(
         #[Uuid]
         public ?string $ID = null,
+        #[RequiredWithout('LocationName')]
         #[Uuid]
         public ?string $LocationID = null,
+        #[RequiredWithout('LocationID')]
         #[Max(256)]
         public ?string $LocationName = null,
         public ?float $ReorderQuantity = null,

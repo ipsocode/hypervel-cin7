@@ -10,7 +10,8 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use InvalidArgumentException;
-use Ipsocode\Cin7\Data\Product\ProductData;
+use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Product\ProductPutData;
 use Ipsocode\Cin7\Data\Sale\SalePutData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
@@ -128,12 +129,13 @@ class RequestCatalogueTest extends TestCase
         $this->connector()->send(new PostProduct(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SKU' => 'Bread']));
         $this->assertSame(['SKU' => 'Bread'], $this->mock->lastPendingRequest()?->body());
 
-        $this->connector()->send(new PostProduct(ProductData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SKU' => 'Bread'])));
-        $this->assertSame(['SKU' => 'Bread'], $this->mock->lastPendingRequest()?->body());
+        // ProductPostData has no ID, so from() drops it.
+        $this->connector()->send(new PostProduct(ProductPostData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'] + Cin7Payloads::load('product', 'post.request'))));
+        $this->assertArrayNotHasKey('ID', $this->mock->lastPendingRequest()?->body());
     }
 
     /**
-     * @param array<string, mixed>|Closure(): ProductData $body
+     * @param array<string, mixed>|Closure(): ProductPutData $body
      */
     #[DataProvider('productPutWithoutIdProvider')]
     public function testPutProductNeedsTheId(array|Closure $body): void
@@ -144,7 +146,7 @@ class RequestCatalogueTest extends TestCase
     }
 
     /**
-     * @return array<string, array{array<string, mixed>|Closure(): ProductData}>
+     * @return array<string, array{array<string, mixed>|Closure(): ProductPutData}>
      */
     public static function productPutWithoutIdProvider(): array
     {
@@ -152,7 +154,7 @@ class RequestCatalogueTest extends TestCase
             'array without ID' => [['Name' => 'Widget']],
             'array with empty ID' => [['ID' => '', 'Name' => 'Widget']],
             'array with null ID' => [['ID' => null]],
-            'data without ID' => [fn (): ProductData => ProductData::from(['Name' => 'Widget'])],
+            'data with empty ID' => [fn (): ProductPutData => ProductPutData::from(['ID' => ''] + Cin7Payloads::load('product', 'put.request'))],
         ];
     }
 

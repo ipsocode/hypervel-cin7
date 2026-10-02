@@ -60,7 +60,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | Accessor | Resource | Methods |
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
-| `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductData $body)`, `put(array\|ProductData $body)` |
+| `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskData $body)`, `put(array\|MoneyTaskData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -124,12 +124,14 @@ foreach ($this->cin7->product()->paginate(includeDeprecated: false)->items() as 
 `BillOfMaterialsProducts` (`BillOfMaterialProductData`), `BillOfMaterialsServices`
 (`BillOfMaterialServiceData`), `Movements` (`ProductMovementData`), `Attachments`
 (`AttachmentLineData`) and `CustomPrices` (`ProductPriceData`). `PriceTiers` is a plain
-`array<string, float>` keyed by the account's tier names. `post()` and `put()` accept a
-`ProductData` as well as an array, and their `dto()` is the saved `ProductData`.
+`array<string, float>` keyed by the account's tier names. `post()` takes a `ProductPostData` and
+`put()` a `ProductPutData` as well as an array, and their `dto()` is the saved `ProductData`.
 
 ```php
-$saved = $this->cin7->product()->put(ProductData::from([
-    'ID' => $guid,
+$product = $this->cin7->product()->get(id: $guid)->dto()[0]; // ProductData
+
+$saved = $this->cin7->product()->put(ProductPutData::from([
+    ...$product->toArray(),
     'PriceTiers' => ['Tier 1' => 8.0],
 ]))->dto(); // ProductData
 ```

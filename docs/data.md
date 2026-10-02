@@ -43,6 +43,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | Parent | Models | Required in every model |
   |---|---|---|
   | `AbstractCustomerData` | `CustomerData`, `CustomerPostData`, `CustomerPutData` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule` |
+  | `AbstractProductData` | `ProductData`, `ProductPostData`, `ProductPutData` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`; and `QuantityToProduce` and `AssemblyCostEstimationMethod` on a write body with a bill of materials (see [products](#products)) |
   | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
@@ -62,11 +63,11 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   mapper, so `toArray()` is the JSON Cin7 expects.
 - **A required field has no default.** It is not nullable, and the model cannot be built
   without it: `from()` throws a `Hypervel\Data\Exceptions\CannotCreateData`. Required fields
-  come first in the constructor. So far the customer and sale classes require the reference's
-  fields (see [customers](#customers) and
+  come first in the constructor. So far the customer, product and sale classes require the
+  reference's fields (see [customers](#customers), [products](#products) and
   [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)), as do
-  the parents above; the product, tax and money models keep every field optional. Where the
-  reference requires different fields per verb, the body is a class per verb.
+  the parents above; the tax and money models keep every field optional. Where the reference
+  requires different fields per verb, the body is a class per verb.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
   key for every field, `null` where the response had none or sent `null`.
@@ -152,7 +153,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | Path | Request body (POST/PUT) | `dto()` |
 |---|---|---|
 | `customer` | POST: `CustomerPostData`; PUT: `CustomerPutData`, which also requires `ID` (Customer, with `Addresses`: `CustomerAddressData`, `Contacts`: `CustomerContactData` and `ProductPrices`: `ProductPriceData`, Customer specific Product Price Model) | GET: `list<CustomerData>`; POST, PUT: `CustomerData`, the saved customer (`CustomerList.0`); responses add `ChildCustomers`: `ChildCustomerData` |
-| `product` | `ProductData` (Product, with `Suppliers`: `ProductSupplierData` and its `ProductSupplierOptions`: `ProductSupplierOptionData` and `SupplyIntervals`: `ProductSupplierOptionIntervalData`, `ReorderLevels`: `ReorderLevelData`, `BillOfMaterialsProducts`: `BillOfMaterialProductData`, `BillOfMaterialsServices`: `BillOfMaterialServiceData`, `Movements`: `ProductMovementData`, `Attachments`: `AttachmentLineData` and `CustomPrices`: `ProductPriceData`) | GET: `list<ProductData>`; POST, PUT: `ProductData`, the saved product (`Products.0`) |
+| `product` | POST: `ProductPostData`, which also requires `Type`; PUT: `ProductPutData`, which also requires `ID` (Product, with `Suppliers`: `ProductSupplierData` and its `ProductSupplierOptions`: `ProductSupplierOptionData` and `SupplyIntervals`: `ProductSupplierOptionIntervalData`, `ReorderLevels`: `ReorderLevelData`, `BillOfMaterialsProducts`: `BillOfMaterialProductData`, `BillOfMaterialsServices`: `BillOfMaterialServiceData`, `Movements`: `ProductMovementData`, `Attachments`: `AttachmentLineData` and `CustomPrices`: `ProductPriceData`) | GET: `list<ProductData>`; POST, PUT: `ProductData`, the saved product (`Products.0`) |
 | `ref/tax` | `TaxData` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `moneyOperation` | `MoneyTaskData` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
@@ -251,8 +252,18 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   (`Tier 1`, or whatever the account renamed it), so it cannot be a set of properties. It is
   an `array<string, float>`, and there is no `PriceTierData`. `PriceTier1` to `PriceTier10`
   are ordinary properties.
-- **Product supplier link.** The table names it `SupplierProductURL`; the POST example sends
-  `URL`. `ProductSupplierData` models the table's name.
+- **Product supplier link.** The table names it `SupplierProductURL`; the POST and PUT examples
+  and their responses send `URL`. `ProductSupplierData` models both keys.
+- **Product `ID` and `Type`.** The table leaves `ID`'s Required column empty, but its notes say
+  "Required for PUT action" and "Ignored by POST action", so `ProductPutData` requires it and
+  `ProductPostData` has none. `Type` is required and read-only for PUT, so `ProductPostData`
+  requires it and `ProductPutData` has none; the PUT example sends no `Type`.
+- **Product `PriceTiers`, when required.** The notes call `PriceTiers` required when no
+  `PriceTierN` is given. That reads as one of two ways to give prices, not as a requirement that
+  every write prices the product, so neither is required.
+- **Product supplier `ProductID` and `ProductSKU`.** The table requires one "when not nested
+  within the Product"; nested in a product's `Suppliers`, `ProductSupplierData` requires
+  neither.
 - **Product `Movements.BatchSN`.** The table types it `Decimal`, but the example has `"1"`
   and a batch or serial number is not a quantity, so it is a nullable string.
 - **Payment `Type`.** The Sale Payment Line Partial table lists `PREPAYMENT`, `PAYMENT` and
@@ -310,6 +321,33 @@ required on different verbs. Each class requires:
 
 `LastModifiedOn` (read-only) and `ChildCustomers` (responses only) are on `CustomerData` alone.
 A response missing a required field fails `dto()` with a `CannotCreateData`.
+
+## Products
+
+`product` follows the Product table, with a class per verb because `ID` and `Type` are each
+taken by one verb only. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `ProductData` (response) | `src/Data/Product/` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status` |
+| `ProductPostData` | `src/Data/Product/` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`, `Type` |
+| `ProductPutData` | `src/Data/Product/` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`, `ID` |
+| `ReorderLevelData` | `src/Data/Product/` | `PickZones` |
+| `BillOfMaterialProductData` | `src/Data/Product/` | `Quantity` |
+| `BillOfMaterialServiceData` | `src/Data/Product/` | `Quantity` |
+
+The tables' conditions are rules a write body is checked against before it is sent:
+
+- `QuantityToProduce` and `AssemblyCostEstimationMethod`, when `BillOfMaterial` is `true`
+  (`#[RequiredIf]`);
+- one of `SupplierID` and `SupplierName` on a supplier, `LocationID` and `LocationName` on a
+  supplier option and on a reorder level, `ComponentProductID` and `ProductCode` on a component,
+  and `ComponentProductID` and `Name` on a service (`#[RequiredWithout]`, naming the other);
+- `IntervalDays` and `IntervalStartDate` for an `Interval` supply interval, and `IsMonday` to
+  `IsSunday` for a `Fixed` one, which the interval table's notes require (`#[RequiredIf]`).
+
+`AverageCost`, `LastModifiedOn` and `BOMType` (read-only) are on `ProductData` alone. A response
+missing a required field fails `dto()` with a `CannotCreateData`.
 
 ## Sale invoices, credit notes and payments
 

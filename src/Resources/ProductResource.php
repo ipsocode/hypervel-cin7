@@ -8,7 +8,8 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Product\ProductData;
+use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Product\ProductPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
@@ -117,17 +118,17 @@ final class ProductResource extends BaseResource
     }
 
     /**
-     * @param array<string, mixed>|ProductData $body
+     * @param array<string, mixed>|ProductPostData $body
      */
-    public function post(array|ProductData $body): Response
+    public function post(array|ProductPostData $body): Response
     {
         return $this->connector->send(new PostProduct($body));
     }
 
     /**
-     * @param array<string, mixed>|ProductData $body
+     * @param array<string, mixed>|ProductPutData $body
      */
-    public function put(array|ProductData $body): Response
+    public function put(array|ProductPutData $body): Response
     {
         return $this->connector->send(new PutProduct($body));
     }
