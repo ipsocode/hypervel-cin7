@@ -1,0 +1,12 @@
+{
+    "Name": "Test set",
+    "Attribute1Name": "List attribute name",
+    "Attribute1Type": "List",
+    "Attribute1Values": "Red, Black, Blue, Aqua",
+    "Attribute2Name": "Check box attribute name",
+    "Attribute2Type": "Checkbox",
+    "Attribute2Values": "",
+    "Attribute3Name": "Text attribute name",
+    "Attribute3Type": "Text",
+    "Attribute3Values": ""
+}

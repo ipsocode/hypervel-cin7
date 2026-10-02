@@ -24,8 +24,9 @@ use Ipsocode\Cin7\Enums\ProductStatus;
  * `from()`. A product with a bill of materials (`BillOfMaterial` true) also needs
  * `QuantityToProduce` and `AssemblyCostEstimationMethod`, which a write body is checked for.
  * `PriceTiers` is a map of the account's price tier names to prices, e.g. `['Tier 1' => 8.0]`:
- * the names can be renamed in the account's settings, so they cannot be properties and there is
- * no `PriceTierData`. `AdditionalAttribute1` to `AdditionalAttribute10` are ten wire keys.
+ * the names can be renamed in the account's settings, so they cannot be properties, and no class
+ * models the map; `PriceTierData` is the tier list at `ref/priceTier`. `AdditionalAttribute1` to
+ * `AdditionalAttribute10` are ten wire keys.
  *
  * @see docs/data.md
  */

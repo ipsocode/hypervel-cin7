@@ -7,11 +7,14 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\Ref\AccountResource;
+use Ipsocode\Cin7\Resources\Ref\AttributeSetResource;
 use Ipsocode\Cin7\Resources\Ref\BrandResource;
 use Ipsocode\Cin7\Resources\Ref\CategoryResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource;
 use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
 use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
+use Ipsocode\Cin7\Resources\Ref\PriceTierResource;
+use Ipsocode\Cin7\Resources\Ref\ProductAvailabilityResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 use Ipsocode\Cin7\Resources\Ref\UnitResource;
@@ -93,5 +96,29 @@ final class RefResource extends BaseResource
     public function unit(): UnitResource
     {
         return new UnitResource($this->connector);
+    }
+
+    /**
+     * The `ref/priceTier` resource.
+     */
+    public function priceTier(): PriceTierResource
+    {
+        return new PriceTierResource($this->connector);
+    }
+
+    /**
+     * The `ref/productavailability` resource.
+     */
+    public function productAvailability(): ProductAvailabilityResource
+    {
+        return new ProductAvailabilityResource($this->connector);
+    }
+
+    /**
+     * The `ref/attributeset` resource.
+     */
+    public function attributeSet(): AttributeSetResource
+    {
+        return new AttributeSetResource($this->connector);
     }
 }

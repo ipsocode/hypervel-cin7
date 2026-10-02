@@ -20,6 +20,7 @@ use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
+use Ipsocode\Cin7\Resources\ProductFamilyResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
 use Ipsocode\Cin7\Resources\PurchaseListResource;
@@ -183,6 +184,14 @@ final class Cin7Connector extends Connector implements HasPagination
     public function purchaseList(): PurchaseListResource
     {
         return new PurchaseListResource($this);
+    }
+
+    /**
+     * The `productFamily` resource.
+     */
+    public function productFamily(): ProductFamilyResource
+    {
+        return new ProductFamilyResource($this);
     }
 
     /**
