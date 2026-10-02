@@ -1,0 +1,44 @@
+{
+    "PriceTiers": [
+        {
+            "Code": 1,
+            "Name": "Tier 1"
+        },
+        {
+            "Code": 2,
+            "Name": "Tier 2"
+        },
+        {
+            "Code": 3,
+            "Name": "Tier 3"
+        },
+        {
+            "Code": 4,
+            "Name": "Tier 4"
+        },
+        {
+            "Code": 5,
+            "Name": "Tier 5"
+        },
+        {
+            "Code": 6,
+            "Name": "Tier 6"
+        },
+        {
+            "Code": 7,
+            "Name": "Tier 7"
+        },
+        {
+            "Code": 8,
+            "Name": "Tier 8"
+        },
+        {
+            "Code": 9,
+            "Name": "Tier 9"
+        },
+        {
+            "Code": 10,
+            "Name": "Tier 10"
+        }
+    ]
+}
