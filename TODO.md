@@ -58,8 +58,8 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
 - [ ] `advanced-purchase` · `advanced-purchase` · GET POST PUT DELETE
   - [ ] AdvancedPurchase: `AdvancedPurchaseData`
   - [x] product fields: `trait HasProductFields`
-  - [ ] Purchase POST/PUT body: `PurchasePostData`
-  - [ ] Purchase POST/PUT body: `PurchasePutData`
+  - [ ] Purchase POST/PUT body: `AdvancedPurchasePostData`
+  - [ ] Purchase POST/PUT body: `AdvancedPurchasePutData`
 - [ ] `advanced-purchase-stock-received` · `advanced-purchase/stock` · GET POST PUT DELETE
   - [ ] AdvancedPurchaseStock: `AdvancedPurchaseStockData`
 - [ ] `advanced-purchase-put-away` · `advanced-purchase/put-away` · GET POST
@@ -373,7 +373,7 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] FactoryCalendarSpecialDay: `FactoryCalendarSpecialDayData`
 - [ ] `product-production-bom` · `production/productionBOM` · GET POST PUT DELETE
   - [ ] ProductionBOM: `ProductionBomData`
-  - [ ] ProductionBOMOperation: `ProductFamilyProductionBomOperationData`
+  - [ ] ProductionBOMOperation: `ProductionBomOperationData`
   - [ ] ProductionBOMResource: `ProductionBomResourceData`
   - [ ] ProductionBOMComponent: `ProductionBomComponentData`
   - [ ] ProductionBOMAttachment: `ProductionBomAttachmentData`
