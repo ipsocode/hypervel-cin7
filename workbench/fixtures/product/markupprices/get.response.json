@@ -1,0 +1,65 @@
+{
+    "ProductID": "7c8795c2-1a6b-4318-ba72-291f61444906",
+    "MarkupPrices": [
+        {
+            "TierNumber": 1,
+            "MarkupType": "A",
+            "UsePriceType": "A",
+            "MarkupValue": 11
+        },
+        {
+            "TierNumber": 2,
+            "MarkupType": "D",
+            "UsePriceType": null,
+            "MarkupValue": null
+        },
+        {
+            "TierNumber": 3,
+            "MarkupType": "A",
+            "UsePriceType": "A",
+            "MarkupValue": 15
+        },
+        {
+            "TierNumber": 4,
+            "MarkupType": "D",
+            "UsePriceType": null,
+            "MarkupValue": null
+        },
+        {
+            "TierNumber": 5,
+            "MarkupType": "D",
+            "UsePriceType": null,
+            "MarkupValue": null
+        },
+        {
+            "TierNumber": 6,
+            "MarkupType": "D",
+            "UsePriceType": null,
+            "MarkupValue": null
+        },
+        {
+            "TierNumber": 7,
+            "MarkupType": "D",
+            "UsePriceType": null,
+            "MarkupValue": null
+        },
+        {
+            "TierNumber": 8,
+            "MarkupType": "D",
+            "UsePriceType": null,
+            "MarkupValue": null
+        },
+        {
+            "TierNumber": 9,
+            "MarkupType": "D",
+            "UsePriceType": null,
+            "MarkupValue": null
+        },
+        {
+            "TierNumber": 10,
+            "MarkupType": "D",
+            "UsePriceType": null,
+            "MarkupValue": null
+        }
+    ]
+}

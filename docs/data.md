@@ -200,9 +200,11 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
 | `ref/account` | POST: `AccountPostData`, which also takes `SystemAccount` and `SystemAccountCode`; PUT: `AccountPutData` (Chart of Accounts) | GET: `list<AccountData>`; POST, PUT: `AccountData`, the saved account (`AccountsList.0`); DELETE: `{Success}`, left to `json()` |
 | `ref/account/bank` | none | GET: `list<BankAccountData>` (Bank Accounts) |
+| `ref/attributeset` | POST: `AttributeSetPostData`; PUT: `AttributeSetPutData`, which also requires `ID` (Attribute Set, with `Attributes`: `AttributeSetLineData`, Attribute Set Line Model) | GET: `list<AttributeSetData>`; POST, PUT: `AttributeSetData`, the saved set, a bare object; DELETE: `{Success}`, left to `json()` |
 | `ref/brand` | POST: `BrandPostData`; PUT: `BrandPutData`, which also requires `ID` (Brand) | GET: `list<BrandData>`; POST, PUT: `BrandData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/category` | POST: `ProductCategoryPostData`; PUT: `ProductCategoryPutData`, which also requires `ID` (Product Category) | GET: `list<ProductCategoryData>`; POST, PUT: `ProductCategoryData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
 | `ref/unit` | POST: `UnitOfMeasurePostData`; PUT: `UnitOfMeasurePutData`, which also requires `ID` (Unit of Measure) | GET: `list<UnitOfMeasureData>`; POST, PUT: `UnitOfMeasureData`, the saved record, a bare object and not a list; DELETE: `{Success}`, left to `json()` |
+| `ref/priceTier` | none | GET: `list<PriceTierData>` (Price Tier), read from `PriceTiers` |
 | `ref/fixedassettype` | POST: `FixedAssetTypePostData`; PUT: `FixedAssetTypePutData`, which also requires `FixedAssetTypeID` (Fixed Asset Types) | GET: `list<FixedAssetTypeData>`; POST, PUT: `FixedAssetTypeData`, the saved type (`FixedAssetTypeList.0`) |
 | `ref/paymentterm` | POST: `PaymentTermPostData`; PUT: `PaymentTermPutData`, which also requires `ID` (Payment Term) | GET: `list<PaymentTermData>`; POST, PUT: `PaymentTermData`, the saved term (`PaymentTermList.0`); DELETE: `{Success}`, left to `json()` |
 | `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
@@ -211,6 +213,11 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
+| `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
+| `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
+| `product/attachments` | POST: `ProductAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
+| `ref/productavailability` | none | GET: `list<ProductAvailabilityData>` (Product Availability) |
+| `product/markupprices` | PUT: `MarkupPricesData` (Markup Prices Model, with `MarkupPrices`: `MarkupPriceLineData`, Markup Price Line Model) | GET, PUT: `MarkupPricesData` |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
@@ -844,6 +851,42 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   saved record itself, `{ID, Name}`, where `ref/tax` and the others answer with the list envelope, so
   their `dto()` reads the whole body. The brand POST example's keys are unquoted, and is fixed
   in its fixture.
+- **Price Tier and a product's `PriceTiers`.** The reference's Other Models `PriceTierModel` is the
+  product's `PriceTiers` map, which has no class; the `{Code, Name}` table of `ref/priceTier` is
+  `PriceTierData`. That list has no `Total` and no page.
+- **Markup Prices values.** `MarkupType` (`P` a percentage, `A` an amount, `D` none) and
+  `UsePriceType` (`A` average cost, `F` latest fixed supplier cost, `L` latest supplier cost, `V`
+  the value itself) are enums named for their meaning: `MarkupType::Percent` is `'P'` and
+  `UsePriceType::AverageCost` is `'A'`. The table's Required column says "Yes, except when
+  `MarkupType` is `D`" for `UsePriceType` and `MarkupValue`, so they are `#[RequiredUnless]`; a
+  tier number is 1 to 10 and a value at least 0. The PUT example's keys are single-quoted and its
+  `ProductID` upper-case, and are fixed in its fixture. The heading says `/ref/markupprices` but the
+  operations use `/product/markupprices`, which the classes follow.
+- **Product attachments.** Every action answers a bare array of `AttachmentLineData`, so each
+  item keeps its response (`AttachmentLineData` is a `WithResponse`). The examples send `IsDefault`
+  as the strings `"true"` and `"false"`; the fixtures use JSON booleans, and the class types it
+  `bool`. The reference marks the `ProductID` of GET and the `ID` of DELETE optional, but each names
+  what it reads or deletes, so the requests require them. The POST example's `Content` is a base64
+  image; its fixture keeps the first 32 characters, and its keys are unquoted, fixed in the fixture.
+- **Product Family.** It follows the Product table's conventions: `CostingMethod` and `DropShipMode`
+  are the product's enums, `PriceTier1` to `PriceTier10` are ten wire keys, and the read-only
+  `Option1Values` to `Option3Values`, `LastModifiedOn`, `Attachments` and `CountryOfOriginCode` are on
+  `ProductFamilyData` alone. The table's `Products` line says a product's `SKU` and `Name` are
+  "ignored in POST and PUT", yet the examples send them, so they are modelled and the requests leave
+  them out of the body (`Products.*.SKU` and `Products.*.Name`). A PUT adds or updates the products
+  it lists and never deletes one. `Option1Name` is required, the one option every family has.
+- **Attribute Set.** The table writes `Attribute#Name`, `Attribute#Type` and `Attribute#Values` for
+  # from 1 to 10, with the first required on POST and PUT: each write class takes
+  `Attribute1Name`, `Attribute1Type` and `Attribute1Values` as required arguments, the response
+  keeps them optional, and `Attribute2…` to `Attribute10…` are the `HasAttributeSetAttributes` trait's
+  optional fields. `Attribute#Type` is the `AttributeType` enum (`Not used`, `Text`, `Checkbox`,
+  `List`, `Date`, `Numeric`). Its POST and PUT answer with the saved set itself, not a list, and
+  the GET and DELETE parameter descriptions say "location", copied from the Location section.
+- **Product family attachments.** The same as the product's: the family's key is `FamilyID`, and the
+  POST table marks `Content` required without the `Content`-or-`FileDownloadUrl` rule the product's
+  has, which the examples and the notes both give, so it is `#[RequiredWithout]` here too.
+- **Product Availability `Sku`.** The GET parameter is spelt `Sku`, not `SKU`, and the field is
+  `SKU`; each is sent as the reference spells it. Every field is optional.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -967,6 +1010,20 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
+
+`AttributeSetData` requires `Name`; `AttributeSetPostData` also `Attribute1Name`, `Attribute1Type`
+and `Attribute1Values`, and `AttributeSetPutData` `ID` as well (`src/Data/Ref/AttributeSet/`).
+`ProductFamilyData`, `ProductFamilyPostData` (`src/Data/ProductFamily/`) require `SKU`, `Name`,
+`Category`, `CostingMethod`, `DefaultLocation`, `UOM` and `Option1Name`; `ProductFamilyPutData` adds
+`ID`; `ProductFamilyProductLineData` requires `ID` and `Option1`. `ProductFamilyAttachmentPostData`
+(`src/Data/ProductFamily/Attachments/`) requires `FamilyID` and `FileName`, and `Content` unless a
+`FileDownloadUrl` is given.
+`ProductAttachmentPostData` (`src/Data/Product/Attachments/`) requires `ProductID` and `FileName`,
+and `Content` unless a `FileDownloadUrl` is given (`#[RequiredWithout]`);
+`ProductAvailabilityData` (`src/Data/Ref/ProductAvailability/`) requires nothing.
+`PriceTierData` (`src/Data/Ref/PriceTier/`) requires nothing. `MarkupPricesData`
+(`src/Data/Product/MarkupPrices/`) requires `ProductID` and `MarkupPrices`, and `MarkupPriceLineData`
+`TierNumber` and `MarkupType`; one `MarkupPricesData` is both the PUT body and the response.
 
 `ref/brand`, `ref/category` and `ref/unit` are each a name and an ID, with a class per verb because
 the ID is taken by PUT and the response only:
