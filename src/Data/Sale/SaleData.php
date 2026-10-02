@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
@@ -44,6 +45,11 @@ final class SaleData extends AbstractSaleData implements WithResponse
     public function __construct(
         string $Location,
         float $CurrencyRate,
+        public PickingStatus $CombinedPickingStatus,
+        public PackingStatus $CombinedPackingStatus,
+        public ShippingStatus $CombinedShippingStatus,
+        #[Uuid]
+        public ?string $ID = null,
         #[Max(3)]
         public ?string $BaseCurrency = null,
         #[Max(3)]
@@ -51,9 +57,6 @@ final class SaleData extends AbstractSaleData implements WithResponse
         public ?TaxCalculation $TaxCalculation = null,
         public ?float $COGSAmount = null,
         public ?SaleStatus $Status = null,
-        public ?PickingStatus $CombinedPickingStatus = null,
-        public ?PackingStatus $CombinedPackingStatus = null,
-        public ?ShippingStatus $CombinedShippingStatus = null,
         public ?FulfilmentStatus $FulFilmentStatus = null,
         #[Max(20)]
         public ?string $CombinedInvoiceStatus = null,

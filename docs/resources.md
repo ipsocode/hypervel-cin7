@@ -55,7 +55,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array|CustomerData $body)`, `put(array|CustomerData $body)` |
 | `$cin7->product()` | `ProductResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array|ProductData $body)`, `put(array|ProductData $body)` |
 | `$cin7->moneyOperation()` | `MoneyOperationResource` | `get(string $taskId)`, `post(array|MoneyTaskData $body)`, `put(array|MoneyTaskData $body)`, `delete(string $id, bool $void = false)` |
-| `$cin7->sale()` | `SaleResource` | `get(string $id, array $parameters = [])`, `post(array|SalePostPutData $body)`, `put(array|SalePostPutData $body)`, `delete(string $id, bool $void = false)` |
+| `$cin7->sale()` | `SaleResource` | `get(string $id, array $parameters = [])`, `post(array|SalePostData $body)`, `put(array|SalePutData $body)`, `delete(string $id, bool $void = false)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
@@ -180,7 +180,7 @@ cannot be paginated; list sales through `saleList()`, whose envelope is
 `delete($id, $void)` sends `sale?ID=…&Void=…`: `void: true` voids the sale, and the default
 `false` undoes a void. Every `sale` action answers with the Sale, so `dto()` is a `SaleData`
 for `get()`, `post()`, `put()` and `delete()`, and a `list<SaleListData>` for
-`saleList()->get()`. `post()` and `put()` accept a `SalePostPutData` as well as an array (see
+`saleList()->get()`. `post()` and `put()` accept a `SalePostData` and a `SalePutData` as well as an array (see
 [data](data.md)).
 
 ```php

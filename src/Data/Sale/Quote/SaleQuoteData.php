@@ -20,22 +20,22 @@ final class SaleQuoteData extends Data
 {
     /**
      * @param null|list<SalePaymentLineData> $Prepayments
-     * @param null|list<SaleQuoteLineData> $Lines
+     * @param list<SaleQuoteLineData> $Lines
      * @param null|list<SaleAdditionalChargeData> $AdditionalCharges
      */
     public function __construct(
         #[Max(1024)]
-        public ?string $Memo = null,
-        public ?TaskStatus $Status = null,
+        public string $Memo,
+        public TaskStatus $Status,
+        #[DataCollectionOf(SaleQuoteLineData::class)]
+        public array $Lines,
+        public float $TotalBeforeTax,
+        public float $Tax,
+        public float $Total,
         #[DataCollectionOf(SalePaymentLineData::class)]
         public ?array $Prepayments = null,
-        #[DataCollectionOf(SaleQuoteLineData::class)]
-        public ?array $Lines = null,
         #[DataCollectionOf(SaleAdditionalChargeData::class)]
         public ?array $AdditionalCharges = null,
-        public ?float $TotalBeforeTax = null,
-        public ?float $Tax = null,
-        public ?float $Total = null,
     ) {
     }
 }

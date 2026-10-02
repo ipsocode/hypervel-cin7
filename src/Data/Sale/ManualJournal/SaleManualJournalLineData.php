@@ -15,12 +15,12 @@ use Ipsocode\Cin7\Data\Attributes\DateTime;
 final class SaleManualJournalLineData extends Data
 {
     public function __construct(
-        public ?string $Reference = null,
-        public ?float $Amount = null,
+        public float $Amount,
         #[DateTime]
-        public ?string $Date = null,
-        public ?string $Debit = null,
-        public ?string $Credit = null,
+        public string $Date,
+        public string $Debit,
+        public string $Credit,
+        public ?string $Reference = null,
     ) {
     }
 }

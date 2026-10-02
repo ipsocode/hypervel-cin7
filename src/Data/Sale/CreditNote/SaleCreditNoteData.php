@@ -22,7 +22,7 @@ final class SaleCreditNoteData extends AbstractSaleCreditNoteData
         string $TaskID,
         TaskStatus $Status,
         string $CreditNoteDate,
-        public ?string $CreditNoteInvoiceNumber = null,
+        public string $CreditNoteInvoiceNumber,
         public ?string $CreditNoteNumber = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
         public ?array $Refunds = null,

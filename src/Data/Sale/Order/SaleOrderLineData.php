@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\Order;
 
+use Hypervel\Data\Attributes\Validation\Max;
 use Ipsocode\Cin7\Data\AbstractLineData;
 
 /**
@@ -22,4 +23,9 @@ final class SaleOrderLineData extends AbstractLineData
     public ?bool $Backorder = null;
 
     public ?float $BackorderQuantity = null;
+
+    public ?float $Total = null;
+
+    #[Max(256)]
+    public ?string $Comment = null;
 }

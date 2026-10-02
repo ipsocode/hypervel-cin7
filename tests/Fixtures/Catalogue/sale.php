@@ -6,14 +6,23 @@ use Hypervel\Saloon\Enums\Method;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Sale\AddressData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNoteData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentPickPackData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentPickPackLineData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipLineData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceAdditionalChargeData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceLineData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalLineData;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderLineData;
+use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteLineData;
 use Ipsocode\Cin7\Data\Sale\SaleAdditionalChargeData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
-use Ipsocode\Cin7\Data\Sale\SalePostPutData;
+use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Data\Sale\SalePutData;
 use Ipsocode\Cin7\Data\Sale\SaleShippingAddressData;
 use Ipsocode\Cin7\Requests\Sale\DeleteSale;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
@@ -59,7 +68,7 @@ return [
         ],
         PostSale::class . ' with data' => [
             PostSale::class,
-            [fn (): SalePostPutData => SalePostPutData::from(['Customer' => 'ACME', 'SkipQuote' => false, 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])],
+            [fn (): SalePostData => SalePostData::from(['Customer' => 'ACME', 'SkipQuote' => false, 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])],
             Method::POST,
             '/ExternalApi/v2/sale',
             [],
@@ -67,7 +76,7 @@ return [
         ],
         PutSale::class . ' with data' => [
             PutSale::class,
-            [fn (): SalePostPutData => SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK'], 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])],
+            [fn (): SalePutData => SalePutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK'], 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])],
             Method::PUT,
             '/ExternalApi/v2/sale',
             [],
@@ -116,7 +125,7 @@ return [
             null,
         ],
         'sale post with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(SalePostPutData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])),
+            fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(SalePostData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])),
             PostSale::class,
             Method::POST,
             '/ExternalApi/v2/sale',
@@ -124,7 +133,7 @@ return [
             ['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0],
         ],
         'sale put with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Note' => 'Rush', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])),
+            fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(SalePutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Note' => 'Rush', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])),
             PutSale::class,
             Method::PUT,
             '/ExternalApi/v2/sale',
@@ -139,16 +148,25 @@ return [
         DeleteSale::class => [DeleteSale::class, ['guid-1'], Cin7Payloads::sale(), SaleData::class, ''],
     ],
     'required' => [
-        SaleQuoteLineData::class => ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule'],
+        SaleQuoteLineData::class => ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule', 'AverageCost', 'Comment'],
         SaleOrderLineData::class => ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule'],
-        SaleInvoiceLineData::class => ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule'],
+        SaleInvoiceLineData::class => ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule', 'Total'],
         SaleAdditionalChargeData::class => ['Description', 'Quantity', 'Price', 'Tax', 'TaxRule'],
         SaleInvoiceAdditionalChargeData::class => ['Description', 'Quantity', 'Price', 'Tax', 'TaxRule'],
         AddressData::class => ['Line1', 'Country'],
         SaleShippingAddressData::class => ['Line1', 'Country'],
-        SaleData::class => ['Location', 'CurrencyRate'],
-        SalePostPutData::class => ['Location', 'CurrencyRate'],
-        SaleInvoiceData::class => ['TaskID'],
-        SaleCreditNoteData::class => ['TaskID', 'Status', 'CreditNoteDate'],
+        SaleData::class => ['Location', 'CurrencyRate', 'CombinedPickingStatus', 'CombinedPackingStatus', 'CombinedShippingStatus'],
+        SalePostData::class => ['Location', 'CurrencyRate'],
+        SalePutData::class => ['Location', 'CurrencyRate', 'ID'],
+        SaleInvoiceData::class => ['TaskID', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
+        SaleCreditNoteData::class => ['TaskID', 'Status', 'CreditNoteDate', 'CreditNoteInvoiceNumber'],
+        SaleQuoteData::class => ['Memo', 'Status', 'Lines', 'TotalBeforeTax', 'Tax', 'Total'],
+        SaleFulfilmentData::class => ['TaskID', 'FulfillmentNumber', 'FulFilmentStatus'],
+        SaleFulfilmentPickPackData::class => ['Status'],
+        SaleFulfilmentPickPackLineData::class => ['SKU', 'Quantity'],
+        SaleFulfilmentShipData::class => ['Status'],
+        SaleFulfilmentShipLineData::class => ['ShipmentDate', 'Boxes'],
+        SaleManualJournalData::class => ['Status'],
+        SaleManualJournalLineData::class => ['Amount', 'Date', 'Debit', 'Credit'],
     ],
 ];

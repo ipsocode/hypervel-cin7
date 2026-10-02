@@ -7,7 +7,8 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Sale\SalePostPutData;
+use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Data\Sale\SalePutData;
 use Ipsocode\Cin7\Requests\Sale\DeleteSale;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
@@ -34,17 +35,17 @@ final class SaleResource extends BaseResource
     }
 
     /**
-     * @param array<string, mixed>|SalePostPutData $body
+     * @param array<string, mixed>|SalePostData $body
      */
-    public function post(array|SalePostPutData $body): Response
+    public function post(array|SalePostData $body): Response
     {
         return $this->connector->send(new PostSale($body));
     }
 
     /**
-     * @param array<string, mixed>|SalePostPutData $body
+     * @param array<string, mixed>|SalePutData $body
      */
-    public function put(array|SalePostPutData $body): Response
+    public function put(array|SalePutData $body): Response
     {
         return $this->connector->send(new PutSale($body));
     }

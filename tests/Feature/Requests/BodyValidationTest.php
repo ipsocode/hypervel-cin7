@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
-use Ipsocode\Cin7\Data\Sale\SalePostPutData;
+use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
@@ -167,7 +167,7 @@ class BodyValidationTest extends TestCase
     public function testASaleWithoutACustomerIsNotSent(): void
     {
         try {
-            $this->connector()->send(new PostSale(SalePostPutData::from(['Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
+            $this->connector()->send(new PostSale(SalePostData::from(['Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
             $this->fail('The body should have failed validation.');
         } catch (ValidationException $exception) {
             $this->assertSame(['Customer', 'CustomerID'], array_keys($exception->errors()));
@@ -178,8 +178,8 @@ class BodyValidationTest extends TestCase
 
     public function testEitherCustomerFieldIsEnoughForASale(): void
     {
-        $this->connector()->send(new PostSale(SalePostPutData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
-        $this->connector()->send(new PostSale(SalePostPutData::from(['CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
+        $this->connector()->send(new PostSale(SalePostData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
+        $this->connector()->send(new PostSale(SalePostData::from(['CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])));
 
         $this->mock->assertSentCount(2);
     }

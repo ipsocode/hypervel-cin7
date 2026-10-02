@@ -24,7 +24,7 @@ final class SaleCreditNotesData extends Data implements WithResponse
      */
     public function __construct(
         #[Uuid]
-        public ?string $SaleID = null,
+        public string $SaleID,
         #[DataCollectionOf(SaleCreditNotePartialData::class)]
         public ?array $CreditNotes = null,
     ) {

@@ -31,11 +31,11 @@ return [
         ],
         PostSaleOrder::class . ' with data' => [
             PostSaleOrder::class,
-            [fn (): SaleOrderData => SaleOrderData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Memo' => 'Rush'])],
+            [fn (): SaleOrderData => SaleOrderData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Memo' => 'Rush', 'Status' => 'DRAFT', 'Lines' => [], 'TotalBeforeTax' => 0, 'Tax' => 0, 'Total' => 0])],
             Method::POST,
             '/ExternalApi/v2/sale/order',
             [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Memo' => 'Rush'],
+            ['Memo' => 'Rush', 'Status' => 'DRAFT', 'Lines' => [], 'TotalBeforeTax' => 0.0, 'Tax' => 0.0, 'Total' => 0.0, 'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
         ],
     ],
     'resources' => [
@@ -56,12 +56,12 @@ return [
             ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
         ],
         'sale order post with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->sale()->order()->post(SaleOrderData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'AutoPickPackShipMode' => 'NOPICK'])),
+            fn (Cin7Connector $cin7): mixed => $cin7->sale()->order()->post(SaleOrderData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Memo' => 'Rush', 'Status' => 'DRAFT', 'Lines' => [], 'TotalBeforeTax' => 0, 'Tax' => 0, 'Total' => 0, 'AutoPickPackShipMode' => 'NOPICK'])),
             PostSaleOrder::class,
             Method::POST,
             '/ExternalApi/v2/sale/order',
             [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'AutoPickPackShipMode' => 'NOPICK'],
+            ['Memo' => 'Rush', 'Status' => 'DRAFT', 'Lines' => [], 'TotalBeforeTax' => 0.0, 'Tax' => 0.0, 'Total' => 0.0, 'SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'AutoPickPackShipMode' => 'NOPICK'],
         ],
     ],
     'dtos' => [
@@ -74,5 +74,8 @@ return [
             ['SaleID' => 's', 'Lines' => [['SKU' => 'A', 'BackorderQuantity' => 2]]],
             ['SaleID' => 's', 'Lines' => [['SKU' => 'A']]],
         ],
+    ],
+    'required' => [
+        SaleOrderData::class => ['Memo', 'Status', 'Lines', 'TotalBeforeTax', 'Tax', 'Total'],
     ],
 ];

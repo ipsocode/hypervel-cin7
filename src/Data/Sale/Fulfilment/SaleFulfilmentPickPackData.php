@@ -19,7 +19,7 @@ final class SaleFulfilmentPickPackData extends Data
      * @param null|list<SaleFulfilmentPickPackLineData> $Lines
      */
     public function __construct(
-        public ?TaskStatus $Status = null,
+        public TaskStatus $Status,
         #[DataCollectionOf(SaleFulfilmentPickPackLineData::class)]
         public ?array $Lines = null,
     ) {

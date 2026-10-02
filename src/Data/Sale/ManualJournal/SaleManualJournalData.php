@@ -19,7 +19,7 @@ final class SaleManualJournalData extends Data
      * @param null|list<SaleManualJournalLineData> $Lines
      */
     public function __construct(
-        public ?TaskStatus $Status = null,
+        public TaskStatus $Status,
         #[DataCollectionOf(SaleManualJournalLineData::class)]
         public ?array $Lines = null,
     ) {

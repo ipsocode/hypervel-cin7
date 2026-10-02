@@ -32,52 +32,52 @@ final class SaleListData extends Data implements WithResponse
 
     public function __construct(
         #[Uuid]
-        public ?string $SaleID = null,
+        public string $SaleID,
         #[Max(256)]
-        public ?string $OrderNumber = null,
-        public ?SaleStatus $Status = null,
+        public string $OrderNumber,
+        public SaleStatus $Status,
         #[Date]
-        public ?string $OrderDate = null,
+        public string $OrderDate,
+        #[Date]
+        #[Max(256)]
+        public string $Customer,
+        public float $InvoiceAmount,
+        public float $PaidAmount,
+        #[Max(3)]
+        public string $BaseCurrency,
+        #[Max(3)]
+        public string $CustomerCurrency,
+        #[DateTime]
+        public string $Updated,
+        public TaskStatus $QuoteStatus,
+        public OrderStatus $OrderStatus,
+        public PickingStatus $CombinedPickingStatus,
+        public PackingStatus $CombinedPackingStatus,
+        public ShippingStatus $CombinedShippingStatus,
+        public FulfilmentStatus $FulFilmentStatus,
+        #[Max(20)]
+        public string $CombinedInvoiceStatus,
+        public TaskStatus $CreditNoteStatus,
+        public SalePaymentStatus $CombinedPaymentStatus,
+        public SaleType $Type,
+        #[Max(256)]
+        public string $CombinedTrackingNumbers,
         #[Date]
         public ?string $InvoiceDate = null,
-        #[Date]
-        #[Max(256)]
-        public ?string $Customer = null,
         #[Uuid]
         public ?string $CustomerID = null,
         #[Max(256)]
         public ?string $InvoiceNumber = null,
         #[Max(256)]
         public ?string $CustomerReference = null,
-        public ?float $InvoiceAmount = null,
-        public ?float $PaidAmount = null,
         public ?float $SaleInvoicesTotalAmount = null,
         #[Date]
         public ?string $InvoiceDueDate = null,
         #[Date]
         public ?string $ShipBy = null,
-        #[Max(3)]
-        public ?string $BaseCurrency = null,
-        #[Max(3)]
-        public ?string $CustomerCurrency = null,
         #[Max(256)]
         public ?string $CreditNoteNumber = null,
-        #[DateTime]
-        public ?string $Updated = null,
-        public ?TaskStatus $QuoteStatus = null,
-        public ?OrderStatus $OrderStatus = null,
-        public ?PickingStatus $CombinedPickingStatus = null,
-        public ?PackingStatus $CombinedPackingStatus = null,
-        public ?ShippingStatus $CombinedShippingStatus = null,
-        public ?FulfilmentStatus $FulFilmentStatus = null,
-        #[Max(20)]
-        public ?string $CombinedInvoiceStatus = null,
         public ?float $CombinedPaymentTotal = null,
-        public ?TaskStatus $CreditNoteStatus = null,
-        public ?SalePaymentStatus $CombinedPaymentStatus = null,
-        public ?SaleType $Type = null,
-        #[Max(256)]
-        public ?string $CombinedTrackingNumbers = null,
         #[Max(32)]
         public ?string $SourceChannel = null,
         #[Max(256)]

@@ -23,9 +23,6 @@ use Ipsocode\Cin7\Data\Attributes\DateTime;
  */
 abstract class AbstractSaleData extends Data
 {
-    #[Uuid]
-    public ?string $ID = null;
-
     #[RequiredWithout('CustomerID')]
     #[Max(256)]
     public ?string $Customer = null;

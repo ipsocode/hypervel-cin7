@@ -7,13 +7,13 @@ namespace Ipsocode\Cin7\Data\Sale;
 use Ipsocode\Cin7\Enums\ProcessType;
 
 /**
- * Sale POST/PUT Attributes, the body of `sale` POST and PUT.
- *
- * `AutoPickPackShipMode` is in the reference's POST example but in no Sale table.
+ * The body of `sale` POST: the Sale POST/PUT Attributes without the `ID` only PUT takes, with
+ * the POST-only `SaleType`. `AutoPickPackShipMode` is in the reference's POST example but in no
+ * Sale table. The PUT body is `SalePutData`.
  *
  * @see docs/data.md
  */
-final class SalePostPutData extends AbstractSaleData
+final class SalePostData extends AbstractSaleData
 {
     public function __construct(
         string $Location,

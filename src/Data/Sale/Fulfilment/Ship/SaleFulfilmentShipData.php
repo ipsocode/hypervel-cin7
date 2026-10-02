@@ -22,7 +22,7 @@ final class SaleFulfilmentShipData extends Data
      * @param null|list<SaleFulfilmentShipLineData> $Lines
      */
     public function __construct(
-        public ?ShipmentStatus $Status = null,
+        public ShipmentStatus $Status,
         #[Date]
         public ?string $RequireBy = null,
         public ?SaleShippingAddressData $ShippingAddress = null,

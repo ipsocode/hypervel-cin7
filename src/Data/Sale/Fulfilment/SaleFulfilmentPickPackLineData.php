@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale\Fulfilment;
 
 use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Data\Attributes\DateTime;
@@ -20,17 +21,19 @@ final class SaleFulfilmentPickPackLineData extends Data
     use HasProductFields;
 
     public function __construct(
+        #[Max(50)]
+        public string $SKU,
+        public float $Quantity,
         #[Uuid]
         public ?string $ProductID = null,
-        #[Max(50)]
-        public ?string $SKU = null,
         #[Max(1024)]
         public ?string $Name = null,
         #[Max(256)]
+        #[RequiredWithout('LocationID')]
         public ?string $Location = null,
         #[Uuid]
+        #[RequiredWithout('Location')]
         public ?string $LocationID = null,
-        public ?float $Quantity = null,
         #[Max(50)]
         public ?string $BatchSN = null,
         #[DateTime]

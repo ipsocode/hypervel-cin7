@@ -41,7 +41,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
 
   | Parent | Models | Required in every model |
   |---|---|---|
-  | `AbstractSaleData` | `SaleData`, `SalePostPutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
+  | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
   | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`; shaped to serve the purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
@@ -118,10 +118,13 @@ A data object becomes a write body in four steps:
    fields Hypervel Data reads from the constructor, and the reference's lengths, GUIDs and
    dates from the attributes. A failure throws a `Hypervel\Validation\ValidationException`
    from `send()` before anything goes out, naming each field, nested ones as
-   `Lines.0.SKU`.
+   `Lines.0.SKU`. A required field has to be present, not non-empty: the reference's
+   examples send required fields as `""` or `[]` (an order's `Memo`, say), so `""` and `[]`
+   pass, and the field's other rules apply only to a value.
 
 The rules run through Hypervel Data's own validation, the `validate()` every data class
-has, so there is no validation code per class.
+has, so there is no validation code per class; `WriteRequest` only asks for `present` where
+Hypervel Data would infer `required`.
 
 An array body skips all four: it is sent as given, less the `$omit` paths. That is the way to
 send an explicit `null`, to clear a field:
@@ -149,7 +152,7 @@ $this->cin7->customer()->put(CustomerData::from([...$customer->toArray(), 'ID' =
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `moneyOperation` | `MoneyTaskData` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
-| `sale` | `SalePostPutData` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
+| `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
 | `saleList` | none | GET: `list<SaleListData>` (Sale List) |
 | `sale/order` | `SaleOrderData` (Sale Order, plus `AutoPickPackShipMode`, which the reference documents only in prose) | GET, POST: `SaleOrderData` |
 | `sale/invoice` | POST: `SaleInvoicePostData` (Sale Invoice POST Model); PUT: `SaleInvoicePutData` (its fields, needing only `SaleID` and `TaskID`) | GET, POST, PUT, DELETE: `SaleInvoicesData` (`{SaleID, Invoices}`, with `Invoices`: `SaleInvoicePartialData`, Sale Invoice Partial Model) |
@@ -202,7 +205,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   Sale Quote Line the first table names: it adds `BackorderQuantity` and `DropShip`, and the
   examples also send `Backorder`.
 - **Sale POST/PUT.** The POST example sends `AutoPickPackShipMode`, which no Sale table
-  lists; it is modelled on `SalePostPutData`. The example also sends `"SkipQuote": "false"`,
+  lists; it is modelled on `SalePostData`. The example also sends `"SkipQuote": "false"`,
   `"TaxInclusive": "false"` and `"CurrencyRate": "1"` as strings; the properties are `bool`
   and `float`, following the tables.
 - **Product fields on lines.** "All objects that contain `ProductID` also contain additional
@@ -267,7 +270,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Sale `Location`, `CurrencyRate` and customer.** The Sale POST/PUT table requires
   `Location`, `CurrencyRate` when the customer's currency differs from the base currency, and
   `Customer` when there is no `CustomerID`; the Sale table of the response requires none of
-  them. `SaleData` and `SalePostPutData` require `Location` and `CurrencyRate` always. A write
+  them. `SaleData`, `SalePostData` and `SalePutData` require `Location` and `CurrencyRate` always. A write
   body needs `Customer` or `CustomerID`: each carries `#[RequiredWithout]` naming the other,
   so a sale body with neither fails validation before it is sent.
 - **Required per verb.** The tables have one Required column for every verb. The

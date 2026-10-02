@@ -26,26 +26,26 @@ final class SaleOrderData extends Data implements WithResponse
     use HasResponse;
 
     /**
-     * @param null|list<SaleOrderLineData> $Lines
+     * @param list<SaleOrderLineData> $Lines
      * @param null|list<SaleAdditionalChargeData> $AdditionalCharges
      */
     public function __construct(
+        #[Max(1024)]
+        public string $Memo,
+        #[In(OrderStatus::Draft, OrderStatus::Authorised)]
+        public OrderStatus $Status,
+        #[DataCollectionOf(SaleOrderLineData::class)]
+        public array $Lines,
+        public float $TotalBeforeTax,
+        public float $Tax,
+        public float $Total,
         #[Uuid]
         public ?string $SaleID = null,
         #[Max(256)]
         public ?string $SaleOrderNumber = null,
         public ?bool $CombineAdditionalCharges = null,
-        #[Max(1024)]
-        public ?string $Memo = null,
-        #[In(OrderStatus::Draft, OrderStatus::Authorised)]
-        public ?OrderStatus $Status = null,
-        #[DataCollectionOf(SaleOrderLineData::class)]
-        public ?array $Lines = null,
         #[DataCollectionOf(SaleAdditionalChargeData::class)]
         public ?array $AdditionalCharges = null,
-        public ?float $TotalBeforeTax = null,
-        public ?float $Tax = null,
-        public ?float $Total = null,
         public ?string $AutoPickPackShipMode = null,
     ) {
     }

@@ -58,7 +58,14 @@ abstract class WriteRequest extends Cin7Request
         }
 
         if ($this->body instanceof Data) {
-            $this->body::validate($body);
+            // The reference's Required means the key is sent, and its examples send required
+            // fields as "" or []: so a required field needs to be present, not non-empty.
+            $this->body::factory()
+                ->afterRules(static fn (array $rules): array => array_map(
+                    static fn (mixed $rule): mixed => $rule === 'required' ? 'present' : $rule,
+                    $rules,
+                ))
+                ->validate($body);
         }
 
         return $body;
