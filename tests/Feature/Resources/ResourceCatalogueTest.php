@@ -9,6 +9,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
@@ -37,7 +38,7 @@ class ResourceCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock = Saloon::fake(array_fill(0, 14, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 16, MockResponse::make(Cin7Payloads::customerList())));
     }
 
     /**
@@ -183,6 +184,22 @@ class ResourceCatalogueTest extends TestCase
                 '/ExternalApi/v2/ref/customer/credits',
                 ['page' => 1, 'limit' => 100],
                 null,
+            ],
+            'ref tax post with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT'])),
+                PostTax::class,
+                Method::POST,
+                '/ExternalApi/v2/ref/tax',
+                [],
+                ['Name' => 'VAT'],
+            ],
+            'ref tax put with data' => [
+                fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->put(TaxData::from(['ID' => 'guid-1', 'Name' => 'VAT'])),
+                PutTax::class,
+                Method::PUT,
+                '/ExternalApi/v2/ref/tax',
+                [],
+                ['ID' => 'guid-1', 'Name' => 'VAT'],
             ],
         ];
     }

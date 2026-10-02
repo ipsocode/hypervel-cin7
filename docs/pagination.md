@@ -119,6 +119,12 @@ empty page ends the walk too. `items()` follows this; `pool()` cannot, because i
 the total to plan the remaining pages, so on credits it sends page one and stops. Walk
 credits with `items()`.
 
+## Typed pages
+
+Iterating `paginate()` yields each page's `Response`, so `->dto()` returns that page's
+items as data objects. `items()`, `collect()` and `pool()` keep yielding arrays. See
+[data](data.md#typed-pages).
+
 ## Only a `ListRequest` paginates
 
 `ListRequest` is the only request base that implements `Paginatable`. Saloon's

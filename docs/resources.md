@@ -55,7 +55,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->customer()` | `CustomerResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
 | `$cin7->product()` | `ProductResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
 | `$cin7->ref()` | `RefResource` | `tax()`, `customer()`; a pure grouping, as V2 has no action on `/ref` |
-| `$cin7->ref()->tax()` | `Ref\TaxResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array $body)`, `put(array $body)` |
+| `$cin7->ref()->tax()` | `Ref\TaxResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator`, `post(array|TaxData $body)`, `put(array|TaxData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get(array $filters = [])`, `paginate(array $filters = []): Cin7Paginator` |
 
@@ -89,11 +89,14 @@ foreach ($this->cin7->product()->paginate(['IncludeDeprecated' => false])->items
 The reference data lives under `ref/…`, so the chain spells the path:
 `$cin7->ref()->tax()` and `$cin7->ref()->customer()->credits()`.
 
-`ref/tax` lists under `TaxRuleList` (`{Total, Page, TaxRuleList}`). Its V2 filters
+`ref/tax` lists under `TaxRuleList` (`{Total, Page, TaxRuleList}`). Its data classes are
+`TaxData` and `TaxComponentData`; `get()->dto()` is a `list<TaxData>` and `post()` and
+`put()` accept a `TaxData` and return it from `dto()` (see [data](data.md)). Its V2 filters
 (`ID`, `Name`, `IsActive`, `IsTaxForSale`, `IsTaxForPurchase`, `Account`) go through
 `get()` and `paginate()` as ordinary filters.
 
-`ref/customer/credits` lists under `CustomerCredits` and its envelope has no `Total`;
+`ref/customer/credits` lists under `CustomerCredits` (`get()->dto()` is a
+`list<CustomerCreditData>`) and its envelope has no `Total`;
 see [pagination](pagination.md#an-envelope-with-no-total). `CustomerID` and
 `ShowUsedCredits` are ordinary filters.
 

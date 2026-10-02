@@ -12,10 +12,13 @@ use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
 use InvalidArgumentException;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 use Ipsocode\Cin7\Requests\KeyedRequest;
+use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -33,7 +36,7 @@ class RequestBuildingTest extends TestCase
         parent::setUp();
 
         // One response per send in the longest test; only the request is asserted on.
-        $this->mock = Saloon::fake(array_fill(0, 5, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 7, MockResponse::make(Cin7Payloads::customerList())));
     }
 
     public function testEveryRequestCarriesTheAuthAndContentTypeHeaders(): void
@@ -137,6 +140,33 @@ class RequestBuildingTest extends TestCase
         $this->assertSame(Method::PUT, $pending->method());
         $this->assertSame(['ID' => 'guid-4', 'Name' => 'ACME Ltd'], $pending->body());
         $this->assertSame([], $pending->queryParameters());
+    }
+
+    /**
+     * `Optional` properties are left out of the body, so a PUT never sends a key the caller
+     * did not set. A collection sent as `[]` would delete the records on the other side.
+     */
+    public function testADataObjectSendsOnlyTheKeysThatWereSet(): void
+    {
+        $pending = $this->send(new PutTax(TaxData::from(['ID' => 'guid-1', 'Name' => 'VAT'])));
+
+        $this->assertSame(Method::PUT, $pending->method());
+        $this->assertSame(['ID' => 'guid-1', 'Name' => 'VAT'], $pending->body());
+        $this->assertArrayNotHasKey('Components', $pending->body());
+    }
+
+    public function testASetCollectionIsSentAndAnUnsetOneIsLeftOut(): void
+    {
+        $withComponents = TaxData::from([
+            'Name' => 'VAT',
+            'Components' => [['Name' => 'Tax', 'Percent' => '20.0000000000', 'ComponentOrder' => '1']],
+        ]);
+
+        $this->assertInstanceOf(TaxComponentData::class, $withComponents->Components[0]);
+        $this->assertSame(
+            ['Name' => 'VAT', 'Components' => [['Name' => 'Tax', 'Percent' => '20.0000000000', 'ComponentOrder' => '1']]],
+            $this->send(new PutTax($withComponents))->body(),
+        );
     }
 
     public function testTheDecodedBodyIsReturnedAsAnArray(): void

@@ -111,6 +111,9 @@ worker's lifetime is safe.
 - [docs/requests.md](docs/requests.md) — the three request bases and the
   request lines they send, the wire protocol, the exceptions a failed call
   throws, and the bounded 503 retry.
+- [docs/data.md](docs/data.md) — the typed request and response bodies: the
+  conventions every data class follows, the class behind each path, and the
+  empty-collection rule.
 - [docs/pagination.md](docs/pagination.md) — walking every page of a listing or
   sending the pages concurrently, and how the last page is worked out from
   Cin7's list envelope.
@@ -125,8 +128,19 @@ worker's lifetime is safe.
 - **No caching.** Response caching, cache-key shape and cache-hit logging
   semantics are consumer policy; `Cacheable`/`HasCaching` can be adopted later
   once a second consumer's needs are known.
-- **No DTOs.** Cin7 responses stay associative arrays; consumers already have a
-  typed domain layer.
+- **No mandatory DTOs.** Arrays work everywhere: a write takes an array body and
+  `json()` returns the decoded array. Typed data objects are an additive layer on
+  top ([docs/data.md](docs/data.md)), shown here for a tax rule:
+
+  ```php
+  use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+
+  // Only the keys you set are sent.
+  $response = $cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT', 'Account' => '800']));
+
+  $tax = $response->dto();                  // TaxData
+  $rules = $cin7->ref()->tax()->get()->dto(); // list<TaxData>
+  ```
 - **No request logging.** Instrumentation writes consumer-owned models.
 
 ## Contributing

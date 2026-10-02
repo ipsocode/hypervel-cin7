@@ -4,6 +4,8 @@ providers:
   # Saloon first: testbench does not auto-discover it, and it registers the `saloon`
   # HTTP connection the connector sends over.
   - Hypervel\Saloon\SaloonServiceProvider
+  # Likewise not auto-discovered; it merges the `data` config the data objects read.
+  - Hypervel\Data\DataServiceProvider
   - Ipsocode\Cin7\Cin7ServiceProvider
   - Workbench\App\Providers\WorkbenchServiceProvider
 
