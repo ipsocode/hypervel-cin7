@@ -14,6 +14,8 @@ use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\Purchase\OrderResource as PurchaseOrderResource;
 use Ipsocode\Cin7\Resources\Purchase\PaymentResource as PurchasePaymentResource;
 use Ipsocode\Cin7\Resources\Purchase\StockResource as PurchaseStockResource;
+use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
+use Ipsocode\Cin7\Resources\PurchaseListResource;
 use Ipsocode\Cin7\Resources\PurchaseResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
@@ -137,6 +139,16 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($purchase->stock(), $purchase->stock());
         $this->assertInstanceOf(PurchasePaymentResource::class, $purchase->payment());
         $this->assertNotSame($purchase->payment(), $purchase->payment());
+    }
+
+    public function testPurchaseListAndPurchaseCreditNoteListReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(PurchaseListResource::class, $connector->purchaseList());
+        $this->assertInstanceOf(PurchaseCreditNoteListResource::class, $connector->purchaseCreditNoteList());
+        $this->assertNotSame($connector->purchaseList(), $connector->purchaseList());
+        $this->assertNotSame($connector->purchaseCreditNoteList(), $connector->purchaseCreditNoteList());
     }
 
     public function testSupplierReturnsAFreshSupplierResource(): void
