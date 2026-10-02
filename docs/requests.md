@@ -468,7 +468,8 @@ These are the requests Cin7 receives.
   `api-auth-accountid` and `api-auth-applicationkey`, the last two from
   [configuration](configuration.md).
 - **Parameters.** GET and DELETE carry their parameters in the query string.
-  POST and PUT carry theirs as a raw JSON body and send no query string.
+  POST and PUT carry theirs as a raw JSON body and send no query string, except
+  `PostCrmWorkflowStart`, which sends everything in the query string and no body.
 - **Page defaults.** `page=1` and `limit=100` are added to the
   query string of every `ListRequest` when the caller has not set them. They
   are never added to a read or delete of one record, or a `WriteRequest`. A page below 1 or a
@@ -489,7 +490,8 @@ These are the requests Cin7 receives.
   `TaskID`). A `WriteRequest` sends no identifier of its own; the caller merges it into the body,
   as in [PUT identifiers](resources.md#put-identifiers).
 - **Empty write.** `new PostCustomer()` with no body still sends a JSON body,
-  the encoding of an empty array (`[]`), not a bodyless POST.
+  the encoding of an empty array (`[]`), not a bodyless POST. `PostCrmWorkflowStart` is a
+  `Cin7Request`, not a `WriteRequest`, and sends no body at all.
 
 ## Fields left out of write bodies
 
