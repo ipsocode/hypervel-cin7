@@ -7,6 +7,8 @@ use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPostData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPutData;
 use Ipsocode\Cin7\Requests\Ref\Tax\GetTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
@@ -45,7 +47,7 @@ return [
         ],
         PostTax::class . ' with data' => [
             PostTax::class,
-            [fn (): TaxData => TaxData::from($fields)],
+            [fn (): TaxPostData => TaxPostData::from($fields)],
             Method::POST,
             '/ExternalApi/v2/ref/tax',
             [],
@@ -53,11 +55,11 @@ return [
         ],
         PutTax::class . ' with data' => [
             PutTax::class,
-            [fn (): TaxData => TaxData::from([...$fields, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])],
+            [fn (): TaxPutData => TaxPutData::from([...$fields, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])],
             Method::PUT,
             '/ExternalApi/v2/ref/tax',
             [],
-            [...$fields, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'],
+            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ...$fields],
         ],
     ],
     'resources' => [
@@ -94,7 +96,7 @@ return [
             ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'VAT'],
         ],
         'ref tax post with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->post(TaxData::from($fields)),
+            fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->post(TaxPostData::from($fields)),
             PostTax::class,
             Method::POST,
             '/ExternalApi/v2/ref/tax',
@@ -102,12 +104,12 @@ return [
             $fields,
         ],
         'ref tax put with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->put(TaxData::from([...$fields, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])),
+            fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->put(TaxPutData::from([...$fields, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])),
             PutTax::class,
             Method::PUT,
             '/ExternalApi/v2/ref/tax',
             [],
-            [...$fields, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'],
+            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ...$fields],
         ],
     ],
     'dtos' => [
@@ -116,15 +118,18 @@ return [
         PutTax::class => [PutTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
     ],
     'bodies' => [
-        'tax POST' => [TaxData::class, Cin7Payloads::load('ref/tax', 'post.request')],
-        'tax PUT' => [TaxData::class, Cin7Payloads::load('ref/tax', 'put.request')],
+        TaxPostData::class => [TaxPostData::class, Cin7Payloads::load('ref/tax', 'post.request')],
+        TaxPutData::class => [TaxPutData::class, Cin7Payloads::load('ref/tax', 'put.request')],
     ],
     'missing' => [
+        'tax PUT without ID' => [TaxPutData::class, Arr::except(Cin7Payloads::load('ref/tax', 'put.request'), 'ID')],
         'tax without Account' => [TaxData::class, Arr::except(Cin7Payloads::taxList()['TaxRuleList'][0], 'Account')],
         'tax component without ComponentOrder' => [TaxComponentData::class, ['Name' => 'Tax', 'Percent' => 10, 'AccountCode' => '820']],
     ],
     'required' => [
         TaxData::class => ['Name', 'Account', 'IsActive', 'TaxInclusive'],
+        TaxPostData::class => ['Name', 'Account', 'IsActive', 'TaxInclusive'],
+        TaxPutData::class => ['Name', 'Account', 'IsActive', 'TaxInclusive', 'ID'],
         TaxComponentData::class => ['Name', 'Percent', 'AccountCode', 'ComponentOrder'],
     ],
     'omitted' => [

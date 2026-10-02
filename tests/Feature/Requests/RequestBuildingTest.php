@@ -15,7 +15,8 @@ use Hypervel\Saloon\Pagination\Contracts\Paginatable;
 use InvalidArgumentException;
 use Ipsocode\Cin7\Data\Customer\CustomerPutData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
-use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPostData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPutData;
 use Ipsocode\Cin7\Enums\CountryFormat;
 use Ipsocode\Cin7\Enums\PickingStatus;
 use Ipsocode\Cin7\Enums\SaleStatus;
@@ -23,6 +24,7 @@ use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
+use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
@@ -194,10 +196,10 @@ class RequestBuildingTest extends TestCase
      */
     public function testADataObjectSendsOnlyTheKeysThatWereSet(): void
     {
-        $pending = $this->send(new PutTax(TaxData::from([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])));
+        $pending = $this->send(new PutTax(TaxPutData::from([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])));
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $pending->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ...self::TAX], $pending->body());
         $this->assertArrayNotHasKey('Components', $pending->body());
     }
 
@@ -221,23 +223,23 @@ class RequestBuildingTest extends TestCase
         $gst = ['Name' => 'GST', 'Percent' => '5.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '1'];
         $pst = ['Name' => 'PST', 'Percent' => '7.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '2'];
 
-        $body = $this->send(new PutTax(TaxData::from([
+        $body = $this->send(new PutTax(TaxPutData::from([
             ...self::TAX,
             'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1',
             'Components' => [[...$gst, 'Compound' => null], [...$pst, 'ID' => null]],
         ])))->body();
 
-        $this->assertSame([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Components' => [$gst, $pst]], $body);
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Components' => [$gst, $pst], ...self::TAX], $body);
         $this->assertStringContainsString('"Components":[{"Name":"GST"', (string) json_encode($body));
     }
 
     public function testASetCollectionIsSentAndAnUnsetOneIsLeftOut(): void
     {
         $component = ['Name' => 'Tax', 'Percent' => '20.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '1'];
-        $withComponents = TaxData::from([...self::TAX, 'Components' => [$component]]);
+        $withComponents = TaxPostData::from([...self::TAX, 'Components' => [$component]]);
 
         $this->assertInstanceOf(TaxComponentData::class, $withComponents->Components[0]);
-        $this->assertSame([...self::TAX, 'Components' => [$component]], $this->send(new PutTax($withComponents))->body());
+        $this->assertSame(['Components' => [$component], ...self::TAX], $this->send(new PostTax($withComponents))->body());
     }
 
     public function testTheDecodedBodyIsReturnedAsAnArray(): void

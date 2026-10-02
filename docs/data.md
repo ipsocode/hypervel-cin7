@@ -7,12 +7,13 @@ data object through Saloon's `dto()`. Arrays keep working: every resource method
 the Saloon `Response`, and `json()` is unchanged.
 
 ```php
-use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPostData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPutData;
 
-$cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT', 'Account' => '800', 'IsActive' => true, 'TaxInclusive' => false]));
+$cin7->ref()->tax()->post(TaxPostData::from(['Name' => 'VAT', 'Account' => '800', 'IsActive' => true, 'TaxInclusive' => false]));
 $cin7->ref()->tax()->post(['Name' => 'VAT', 'Account' => '800', 'IsActive' => true, 'TaxInclusive' => false]); // same body
 
-$saved = $cin7->ref()->tax()->put($tax)->dto();       // TaxData
+$saved = $cin7->ref()->tax()->put(TaxPutData::from([...$tax->toArray(), 'Account' => '820']))->dto(); // TaxData
 $rules = $cin7->ref()->tax()->get()->dto();           // list<TaxData>
 $raw = $saved->getResponse()->json();                 // the untouched body
 ```
@@ -46,6 +47,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   |---|---|---|
   | `AbstractCustomerData` | `CustomerData`, `CustomerPostData`, `CustomerPutData` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule` |
   | `AbstractMoneyTaskData` | `MoneyTaskData`, `MoneyTaskPostData`, `MoneyTaskPutData` | `TaskType`, `Status`, `BankAccount`, `Date` |
+  | `AbstractTaxData` | `TaxData`, `TaxPostData`, `TaxPutData` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
   | `AbstractProductData` | `ProductData`, `ProductPostData`, `ProductPutData` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`; and `QuantityToProduce` and `AssemblyCostEstimationMethod` on a write body with a bill of materials (see [products](#products)) |
   | `AbstractSaleData` | `SaleData`, `SalePostData`, `SalePutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
@@ -160,7 +162,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 |---|---|---|
 | `customer` | POST: `CustomerPostData`; PUT: `CustomerPutData`, which also requires `ID` (Customer, with `Addresses`: `CustomerAddressData`, `Contacts`: `CustomerContactData` and `ProductPrices`: `ProductPriceData`, Customer specific Product Price Model) | GET: `list<CustomerData>`; POST, PUT: `CustomerData`, the saved customer (`CustomerList.0`); responses add `ChildCustomers`: `ChildCustomerData` |
 | `product` | POST: `ProductPostData`, which also requires `Type`; PUT: `ProductPutData`, which also requires `ID` (Product, with `Suppliers`: `ProductSupplierData` and its `ProductSupplierOptions`: `ProductSupplierOptionData` and `SupplyIntervals`: `ProductSupplierOptionIntervalData`, `ReorderLevels`: `ReorderLevelData`, `BillOfMaterialsProducts`: `BillOfMaterialProductData`, `BillOfMaterialsServices`: `BillOfMaterialServiceData`, `Movements`: `ProductMovementData`, `Attachments`: `AttachmentLineData` and `CustomPrices`: `ProductPriceData`) | GET: `list<ProductData>`; POST, PUT: `ProductData`, the saved product (`Products.0`) |
-| `ref/tax` | `TaxData`, for both verbs (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
+| `ref/tax` | POST: `TaxPostData`; PUT: `TaxPutData`, which also requires `ID` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
@@ -242,8 +244,10 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Money Task Line `TaxRule` and `Account`.** The table names them so, but every example
   sends `TaxRuleName` and `AccountCode`; `MoneyTaskLineData` models the example keys, and
   requires them as the table requires `TaxRule` and `Account`.
-- **Tax `ID`.** The table requires no `ID`, and its required fields are the same on every verb,
-  so one class, `TaxData`, serves POST, PUT and the responses, with `ID` optional.
+- **Tax `ID` and `TaxPercent`.** The table marks no `ID` required, but a PUT changes the rule its
+  `ID` names, so `TaxPutData` requires it; `TaxPostData` has none, and `TaxData` leaves it
+  optional. `TaxPercent` is read-only, but the request examples send it, so the classes model it
+  and the requests leave it out of the body.
 - **Tax Component notes.** The notes on `Name` ("Name of product. Read-only.") and `Percent`
   ("Cost. Required if product type is `Service`") are copied from a product table;
   `TaxComponentData` follows the Required column and requires both.
@@ -389,7 +393,9 @@ missing a required field fails `dto()` with a `CannotCreateData`.
 
 | Class | Folder | Required |
 |---|---|---|
-| `TaxData` (POST, PUT and responses) | `src/Data/Ref/Tax/` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
+| `TaxData` (response) | `src/Data/Ref/Tax/` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
+| `TaxPostData` | `src/Data/Ref/Tax/` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
+| `TaxPutData` | `src/Data/Ref/Tax/` | `Name`, `Account`, `IsActive`, `TaxInclusive`, `ID` |
 | `TaxComponentData` | `src/Data/Ref/Tax/` | `Name`, `Percent`, `AccountCode`, `ComponentOrder` |
 | `MoneyTaskData` (response) | `src/Data/MoneyTask/` | `TaskType`, `Status`, `BankAccount`, `Date` |
 | `MoneyTaskPostData` | `src/Data/MoneyTask/` | `TaskType`, `Status`, `BankAccount`, `Date` |

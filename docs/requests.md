@@ -113,7 +113,8 @@ requests' `dto()` is a
 record (`CustomerList.0`, `Products.0`).
 
 The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
-`TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s; the PUT body carries `ID`), all
+`TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are
+`TaxPostData` and `TaxPutData`; the PUT body carries `ID`), all
 on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
 `ref/customer/credits`.
 
