@@ -44,6 +44,7 @@ use Ipsocode\Cin7\Resources\StockTransferListResource;
 use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
+use Ipsocode\Cin7\Resources\WebhooksResource;
 use UnitEnum;
 
 /**
@@ -430,5 +431,13 @@ final class Cin7Connector extends Connector implements HasPagination
     public function crm(): CrmResource
     {
         return new CrmResource($this);
+    }
+
+    /**
+     * The `webhooks` resource.
+     */
+    public function webhooks(): WebhooksResource
+    {
+        return new WebhooksResource($this);
     }
 }

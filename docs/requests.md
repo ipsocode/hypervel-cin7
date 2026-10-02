@@ -330,6 +330,11 @@ dates (`startDateFrom`, `startDateTo` and so on), `assignedTo` and `category`.
 `PostCrmWorkflowStart` (`WorkflowStart/`) sends everything in the query and nothing in the body:
 `StartDate`, `EnityType` (the reference's spelling, kept), `EntityID`, and the workflow by `ID` or
 `Name`. It answers `{Success}`, left to `json()`.
+
+The `webhooks` actions live under `src/Requests/Webhooks/`: `GetWebhooks` (a plain `Cin7Request`, as the
+reference takes no page or limit), `PostWebhooks` and `PutWebhooks` (bodies `WebhookPostData` and
+`WebhookPutData`, which carries `ID`) and `DeleteWebhooks` (keyed `ID`). A GET, POST or PUT answers a
+`Webhooks` list, so `dto()` is a `list<WebhookData>`; a DELETE answers an empty one, left to `json()`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed
