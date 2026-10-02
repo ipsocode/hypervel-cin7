@@ -46,15 +46,15 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
 
-### `reference/stock/**` Stock (7 resources, 17 operations)
+### `reference/stock/**` Stock (7 resources, 17 operations, 5 left)
 
-- [ ] `stock-adjustment-list` · `stockadjustmentList` · GET
+- [x] `stock-adjustment-list` · `stockadjustmentList` · GET
   - [x] product fields: `trait HasProductFields`
-  - [ ] Stock Adjustment List: `StockAdjustmentListData`
-- [ ] `stock-adjustment` · `stockadjustment` · GET POST PUT DELETE
-  - [ ] Stock Adjustment: `StockAdjustmentData`
-  - [ ] Stock Adjustment POST/PUT body: `StockAdjustmentPostData`
-  - [ ] Stock Adjustment POST/PUT body: `StockAdjustmentPutData`
+  - [x] Stock Adjustment List: `StockAdjustmentListData`
+- [x] `stock-adjustment` · `stockadjustment` · GET POST PUT DELETE
+  - [x] Stock Adjustment: `StockAdjustmentData`
+  - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPostData`
+  - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPutData`
 - [ ] `stock-take-list` · `stockTakeList` · GET
   - [ ] Stock Take List: `StockTakeListData`
 - [ ] `stock-take` · `stocktake` · GET POST PUT DELETE
@@ -114,8 +114,8 @@ Built with the first resource that uses it.
 - [x] PurchaseCreditNoteModel: `PurchaseCreditNoteData` · used by purchase
 - [x] PurchaseInvoiceLineModel: `PurchaseInvoiceLineData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
 - [x] PurchaseInvoiceAdditionalChargeModel: `PurchaseInvoiceAdditionalChargeData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
-- [ ] ExistingStockLineModel: `ExistingStockLineData` · used by stock-adjustment, stock-take
-- [ ] NewStockLineModel: `NewStockLineData` · used by stock-adjustment, stock-take
+- [x] ExistingStockLineModel: `ExistingStockLineData` · used by stock-adjustment, stock-take
+- [x] NewStockLineModel: `NewStockLineData` · used by stock-adjustment, stock-take
 - [x] TransactionStockLineModel: `TransactionStockLineData` · used by disassembly, finished-goods, inventory-write-off, money-operation, bank-transfer, stock-adjustment, stock-take
 - [ ] StockTransferLineModel: `StockTransferLineData` · used by stock-transfer
 - [x] PriceTierModel: no class: a map of tier names to prices · used by product

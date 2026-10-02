@@ -67,6 +67,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)`; `attachments()`, `markupPrices()` |
 | `$cin7->bankTransfer()` | `BankTransferResource` | `get(string $taskId)`, `post(array\|BankTransferPostData $body)`, `put(array\|BankTransferPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->stockAdjustmentList()` | `StockAdjustmentListResource` | `get($page, $limit, ?CompletionStatus $status)`, `paginate($limit, ?CompletionStatus $status): Cin7Paginator` |
+| `$cin7->stockAdjustment()` | `StockAdjustmentResource` | `get(string $taskId)`, `post(array\|StockAdjustmentPostData $body)`, `put(array\|StockAdjustmentPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
@@ -1105,3 +1107,26 @@ request:
    [`ConnectorResourcesTest`](../tests/Feature/Resources/ConnectorResourcesTest.php),
    only when it is new.
 5. Document the resource here and the request in [requests](requests.md).
+
+## Stock
+
+`$cin7->stockAdjustmentList()` is `stockadjustmentList`, filtered by `status` (a `CompletionStatus`),
+and its `get()->dto()` is a `list<StockAdjustmentListData>`.
+
+`$cin7->stockAdjustment()` is `stockadjustment`, keyed by `TaskID` (`get($taskId)`), with no list
+action of its own. `post()` takes a `StockAdjustmentPostData` and `put()` a `StockAdjustmentPutData`,
+which requires `TaskID`, as well as an array. A body needs its `EffectiveDate`, `Status` (`DRAFT` or
+`COMPLETED`) and `Lines`, each a `NewStockLineData`: a `Quantity` and `UnitCost`, its product by
+`ProductID` or `SKU` and its location by `LocationID` or `Location`. `UpdateOnHand: true` adjusts the
+quantity on hand and not the available quantity. Every action answers with the adjustment, so
+`dto()` is a `StockAdjustmentData`, with the lines it changed (`ExistingStockLines`, in non-zero stock,
+and `NewStockLines`, in zero stock) and the `Transactions` they created. `delete($id, void: true)`
+voids it.
+
+```php
+$adjustment = $this->cin7->stockAdjustment()->post(StockAdjustmentPostData::from([
+    'EffectiveDate' => '2017-12-01T00:00:00',
+    'Status' => 'DRAFT',
+    'Lines' => [['SKU' => 'AF308', 'Quantity' => 600, 'UnitCost' => 1, 'Location' => 'Main Warehouse']],
+]))->dto(); // StockAdjustmentData
+```

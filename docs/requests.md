@@ -106,6 +106,9 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
 | `GetBankTransfer` | **`taskId`** |
 | `DeleteBankTransfer` | **`id`**, `void` |
+| `GetStockAdjustmentList` | `page`, `limit`, `status` (`CompletionStatus`) |
+| `GetStockAdjustment` | **`taskId`** |
+| `DeleteStockAdjustment` | **`id`**, `void` |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
 | `DeleteJournal` | **`id`**, `void` |
 | `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
@@ -247,6 +250,12 @@ The `bankTransfer` actions live under `src/Requests/BankTransfer/`, and follow t
 `BankTransferPostData` and `BankTransferPutData`; the PUT body carries `TaskID`). Every one's
 `dto()` is a `BankTransferData`.
 
+The `stockadjustment` actions live under `src/Requests/StockAdjustment/`: `GetStockAdjustment` (keyed
+`TaskID`), `DeleteStockAdjustment` (keyed `ID`, with `Void`), and `PostStockAdjustment` and
+`PutStockAdjustment` (`WriteRequest`s, whose data object bodies are `StockAdjustmentPostData` and
+`StockAdjustmentPutData`; the PUT body carries `TaskID`). Every one's `dto()` is a
+`StockAdjustmentData`. `GetStockAdjustmentList` (`src/Requests/StockAdjustmentList/`, a `ListRequest`
+for `stockadjustmentList`, keyed `StockAdjustmentList`) lists them, filtered by `status`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed
