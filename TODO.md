@@ -76,13 +76,6 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [ ] Purchase Manual Journal: `AdvancedPurchaseManualJournalsData`
   - [ ] AdvancedPurchasePartialMAnJModel: `AdvancedPurchasePartialManualJournalData`
 
-### `reference/supplier/**` Supplier (2 resources, 4 operations, 1 left)
-
-- [x] `supplier` · `supplier` · GET POST PUT
-  - [x] Supplier: `SupplierData`
-- [ ] `supplier-deposits` · `ref/supplier/deposits` · GET
-  - [ ] Supplier Deposits: `SupplierDepositData`
-
 ### `reference/other-models/**` Shared models for purchase, supplier and me
 
 Each is built with the first resource here that uses it; a ticked one is built, and moves to
@@ -107,8 +100,6 @@ Each is built with the first resource here that uses it; a ticked one is built, 
 - [ ] PurchaseCreditNoteModel: `PurchaseCreditNoteData` · used by purchase
 - [ ] PurchaseInvoiceLineModel: `PurchaseInvoiceLineData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
 - [ ] PurchaseInvoiceAdditionalChargeModel: `PurchaseInvoiceAdditionalChargeData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
-- [x] SupplierAddressModel: `CustomerAddressData` · used by customer, supplier, lead
-- [x] SupplierContactModel: `CustomerContactData` · used by customer, supplier, lead
 - [ ] PurchasePaymentLineModel: `PurchasePaymentLineData` · used by purchase, advanced-purchase
 - [ ] AdvancedPurchaseStockModel: `AdvancedPurchaseStockData` · used by purchase, advanced-purchase
 - [ ] AdvancedPurchaseStockLineModel: `AdvancedPurchaseStockLineData` · used by purchase, purchase-stock-received, advanced-purchase, advanced-purchase-stock-received
@@ -331,6 +322,8 @@ Built with the first resource that uses it.
 - [ ] InventoryWriteOffLineModel: `InventoryWriteOffLineData` · used by inventory-write-off
 - [x] TaxComponentModel: `TaxComponentData` · used by tax
 - [x] MoneyTaskLineModel: `MoneyTaskLineData` · used by money-operation
+- [x] SupplierAddressModel: `CustomerAddressData` · used by customer, supplier, lead
+- [x] SupplierContactModel: `CustomerContactData` · used by customer, supplier, lead
 - [x] ChildCustomerModel: `ChildCustomerData` · used by customer
 - [x] ProductPriceModel: `ProductPriceData` · used by customer, product, custom-prices
 - [ ] JournalLineModel: `JournalLineData` · used by journal
@@ -497,6 +490,13 @@ Every resource in these groups is in.
 - [x] `sale-attachments` · `sale/attachment` · GET POST DELETE
   - [x] Sale Attachments: `SaleAttachmentsData`
   - [x] Sale Attachments POST body: `SaleAttachmentPostData`
+
+### `reference/supplier/**` Supplier (2 resources, 4 operations)
+
+- [x] `supplier` · `supplier` · GET POST PUT
+  - [x] Supplier: `SupplierData`
+- [x] `supplier-deposits` · `ref/supplier/deposits` · GET
+  - [x] Supplier Deposits: `SupplierDepositData`
 
 ### `reference/tax/**` Tax (1 resource, 3 operations)
 
