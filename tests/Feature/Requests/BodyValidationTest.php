@@ -46,6 +46,7 @@ use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentPostData;
+use Ipsocode\Cin7\Data\StockTake\StockTakePostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
@@ -82,6 +83,7 @@ use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
 use Ipsocode\Cin7\Requests\StockAdjustment\PostStockAdjustment;
+use Ipsocode\Cin7\Requests\StockTake\PostStockTake;
 use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -388,6 +390,25 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PostStockAdjustment(StockAdjustmentPostData::from($body + ['Lines' => [$line + ['ProductID' => 'ccb7d97b-a638-4b34-833e-4c348b81f40d', 'LocationID' => 'cd3ed3bb-673a-4d48-b47b-5f92a973ae8c']]])));
 
         $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A stock take needs a location, by `LocationID` or `Location`; a body with neither is not sent.
+     */
+    public function testAStockTakeWithoutALocationIsNotSent(): void
+    {
+        $body = ['EffectiveDate' => '2018-04-27T00:00:00', 'Account' => '403'];
+
+        try {
+            $this->connector()->send(new PostStockTake(StockTakePostData::from($body)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['LocationID', 'Location'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostStockTake(StockTakePostData::from($body + ['Location' => 'Main Warehouse'])));
+
+        $this->mock->assertSentCount(1);
     }
 
     /**

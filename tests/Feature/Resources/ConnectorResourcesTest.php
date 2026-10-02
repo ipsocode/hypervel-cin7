@@ -66,6 +66,8 @@ use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
 use Ipsocode\Cin7\Resources\StockAdjustmentListResource;
 use Ipsocode\Cin7\Resources\StockAdjustmentResource;
+use Ipsocode\Cin7\Resources\StockTakeListResource;
+use Ipsocode\Cin7\Resources\StockTakeResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -263,6 +265,16 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->stockAdjustment(), $connector->stockAdjustment());
         $this->assertInstanceOf(StockAdjustmentListResource::class, $connector->stockAdjustmentList());
         $this->assertNotSame($connector->stockAdjustmentList(), $connector->stockAdjustmentList());
+    }
+
+    public function testStockTakeResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(StockTakeResource::class, $connector->stockTake());
+        $this->assertNotSame($connector->stockTake(), $connector->stockTake());
+        $this->assertInstanceOf(StockTakeListResource::class, $connector->stockTakeList());
+        $this->assertNotSame($connector->stockTakeList(), $connector->stockTakeList());
     }
 
     public function testMeReturnsAFreshMeResource(): void

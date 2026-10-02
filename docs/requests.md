@@ -109,6 +109,9 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetStockAdjustmentList` | `page`, `limit`, `status` (`CompletionStatus`) |
 | `GetStockAdjustment` | **`taskId`** |
 | `DeleteStockAdjustment` | **`id`**, `void` |
+| `GetStockTakeList` | `page`, `limit`, `status` (`StockTakeStatus`) |
+| `GetStockTake` | **`taskId`** |
+| `DeleteStockTake` | **`id`**, `void` |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
 | `DeleteJournal` | **`id`**, `void` |
 | `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
@@ -256,6 +259,11 @@ The `stockadjustment` actions live under `src/Requests/StockAdjustment/`: `GetSt
 `StockAdjustmentPutData`; the PUT body carries `TaskID`). Every one's `dto()` is a
 `StockAdjustmentData`. `GetStockAdjustmentList` (`src/Requests/StockAdjustmentList/`, a `ListRequest`
 for `stockadjustmentList`, keyed `StockAdjustmentList`) lists them, filtered by `status`.
+The `stocktake` actions live under `src/Requests/StockTake/`, the same four as `stockadjustment`:
+`GetStockTake` (keyed `TaskID`), `DeleteStockTake` (keyed `ID`, with `Void`), and `PostStockTake` and
+`PutStockTake` (`WriteRequest`s, whose bodies are `StockTakePostData` and `StockTakePutData`). Every
+one's `dto()` is a `StockTakeData`. `GetStockTakeList` (`src/Requests/StockTakeList/`) lists them,
+filtered by `status`, and reads the list from `StockAdjustmentList`, the key its example uses.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed

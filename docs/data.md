@@ -214,6 +214,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
 | `stockadjustmentList` | none | GET: `list<StockAdjustmentListData>` (Stock Adjustment List), read from `StockAdjustmentList` |
 | `stockadjustment` | POST: `StockAdjustmentPostData`; PUT: `StockAdjustmentPutData`, which also requires `TaskID` (Stock Adjustment POST/PUT, with `Lines`: `NewStockLineData`, New Stock Line Model) | GET, POST, PUT, DELETE: `StockAdjustmentData` (Stock Adjustment, with `ExistingStockLines`: `ExistingStockLineData`, `NewStockLines`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
+| `stockTakeList` | none | GET: `list<StockTakeListData>` (Stock Take List), read from `StockAdjustmentList` |
+| `stocktake` | POST: `StockTakePostData`; PUT: `StockTakePutData`, which also requires `TaskID` and `Status` (Stock Take, with `Categories`, `Brands` and `Bins`: `IdNameData`, IDName Model) | GET, POST, PUT, DELETE: `StockTakeData` (Stock Take, with `NonZeroStockOnHandProducts`: `ExistingStockLineData`, `ZeroStockOnHandProducts`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
 | `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
@@ -1375,3 +1377,23 @@ shared with the stock take, so they live in `src/Data/Other/`; both carry the pr
   method, so they stay optional.
 - **Examples.** The examples send `null` for `BatchSN`, `ExpiryDate` and the product custom fields;
   the fixtures are the six of them, unchanged.
+
+`stocktake` has a class per verb because `TaskID` is taken by PUT and the response only, and the
+table requires `Status` on PUT only. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `StockTakeData` (response) | `src/Data/StockTake/` | `EffectiveDate`, `Account` |
+| `StockTakePostData` | `src/Data/StockTake/` | `EffectiveDate`, `Account`; and `LocationID` or `Location` (`#[RequiredWithout]`) |
+| `StockTakePutData` | `src/Data/StockTake/` | `EffectiveDate`, `Account`, `TaskID`, `Status`; and `LocationID` or `Location` |
+| `IdNameData` | `src/Data/StockTake/` | nothing |
+| `StockTakeListData` | `src/Data/StockTakeList/` | nothing |
+
+- **`Status`** is a `StockTakeStatus` (`DRAFT`, `IN PROGRESS`, `COMPLETED`, `VOIDED`), optional in
+  the response and a POST body, required on PUT.
+- **`StockTakeListData`** keeps the filters as the comma delimited strings the table says, where
+  `StockTakeData` has lists of strings and of `IdNameData`. The list example returns its entries
+  under `StockAdjustmentList`, copied from the adjustment list: use the example's key.
+- **`UseRelativeQuantity`** is a Boolean in the table, but the PUT example sends `1`. The fixture
+  sends `true`.
+- **`LocationID`** is a String in the stock take tables, not a Guid, so it is not checked as one.
