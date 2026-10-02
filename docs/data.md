@@ -216,6 +216,9 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `stockadjustment` | POST: `StockAdjustmentPostData`; PUT: `StockAdjustmentPutData`, which also requires `TaskID` (Stock Adjustment POST/PUT, with `Lines`: `NewStockLineData`, New Stock Line Model) | GET, POST, PUT, DELETE: `StockAdjustmentData` (Stock Adjustment, with `ExistingStockLines`: `ExistingStockLineData`, `NewStockLines`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
 | `stockTakeList` | none | GET: `list<StockTakeListData>` (Stock Take List), read from `StockAdjustmentList` |
 | `stocktake` | POST: `StockTakePostData`; PUT: `StockTakePutData`, which also requires `TaskID` and `Status` (Stock Take, with `Categories`, `Brands` and `Bins`: `IdNameData`, IDName Model) | GET, POST, PUT, DELETE: `StockTakeData` (Stock Take, with `NonZeroStockOnHandProducts`: `ExistingStockLineData`, `ZeroStockOnHandProducts`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
+| `stockTransferList` | none | GET: `list<StockTransferListData>` (Stock Transfer List), read from `StockTransferList` |
+| `stockTransfer` | POST: `StockTransferPostData`; PUT: `StockTransferPutData`, which also requires `TaskID` (Stock Transfer, with `Lines`: `StockTransferLineData`, Stock Transfer Line Model) | GET, POST, PUT, DELETE: `StockTransferData` (Stock Transfer, with `Order`: `StockTransferOrderData`, Stock Transfer Order Model, whose `Lines` are `StockTransferOrderLineData`) |
+| `stockTransfer/order` | POST: `StockTransferOrderPostData` (Stock Transfer Order) | GET, POST: `StockTransferOrderData` |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
 | `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
@@ -1398,3 +1401,29 @@ table requires `Status` on PUT only. Each class requires:
 - **`UseRelativeQuantity`** is a Boolean in the table, but the PUT example sends `1`. The fixture
   sends `true`.
 - **`LocationID`** is a String in the stock take tables, not a Guid, so it is not checked as one.
+
+`stockTransfer` has a class per verb because `TaskID` is taken by PUT and the response only. Each class
+requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `StockTransferData` (response) | `src/Data/StockTransfer/` | `Status`, `CompletionDate`, `Lines` |
+| `StockTransferPostData` | `src/Data/StockTransfer/` | the same; and `From` or `FromLocation`, `To` or `ToLocation` (`#[RequiredWithout]`), `InTransitAccount` and `DepartureDate` when `Status` is `IN TRANSIT` (`#[RequiredIf]`) |
+| `StockTransferPutData` | `src/Data/StockTransfer/` | the same, and `TaskID` |
+| `StockTransferLineData` | `src/Data/StockTransfer/` | `TransferQuantity`; and `ProductID` or `SKU` |
+| `StockTransferOrderData` | `src/Data/StockTransfer/Order/` | `Status` |
+| `StockTransferOrderPostData` | `src/Data/StockTransfer/Order/` | `TaskID`, `Status`, `Lines` |
+| `StockTransferOrderLineData` | `src/Data/StockTransfer/Order/` | `TransferQuantity`; and `ProductID` or `SKU` |
+| `StockTransferListData` | `src/Data/StockTransferList/` | nothing |
+
+- **One order class.** The reference names both the `stockTransfer/order` table and the Stock
+  Transfer Order Model `StockTransferOrderData`, and they are the same two fields and lines: one class
+  serves both, with `TaskID` and `LastModifiedOn` optional, since the nested `Order` carries neither.
+- **`ManualJournals`.** All six transfer examples send `"ManualJournals": []`, in no table and with
+  no model. It stays a list of whatever the reference puts in it.
+- **PUT request example.** `names.py example` does not find it (the blueprint's `PUT` request is
+  formatted differently); the fixture is the example copied as it stands.
+- **`DepartureDate` and `InTransitAccount`** are "Yes*" for `IN TRANSIT` only, so they are
+  `#[RequiredIf('Status', …)]`; `BatchSN` and `ExpiryDate` depend on the product's costing method and
+  stay optional.
+- **Examples.** The examples need no correction.

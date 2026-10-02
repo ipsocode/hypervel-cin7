@@ -47,6 +47,7 @@ use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentPostData;
 use Ipsocode\Cin7\Data\StockTake\StockTakePostData;
+use Ipsocode\Cin7\Data\StockTransfer\StockTransferPostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
@@ -84,6 +85,7 @@ use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
 use Ipsocode\Cin7\Requests\StockAdjustment\PostStockAdjustment;
 use Ipsocode\Cin7\Requests\StockTake\PostStockTake;
+use Ipsocode\Cin7\Requests\StockTransfer\PostStockTransfer;
 use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -409,6 +411,35 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PostStockTake(StockTakePostData::from($body + ['Location' => 'Main Warehouse'])));
 
         $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A stock transfer needs both locations, by ID or by name, and, in transit, the account holding
+     * the stock and the date it left; a body without them is not sent.
+     */
+    public function testAStockTransferNeedsItsLocationsAndItsInTransitFields(): void
+    {
+        $body = ['Status' => 'DRAFT', 'CompletionDate' => '2017-12-19T00:00:00', 'Lines' => [['SKU' => 'Bread', 'TransferQuantity' => 1]]];
+        $locations = ['FromLocation' => 'Main Warehouse', 'ToLocation' => 'Bin 1'];
+
+        try {
+            $this->connector()->send(new PostStockTransfer(StockTransferPostData::from($body)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['From', 'FromLocation', 'To', 'ToLocation'], array_keys($exception->errors()));
+        }
+
+        try {
+            $this->connector()->send(new PostStockTransfer(StockTransferPostData::from([...$body, ...$locations, 'Status' => 'IN TRANSIT'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['InTransitAccount', 'DepartureDate'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostStockTransfer(StockTransferPostData::from([...$body, ...$locations])));
+        $this->connector()->send(new PostStockTransfer(StockTransferPostData::from([...$body, ...$locations, 'Status' => 'IN TRANSIT', 'InTransitAccount' => '715', 'DepartureDate' => '2018-03-12T00:00:00'])));
+
+        $this->mock->assertSentCount(2);
     }
 
     /**

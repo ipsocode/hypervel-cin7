@@ -69,6 +69,9 @@ use Ipsocode\Cin7\Resources\StockAdjustmentListResource;
 use Ipsocode\Cin7\Resources\StockAdjustmentResource;
 use Ipsocode\Cin7\Resources\StockTakeListResource;
 use Ipsocode\Cin7\Resources\StockTakeResource;
+use Ipsocode\Cin7\Resources\StockTransfer\OrderResource as StockTransferOrderResource;
+use Ipsocode\Cin7\Resources\StockTransferListResource;
+use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -299,6 +302,18 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->stockTake(), $connector->stockTake());
         $this->assertInstanceOf(StockTakeListResource::class, $connector->stockTakeList());
         $this->assertNotSame($connector->stockTakeList(), $connector->stockTakeList());
+    }
+
+    public function testStockTransferResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(StockTransferResource::class, $connector->stockTransfer());
+        $this->assertNotSame($connector->stockTransfer(), $connector->stockTransfer());
+        $this->assertInstanceOf(StockTransferListResource::class, $connector->stockTransferList());
+        $this->assertNotSame($connector->stockTransferList(), $connector->stockTransferList());
+        $this->assertInstanceOf(StockTransferOrderResource::class, $connector->stockTransfer()->order());
+        $this->assertNotSame($connector->stockTransfer()->order(), $connector->stockTransfer()->order());
     }
 
     public function testMeReturnsAFreshMeResource(): void

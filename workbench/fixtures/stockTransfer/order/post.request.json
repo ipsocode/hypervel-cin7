@@ -1,0 +1,21 @@
+{
+    "TaskID": "76a1294b-cea1-4a67-bde7-97363a9cd718",
+    "Status": "AUTHORISED",
+    "Lines": [
+        {
+            "ProductID": "34d4edc5-d366-4251-82b2-d75e27fe5e9d",
+            "SKU": "GB3-White",
+            "ProductName": "Golf balls white 3-pack",
+            "TransferQuantity": 1,
+            "Comments": ""
+        },
+        {
+            "ProductID": "9f35c272-5964-44c9-b372-170e9b9fd5be",
+            "SKU": "21354 - 002",
+            "ProductName": "Big Family red",
+            "TransferQuantity": 1,
+            "Comments": ""
+        }
+    ],
+    "LastModifiedOn": "2018-03-12T00:00:00"
+}
