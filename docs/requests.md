@@ -134,9 +134,10 @@ sends them. [`PageDefaults::apply()`](../src/PageDefaults.php):
 - Sets `page` to `PageDefaults::PAGE` (`1`) and `limit` to
   `PageDefaults::LIMIT` (`100`) only when the caller has not. Caller values
   win.
-- Adds lowercase keys. Cin7 also accepts `Page` and `Limit`, and those count as
-  set: `['Page' => 5, 'Limit' => 20]` is sent as `Page=5&Limit=20`, never with
-  both spellings.
+- Sends lowercase keys. Cin7 also accepts `Page` and `Limit`; a caller's are
+  renamed to the lowercase spelling, so `['Page' => 5, 'Limit' => 20]` is sent as
+  `page=5&limit=20`, never with both spellings, and `paginate()` reads the limit
+  it sent.
 - Treats a `null` value as absent, so the default is used.
 - Appends the defaults after the caller's keys, which keep their order.
 - Exposes `PAGE` and `LIMIT` as public constants, so code paging by hand can

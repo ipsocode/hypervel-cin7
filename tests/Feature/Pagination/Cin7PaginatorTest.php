@@ -116,6 +116,29 @@ class Cin7PaginatorTest extends TestCase
         $this->assertSame(['page' => 1, 'limit' => 100], $mock->lastPendingRequest()->queryParameters());
     }
 
+    /**
+     * `Page`/`Limit` go out lowercase, so the paginator's page overrides, never joins, the
+     * caller's, and a Total of 7 at the caller's Limit of 5 is two pages.
+     */
+    public function testACapitalisedPageAndLimitDoNotDuplicateOrHideTheSentLimit(): void
+    {
+        $mock = Saloon::fake([
+            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a', 'ACME')], page: 1, total: 7)),
+            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('b', 'Globex')], page: 2, total: 7)),
+        ]);
+
+        $items = iterator_to_array(
+            $this->connector()->customer()->paginate(['Page' => 5, 'Limit' => 5])->items(),
+            false,
+        );
+
+        $this->assertSame(['ACME', 'Globex'], array_column($items, 'Name'));
+        $this->assertSame(
+            [['page' => 1, 'limit' => 5], ['page' => 2, 'limit' => 5]],
+            array_values($mock->recorded()->map(fn (Response $response): array => $response->pendingRequest()->queryParameters())->all()),
+        );
+    }
+
     public function testAnEnvelopeWithNoListArrayYieldsNoItems(): void
     {
         Saloon::fake([MockResponse::make(['Total' => 0, 'Page' => 1])]);
