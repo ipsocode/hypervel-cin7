@@ -51,13 +51,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
 
-### `reference/product-family/**` Product Family (2 resources, 6 operations)
-
-- [ ] `product-family` · `productFamily` · GET POST PUT
-  - [ ] Product Family: `ProductFamilyData`
-- [ ] `product-family-attachments` · `productFamily/attachments` · GET POST DELETE
-  - [ ] Product Family Attachments POST body: `ProductFamilyAttachmentPostData`
-
 ### `reference/stock/**` Stock (7 resources, 17 operations)
 
 - [ ] `stock-adjustment-list` · `stockadjustmentList` · GET
@@ -111,7 +104,7 @@ Built with the first resource that uses it.
 - [x] SaleManualJournalModel: `SaleManualJournalData` · used by sale
 - [x] SaleManualJournalLineModel: `SaleManualJournalLineData` · used by sale, sale-manual-journals
 - [x] AttachmentLineModel: `AttachmentLineData` · used by journal, money-operation, bank-transfer, product, product-attachments, product-family, product-family-attachments, purchase, purchase-attachments, advanced-purchase, sale, sale-attachments, stock-adjustment, stock-take
-- [ ] ProductFamilyProductLineModel: `ProductFamilyProductLineData` · used by product-family
+- [x] ProductFamilyProductLineModel: `ProductFamilyProductLineData` · used by product-family
 - [x] InventoryMovementLineModel: `InventoryMovementLineData` · used by purchase, advanced-purchase, sale
 - [x] SaleTransactionLineModel: `SaleTransactionLineData` · used by sale
 - [x] PurchaseManualJournalModel: `PurchaseManualJournalData` · used by purchase
@@ -382,6 +375,13 @@ Every resource in these groups is in.
 
 - [x] `product-category` · `ref/category` · GET POST PUT DELETE
   - [x] Product Category: `ProductCategoryData`
+
+### `reference/product-family/**` Product Family (2 resources, 6 operations)
+
+- [x] `product-family` · `productFamily` · GET POST PUT
+  - [x] Product Family: `ProductFamilyData`
+- [x] `product-family-attachments` · `productFamily/attachments` · GET POST DELETE
+  - [x] Product Family Attachments POST body: `ProductFamilyAttachmentPostData`
 
 ### `reference/product-markup-prices/**` Product Markup Prices (1 resource, 2 operations)
 

@@ -70,6 +70,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
+| `$cin7->productFamily()` | `ProductFamilyResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductFamilyPostData $body)`, `put(array\|ProductFamilyPutData $body)`; `attachments()` |
+| `$cin7->productFamily()->attachments()` | `ProductFamily\AttachmentsResource` | `get(string $familyId)`, `post(array\|ProductFamilyAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->sale()->fulfilment()` | `Sale\FulfilmentResource` | `get(string $saleId, …)`, `post(array\|SaleFulfilmentsData $body)`, `delete(string $taskId, ?bool $void = null)`; `pick()`, `pack()`, `ship()` |
@@ -422,6 +424,26 @@ $this->cin7->product()->attachments()->post([
 foreach ($this->cin7->ref()->productAvailability()->paginate(location: 'Main Warehouse')->items() as $stock) {
     // $stock is one entry of ProductAvailabilityList
 }
+```
+
+## Product family
+
+`$cin7->productFamily()` lists under `ProductFamilies`, filtered by `id`, `name`, `sku` and
+`modifiedSince`, and `get()->dto()` is a `list<ProductFamilyData>`, with `Products`
+(`ProductFamilyProductLineData`) and `Attachments`. `post()` takes a `ProductFamilyPostData` and
+`put()` a `ProductFamilyPutData`, which requires `ID`, as well as an array; both answer with the
+saved family. A PUT adds or updates the products it lists and never deletes one.
+`$cin7->productFamily()->attachments()` is the product's attachments for a family: `get($familyId)`,
+`post()` and `delete($id)`.
+
+```php
+$family = $this->cin7->productFamily()->get(sku: 'GB1')->dto()[0]; // ProductFamilyData
+
+$this->cin7->productFamily()->attachments()->post([
+    'FamilyID' => $family->ID,
+    'FileName' => 'front.jpg',
+    'FileDownloadUrl' => 'https://files.example/front.jpg',
+]);
 ```
 
 ## Price tiers and markup prices

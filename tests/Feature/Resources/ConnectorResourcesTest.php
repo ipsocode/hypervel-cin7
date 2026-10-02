@@ -21,6 +21,8 @@ use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\Product\AttachmentsResource as ProductAttachmentsResource;
 use Ipsocode\Cin7\Resources\Product\MarkupPricesResource;
+use Ipsocode\Cin7\Resources\ProductFamily\AttachmentsResource as ProductFamilyAttachmentsResource;
+use Ipsocode\Cin7\Resources\ProductFamilyResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\Purchase\AttachmentResource as PurchaseAttachmentResource;
 use Ipsocode\Cin7\Resources\Purchase\CreditNoteResource as PurchaseCreditNoteResource;
@@ -106,6 +108,16 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($product->attachments(), $product->attachments());
         $this->assertInstanceOf(MarkupPricesResource::class, $product->markupPrices());
         $this->assertNotSame($product->markupPrices(), $product->markupPrices());
+    }
+
+    public function testProductFamilyReturnsItsAttachments(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(ProductFamilyResource::class, $connector->productFamily());
+        $this->assertNotSame($connector->productFamily(), $connector->productFamily());
+        $this->assertInstanceOf(ProductFamilyAttachmentsResource::class, $connector->productFamily()->attachments());
+        $this->assertNotSame($connector->productFamily()->attachments(), $connector->productFamily()->attachments());
     }
 
     public function testProductReturnsAFreshInstanceEveryCall(): void
