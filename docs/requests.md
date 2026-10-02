@@ -120,6 +120,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetPurchaseManualJournal` | **`taskId`** |
 | `GetPurchaseAttachment` | **`taskId`** |
 | `DeletePurchaseAttachment` | **`id`** |
+| `GetAdvancedPurchase` | **`id`**, `combineAdditionalCharges` |
+| `DeleteAdvancedPurchase` | **`id`**, `void` |
 | `GetAdvancedPurchaseStock` | **`purchaseId`** |
 | `DeleteAdvancedPurchaseStock` | **`taskId`**, `void` |
 | `GetAdvancedPurchaseManualJournal` | **`purchaseId`** |
@@ -247,6 +249,14 @@ The manual journal's POST body is `PurchaseManualJournalPostData`, which require
 The attachment's POST body is `PurchaseAttachmentPostData`, which names the purchase as
 `PurchaseID`, though the response keys it `TaskID`.
 
+The `advanced-purchase` actions live under `src/Requests/AdvancedPurchase/`: `GetAdvancedPurchase`
+and `DeleteAdvancedPurchase` (keyed `ID`; the DELETE takes `Void`) and `PostAdvancedPurchase` and
+`PutAdvancedPurchase` (`WriteRequest`s, whose data object bodies are `AdvancedPurchasePostData` and
+`AdvancedPurchasePutData`; the PUT body carries `ID`, and `PutAdvancedPurchase` leaves the POST-only
+`PurchaseType` out of it), all on `advanced-purchase`. Every `advanced-purchase` request's `dto()`
+is an `AdvancedPurchaseData`. `advanced-purchase` has no list action; `purchaseList` lists simple
+and advanced purchases alike.
+
 The `advanced-purchase/…` documents live under `src/Requests/AdvancedPurchase/`, one folder per
 path:
 
@@ -338,6 +348,7 @@ data object's body is also stripped of nulls and validated after the omission; s
 | `PostPurchasePayment` | `ID` (PUT only), `DateCreated` |
 | `PutPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
 | `PostPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
+| `PutAdvancedPurchase` | `PurchaseType` (POST only) |
 | `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
 | `PostPurchaseCreditNote` | `Unstock.*.ProductID`, `Unstock.*.SKU`, `Unstock.*.Name`, `Unstock.*.Location`, `Unstock.*.BatchSN`, `Unstock.*.ExpiryDate` |
 | `PostAdvancedPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |

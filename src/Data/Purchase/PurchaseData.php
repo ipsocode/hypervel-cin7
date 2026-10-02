@@ -11,6 +11,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Data\AbstractPurchaseData;
 use Ipsocode\Cin7\Data\Other\AttachmentLineData;
 use Ipsocode\Cin7\Data\Other\InventoryMovementLineData;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\SimplePurchaseCreditNoteData;
@@ -42,8 +43,9 @@ final class PurchaseData extends AbstractPurchaseData implements WithResponse
      * @param null|list<InventoryMovementLineData> $InventoryMovements
      */
     public function __construct(
-        string $Approach,
         string $Location,
+        #[Max(10)]
+        public string $Approach,
         #[Uuid]
         public ?string $ID = null,
         #[Max(50)]
@@ -72,6 +74,6 @@ final class PurchaseData extends AbstractPurchaseData implements WithResponse
         #[DataCollectionOf(InventoryMovementLineData::class)]
         public ?array $InventoryMovements = null,
     ) {
-        parent::__construct($Approach, $Location);
+        parent::__construct($Location);
     }
 }

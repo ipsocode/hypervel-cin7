@@ -66,9 +66,9 @@ return [
                 'TaskID' => '00000000-0000-0000-0000-000000000000',
                 'CombineAdditionalCharges' => false,
                 'CreditNoteInvoiceNumber' => 'INV-00103/2',
+                'CreditNoteDate' => '2018-04-15T00:00:00',
                 'AdditionalCharges' => [['Account' => '715', 'Description' => 'Rounding', 'Quantity' => 1.0, 'Price' => 0.5, 'Tax' => 0.0, 'TaxRule' => 'Tax on Purchases']],
                 'CreditNoteNumber' => 'CR-00103/1',
-                'CreditNoteDate' => '2018-04-15T00:00:00',
                 'Lines' => [['Account' => '715', 'Total' => 75.0, 'ProductID' => '11510572-0f9e-4d7c-a203-7e0563c3388f', 'SKU' => 'Bread', 'Name' => 'Baked Bread', 'Quantity' => 5.0, 'Price' => 15.0, 'Tax' => 0.0, 'TaxRule' => 'Tax on Purchases']],
                 'Unstock' => [['CardID' => '0c6555ab-2cf1-4939-871d-8060b9bbfa38', 'Quantity' => 5.0, 'Date' => '2018-04-15T00:00:00']],
             ],
@@ -105,7 +105,7 @@ return [
             Method::POST,
             '/ExternalApi/v2/advanced-purchase/creditnote',
             [],
-            ['Status' => 'AUTHORISED', 'PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00103/2', 'CreditNoteNumber' => 'CR-00103/1', 'CreditNoteDate' => '2018-04-15T00:00:00', 'Lines' => [], 'Unstock' => []],
+            ['Status' => 'AUTHORISED', 'PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00103/2', 'CreditNoteDate' => '2018-04-15T00:00:00', 'CreditNoteNumber' => 'CR-00103/1', 'Lines' => [], 'Unstock' => []],
         ],
         'advancedPurchase creditNote delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->creditNote()->delete('43ce7d3b-8c67-4aff-9224-b36b95811b08'),
@@ -132,8 +132,8 @@ return [
     ],
     'required' => [
         AdvancedPurchaseCreditNotesData::class => ['PurchaseID', 'CreditNotes'],
-        AdvancedPurchasePartialCreditNoteData::class => ['CreditNoteNumber', 'CreditNoteDate', 'Status', 'Lines', 'Unstock', 'TaskID', 'CombineAdditionalCharges', 'CreditNoteInvoiceNumber'],
-        AdvancedPurchasePartialCreditNotePostData::class => ['CreditNoteNumber', 'CreditNoteDate', 'Status', 'Lines', 'Unstock', 'PurchaseID', 'TaskID', 'CombineAdditionalCharges', 'CreditNoteInvoiceNumber'],
+        AdvancedPurchasePartialCreditNoteData::class => ['CreditNoteNumber', 'Status', 'Lines', 'Unstock', 'TaskID', 'CombineAdditionalCharges', 'CreditNoteInvoiceNumber', 'CreditNoteDate'],
+        AdvancedPurchasePartialCreditNotePostData::class => ['CreditNoteNumber', 'Status', 'Lines', 'Unstock', 'PurchaseID', 'TaskID', 'CombineAdditionalCharges', 'CreditNoteInvoiceNumber', 'CreditNoteDate'],
     ],
     'omitted' => [
         PostAdvancedPurchaseCreditNote::class => [PostAdvancedPurchaseCreditNote::class, Cin7Payloads::load('advanced-purchase/creditnote', 'post.request'), $sent],

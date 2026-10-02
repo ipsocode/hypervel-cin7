@@ -55,9 +55,9 @@ return [
                 'Status' => 'DRAFT',
                 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136',
                 'CombineAdditionalCharges' => false,
+                'CreditNoteDate' => '2017-12-21T00:00:00',
                 'AdditionalCharges' => [['Account' => '715', 'Description' => 'Freight', 'Quantity' => 1.0, 'Price' => 3.0, 'Tax' => 0.0, 'TaxRule' => 'Sales Tax on Imports']],
                 'CreditNoteNumber' => 'tr12',
-                'CreditNoteDate' => '2017-12-21T00:00:00',
                 'Lines' => [['Account' => '715', 'Total' => 2.0, 'ProductID' => 'c08b3876-89cc-46c4-af52-b77f058fdf81', 'SKU' => 'Bread', 'Name' => 'Baked Bread', 'Quantity' => 1.0, 'Price' => 2.0, 'Tax' => 0.0, 'TaxRule' => 'Sales Tax on Imports']],
                 'Unstock' => [['CardID' => 'a2db08f1-32cd-48e3-b558-a74af15ee53f', 'Quantity' => 3.0, 'Date' => '2017-12-11T00:00:00']],
             ],
@@ -94,7 +94,7 @@ return [
             Method::POST,
             '/ExternalApi/v2/purchase/creditnote',
             [],
-            ['Status' => 'AUTHORISED', 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'CreditNoteNumber' => 'tr12', 'CreditNoteDate' => '2017-12-21T00:00:00', 'Lines' => [], 'Unstock' => []],
+            ['Status' => 'AUTHORISED', 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'CreditNoteDate' => '2017-12-21T00:00:00', 'CreditNoteNumber' => 'tr12', 'Lines' => [], 'Unstock' => []],
         ],
     ],
     'dtos' => [
@@ -110,8 +110,8 @@ return [
         'purchase unstock line without CardID' => [PurchaseUnStockLineData::class, Arr::except($unstock, 'CardID')],
     ],
     'required' => [
-        PurchaseCreditNoteData::class => ['CreditNoteNumber', 'CreditNoteDate', 'Status', 'Lines', 'Unstock'],
-        PurchaseCreditNotePostData::class => ['CreditNoteNumber', 'CreditNoteDate', 'Status', 'Lines', 'Unstock', 'TaskID', 'CombineAdditionalCharges'],
+        PurchaseCreditNoteData::class => ['CreditNoteNumber', 'Status', 'Lines', 'Unstock', 'CreditNoteDate'],
+        PurchaseCreditNotePostData::class => ['CreditNoteNumber', 'Status', 'Lines', 'Unstock', 'TaskID', 'CombineAdditionalCharges', 'CreditNoteDate'],
         PurchaseUnStockLineData::class => ['CardID', 'Quantity'],
     ],
     'omitted' => [

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Purchase;
 
+use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
+use Ipsocode\Cin7\Data\AbstractPurchaseData;
 
 /**
  * The body of `purchase` PUT: the Purchase POST/PUT Attributes with the `ID` PUT requires. The
@@ -15,11 +17,12 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 final class PurchasePutData extends AbstractPurchaseData
 {
     public function __construct(
-        string $Approach,
         string $Location,
         #[Uuid]
         public string $ID,
+        #[Max(10)]
+        public string $Approach,
     ) {
-        parent::__construct($Approach, $Location);
+        parent::__construct($Location);
     }
 }

@@ -12,7 +12,9 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `StockReceiving` that every `advanced-purchase/stock` action answers with), and the Available
  * Fields for Purchase Stock Received table, which adds the purchase's `PurchaseID`. One name, so
  * one class: `PurchaseID` is optional, as only the second table has it, and `TaskID` is required,
- * as the model requires it. The bodies of POST and PUT are `AdvancedPurchaseStockPostData` and
+ * as the model requires it. An advanced purchase's `StockReceived` items add
+ * `InvoicingAndReceivingNumber`, which only the `advanced-purchase` examples send, so it is
+ * optional too. The bodies of POST and PUT are `AdvancedPurchaseStockPostData` and
  * `AdvancedPurchaseStockPutData`.
  *
  * @see docs/data.md
@@ -29,6 +31,7 @@ final class AdvancedPurchaseStockData extends AbstractAdvancedPurchaseStockData
         public string $TaskID,
         #[Uuid]
         public ?string $PurchaseID = null,
+        public ?int $InvoicingAndReceivingNumber = null,
     ) {
         parent::__construct($Status, $Lines);
     }

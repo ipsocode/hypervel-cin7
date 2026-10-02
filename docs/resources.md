@@ -79,7 +79,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
-| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `putAway()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()` |
+| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `get(string $id, …)`, `post(array\|AdvancedPurchasePostData $body)`, `put(array\|AdvancedPurchasePutData $body)`, `delete(string $id, ?bool $void = null)`; `stock()`, `putAway()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()` |
 | `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->advancedPurchase()->manualJournal()` | `AdvancedPurchase\ManualJournalResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePartialManualJournalPostData $body)` |
 | `$cin7->advancedPurchase()->invoice()` | `AdvancedPurchase\InvoiceResource` | `get(string $purchaseId, ?bool $combineAdditionalCharges = null)`, `post(array\|AdvancedPurchasePartialInvoicePostData $body)`, `delete(string $taskId, ?bool $void = null)` |
@@ -639,8 +639,40 @@ $this->cin7->purchase()->attachment()->delete($attachments->Lines[0]->ID); // DE
 
 ## Advanced purchase
 
-`$cin7->advancedPurchase()` is `advanced-purchase`, the advanced purchase, and its documents are
-sub-resources below it, as the paths are.
+`$cin7->advancedPurchase()` is `advanced-purchase`, a purchase of any kind: simple, advanced or
+service, where `purchase` supports only simple ones. It is keyed: `get($id)` sends
+`advanced-purchase?ID=…`, and `combineAdditionalCharges: true` lists the additional charges in
+`Lines` (a service purchase, which has only additional charges, answers with empty `Lines` without
+it). `post()` takes an `AdvancedPurchasePostData` and `put()` an `AdvancedPurchasePutData` as well
+as an array; a write needs `Location` and the supplier, by `Supplier` or `SupplierID`, a POST also
+`Approach` (`INVOICE` or `STOCK`) and, optionally, `PurchaseType` (`Simple` or `Advanced`, a
+`ProcessType`), which PUT does not take, and a PUT the purchase's `ID`. `delete($id, void: true)`
+sends `advanced-purchase?ID=…&Void=true` and voids the purchase, and `void: false` undoes it;
+without `void` no `Void` is sent, and the reference defaults it to `false`. Every action answers
+with the purchase, so `dto()` is an `AdvancedPurchaseData`, which carries its `Order` and the lists
+of its `StockReceived`, `PutAway`, `Invoice`, `CreditNote` and `ManualJournals`. `advanced-purchase`
+has no list action; list purchases through `purchaseList()`.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePostData;
+
+$purchase = $this->cin7->advancedPurchase()->post(AdvancedPurchasePostData::from([
+    'Supplier' => 'ABPA',
+    'Approach' => 'STOCK',
+    'Location' => 'Main Warehouse',
+    'PurchaseType' => 'Advanced',
+]))->dto(); // AdvancedPurchaseData
+
+$invoices = $this->cin7->advancedPurchase()->get($purchase->ID)->dto()->Invoice; // list<AdvancedPurchaseInvoiceData>
+
+$this->cin7->advancedPurchase()->delete($purchase->ID, void: true); // DELETE advanced-purchase?ID=…&Void=true
+```
+
+Its documents are sub-resources below it, as the paths are: `->stock()`, `->putAway()`,
+`->invoice()`, `->creditNote()`, `->payment()` and `->manualJournal()` send
+`advanced-purchase/stock`, `advanced-purchase/put-away`, `advanced-purchase/invoice`,
+`advanced-purchase/creditnote`, `advanced-purchase/payment` and `advanced-purchase/manualJournal`.
+Each is read by the purchase's `ID`, sent as `PurchaseID`.
 
 `$cin7->advancedPurchase()->stock()` is `advanced-purchase/stock`, an advanced purchase's stock
 received. It is not available for a service purchase, and only when `Use Put Away` is set in the
@@ -832,6 +864,7 @@ key:
 | `sale/invoice` | `SaleID` and `TaskID` |
 | `sale/payment` | `ID` |
 | `purchase/payment` | `TaskID` and `ID` |
+| `advanced-purchase` | `ID` |
 | `advanced-purchase/stock` | `PurchaseID` and `TaskID` |
 | `advanced-purchase/payment` | `TaskID` and `ID` |
 | `moneyOperation` | `TaskID` |

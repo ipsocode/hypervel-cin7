@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote;
 use Hypervel\Data\Attributes\Validation\In;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
+use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\AbstractPurchaseCreditNoteData;
 use Ipsocode\Cin7\Data\Other\PurchaseUnStockLineData;
 use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceLineData;
@@ -29,7 +30,6 @@ final class AdvancedPurchasePartialCreditNotePostData extends AbstractPurchaseCr
      */
     public function __construct(
         string $CreditNoteNumber,
-        string $CreditNoteDate,
         #[In(TaskStatus::Draft, TaskStatus::Authorised)]
         public TaskStatus $Status,
         array $Lines,
@@ -41,7 +41,9 @@ final class AdvancedPurchasePartialCreditNotePostData extends AbstractPurchaseCr
         public bool $CombineAdditionalCharges,
         #[Max(50)]
         public string $CreditNoteInvoiceNumber,
+        #[DateTime]
+        public string $CreditNoteDate,
     ) {
-        parent::__construct($CreditNoteNumber, $CreditNoteDate, $Status, $Lines, $Unstock);
+        parent::__construct($CreditNoteNumber, $Status, $Lines, $Unstock);
     }
 }

@@ -10,8 +10,9 @@ use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * The fields of the Sale Payment Line Model, which the payments of a credit note extend with the
- * order, invoice and credit note numbers, `Type` and `CreditID`. A field declared here is set
- * through `from()`, not the child's constructor.
+ * order, invoice and credit note numbers, `Type` and `CreditID`, and the Purchase Payment Line
+ * Model with the purchase's `PurchaseID` and `TaskID`. A field declared here is set through
+ * `from()`, not the child's constructor.
  *
  * @see docs/data.md
  */

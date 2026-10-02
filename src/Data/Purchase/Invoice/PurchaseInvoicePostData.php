@@ -12,8 +12,8 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
 
 /**
  * The body of `purchase/invoice` POST: the Available Fields for Purchase Invoice table with the
- * `TaskID`, `CombineAdditionalCharges` and `InvoiceDueDate` it requires, a `Status` of `DRAFT` or
- * `AUTHORISED`, and the totals, which POST does not require. The response is
+ * `TaskID`, `CombineAdditionalCharges`, `InvoiceDate` and `InvoiceDueDate` it requires, a `Status`
+ * of `DRAFT` or `AUTHORISED`, and the totals, which POST does not require. The response is
  * `PurchaseInvoiceData`.
  *
  * @see docs/data.md
@@ -24,7 +24,6 @@ final class PurchaseInvoicePostData extends AbstractPurchaseInvoiceData
      * @param list<PurchaseInvoiceLineData> $Lines
      */
     public function __construct(
-        string $InvoiceDate,
         #[In(InvoiceStatus::Draft, InvoiceStatus::Authorised)]
         public InvoiceStatus $Status,
         array $Lines,
@@ -32,10 +31,12 @@ final class PurchaseInvoicePostData extends AbstractPurchaseInvoiceData
         public string $TaskID,
         public bool $CombineAdditionalCharges,
         #[DateTime]
+        public string $InvoiceDate,
+        #[DateTime]
         public string $InvoiceDueDate,
         public ?float $InvoiceTotalAmount = null,
         public ?float $InvoiceTotalTaxAmount = null,
     ) {
-        parent::__construct($InvoiceDate, $Status, $Lines);
+        parent::__construct($Status, $Lines);
     }
 }

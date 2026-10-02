@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Purchase;
+namespace Ipsocode\Cin7\Data;
 
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\RequiredWithout;
@@ -15,15 +15,19 @@ use Ipsocode\Cin7\Data\Other\PurchaseShippingAddressData;
 use Ipsocode\Cin7\Enums\TaxCalculation;
 
 /**
- * The fields the Available Fields for Purchase table and the Purchase POST/PUT Attributes share:
- * the response of `purchase` and the body of its POST and PUT. Each is a final child that adds its
- * own fields.
+ * The fields the Available Fields for Purchase tables and the Purchase POST/PUT Attributes share:
+ * the response of `purchase` and of `advanced-purchase` and the body of their POST and PUT. The
+ * two paths document these fields alike, so the simple and the advanced purchase share this
+ * parent, which is in `src/Data/` itself as its children span both families. Each is a final
+ * child that adds its own fields.
  *
- * A purchase needs its `Approach` and `Location`, which the POST/PUT table requires, so each
- * child passes them to this constructor; the optional fields declared here are set through
- * `from()`. It also needs a supplier: `Supplier` or `SupplierID`, so a write body without either
- * fails validation before it is sent. `Approach` is `INVOICE` or `STOCK`, but the PUT example sends
- * `Stock`, so it is a string.
+ * A purchase needs its `Location`, which the POST/PUT tables require, so each child passes it to
+ * this constructor; the optional fields declared here are set through `from()`. The tables require
+ * `Approach` too, but the `advanced-purchase` PUT example sends none, so each child declares it:
+ * every class requires it but `AdvancedPurchasePutData`. `Approach` is `INVOICE` or `STOCK`, but
+ * the `purchase` PUT and `advanced-purchase` POST examples send `Stock`, so it is a string. A
+ * purchase also needs a supplier: `Supplier` or `SupplierID`, so a write body without either fails
+ * validation before it is sent.
  *
  * @see docs/data.md
  */
@@ -68,8 +72,6 @@ abstract class AbstractPurchaseData extends Data
     public ?AdditionalAttributeData $AdditionalAttributes = null;
 
     public function __construct(
-        #[Max(10)]
-        public string $Approach,
         #[Max(256)]
         public string $Location,
     ) {
