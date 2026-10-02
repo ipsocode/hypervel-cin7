@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Purchase\Payment;
+namespace Ipsocode\Cin7\Data;
 
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
@@ -10,8 +10,9 @@ use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * The fields of the Available Fields for Purchase Payments table that every verb takes: the
- * response of `purchase/payment` and the body of its POST and PUT. Each is a final child that adds
- * the fields of its verb.
+ * response of `purchase/payment` and `advanced-purchase/payment` and the body of their POST and
+ * PUT. Both paths document the same table, so the simple and the advanced purchase's payment
+ * classes share this parent; each is a final child that adds the fields of its verb.
  *
  * Every payment needs its `TaskID`, `DatePaid` and `CurrencyRate`, so each child passes them to
  * this constructor; `Amount` and `Account`, which a PUT of a deposit payment does not take, stay in
