@@ -1,6 +1,7 @@
 {
     "name": "ipsocode/hypervel-cin7",
     "description": "Cin7 Core API client for Hypervel, built on hypervel/saloon",
+    "type": "library",
     "license": "MIT",
     "keywords": [
         "hypervel",
@@ -10,6 +11,18 @@
         "saloon",
         "coroutine"
     ],
+    "homepage": "https://github.com/ipsocode/hypervel-cin7",
+    "authors": [
+        {
+            "name": "Ipsocode",
+            "homepage": "https://github.com/ipsocode"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/ipsocode/hypervel-cin7/issues",
+        "source": "https://github.com/ipsocode/hypervel-cin7",
+        "security": "https://github.com/ipsocode/hypervel-cin7/security/policy"
+    },
     "require": {
         "hypervel/components": "0.4.x-dev"
     },
