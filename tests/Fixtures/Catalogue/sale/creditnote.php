@@ -100,6 +100,7 @@ return [
         'credit note without CreditNoteDate' => [SaleCreditNotePartialData::class, Arr::except(Cin7Payloads::saleCreditNotePartial(), 'CreditNoteDate')],
     ],
     'required' => [
+        SaleCreditNotesData::class => ['SaleID'],
         SaleCreditNotePartialData::class => ['TaskID', 'CombineAdditionalCharges', 'Status', 'CreditNoteDate'],
         SaleCreditNotePostData::class => ['SaleID', 'TaskID', 'CombineAdditionalCharges', 'CreditNoteInvoiceNumber', 'Status', 'CreditNoteDate'],
     ],

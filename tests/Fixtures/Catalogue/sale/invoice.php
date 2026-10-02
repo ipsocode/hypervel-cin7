@@ -142,6 +142,7 @@ return [
         'invoice without InvoiceDate' => [SaleInvoicePartialData::class, Arr::except(Cin7Payloads::saleInvoicePartial(), 'InvoiceDate')],
     ],
     'required' => [
+        SaleInvoicesData::class => ['SaleID'],
         SaleInvoicePartialData::class => ['TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
         SaleInvoicePostData::class => ['SaleID', 'TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
         SaleInvoicePutData::class => ['SaleID', 'TaskID'],

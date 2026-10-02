@@ -48,4 +48,7 @@ return [
             'SaleList',
         ],
     ],
+    'required' => [
+        SaleListData::class => ['SaleID', 'OrderNumber', 'Status', 'OrderDate', 'Customer', 'InvoiceAmount', 'PaidAmount', 'BaseCurrency', 'CustomerCurrency', 'Updated', 'QuoteStatus', 'OrderStatus', 'CombinedPickingStatus', 'CombinedPackingStatus', 'CombinedShippingStatus', 'FulFilmentStatus', 'CombinedInvoiceStatus', 'CreditNoteStatus', 'CombinedPaymentStatus', 'Type', 'CombinedTrackingNumbers'],
+    ],
 ];

@@ -18,10 +18,10 @@ final class SaleFulfilmentData extends Data
 {
     public function __construct(
         #[Uuid]
-        public ?string $TaskID = null,
-        public ?int $FulfillmentNumber = null,
+        public string $TaskID,
+        public int $FulfillmentNumber,
+        public FulfilmentStatus $FulFilmentStatus,
         public ?string $LinkedInvoiceNumber = null,
-        public ?FulfilmentStatus $FulFilmentStatus = null,
         public ?SaleFulfilmentPickPackData $Pick = null,
         public ?SaleFulfilmentPickPackData $Pack = null,
         public ?SaleFulfilmentShipData $Ship = null,

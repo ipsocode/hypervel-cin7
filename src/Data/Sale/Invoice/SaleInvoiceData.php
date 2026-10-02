@@ -21,12 +21,12 @@ final class SaleInvoiceData extends AbstractSaleInvoiceData
      */
     public function __construct(
         string $TaskID,
+        public InvoiceStatus $Status,
+        #[DateTime]
+        public string $InvoiceDate,
+        #[DateTime]
+        public string $InvoiceDueDate,
         public ?string $InvoiceNumber = null,
-        public ?InvoiceStatus $Status = null,
-        #[DateTime]
-        public ?string $InvoiceDate = null,
-        #[DateTime]
-        public ?string $InvoiceDueDate = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
         public ?array $Payments = null,
         public ?float $TotalBeforeTax = null,

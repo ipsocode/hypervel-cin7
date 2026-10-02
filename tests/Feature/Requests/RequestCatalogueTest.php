@@ -11,7 +11,7 @@ use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use InvalidArgumentException;
 use Ipsocode\Cin7\Data\Product\ProductData;
-use Ipsocode\Cin7\Data\Sale\SalePostPutData;
+use Ipsocode\Cin7\Data\Sale\SalePutData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
@@ -107,7 +107,7 @@ class RequestCatalogueTest extends TestCase
         $this->connector()->send(new PutSale(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SaleType' => 'Advanced']));
         $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $this->mock->lastPendingRequest()?->body());
 
-        $this->connector()->send(new PutSale(SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1, 'SaleType' => 'Advanced'])));
+        $this->connector()->send(new PutSale(SalePutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1, 'SaleType' => 'Advanced'])));
         $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0], $this->mock->lastPendingRequest()?->body());
     }
 

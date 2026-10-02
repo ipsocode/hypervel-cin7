@@ -17,14 +17,14 @@ use Hypervel\Data\Data;
 final class SaleFulfilmentShipLineData extends Data
 {
     public function __construct(
+        #[Date]
+        public string $ShipmentDate,
+        #[Max(256)]
+        public string $Boxes,
         #[Uuid]
         public ?string $ID = null,
-        #[Date]
-        public ?string $ShipmentDate = null,
         #[Max(256)]
         public ?string $Carrier = null,
-        #[Max(256)]
-        public ?string $Boxes = null,
         #[Max(256)]
         public ?string $TrackingNumber = null,
         #[Max(512)]
