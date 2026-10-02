@@ -14,11 +14,12 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
  * The fields the purchase credit note tables share: the Purchase Credit Note Model and the
- * Available Fields for Purchase Credit Note table (a purchase's `CreditNote`, the response of
- * `purchase/creditnote` and the body of its POST), and the Advanced purchase credit note partial
- * model (a credit note of `advanced-purchase/creditnote` and the body of its POST). The simple and
- * the advanced purchase both use it, so it is at the `src/Data/` root. Each is a final child that
- * adds its own fields.
+ * Available Fields for Purchase Credit Note table (the response of `purchase/creditnote` and the
+ * body of its POST), and the Advanced purchase credit note partial model (a credit note of
+ * `advanced-purchase/creditnote` and the body of its POST). The simple and the advanced purchase
+ * both use it, so it is at the `src/Data/` root. Each is a final child that adds its own fields.
+ * A purchase's `CreditNote` is not one: the `purchase` examples send its `Unstock` as an object,
+ * so it is `SimplePurchaseCreditNoteData`.
  *
  * Every credit note needs its `CreditNoteNumber`, `CreditNoteDate`, `Status`, `Lines` and
  * `Unstock`, so each child passes them to this constructor; `AdditionalCharges` and the totals,

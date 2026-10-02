@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Other\AttachmentLineData;
 use Ipsocode\Cin7\Data\Other\InventoryMovementLineData;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\SimplePurchaseCreditNoteData;
-use Ipsocode\Cin7\Data\Purchase\Invoice\SimplePurchaseInvoiceData;
+use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceData;
 use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
@@ -26,9 +26,10 @@ use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
  * lack. `OrderDate` is in every example and in no Purchase table; it is modelled as the purchase
  * lists' `OrderDate`.
  *
- * The examples embed the invoice and the credit note in a shape of their own (`InvocieNumber`, and
- * `Unstock` as `{Status, Lines}`), so they are `SimplePurchaseInvoiceData` and
- * `SimplePurchaseCreditNoteData`, not the `purchase/invoice` and `purchase/creditnote` classes.
+ * The invoice is `purchase/invoice`'s `PurchaseInvoiceData`, which reads the `null`
+ * `InvoiceDueDate` and the misspelt `InvocieNumber` the examples embed. The examples embed the
+ * credit note in a shape of its own (`Unstock` as `{Status, Lines}`), so it is
+ * `SimplePurchaseCreditNoteData`, not the `purchase/creditnote` class.
  *
  * @see docs/data.md
  */
@@ -63,7 +64,7 @@ final class PurchaseData extends AbstractPurchaseData implements WithResponse
         public ?string $LastUpdatedDate = null,
         public ?PurchaseOrderData $Order = null,
         public ?PurchaseStockData $StockReceived = null,
-        public ?SimplePurchaseInvoiceData $Invoice = null,
+        public ?PurchaseInvoiceData $Invoice = null,
         public ?SimplePurchaseCreditNoteData $CreditNote = null,
         public ?PurchaseManualJournalData $ManualJournals = null,
         #[DataCollectionOf(AttachmentLineData::class)]

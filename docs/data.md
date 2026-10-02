@@ -71,7 +71,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractPurchaseOrderData` | `PurchaseOrderData`, `PurchaseOrderPostData` | `Status`, `Lines`; and `Memo` on the POST body (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractPurchaseStockData` | `PurchaseStockData`, `PurchaseStockPostData` | `Status`, `Lines` |
   | `AbstractPurchaseCreditNoteData` | `PurchaseCreditNoteData`, `PurchaseCreditNotePostData`, `AdvancedPurchasePartialCreditNoteData`, `AdvancedPurchasePartialCreditNotePostData` | `CreditNoteNumber`, `CreditNoteDate`, `Status`, `Lines`, `Unstock` |
-  | `AbstractPurchaseInvoiceData` | `PurchaseInvoiceData`, `PurchaseInvoicePostData`, `AdvancedPurchasePartialInvoiceData`, `AdvancedPurchasePartialInvoicePostData`; in `src/Data/` itself, as its children span the purchase and advanced purchase families | `InvoiceDate`, `InvoiceDueDate`, `Status`, `Lines` |
+  | `AbstractPurchaseInvoiceData` | `PurchaseInvoiceData`, `PurchaseInvoicePostData`, `AdvancedPurchasePartialInvoiceData`, `AdvancedPurchasePartialInvoicePostData`; in `src/Data/` itself, as its children span the purchase and advanced purchase families | `InvoiceDate`, `Status`, `Lines`; and `InvoiceDueDate` on every child but `PurchaseInvoiceData` (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData`, `AdvancedPurchasePaymentData`, `AdvancedPurchasePaymentPostData`, `AdvancedPurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
   | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData`, `AdvancedPurchasePartialManualJournalData`, `AdvancedPurchasePartialManualJournalPostData` | `Status` |
   | `AbstractAdvancedPurchaseStockData` | `AdvancedPurchaseStockData`, `AdvancedPurchaseStockPostData`, `AdvancedPurchaseStockPutData` | `Status`, `Lines` |
@@ -214,12 +214,12 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `sale/manualJournal` | POST: `SaleManualJournalPostData` (Sale Manual Journal, with `Lines`: `SaleManualJournalLineData`) | GET, POST: `SaleManualJournalData` |
 | `sale/attachment` | POST: `SaleAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `SaleAttachmentsData` (`{SaleID, Lines}`, with `Lines`: `AttachmentLineData`) |
 | `sale/payment` | POST: `SalePaymentPostData`; PUT: `SalePaymentPutData` (the Sale Payment Line Partial Model's fields for each verb) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
-| `purchase` | POST: `PurchasePostData`; PUT: `PurchasePutData`, which also requires `ID` (Purchase POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `PurchaseShippingAddressData`, Purchase Shipping Address Model, and `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `PurchaseData` (Available Fields for Purchase, with `Order`: `PurchaseOrderData`, `StockReceived`: `PurchaseStockData`, `Invoice`: `SimplePurchaseInvoiceData`, `CreditNote`: `SimplePurchaseCreditNoteData`, whose `Unstock` is `PurchaseUnStockData`, `ManualJournals`: `PurchaseManualJournalData`, `Attachments`: `AttachmentLineData` and `InventoryMovements`: `InventoryMovementLineData`) |
+| `purchase` | POST: `PurchasePostData`; PUT: `PurchasePutData`, which also requires `ID` (Purchase POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `PurchaseShippingAddressData`, Purchase Shipping Address Model, and `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `PurchaseData` (Available Fields for Purchase, with `Order`: `PurchaseOrderData`, `StockReceived`: `PurchaseStockData`, `Invoice`: `PurchaseInvoiceData`, `CreditNote`: `SimplePurchaseCreditNoteData`, whose `Unstock` is `PurchaseUnStockData`, `ManualJournals`: `PurchaseManualJournalData`, `Attachments`: `AttachmentLineData` and `InventoryMovements`: `InventoryMovementLineData`) |
 | `purchaseList` | none | GET: `list<PurchaseListData>` (Purchase List) |
 | `purchaseCreditNoteList` | none | GET: `list<PurchaseCreditNoteListData>` (Purchase Credit Note List), read from `PurchaseList` |
 | `purchase/order` | POST: `PurchaseOrderPostData` (Available Fields for Purchase Order, with `Lines`: `PurchaseOrderLineData` and `AdditionalCharges`: `PurchaseAdditionalChargeData`) | GET, POST: `PurchaseOrderData` |
 | `purchase/stock` | POST: `PurchaseStockPostData` (Available Fields for Purchase Stock Received, with `Lines`: `PurchaseStockLineData`) | GET, POST: `PurchaseStockData` |
-| `purchase/invoice` | POST: `PurchaseInvoicePostData` (Available Fields for Purchase Invoice, with `Lines`: `PurchaseInvoiceLineData` and `AdditionalCharges`: `PurchaseInvoiceAdditionalChargeData`) | GET, POST: `PurchaseInvoiceData`, the invoice (the table and the Purchase Invoice Model, whose `Payments` are `SalePaymentLineData`; the invoice a purchase embeds is read by `SimplePurchaseInvoiceData`) |
+| `purchase/invoice` | POST: `PurchaseInvoicePostData` (Available Fields for Purchase Invoice, with `Lines`: `PurchaseInvoiceLineData` and `AdditionalCharges`: `PurchaseInvoiceAdditionalChargeData`) | GET, POST: `PurchaseInvoiceData`, the invoice (the table and the Purchase Invoice Model a purchase embeds, whose `Payments` are `SalePaymentLineData`) |
 | `purchase/creditnote` | POST: `PurchaseCreditNotePostData` (Available Fields for Purchase Credit Note, with `Lines`: `PurchaseInvoiceLineData`, `AdditionalCharges`: `PurchaseInvoiceAdditionalChargeData` and `Unstock`: `PurchaseUnStockLineData`) | GET, POST: `PurchaseCreditNoteData`, the credit note (the table and the Purchase Credit Note Model, whose `Refunds` are `SalePaymentLineData`; the credit note a purchase embeds is read by `SimplePurchaseCreditNoteData`) |
 | `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
 | `purchase/manualJournal` | POST: `PurchaseManualJournalPostData` (Available field for Purchase Manual Journal, with `Lines`: `PurchaseManualJournalLineData`) | GET, POST: `PurchaseManualJournalData` |
@@ -577,10 +577,16 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `DRAFT` and `AUTHORISED`, takes the totals the notes mark "Not required for POST" as optional,
   and has no `Payments` or `Paid`. Its notes call `InvoiceNumber` auto-generated, but, unlike the
   sale invoice's POST table, this table lists it and the POST example sends it, so the POST body
-  takes it. Both tables require `InvoiceDueDate`, but the four `purchase` examples embed the invoice
-  with a `null` one and its number under `InvocieNumber`. `PurchaseInvoiceData` follows the
-  tables, so it does not read the embedded invoices: a purchase's `Invoice` is
-  `SimplePurchaseInvoiceData` (see below).
+  takes it. Both tables require `InvoiceDueDate`, but the `purchase` POST, PUT and DELETE examples
+  embed an invoice that is `DRAFT` or `VOIDED` with a `null` one: `PurchaseInvoiceData` leaves it
+  optional, and `PurchaseInvoicePostData`, `AdvancedPurchasePartialInvoiceData` and
+  `AdvancedPurchasePartialInvoicePostData` require it, so each declares its own and
+  `AbstractPurchaseInvoiceData` takes only `InvoiceDate`, `Status` and `Lines`, as the purchase
+  order classes each declare their `Memo`. The four `purchase` examples also send the invoice's
+  number under the misspelt `InvocieNumber`, where `purchase/invoice` sends `InvoiceNumber`; as with
+  the money task's `SupplierCustomer`, the wire key is modelled, so `PurchaseInvoiceData` takes an
+  optional `InvocieNumber` beside the model's `InvoiceNumber`. One class reads both the
+  `purchase/invoice` invoice and a purchase's `Invoice`, as the model name is one.
 - **Purchase Credit Note.** The reference documents the model twice: the Purchase Credit Note
   Model a purchase embeds as its `CreditNote`, with `Refunds` (Sale Payment Line Model), and the
   Available Fields for Purchase Credit Note table of `purchase/creditnote`, which adds `TaskID` and
@@ -594,26 +600,20 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   an object, `{Status, Lines}`, and three of them send a `null` `CreditNoteDate`.
   `PurchaseCreditNoteData` follows the tables, so it does not read the embedded credit notes: a
   purchase's `CreditNote` is `SimplePurchaseCreditNoteData` (see below).
-- **A simple purchase's invoice and credit note.** The four `purchase` examples embed the invoice
-  and the credit note in a shape the `purchase/invoice` and `purchase/creditnote` tables and
-  examples do not have. The invoice's number is under the misspelt `InvocieNumber`, and an
-  invoice that is `DRAFT` or `VOIDED` has a `null` `InvoiceDueDate`; the credit note's `Unstock` is
-  an object, `{Status, Lines}`, not a list of lines, and a credit note that is `NOT AVAILABLE` or
-  `VOIDED` has a `null` `CreditNoteDate` and a `CreditNoteNumber` of `""`. `PurchaseInvoiceData`
-  and `PurchaseCreditNoteData` keep their tables' rules, so `PurchaseData` reads the two as
-  `SimplePurchaseInvoiceData` and `SimplePurchaseCreditNoteData`, the documents as a simple
-  purchase embeds them: the dates the examples send as `null` are optional, the other fields the
-  model tables require stay required, and `Unstock` is a `PurchaseUnStockData`, a `TaskStatus`
-  `Status` and `Lines` of `PurchaseUnStockLineData`, as the Purchase Stock Model is the stock
-  received's. `SimplePurchaseInvoiceData` takes the model's `InvoiceNumber` and, beside it, the
-  examples' key, `InvocieNumber`. The credit note needs a class of its own, as its `Unstock` has
-  another type. The invoice's split is temporary: it is to fold into `PurchaseInvoiceData` (an
-  optional `InvoiceDueDate` on the response, as `Memo` is on `PurchaseOrderData`, and
-  `InvocieNumber` beside `InvoiceNumber`) once `AbstractPurchaseInvoiceData` no longer requires
-  `InvoiceDueDate` of every child. The embedded `Order`, `StockReceived` and
-  `ManualJournals` are the sub-paths' `PurchaseOrderData` (with an optional `Memo`, see above),
-  `PurchaseStockData` and `PurchaseManualJournalData`, whose `TaskStatus` has the `VOIDED` a
-  voided purchase's journal sends.
+- **A simple purchase's credit note.** The four `purchase` examples embed the credit note in a
+  shape the `purchase/creditnote` tables and examples do not have: its `Unstock` is an object,
+  `{Status, Lines}`, not a list of lines, and a credit note that is `NOT AVAILABLE` or `VOIDED`
+  has a `null` `CreditNoteDate` and a `CreditNoteNumber` of `""`. `PurchaseCreditNoteData` keeps
+  its tables' rules, so `PurchaseData` reads it as `SimplePurchaseCreditNoteData`, the credit note
+  as a simple purchase embeds it: the `CreditNoteDate` the examples send as `null` is optional,
+  the other fields the model table requires stay required, and `Unstock` is a
+  `PurchaseUnStockData`, a `TaskStatus` `Status` and `Lines` of `PurchaseUnStockLineData`, as the
+  Purchase Stock Model is the stock received's. It needs a class of its own, as its `Unstock` has
+  another type. The embedded `Invoice`, `Order`, `StockReceived` and `ManualJournals` are the
+  sub-paths' `PurchaseInvoiceData` (with an optional `InvoiceDueDate`, see above),
+  `PurchaseOrderData` (with an optional `Memo`, see above), `PurchaseStockData` and
+  `PurchaseManualJournalData`, whose `TaskStatus` has the `VOIDED` a voided purchase's journal
+  sends.
 - **Purchase unstock line.** The Purchase Unstock Line Model marks `ProductID`, `SKU`, `Name`,
   `Location`, `BatchSN` and `ExpiryDate` read-only, but the `purchase/creditnote` POST example
   sends them. `PurchaseUnStockLineData` models them, and `PostPurchaseCreditNote` leaves them out
@@ -876,14 +876,13 @@ reference marks the endpoint deprecated: it supports only simple purchases. Each
 | `PurchasePostData` | `src/Data/Purchase/` | `Approach`, `Location`; and `Supplier` or `SupplierID` (`#[RequiredWithout]`) |
 | `PurchasePutData` | `src/Data/Purchase/` | `Approach`, `Location`, `ID`; and `Supplier` or `SupplierID` (`#[RequiredWithout]`) |
 | `PurchaseShippingAddressData` | `src/Data/Other/` | none |
-| `SimplePurchaseInvoiceData` | `src/Data/Purchase/Invoice/` | `InvoiceDate`, `Status`, `Lines` |
 | `SimplePurchaseCreditNoteData` | `src/Data/Purchase/CreditNote/` | `CreditNoteNumber`, `Status`, `Lines`, `Unstock` |
 | `PurchaseUnStockData` | `src/Data/Purchase/` | `Status`, `Lines` |
 
-`TaxCalculation` is a `TaxCalculation`, and `Approach` and `Status` are strings. The invoice's
-`Status` is an `InvoiceStatus`, and the credit note's and its unstock's a `TaskStatus`; their lines
-and charges are the purchase invoice's `PurchaseInvoiceLineData` and
-`PurchaseInvoiceAdditionalChargeData`, and their `Payments` and `Refunds` the shared
+`TaxCalculation` is a `TaxCalculation`, and `Approach` and `Status` are strings. The embedded
+invoice is `purchase/invoice`'s `PurchaseInvoiceData` (see below). The credit note's and its
+unstock's `Status` is a `TaskStatus`; its lines and charges are the purchase invoice's
+`PurchaseInvoiceLineData` and `PurchaseInvoiceAdditionalChargeData`, and its `Refunds` the shared
 `SalePaymentLineData`. `PurchaseShippingAddressData` is in `src/Data/Other/`, as the advanced
 purchase ships to one too. A response missing a required field fails `dto()` with a
 `CannotCreateData`. The fixtures are the reference's six examples, unchanged.
@@ -942,16 +941,18 @@ deprecated: it supports only simple purchases. Each class requires:
 
 | Class | Folder | Required |
 |---|---|---|
-| `PurchaseInvoiceData` (response) | `src/Data/Purchase/Invoice/` | `InvoiceDate`, `InvoiceDueDate`, `Status`, `Lines` |
-| `PurchaseInvoicePostData` | `src/Data/Purchase/Invoice/` | `InvoiceDate`, `InvoiceDueDate`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `TaskID`, `CombineAdditionalCharges` |
+| `PurchaseInvoiceData` (response, and a purchase's `Invoice`) | `src/Data/Purchase/Invoice/` | `InvoiceDate`, `Status`, `Lines` |
+| `PurchaseInvoicePostData` | `src/Data/Purchase/Invoice/` | `InvoiceDate`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `TaskID`, `CombineAdditionalCharges`, `InvoiceDueDate` |
 | `PurchaseInvoiceLineData` | `src/Data/Purchase/Invoice/` | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Account`, `Total` |
 | `PurchaseInvoiceAdditionalChargeData` | `src/Data/Purchase/Invoice/` | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Account` |
 
-`Status` is an `InvoiceStatus`. The line and charge classes extend `AbstractLineData` and
-`AbstractChargeData`, and are in `src/Data/Purchase/Invoice/`, the folder of the path they are
-named for, though the purchase and advanced purchase credit notes and the advanced purchase's
-invoices use them too. A response missing a required field fails `dto()` with a
-`CannotCreateData`.
+`Status` is an `InvoiceStatus`. `InvoiceDueDate` is optional on the response, since a purchase
+embeds a draft or voided invoice without one, and the response also takes the `InvocieNumber` key
+those embedded invoices send (see [above](#where-the-references-tables-and-examples-disagree)).
+The line and charge classes extend `AbstractLineData` and `AbstractChargeData`, and are in
+`src/Data/Purchase/Invoice/`, the folder of the path they are named for, though the purchase and
+advanced purchase credit notes and the advanced purchase's invoices use them too. A response
+missing a required field fails `dto()` with a `CannotCreateData`.
 
 `purchase/creditnote` follows the Available Fields for Purchase Credit Note table and the
 Purchase Credit Note Model, with a POST class because POST requires `TaskID` and
@@ -1024,8 +1025,8 @@ Advanced purchase invoice partial model, with a POST class because POST also tak
 | Class | Folder | Required |
 |---|---|---|
 | `AdvancedPurchaseInvoicesData` (response) | `src/Data/AdvancedPurchase/Invoice/` | `PurchaseID`, `Invoices` |
-| `AdvancedPurchasePartialInvoiceData` | `src/Data/AdvancedPurchase/Invoice/` | `InvoiceDate`, `InvoiceDueDate`, `Status`, `Lines`, `TaskID`, `CombineAdditionalCharges` |
-| `AdvancedPurchasePartialInvoicePostData` | `src/Data/AdvancedPurchase/Invoice/` | `InvoiceDate`, `InvoiceDueDate`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID`, `TaskID`, `CombineAdditionalCharges` |
+| `AdvancedPurchasePartialInvoiceData` | `src/Data/AdvancedPurchase/Invoice/` | `InvoiceDate`, `Status`, `Lines`, `TaskID`, `CombineAdditionalCharges`, `InvoiceDueDate` |
+| `AdvancedPurchasePartialInvoicePostData` | `src/Data/AdvancedPurchase/Invoice/` | `InvoiceDate`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID`, `TaskID`, `CombineAdditionalCharges`, `InvoiceDueDate` |
 
 `Status` is an `InvoiceStatus`. `Lines` are `PurchaseInvoiceLineData` and `AdditionalCharges`
 `PurchaseInvoiceAdditionalChargeData`, from `src/Data/Purchase/Invoice/`. A required `Lines` may

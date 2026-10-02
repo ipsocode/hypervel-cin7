@@ -8,20 +8,20 @@ use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
+use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\AbstractPurchaseInvoiceData;
 use Ipsocode\Cin7\Data\Other\SalePaymentLineData;
 use Ipsocode\Cin7\Enums\InvoiceStatus;
 
 /**
- * Purchase Invoice Model and the Available Fields for Purchase Invoice table, the response of
- * `purchase/invoice`. One name, so one class carrying the union: the table's `TaskID`,
- * `CombineAdditionalCharges`, `InvoiceTotalAmount` and `InvoiceTotalTaxAmount` and the model's
- * `Payments` and `Paid` are optional, as only one of the two has them. The POST body is
- * `PurchaseInvoicePostData`.
- *
- * It follows the tables, which require `InvoiceDueDate`. The `purchase` examples embed the invoice
- * with a `null` `InvoiceDueDate` and its number under `InvocieNumber`, which this class does not
- * read: a purchase's `Invoice` is `SimplePurchaseInvoiceData`.
+ * Purchase Invoice Model, the `Invoice` of a purchase, and the Available Fields for Purchase
+ * Invoice table, the response of `purchase/invoice`. One name, so one class carrying the union:
+ * the table's `TaskID`, `CombineAdditionalCharges`, `InvoiceTotalAmount` and
+ * `InvoiceTotalTaxAmount` and the model's `Payments` and `Paid` are optional, as only one of the
+ * two has them. Both require `InvoiceDueDate`, but the `purchase` examples embed an invoice that is
+ * `DRAFT` or `VOIDED` with a `null` one, so it is optional here. Those examples send the number as
+ * `InvocieNumber`, misspelt, where `purchase/invoice` sends `InvoiceNumber`; that is the wire key,
+ * so the class takes it beside `InvoiceNumber`. The POST body is `PurchaseInvoicePostData`.
  *
  * @see docs/data.md
  */
@@ -35,9 +35,11 @@ final class PurchaseInvoiceData extends AbstractPurchaseInvoiceData implements W
      */
     public function __construct(
         string $InvoiceDate,
-        string $InvoiceDueDate,
         InvoiceStatus $Status,
         array $Lines,
+        #[DateTime]
+        public ?string $InvoiceDueDate = null,
+        public ?string $InvocieNumber = null,
         #[Uuid]
         public ?string $TaskID = null,
         public ?bool $CombineAdditionalCharges = null,
@@ -47,6 +49,6 @@ final class PurchaseInvoiceData extends AbstractPurchaseInvoiceData implements W
         public ?float $InvoiceTotalAmount = null,
         public ?float $InvoiceTotalTaxAmount = null,
     ) {
-        parent::__construct($InvoiceDate, $InvoiceDueDate, $Status, $Lines);
+        parent::__construct($InvoiceDate, $Status, $Lines);
     }
 }
