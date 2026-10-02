@@ -212,6 +212,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
 | `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
+| `stockadjustmentList` | none | GET: `list<StockAdjustmentListData>` (Stock Adjustment List), read from `StockAdjustmentList` |
+| `stockadjustment` | POST: `StockAdjustmentPostData`; PUT: `StockAdjustmentPutData`, which also requires `TaskID` (Stock Adjustment POST/PUT, with `Lines`: `NewStockLineData`, New Stock Line Model) | GET, POST, PUT, DELETE: `StockAdjustmentData` (Stock Adjustment, with `ExistingStockLines`: `ExistingStockLineData`, `NewStockLines`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
 | `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
@@ -1345,3 +1347,31 @@ purchase's `PurchaseID` and limits `Status` (see
 The lines are the purchase's `PurchaseManualJournalLineData`. A journal's `TaskID` is the purchase
 invoice task it belongs to. The reference's examples need no correction; the fixtures are the three
 of them, unchanged.
+
+## Stock
+
+`stockadjustment` has a class per verb because `TaskID` is taken by PUT and the response only, and
+`Lines` and `UpdateOnHand` by the bodies only. `ExistingStockLineData` and `NewStockLineData` are
+shared with the stock take, so they live in `src/Data/Other/`; both carry the product fields
+(`HasProductFields`) and the stock take's (`HasStockLineProductFields`: `Image`, `Barcode`,
+`StockLocator`, `Unit`, `CostingMethod`). Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `StockAdjustmentData` (response) | `src/Data/StockAdjustment/` | `EffectiveDate`, `Status` |
+| `StockAdjustmentPostData` | `src/Data/StockAdjustment/` | `EffectiveDate`, `Status`, `Lines` |
+| `StockAdjustmentPutData` | `src/Data/StockAdjustment/` | `EffectiveDate`, `Status`, `Lines`, `TaskID` |
+| `NewStockLineData` | `src/Data/Other/` | `Quantity`, `UnitCost`; and `ProductID` or `SKU`, `LocationID` or `Location` (`#[RequiredWithout]`) |
+| `ExistingStockLineData` | `src/Data/Other/` | nothing: it is in responses only |
+| `StockAdjustmentListData` | `src/Data/StockAdjustmentList/` | nothing |
+
+- **Response statuses.** `Status` is a `CompletionStatus` (`DRAFT`, `COMPLETED`, `VOIDED`), and a
+  POST or PUT takes `DRAFT` or `COMPLETED`.
+- **`StocktakeNumber` on a body.** It is auto-generated, but both examples send it, so the bodies
+  take it as an optional string.
+- **The group's "Additional fields" table** lists the product fields for objects with a `ProductID`:
+  the lines have them, and the list, which has no `ProductID`, does not.
+- **`BatchSN` and `ExpiryDate` on a new line** are "Yes*" and depend on the product's costing
+  method, so they stay optional.
+- **Examples.** The examples send `null` for `BatchSN`, `ExpiryDate` and the product custom fields;
+  the fixtures are the six of them, unchanged.

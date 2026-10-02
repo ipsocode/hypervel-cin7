@@ -29,6 +29,8 @@ use Ipsocode\Cin7\Resources\RefResource;
 use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
+use Ipsocode\Cin7\Resources\StockAdjustmentListResource;
+use Ipsocode\Cin7\Resources\StockAdjustmentResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use UnitEnum;
@@ -313,5 +315,21 @@ final class Cin7Connector extends Connector implements HasPagination
             503 => self::THROTTLE_COOLDOWN,
             default => null,
         };
+    }
+
+    /**
+     * The `stockadjustmentList` resource.
+     */
+    public function stockAdjustmentList(): StockAdjustmentListResource
+    {
+        return new StockAdjustmentListResource($this);
+    }
+
+    /**
+     * The `stockadjustment` resource.
+     */
+    public function stockAdjustment(): StockAdjustmentResource
+    {
+        return new StockAdjustmentResource($this);
     }
 }

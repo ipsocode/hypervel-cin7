@@ -45,6 +45,7 @@ use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentPostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
@@ -80,6 +81,7 @@ use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
+use Ipsocode\Cin7\Requests\StockAdjustment\PostStockAdjustment;
 use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -361,6 +363,29 @@ class BodyValidationTest extends TestCase
 
         $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['Location' => 'Main Warehouse']]])));
         $this->connector()->send(new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from($body + ['Lines' => [$line + ['LocationID' => 'ccb7d97b-a638-4b34-833e-4c348b81f40d']]])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A new stock line needs its product, by `ProductID` or `SKU`, and its location, by `LocationID`
+     * or `Location`: a body with a line that has neither of either is not sent, and one of each
+     * is enough.
+     */
+    public function testANewStockLineNeedsItsProductAndItsLocation(): void
+    {
+        $body = ['EffectiveDate' => '2017-12-01T00:00:00', 'Status' => 'DRAFT'];
+        $line = ['Quantity' => 1, 'UnitCost' => 2];
+
+        try {
+            $this->connector()->send(new PostStockAdjustment(StockAdjustmentPostData::from($body + ['Lines' => [$line]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Lines.0.ProductID', 'Lines.0.SKU', 'Lines.0.LocationID', 'Lines.0.Location'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostStockAdjustment(StockAdjustmentPostData::from($body + ['Lines' => [$line + ['SKU' => 'AF308', 'Location' => 'Main Warehouse']]])));
+        $this->connector()->send(new PostStockAdjustment(StockAdjustmentPostData::from($body + ['Lines' => [$line + ['ProductID' => 'ccb7d97b-a638-4b34-833e-4c348b81f40d', 'LocationID' => 'cd3ed3bb-673a-4d48-b47b-5f92a973ae8c']]])));
 
         $this->mock->assertSentCount(2);
     }
