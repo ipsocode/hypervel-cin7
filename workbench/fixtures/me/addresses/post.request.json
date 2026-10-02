@@ -1,0 +1,10 @@
+{
+    "Line1": "DEFAULT business address",
+    "Line2": null,
+    "CitySuburb": "DEFAULT City",
+    "StateProvince": "DEFAULT State",
+    "ZipPostCode": "DEFAULT Postcode",
+    "Country": "Russia",
+    "Type": "Business",
+    "DefaultForType": true
+}
