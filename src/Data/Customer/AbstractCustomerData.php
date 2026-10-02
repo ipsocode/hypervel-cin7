@@ -9,6 +9,8 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Concerns\HasAdditionalAttributes;
+use Ipsocode\Cin7\Data\Other\CustomerAddressData;
+use Ipsocode\Cin7\Data\Other\CustomerContactData;
 use Ipsocode\Cin7\Data\Other\ProductPriceData;
 
 /**

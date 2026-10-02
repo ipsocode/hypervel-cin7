@@ -26,6 +26,7 @@ use Ipsocode\Cin7\Resources\Sale\QuoteResource;
 use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
 use Ipsocode\Cin7\Resources\SaleListResource;
 use Ipsocode\Cin7\Resources\SaleResource;
+use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Tests\TestCase;
 
 /**
@@ -107,6 +108,14 @@ class ConnectorResourcesTest extends TestCase
 
         $this->assertInstanceOf(SaleCreditNoteListResource::class, $connector->saleCreditNoteList());
         $this->assertNotSame($connector->saleCreditNoteList(), $connector->saleCreditNoteList());
+    }
+
+    public function testSupplierReturnsAFreshSupplierResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(SupplierResource::class, $connector->supplier());
+        $this->assertNotSame($connector->supplier(), $connector->supplier());
     }
 
     public function testAFulfilmentReturnsItsPickPackAndShip(): void
