@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\MoneyOperation;
 
+use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Data;
 
 /**
@@ -17,13 +18,17 @@ use Hypervel\Data\Data;
 final class MoneyTaskLineData extends Data
 {
     public function __construct(
+        #[Max(256)]
         public ?string $Name = null,
+        #[Max(256)]
         public ?string $Comment = null,
         public ?float $Quantity = null,
         public ?float $Price = null,
         public ?float $Discount = null,
         public ?float $Tax = null,
+        #[Max(50)]
         public ?string $TaxRuleName = null,
+        #[Max(50)]
         public ?string $AccountCode = null,
         public ?float $Total = null,
     ) {

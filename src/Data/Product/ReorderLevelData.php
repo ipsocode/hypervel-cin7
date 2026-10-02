@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Product;
 
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
@@ -14,11 +16,15 @@ use Hypervel\Data\Data;
 final class ReorderLevelData extends Data
 {
     public function __construct(
+        #[Uuid]
         public ?string $LocationID = null,
+        #[Max(256)]
         public ?string $LocationName = null,
         public ?float $MinimumBeforeReorder = null,
         public ?float $ReorderQuantity = null,
+        #[Max(256)]
         public ?string $StockLocator = null,
+        #[Max(512)]
         public ?string $PickZones = null,
     ) {
     }

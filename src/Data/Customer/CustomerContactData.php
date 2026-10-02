@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Customer;
 
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
@@ -16,15 +18,23 @@ use Hypervel\Data\Data;
 final class CustomerContactData extends Data
 {
     public function __construct(
+        #[Uuid]
         public ?string $ID = null,
         public ?string $CustomerID = null,
+        #[Max(256)]
         public ?string $Name = null,
         public ?string $JobTitle = null,
+        #[Max(50)]
         public ?string $Phone = null,
+        #[Max(50)]
         public ?string $MobilePhone = null,
+        #[Max(50)]
         public ?string $Fax = null,
+        #[Max(256)]
         public ?string $Email = null,
+        #[Max(256)]
         public ?string $Website = null,
+        #[Max(256)]
         public ?string $Comment = null,
         public ?bool $Default = null,
         public ?bool $IncludeInEmail = null,

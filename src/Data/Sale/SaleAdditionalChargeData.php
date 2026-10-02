@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale;
 
+use Hypervel\Data\Attributes\Validation\Max;
 use Ipsocode\Cin7\Data\AbstractChargeData;
 
 /**
@@ -13,5 +14,6 @@ use Ipsocode\Cin7\Data\AbstractChargeData;
  */
 final class SaleAdditionalChargeData extends AbstractChargeData
 {
+    #[Max(1024)]
     public ?string $Comment = null;
 }

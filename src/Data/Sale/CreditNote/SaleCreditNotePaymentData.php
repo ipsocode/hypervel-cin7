@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
 
 /**
@@ -20,6 +21,7 @@ final class SaleCreditNotePaymentData extends AbstractSalePaymentLineData
         public ?string $InvoiceNumber = null,
         public ?string $CreditNoteNumber = null,
         public ?string $Type = null,
+        #[Uuid]
         public ?string $CreditID = null,
     ) {
     }

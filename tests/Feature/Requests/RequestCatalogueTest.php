@@ -410,7 +410,7 @@ class RequestCatalogueTest extends TestCase
                 Method::POST,
                 '/ExternalApi/v2/sale/invoice',
                 [],
-                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'Status' => 'DRAFT', 'InvoiceDate' => '2017-11-22T00:00:00', 'InvoiceDueDate' => '2017-12-22T00:00:00', 'Memo' => 'Rush'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'Status' => 'DRAFT', 'InvoiceDate' => '2017-11-22T00:00:00', 'InvoiceDueDate' => '2017-12-22T00:00:00', 'Memo' => 'Rush', 'TaskID' => '00000000-0000-0000-0000-000000000000'],
             ],
             PutSaleInvoice::class . ' with data' => [
                 PutSaleInvoice::class,
@@ -418,7 +418,7 @@ class RequestCatalogueTest extends TestCase
                 Method::PUT,
                 '/ExternalApi/v2/sale/invoice',
                 [],
-                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Lines' => []],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Lines' => [], 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
             ],
             PostSaleCreditNote::class . ' with data' => [
                 PostSaleCreditNote::class,
@@ -426,7 +426,7 @@ class RequestCatalogueTest extends TestCase
                 Method::POST,
                 '/ExternalApi/v2/sale/creditnote',
                 [],
-                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00', 'Memo' => 'Damaged'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Memo' => 'Damaged', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00'],
             ],
             PostSalePayment::class . ' with data' => [
                 PostSalePayment::class,
@@ -478,19 +478,19 @@ class RequestCatalogueTest extends TestCase
             ],
             PostSale::class . ' with data' => [
                 PostSale::class,
-                [fn (): SalePostPutData => SalePostPutData::from(['Customer' => 'ACME', 'SkipQuote' => false])],
+                [fn (): SalePostPutData => SalePostPutData::from(['Customer' => 'ACME', 'SkipQuote' => false, 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])],
                 Method::POST,
                 '/ExternalApi/v2/sale',
                 [],
-                ['Customer' => 'ACME', 'SkipQuote' => false],
+                ['Customer' => 'ACME', 'SkipQuote' => false, 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0],
             ],
             PutSale::class . ' with data' => [
                 PutSale::class,
-                [fn (): SalePostPutData => SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']])],
+                [fn (): SalePostPutData => SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK'], 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])],
                 Method::PUT,
                 '/ExternalApi/v2/sale',
                 [],
-                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK']],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'ShippingAddress' => ['Line1' => '1 High St', 'Country' => 'UK'], 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0],
             ],
             PostMoneyOperation::class . ' with data' => [
                 PostMoneyOperation::class,
@@ -580,8 +580,8 @@ class RequestCatalogueTest extends TestCase
         $this->connector()->send(new PutSale(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SaleType' => 'Advanced']));
         $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $this->mock->lastPendingRequest()?->body());
 
-        $this->connector()->send(new PutSale(SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'SaleType' => 'Advanced'])));
-        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $this->mock->lastPendingRequest()?->body());
+        $this->connector()->send(new PutSale(SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1, 'SaleType' => 'Advanced'])));
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0], $this->mock->lastPendingRequest()?->body());
     }
 
     public function testPostSaleKeepsTheSaleType(): void

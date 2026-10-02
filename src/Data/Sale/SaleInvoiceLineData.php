@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale;
 
+use Hypervel\Data\Attributes\Validation\Max;
 use Ipsocode\Cin7\Data\AbstractLineData;
 
 /**
@@ -16,5 +17,6 @@ final class SaleInvoiceLineData extends AbstractLineData
 {
     public ?float $AverageCost = null;
 
+    #[Max(50)]
     public ?string $Account = null;
 }

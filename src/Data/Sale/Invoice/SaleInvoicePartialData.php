@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\Invoice;
 
+use Ipsocode\Cin7\Data\Attributes\DateTime;
+
 /**
  * Sale Invoice Partial Model, one entry of `Invoices` in the `sale/invoice` responses. The fields
  * the reference marks required have no default.
@@ -13,12 +15,15 @@ namespace Ipsocode\Cin7\Data\Sale\Invoice;
 final class SaleInvoicePartialData extends AbstractSaleInvoiceData
 {
     public function __construct(
-        public string $TaskID,
+        string $TaskID,
         public bool $CombineAdditionalCharges,
         public string $Status,
+        #[DateTime]
         public string $InvoiceDate,
+        #[DateTime]
         public string $InvoiceDueDate,
         public ?string $InvoiceNumber = null,
     ) {
+        parent::__construct($TaskID);
     }
 }

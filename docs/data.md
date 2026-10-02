@@ -28,31 +28,39 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   different fields, the class carries the union. A request body gets its own class
   only where the reference documents one, or where the verbs need different fields.
 - **Models that share fields extend an abstract parent.** The shared fields are declared
-  once, as properties, in an `Abstract…Data` class, and each model is a final child that
-  adds its own; a field one model requires stays in that model's constructor, since PHP
-  does not let a child make an inherited field required. A field declared in a parent is
-  set through `from()`, like any other.
+  once, in an `Abstract…Data` class, and each model is a final child that adds its own.
+  A field every one of the parent's tables requires is a parameter of the parent's
+  constructor; a child with a constructor of its own takes it there and passes it on. A
+  field only some of the tables require stays in those children's constructors, since PHP
+  does not let a child make an inherited optional field required. The parent's optional
+  fields are properties, set through `from()` like any other.
 
-  | Parent | Models |
-  |---|---|
-  | `AbstractSaleData` | `SaleData`, `SalePostPutData` |
-  | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` |
-  | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` |
-  | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`; shaped to serve the purchase line models too |
-  | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`; shaped to serve the purchase charge models too |
-  | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` |
-  | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData` |
+  | Parent | Models | Required in every model |
+  |---|---|---|
+  | `AbstractSaleData` | `SaleData`, `SalePostPutData` | `Location`, `CurrencyRate`; and `Customer` or `CustomerID` on a write body (see [below](#where-the-references-tables-and-examples-disagree)) |
+  | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` | `TaskID` |
+  | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
+  | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`; shaped to serve the purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
+  | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`; shaped to serve the purchase charge models too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
+  | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` | none |
+  | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData` | `Line1`, `Country` |
+
+  The line and charge requirements hold in the purchase tables as well, so a purchase model
+  can extend those parents unchanged. `Account`, which the purchase invoice tables require
+  and the sale invoice tables do not, belongs on the children.
 
   Two field sets several unrelated models carry are traits in `src/Data/Concerns/`:
   `HasProductFields` (the product fields of every line with a `ProductID`) and
   `HasAdditionalAttributes` (`AdditionalAttribute1` to `10`).
 - **Property names are the wire keys, verbatim** (`ID`, `TaxRuleList`), with no name
   mapper, so `toArray()` is the JSON Cin7 expects.
-- **A field the reference requires has no default.** It is not nullable, and the model
-  cannot be built without it: `from()` throws a `Hypervel\Data\Exceptions\CannotCreateData`.
-  Required fields come first in the constructor. Where the reference requires different
-  fields per verb, the body is a class per verb (see
-  [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)).
+- **A required field has no default.** It is not nullable, and the model cannot be built
+  without it: `from()` throws a `Hypervel\Data\Exceptions\CannotCreateData`. Required fields
+  come first in the constructor. The required fields so far are those of the sale invoice,
+  credit note and payment classes (see
+  [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)) and
+  those the parents above declare; the other models keep every field optional. Where the
+  reference requires different fields per verb, the body is a class per verb.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
   key for every field, `null` where the response had none or sent `null`.
@@ -64,7 +72,9 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   its Length column, `#[Uuid]` for a `Guid`, `#[DateTime]`
   (`Ipsocode\Cin7\Data\Attributes\DateTime`) for a `DateTime`, and `#[Date]` for a `Date`.
   They are checked when the model is sent as a write body, never when a response is read,
-  so a response Cin7 sends outside them still becomes a data object.
+  so a response Cin7 sends outside them still becomes a data object. A `Decimal` with a
+  Length (the product dimensions' `50`) gets no rule, since `#[Max]` on a number caps its
+  value, not its digits.
 - **Response data classes implement `WithResponse`** with `HasResponse`, so
   `getResponse()` still reaches the raw body.
 
@@ -191,9 +201,11 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   sends `TaxRuleName` and `AccountCode`; `MoneyTaskLineData` models the example keys.
 - **Money Task nulls.** `SupplierID`, `CustomerID` and `Note` are `null` in the examples, so
   those properties admit `null`.
-- **Customer `AdditionalAttribute#`.** The table lists one row, "# - int(1-10)". On the wire
-  these are ten keys, `AdditionalAttribute1` to `AdditionalAttribute10`, which `CustomerData`,
-  `ProductData` and `AdditionalAttributeData` take from the `HasAdditionalAttributes` trait.
+- **Customer `AdditionalAttribute#`.** The table lists one row, "# - int(1-10)", with no
+  length. On the wire these are ten keys, `AdditionalAttribute1` to `AdditionalAttribute10`,
+  which `CustomerData`, `ProductData` and `AdditionalAttributeData` take from the
+  `HasAdditionalAttributes` trait. The Product table and the Additional Attribute Model give
+  each 256 characters, and the trait applies that limit to all three.
 - **Customer `TaxNumber`.** The table types it `Int`, but every example has `""` or `null`, so
   it is a nullable string. `Discount` and `CreditLimit` are `float`, since a decimal is
   harmless where an integer is documented.
@@ -220,6 +232,15 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   and the totals and `Paid`, and its `CreditNotes` carry `Refunds` and the totals; the Partial
   tables and every `sale/invoice` and `sale/creditnote` example have none of them, so the
   partial classes leave them out.
+- **Line `ProductID` and `SKU`.** Every line table marks them `Yes*`, required when
+  `CombineAdditionalCharges` is set; the line classes require them always, with `Name`,
+  `Quantity`, `Price`, `Tax` and `TaxRule`, which every line table requires.
+- **Sale `Location`, `CurrencyRate` and customer.** The Sale POST/PUT table requires
+  `Location`, `CurrencyRate` when the customer's currency differs from the base currency, and
+  `Customer` when there is no `CustomerID`; the Sale table of the response requires none of
+  them. `SaleData` and `SalePostPutData` require `Location` and `CurrencyRate` always. A write
+  body needs `Customer` or `CustomerID`: each carries `#[RequiredWithout]` naming the other,
+  so a sale body with neither fails validation before it is sent.
 - **Required per verb.** The tables have one Required column for every verb. The
   `sale/invoice` PUT notes allow leaving attributes out, so `SaleInvoicePutData` requires only
   `SaleID` and `TaskID`; a payment PUT may not carry `Amount` or `Account` when it is a

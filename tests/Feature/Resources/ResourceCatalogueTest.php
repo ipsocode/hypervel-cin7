@@ -392,7 +392,7 @@ class ResourceCatalogueTest extends TestCase
                 Method::POST,
                 '/ExternalApi/v2/sale/invoice',
                 [],
-                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'Status' => 'DRAFT', 'InvoiceDate' => '2017-11-22T00:00:00', 'InvoiceDueDate' => '2017-12-22T00:00:00', 'Memo' => 'Rush'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'Status' => 'DRAFT', 'InvoiceDate' => '2017-11-22T00:00:00', 'InvoiceDueDate' => '2017-12-22T00:00:00', 'Memo' => 'Rush', 'TaskID' => '00000000-0000-0000-0000-000000000000'],
             ],
             'sale invoice put' => [
                 fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->put(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88']),
@@ -448,7 +448,7 @@ class ResourceCatalogueTest extends TestCase
                 Method::POST,
                 '/ExternalApi/v2/sale/creditnote',
                 [],
-                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00', 'Memo' => 'Damaged'],
+                ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Memo' => 'Damaged', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00'],
             ],
             'sale creditNote delete' => [
                 fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->delete('b039f19e-66f8-4309-a4b1-abf928303c88', void: true),
@@ -539,20 +539,20 @@ class ResourceCatalogueTest extends TestCase
                 null,
             ],
             'sale post with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(SalePostPutData::from(['Customer' => 'ACME'])),
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(SalePostPutData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])),
                 PostSale::class,
                 Method::POST,
                 '/ExternalApi/v2/sale',
                 [],
-                ['Customer' => 'ACME'],
+                ['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0],
             ],
             'sale put with data' => [
-                fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Note' => 'Rush'])),
+                fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(SalePostPutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Note' => 'Rush', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])),
                 PutSale::class,
                 Method::PUT,
                 '/ExternalApi/v2/sale',
                 [],
-                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Note' => 'Rush'],
+                ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Note' => 'Rush', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0],
             ],
             'ref tax post with data' => [
                 fn (Cin7Connector $cin7): mixed => $cin7->ref()->tax()->post(TaxData::from(['Name' => 'VAT'])),

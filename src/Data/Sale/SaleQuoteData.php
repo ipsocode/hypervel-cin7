@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Data;
 
 /**
@@ -20,6 +21,7 @@ final class SaleQuoteData extends Data
      * @param null|list<SaleAdditionalChargeData> $AdditionalCharges
      */
     public function __construct(
+        #[Max(1024)]
         public ?string $Memo = null,
         public ?string $Status = null,
         #[DataCollectionOf(SalePaymentLineData::class)]

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Ref\Tax;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
@@ -22,7 +24,10 @@ final class TaxData extends Data implements WithResponse
      * @param null|list<TaxComponentData> $Components
      */
     public function __construct(
+        #[Uuid]
+        #[Max(50)]
         public ?string $ID = null,
+        #[Max(50)]
         public ?string $Name = null,
         public ?string $Account = null,
         public ?bool $IsActive = null,

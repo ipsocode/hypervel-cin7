@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\Invoice;
 
+use Hypervel\Data\Attributes\Validation\Uuid;
+use Ipsocode\Cin7\Data\Attributes\DateTime;
+
 /**
  * The body of `sale/invoice` PUT: the Sale Invoice POST Model's fields, of which PUT needs only
  * `SaleID` and `TaskID`. An empty collection deletes the existing records, so set one only to
@@ -14,12 +17,16 @@ namespace Ipsocode\Cin7\Data\Sale\Invoice;
 final class SaleInvoicePutData extends AbstractSaleInvoiceData
 {
     public function __construct(
+        #[Uuid]
         public string $SaleID,
-        public string $TaskID,
+        string $TaskID,
         public ?bool $CombineAdditionalCharges = null,
         public ?string $Status = null,
+        #[DateTime]
         public ?string $InvoiceDate = null,
+        #[DateTime]
         public ?string $InvoiceDueDate = null,
     ) {
+        parent::__construct($TaskID);
     }
 }

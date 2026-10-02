@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
@@ -25,9 +27,12 @@ final class SaleOrderData extends Data implements WithResponse
      * @param null|list<SaleAdditionalChargeData> $AdditionalCharges
      */
     public function __construct(
+        #[Uuid]
         public ?string $SaleID = null,
+        #[Max(256)]
         public ?string $SaleOrderNumber = null,
         public ?bool $CombineAdditionalCharges = null,
+        #[Max(1024)]
         public ?string $Memo = null,
         public ?string $Status = null,
         #[DataCollectionOf(SaleOrderLineData::class)]

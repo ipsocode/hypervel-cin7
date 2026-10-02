@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Product;
 
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
@@ -14,8 +16,11 @@ use Hypervel\Data\Data;
 final class BillOfMaterialProductData extends Data
 {
     public function __construct(
+        #[Uuid]
         public ?string $ComponentProductID = null,
+        #[Max(256)]
         public ?string $ProductCode = null,
+        #[Max(256)]
         public ?string $Name = null,
         public ?float $Quantity = null,
         public ?float $WastagePercent = null,

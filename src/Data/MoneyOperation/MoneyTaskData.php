@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\MoneyOperation;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
+use Ipsocode\Cin7\Data\Attributes\DateTime;
 
 /**
  * Money Task, the body of `moneyOperation` POST and PUT and the response of every
@@ -29,15 +31,19 @@ final class MoneyTaskData extends Data implements WithResponse
      * @param null|list<AttachmentLineData> $Attachments
      */
     public function __construct(
+        #[Uuid]
         public ?string $TaskID = null,
         public ?string $TaskType = null,
         public ?string $Status = null,
         public ?string $BankAccount = null,
         public ?float $CurrencyConversionRate = null,
         public ?string $SupplierCustomer = null,
+        #[Uuid]
         public ?string $SupplierID = null,
+        #[Uuid]
         public ?string $CustomerID = null,
         public ?string $Reference = null,
+        #[DateTime]
         public ?string $Date = null,
         public ?bool $TaxInclusive = null,
         public ?string $Note = null,

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\Payment;
 
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
+use Ipsocode\Cin7\Data\Attributes\DateTime;
 
 /**
  * The body of `sale/payment` PUT: the Sale Payment Line Partial Model's fields available for PUT.
@@ -16,12 +18,15 @@ use Hypervel\Data\Data;
 final class SalePaymentPutData extends Data
 {
     public function __construct(
+        #[Uuid]
         public string $ID,
         public ?string $Reference = null,
         public ?float $Amount = null,
+        #[DateTime]
         public ?string $DatePaid = null,
         public ?string $Account = null,
         public ?float $CurrencyRate = null,
+        #[Uuid]
         public ?string $CreditID = null,
     ) {
     }

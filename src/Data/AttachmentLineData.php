@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data;
 
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
@@ -14,6 +15,7 @@ use Hypervel\Data\Data;
 final class AttachmentLineData extends Data
 {
     public function __construct(
+        #[Uuid]
         public ?string $ID = null,
         public ?string $ContentType = null,
         public ?bool $IsDefault = null,
