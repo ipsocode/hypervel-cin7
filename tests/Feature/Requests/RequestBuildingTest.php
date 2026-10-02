@@ -19,6 +19,7 @@ use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 use Ipsocode\Cin7\Requests\KeyedRequest;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
+use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -105,6 +106,13 @@ class RequestBuildingTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $this->connector()->paginate($this->anonymousKeyedRequest('guid-1'));
+    }
+
+    public function testPaginatingAGetSaleThrows(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->connector()->paginate(new GetSale('guid-1'));
     }
 
     public function testTheIdentifierIsPlacedFirstAndWinsOverACallerSuppliedValue(): void
@@ -197,8 +205,8 @@ class RequestBuildingTest extends TestCase
     }
 
     /**
-     * No concrete `KeyedRequest` ships yet, so the GET/DELETE contract is exercised through
-     * an anonymous one built on the `customer` path.
+     * The concrete `KeyedRequest`s are covered by the catalogue; the identifier contract is
+     * exercised through an anonymous one built on the `customer` path.
      *
      * @param array<string, mixed> $parameters
      */
