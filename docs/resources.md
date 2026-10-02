@@ -71,7 +71,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
-| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
+| `$cin7->purchase()` | `PurchaseResource` | `get(string $id, …)`, `post(array\|PurchasePostData $body)`, `put(array\|PurchasePutData $body)`, `delete(string $id, ?bool $void = null)`; `order()`, `stock()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->purchase()->order()` | `Purchase\OrderResource` | `get(string $taskId, ?bool $combineAdditionalCharges = null)`, `post(array\|PurchaseOrderPostData $body)` |
 | `$cin7->purchase()->stock()` | `Purchase\StockResource` | `get(string $taskId)`, `post(array\|PurchaseStockPostData $body)` |
 | `$cin7->purchase()->invoice()` | `Purchase\InvoiceResource` | `get(string $taskId, …)`, `post(array\|PurchaseInvoicePostData $body)` |
@@ -404,9 +404,37 @@ $this->cin7->sale()->fulfilment()->pick()->post(SaleFulfilmentPickPostData::from
 
 ## Purchase
 
-`$cin7->purchase()` is `purchase`, the simple purchase, and its documents are sub-resources below
-it, as the paths are: `->order()`, `->stock()` and `->payment()` send `purchase/order`,
-`purchase/stock` and `purchase/payment`. Each is read by the purchase's `TaskID`.
+`$cin7->purchase()` is `purchase`, the simple purchase, which the reference marks deprecated: it
+supports only simple purchases, and an advanced purchase is on `advanced-purchase`. `purchase` is
+keyed: `get($id)` sends `purchase?ID=…`, and `combineAdditionalCharges: true` lists the additional
+charges in `Lines`. `post()` takes a `PurchasePostData` and `put()` a `PurchasePutData` as well as
+an array; a write needs `Approach` (`INVOICE` or `STOCK`), `Location` and the supplier, by
+`Supplier` or `SupplierID`, and a PUT the purchase's `ID`. `delete($id, void: true)` sends
+`purchase?ID=…&Void=true` and voids the purchase, and `void: false` undoes it; without `void` no
+`Void` is sent, and the reference defaults it to `false`. Every action answers with the purchase, so
+`dto()` is a `PurchaseData`, which carries its `Order`, `StockReceived`, `Invoice`, `CreditNote` and
+`ManualJournals`. `purchase` has no list action; list purchases through `purchaseList()` (see
+below).
+
+```php
+use Ipsocode\Cin7\Data\Purchase\PurchasePostData;
+
+$purchase = $this->cin7->purchase()->post(PurchasePostData::from([
+    'Supplier' => 'ABPA',
+    'Approach' => 'INVOICE',
+    'Location' => 'Main Warehouse',
+]))->dto(); // PurchaseData
+
+$order = $this->cin7->purchase()->get($purchase->ID)->dto()->Order; // PurchaseOrderData
+
+$this->cin7->purchase()->delete($purchase->ID, void: true); // DELETE purchase?ID=…&Void=true
+```
+
+Its documents are sub-resources below it, as the paths are: `->order()`, `->stock()`,
+`->invoice()`, `->creditNote()`, `->payment()`, `->manualJournal()` and `->attachment()` send
+`purchase/order`, `purchase/stock`, `purchase/invoice`, `purchase/creditnote`, `purchase/payment`,
+`purchase/manualJournal` and `purchase/attachment`. Each is read by the purchase's `TaskID`, the
+purchase's `ID`.
 
 `$cin7->purchase()->order()` is `purchase/order`, a purchase's order. `get($taskId)` sends
 `purchase/order?TaskID=…`, and `combineAdditionalCharges: true` lists the additional charges in

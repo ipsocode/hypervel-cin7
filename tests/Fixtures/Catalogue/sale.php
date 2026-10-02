@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use Hypervel\Saloon\Enums\Method;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Other\AddressData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentPickPackData;
@@ -153,7 +152,6 @@ return [
         SaleInvoiceLineData::class => ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule', 'Total'],
         SaleAdditionalChargeData::class => ['Description', 'Quantity', 'Price', 'Tax', 'TaxRule'],
         SaleInvoiceAdditionalChargeData::class => ['Description', 'Quantity', 'Price', 'Tax', 'TaxRule'],
-        AddressData::class => ['Line1', 'Country'],
         SaleShippingAddressData::class => ['Line1', 'Country'],
         SaleData::class => ['Location', 'CurrencyRate', 'CombinedPickingStatus', 'CombinedPackingStatus', 'CombinedShippingStatus'],
         SalePostData::class => ['Location', 'CurrencyRate'],

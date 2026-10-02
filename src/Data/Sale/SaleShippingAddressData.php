@@ -8,7 +8,8 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Ipsocode\Cin7\Data\AbstractAddressData;
 
 /**
- * Sale Shipping Address Model.
+ * Sale Shipping Address Model. Its table requires `Line1` and `Country`, so this constructor
+ * takes them; the optional fields are set through `from()`.
  *
  * @see docs/data.md
  */
@@ -21,4 +22,12 @@ final class SaleShippingAddressData extends AbstractAddressData
     public ?string $Contact = null;
 
     public ?bool $ShipToOther = null;
+
+    public function __construct(
+        #[Max(256)]
+        public string $Line1,
+        #[Max(256)]
+        public string $Country,
+    ) {
+    }
 }

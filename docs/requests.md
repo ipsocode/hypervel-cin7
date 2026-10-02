@@ -109,6 +109,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetSaleCreditNoteList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` (`SaleStatus`) |
 | `GetPurchaseList` | `page`, `limit`, `search`, `requiredBy`, `updatedSince`, `updatedUntil`, `orderStatus` (`TaskStatus`), `restockReceivedStatus` (`TaskStatus`), `invoiceStatus` (`InvoiceStatus`), `creditNoteStatus` (`TaskStatus`), `unstockStatus` (`TaskStatus`), `status`, `dropShipTaskId` |
 | `GetPurchaseCreditNoteList` | `page`, `limit`, `search`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` |
+| `GetPurchase` | **`id`**, `combineAdditionalCharges` |
+| `DeletePurchase` | **`id`**, `void` |
 | `GetPurchaseOrder` | **`taskId`**, `combineAdditionalCharges` |
 | `GetPurchaseStock` | **`taskId`** |
 | `GetPurchaseInvoice` | **`taskId`**, `combineAdditionalCharges` |
@@ -212,6 +214,11 @@ The write bodies are per verb where the reference's fields differ: `SaleInvoiceP
 `SalePaymentPostData` and `SalePaymentPutData` for `sale/payment`, and a POST and a PUT class for
 the fulfilment's pick, pack and ship. Each makes the fields the reference requires for that verb
 mandatory; see [data](data.md).
+
+The `purchase` actions live under `src/Requests/Purchase/`: `GetPurchase` and `DeletePurchase`
+(keyed `ID`; the DELETE takes `Void`) and `PostPurchase` and `PutPurchase` (`WriteRequest`s, whose
+data object bodies are `PurchasePostData` and `PurchasePutData`; the PUT body carries `ID`), all on
+`purchase`. Every `purchase` request's `dto()` is a `PurchaseData`. `purchase` has no list action.
 
 `GetPurchaseList` (a `ListRequest` keyed `PurchaseList`) is on `purchaseList`, under
 `src/Requests/PurchaseList/`, and `GetPurchaseCreditNoteList` (keyed `PurchaseList` too, as its

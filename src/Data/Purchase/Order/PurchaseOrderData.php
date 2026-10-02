@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Purchase\Order;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
@@ -16,7 +17,9 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * Fields for Purchase Order table, the response of `purchase/order`, which adds `TaskID` and
  * `CombineAdditionalCharges`. One name, so one class with the union of both: those two are
  * optional, as only the second table has them, and so are the `Prepayments`, which only the
- * first has. The POST body is `PurchaseOrderPostData`.
+ * first has. Both tables require `Memo`, but the `purchase` examples embed an order that is
+ * `NOT AVAILABLE` or `VOIDED` with a `null` `Memo`, so it is optional here. The POST body is
+ * `PurchaseOrderPostData`.
  *
  * @see docs/data.md
  */
@@ -29,18 +32,19 @@ final class PurchaseOrderData extends AbstractPurchaseOrderData implements WithR
      * @param null|list<SalePaymentLineData> $Prepayments
      */
     public function __construct(
-        string $Memo,
         TaskStatus $Status,
         array $Lines,
         public float $TotalBeforeTax,
         public float $Tax,
         public float $Total,
+        #[Max(1024)]
+        public ?string $Memo = null,
         #[Uuid]
         public ?string $TaskID = null,
         public ?bool $CombineAdditionalCharges = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
         public ?array $Prepayments = null,
     ) {
-        parent::__construct($Memo, $Status, $Lines);
+        parent::__construct($Status, $Lines);
     }
 }
