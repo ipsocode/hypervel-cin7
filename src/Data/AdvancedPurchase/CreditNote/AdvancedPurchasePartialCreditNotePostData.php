@@ -15,9 +15,10 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
  * The body of `advanced-purchase/creditnote` POST: one Advanced purchase credit note partial
- * model with the purchase's `PurchaseID`, which only the example sends (the table keys the
- * envelope with it), a `Status` of `DRAFT` or `AUTHORISED`, and the totals, which POST does not
- * require. The example sends the empty GUID as `TaskID` to create a credit note. The response is
+ * model with the purchase's `PurchaseID`, which the Available Fields for Purchase Credit Note
+ * table requires and the POST example sends beside the credit note's fields, a `Status` of
+ * `DRAFT` or `AUTHORISED`, and the totals, which POST does not require. The example sends the
+ * empty GUID as `TaskID` to create a credit note. The response is
  * `AdvancedPurchaseCreditNotesData`.
  *
  * @see docs/data.md

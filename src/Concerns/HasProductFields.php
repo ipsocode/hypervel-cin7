@@ -8,9 +8,10 @@ use Hypervel\Data\Attributes\Validation\Max;
 
 /**
  * The fields the reference adds to an object that carries a `ProductID`: "All objects that
- * contain ProductID also contain additional fields". The sale and purchase order line, pick and
- * pack line, purchase stock line, advanced purchase stock and put away line and inventory movement
- * classes take them from here.
+ * contain ProductID also contain additional fields". The product line classes (every child of
+ * `AbstractLineData`: the sale quote, order and invoice lines and the purchase order and invoice
+ * lines), the pick and pack line, the purchase stock and unstock lines, the advanced purchase
+ * stock and put away lines and the inventory movement line take them from here.
  *
  * `WeightUnits` and `DimensionsUnits` take an abbreviation from the reference's Dimension Unit
  * Available Values (`g`, `kg`, `cm`, `in`, …), but stay strings rather than the `WeightUnit` and

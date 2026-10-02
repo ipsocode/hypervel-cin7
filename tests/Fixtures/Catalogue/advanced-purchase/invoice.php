@@ -77,11 +77,11 @@ return [
             null,
         ],
         'advancedPurchase invoice get with combined charges' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->invoice()->get('5a7fb526-527a-4229-b331-90b6f5535aab', combineAdditionalCharges: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->invoice()->get('5a7fb526-527a-4229-b331-90b6f5535aab', combineAdditionalCharges: true),
             GetAdvancedPurchaseInvoice::class,
             Method::GET,
             '/ExternalApi/v2/advanced-purchase/invoice',
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'CombineAdditionalCharges' => 'false'],
+            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'CombineAdditionalCharges' => 'true'],
             null,
         ],
         'advancedPurchase invoice post' => [
@@ -109,11 +109,11 @@ return [
             null,
         ],
         'advancedPurchase invoice delete with void' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->invoice()->delete('3320ef94-a7e8-4d81-9588-2a3e14cfca6f', void: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->invoice()->delete('3320ef94-a7e8-4d81-9588-2a3e14cfca6f', void: true),
             DeleteAdvancedPurchaseInvoice::class,
             Method::DELETE,
             '/ExternalApi/v2/advanced-purchase/invoice',
-            ['TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Void' => 'false'],
+            ['TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Void' => 'true'],
             null,
         ],
     ],

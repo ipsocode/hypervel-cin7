@@ -101,11 +101,11 @@ return [
             null,
         ],
         'advancedPurchase get with combined charges' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->get('78f64a2d-f339-4f0d-b29e-28646d05093d', combineAdditionalCharges: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->get('78f64a2d-f339-4f0d-b29e-28646d05093d', combineAdditionalCharges: true),
             GetAdvancedPurchase::class,
             Method::GET,
             '/ExternalApi/v2/advanced-purchase',
-            ['ID' => '78f64a2d-f339-4f0d-b29e-28646d05093d', 'CombineAdditionalCharges' => 'false'],
+            ['ID' => '78f64a2d-f339-4f0d-b29e-28646d05093d', 'CombineAdditionalCharges' => 'true'],
             null,
         ],
         'advancedPurchase post' => [
@@ -149,11 +149,11 @@ return [
             null,
         ],
         'advancedPurchase delete with void' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->delete('695dbaf4-92c3-4388-a35c-0efa378db93e', void: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->delete('695dbaf4-92c3-4388-a35c-0efa378db93e', void: true),
             DeleteAdvancedPurchase::class,
             Method::DELETE,
             '/ExternalApi/v2/advanced-purchase',
-            ['ID' => '695dbaf4-92c3-4388-a35c-0efa378db93e', 'Void' => 'false'],
+            ['ID' => '695dbaf4-92c3-4388-a35c-0efa378db93e', 'Void' => 'true'],
             null,
         ],
     ],

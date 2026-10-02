@@ -10,9 +10,9 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchaseInvoicesData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
 /**
- * `DELETE advanced-purchase/invoice?TaskID&Void`, voids an invoice task (`Void` true) or undoes it
- * (false, the default Cin7 applies); the response is the purchase's invoices. Not available for
- * simple purchases.
+ * `DELETE advanced-purchase/invoice?TaskID&Void`, voids an invoice task (`Void` true) or undoes a
+ * void (false, the default Cin7 applies); the response is the purchase's invoices. Not available
+ * for simple purchases.
  *
  * @extends Cin7Request<AdvancedPurchaseInvoicesData>
  */

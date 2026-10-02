@@ -41,9 +41,9 @@ final class InvoiceResource extends BaseResource
     }
 
     /**
-     * Void the invoice task (`void: true`), or undo it (`false`, the default Cin7 applies).
+     * Void the invoice task (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
-     * @param null|bool $void void (true) or undo (false)
+     * @param null|bool $void void (true) or undo a void (false)
      */
     public function delete(
         string $taskId,

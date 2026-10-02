@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\WriteRequest;
  * `POST purchase/stock`, body is a `PurchaseStockPostData` or an array; the response is the saved
  * stock received. A line's `Name` and `Received` are read-only, so they are left out of the body.
  * Cin7 rejects it unless the order is `AUTHORISED` and the stock received is `DRAFT` or
- * `NOT AVAILABLE`.
+ * `NOT AVAILABLE`, and, for a purchase whose `Approach` is `INVOICE`, the invoice is `AUTHORISED`.
  *
  * @extends WriteRequest<PurchaseStockData>
  */

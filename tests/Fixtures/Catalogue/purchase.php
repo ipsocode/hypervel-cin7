@@ -101,11 +101,11 @@ return [
             null,
         ],
         'purchase get with combined charges' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->purchase()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136', combineAdditionalCharges: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->purchase()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136', combineAdditionalCharges: true),
             GetPurchase::class,
             Method::GET,
             '/ExternalApi/v2/purchase',
-            ['ID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => 'false'],
+            ['ID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => 'true'],
             null,
         ],
         'purchase post' => [
@@ -133,11 +133,11 @@ return [
             null,
         ],
         'purchase delete with void' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->purchase()->delete('3fb1debd-1f89-476c-b7ac-826a493a2092', void: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->purchase()->delete('3fb1debd-1f89-476c-b7ac-826a493a2092', void: true),
             DeletePurchase::class,
             Method::DELETE,
             '/ExternalApi/v2/purchase',
-            ['ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092', 'Void' => 'false'],
+            ['ID' => '3fb1debd-1f89-476c-b7ac-826a493a2092', 'Void' => 'true'],
             null,
         ],
         'purchase post with data' => [

@@ -14,9 +14,11 @@ use Workbench\App\Support\Cin7Payloads;
 
 // The catalogue rows for `purchase/stock`; tests/Catalogue.php merges every file's rows by kind.
 
-// One line as a response has it, with the read-only `Name` and `Received`, and as a POST sends it.
+// One line as a response has it, with the read-only `Name` and `Received`, and as a POST sends it:
+// the line's own `Location` first, then `AbstractPurchaseStockLineData`'s fields, `Date` and
+// `Quantity` last.
 $line = ['Date' => '2017-12-08T00:00:00', 'Quantity' => 3, 'SKU' => 'Bread', 'Name' => 'Baked Bread', 'Location' => 'Main Warehouse', 'Received' => false, 'BatchSN' => 'PO-00001-1'];
-$lineSent = ['Date' => '2017-12-08T00:00:00', 'Quantity' => 3.0, 'SKU' => 'Bread', 'Location' => 'Main Warehouse', 'BatchSN' => 'PO-00001-1'];
+$lineSent = ['Location' => 'Main Warehouse', 'SKU' => 'Bread', 'BatchSN' => 'PO-00001-1', 'Date' => '2017-12-08T00:00:00', 'Quantity' => 3.0];
 
 // The POST example, and the body sent from it without each line's read-only fields.
 $request = Cin7Payloads::load('purchase/stock', 'post.request');

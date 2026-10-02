@@ -23,9 +23,10 @@ use Ipsocode\Cin7\Resources\Purchase\StockResource;
 
 /**
  * `purchase`, a simple purchase: `get()`, `post()`, `put()` and `delete()` read, create, change and
- * void one, each answering with the purchase and every document it holds. `purchase` has no list
- * action; list purchases through `purchaseList()`. The reference marks it deprecated: it supports
- * only simple purchases, and an advanced purchase is on `advanced-purchase`.
+ * void one, or undo a void, each answering with the purchase and every document it holds.
+ * `purchase` has no list action; list purchases through `purchaseList()`. The reference marks it
+ * deprecated: it supports only simple purchases, and an advanced purchase is on
+ * `advanced-purchase`.
  *
  * `order()`, `stock()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()` and
  * `attachment()` are the `purchase/order`, `purchase/stock`, `purchase/invoice`,
@@ -65,9 +66,9 @@ final class PurchaseResource extends BaseResource
     }
 
     /**
-     * Void the purchase (`void: true`), or undo it (`false`, the default Cin7 applies).
+     * Void the purchase (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
-     * @param null|bool $void void (true) or undo (false)
+     * @param null|bool $void void (true) or undo a void (false)
      */
     public function delete(
         string $id,
