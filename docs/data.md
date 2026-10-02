@@ -72,7 +72,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractPurchaseCreditNoteData` | `PurchaseCreditNoteData`, `PurchaseCreditNotePostData` | `CreditNoteNumber`, `CreditNoteDate`, `Status`, `Lines`, `Unstock` |
   | `AbstractPurchaseInvoiceData` | `PurchaseInvoiceData`, `PurchaseInvoicePostData` | `InvoiceDate`, `InvoiceDueDate`, `Status`, `Lines` |
   | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
-  | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData` | `Status` |
+  | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData`, `AdvancedPurchasePartialManualJournalData`, `AdvancedPurchasePartialManualJournalPostData` | `Status` |
   | `AbstractAdvancedPurchaseStockData` | `AdvancedPurchaseStockData`, `AdvancedPurchaseStockPostData`, `AdvancedPurchaseStockPutData` | `Status`, `Lines` |
   | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`, `PurchaseOrderLineData`, `PurchaseInvoiceLineData`; shaped to serve the other purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`, `PurchaseAdditionalChargeData`, `PurchaseInvoiceAdditionalChargeData` | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
@@ -222,6 +222,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `purchase/manualJournal` | POST: `PurchaseManualJournalPostData` (Available field for Purchase Manual Journal, with `Lines`: `PurchaseManualJournalLineData`) | GET, POST: `PurchaseManualJournalData` |
 | `purchase/attachment` | POST: `PurchaseAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `PurchaseAttachmentsData` (`{TaskID, Lines}`, with `Lines`: `AttachmentLineData`) |
 | `advanced-purchase/stock` | POST: `AdvancedPurchaseStockPostData`; PUT: `AdvancedPurchaseStockPutData`, which also requires `TaskID` (Available Fields for Purchase Stock Received, with `Lines`: `AdvancedPurchaseStockLineData`, Advanced Purchase Stock Line Model) | GET, POST, PUT, DELETE: `AdvancedPurchaseStocksData` (`{PurchaseID, StockReceiving}`, with `StockReceiving`: `AdvancedPurchaseStockData`, Advanced Purchase Stock Model) |
+| `advanced-purchase/manualJournal` | POST: `AdvancedPurchasePartialManualJournalPostData` (Advanced purchase manual journal partial model, plus `PurchaseID`, with `Lines`: `PurchaseManualJournalLineData`) | GET, POST: `AdvancedPurchaseManualJournalsData` (`{PurchaseID, ManualJournals}`, Available field for Purchase Manual Journal, with `ManualJournals`: `AdvancedPurchasePartialManualJournalData`) |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
 `SaleData` nests one class per model, each in the folder of the sale path it belongs to:
@@ -462,6 +463,22 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `Name` and `Received` are read-only, but the POST and PUT examples send them, so the class models
   them and the write requests leave them out of the body. `Quantity`'s "minimal value is 1" is not
   checked, as no other quantity is.
+- **Advanced purchase manual journals.** The Available field for Purchase Manual Journal table of
+  `advanced-purchase/manualJournal` is the `{PurchaseID, ManualJournals}` envelope its GET and POST
+  answer with, `AdvancedPurchaseManualJournalsData`, and requires both fields; each journal is the
+  Advanced purchase manual journal partial model, `AdvancedPurchasePartialManualJournalData`. The
+  POST body is neither: its example sends `{PurchaseID, TaskID, Status, Lines}`, the partial model
+  plus the envelope's `PurchaseID`, and the partial model limits `Status` to `DRAFT` and
+  `AUTHORISED` for POST, so `AdvancedPurchasePartialManualJournalPostData` requires `PurchaseID`
+  and `TaskID` and carries `#[In(TaskStatus::Draft, TaskStatus::Authorised)]`. The partial model
+  lists `NOT AVAILABLE`, `DRAFT` and `AUTHORISED`, as the purchase's does, so `Status` is the
+  larger `TaskStatus` there too. The partial model's fields agree with the Purchase Manual Journal
+  Model's (a required `Status`, optional `Lines` of the Purchase Manual Journal Line Model), so both
+  journals extend `AbstractPurchaseManualJournalData`, which moved from
+  `src/Data/Purchase/ManualJournal/` to `src/Data/` since its children span the purchase and the
+  advanced purchase. The POST example sends the read-only `IsSystem` on its line, so
+  `PostAdvancedPurchaseManualJournal` leaves `Lines.*.IsSystem` out of the body, as
+  `PostPurchaseManualJournal` does.
 - **Auto-generated numbers.** The invoice and credit note POST tables have no `InvoiceNumber`
   or `CreditNoteNumber` (Cin7 generates them), so the POST classes leave them out.
 - **Purchase Invoice.** The reference documents the model twice: the Purchase Invoice Model a
@@ -829,3 +846,18 @@ Advanced Purchase Stock Model, with a class per verb because `PurchaseID`, `Task
 A required `Lines` may be empty: a POST with `Status` `AUTHORISED` and empty `Lines` authorises
 the task. The reference's examples need no correction; the fixtures are the six of them,
 unchanged.
+
+`advanced-purchase/manualJournal` follows the Available field for Purchase Manual Journal table and
+the Advanced purchase manual journal partial model, with a POST class because POST also takes the
+purchase's `PurchaseID` and limits `Status` (see
+[above](#where-the-references-tables-and-examples-disagree)). Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `AdvancedPurchaseManualJournalsData` (response) | `src/Data/AdvancedPurchase/ManualJournal/` | `PurchaseID`, `ManualJournals` |
+| `AdvancedPurchasePartialManualJournalData` | `src/Data/AdvancedPurchase/ManualJournal/` | `Status`, `TaskID` |
+| `AdvancedPurchasePartialManualJournalPostData` | `src/Data/AdvancedPurchase/ManualJournal/` | `Status` (`DRAFT` or `AUTHORISED`), `PurchaseID`, `TaskID` |
+
+The lines are the purchase's `PurchaseManualJournalLineData`. A journal's `TaskID` is the purchase
+invoice task it belongs to. The reference's examples need no correction; the fixtures are the three
+of them, unchanged.
