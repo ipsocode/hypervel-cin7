@@ -131,11 +131,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [ ] Inventory Write-Off POST/PUT body: `InventoryWriteOffPostData`
   - [ ] Inventory Write-Off POST/PUT body: `InventoryWriteOffPutData`
 
-### `reference/journal/**` Journal (1 resource, 4 operations)
-
-- [ ] `journal` · `journal` · GET POST PUT DELETE
-  - [ ] Journal: `JournalData`
-
 ### `reference/location/**` Location (1 resource, 4 operations)
 
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
@@ -202,11 +197,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `stock-transfer-order` · `stockTransfer/order` · GET POST
   - [ ] Stock Transfer Order: `StockTransferOrderData`
 
-### `reference/transactions/**` Transactions (1 resource, 1 operation)
-
-- [ ] `transactions` · `transactions` · GET
-  - [ ] Transactions: `TransactionData`
-
 ### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
 
 - [ ] `webhooks` · `webhooks` · GET POST PUT DELETE
@@ -257,7 +247,7 @@ Built with the first resource that uses it.
 - [x] SupplierContactModel: `CustomerContactData` · used by customer, supplier, lead
 - [x] ChildCustomerModel: `ChildCustomerData` · used by customer
 - [x] ProductPriceModel: `ProductPriceData` · used by customer, product, custom-prices
-- [ ] JournalLineModel: `JournalLineData` · used by journal
+- [x] JournalLineModel: `JournalLineData` · used by journal
 - [ ] IDNameModel: `IdNameData` · used by stock-take
 - [ ] StockTransferOrderModel: `StockTransferOrderData` · used by stock-transfer
 - [ ] StockTransferOrderLineModel: `StockTransferOrderLineData` · used by stock-transfer, stock-transfer-order
@@ -437,6 +427,11 @@ Every resource in these groups is in.
 - [x] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
   - [x] Fixed Asset Types: `FixedAssetTypeData`
 
+### `reference/journal/**` Journal (1 resource, 4 operations)
+
+- [x] `journal` · `journal` · GET POST PUT DELETE
+  - [x] Journal: `JournalData`
+
 ### `reference/me/**` Me (3 resources, 9 operations)
 
 - [x] `me` · `me` · GET
@@ -502,3 +497,8 @@ Every resource in these groups is in.
 
 - [x] `tax` · `ref/tax` · GET POST PUT
   - [x] Tax: `TaxData`
+
+### `reference/transactions/**` Transactions (1 resource, 1 operation)
+
+- [x] `transactions` · `transactions` · GET
+  - [x] Transactions: `TransactionData`

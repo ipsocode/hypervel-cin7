@@ -185,6 +185,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
 | `me/addresses` | POST: `MeAddressPostData`; PUT: `MeAddressPutData`, which also requires `AddressID` (Me Address) | GET: `list<MeAddressData>`; POST, PUT: `MeAddressData`, the saved address (`MeAddressesList.0`); DELETE: `{Success}`, left to `json()` |
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
+| `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
+| `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
@@ -445,6 +447,11 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Fixed Asset Type and Payment Term value lists.** `DepreciationMethod`, `AveragingMethod` and
   the payment term's `Method` are the enums `DepreciationMethod`, `AveragingMethod` and
   `PaymentTermMethod`.
+- **Journal `Status`.** The three statuses are the `CompletionStatus` the money task and the
+  inventory write-off share. `JournalNumber` is read-only, so it is on `JournalData` alone, and
+  `Attachments` is on the response only: no request example sends it.
+- **Transactions `Type`.** The table's list of thirteen kinds is the `TransactionType` enum; every
+  field of `TransactionData` is optional, as the table marks none required.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -568,6 +575,18 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
+
+`journal` has a class per verb because `TaskID` is taken by PUT and the response only. Each class
+requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `JournalData` (response) | `src/Data/Journal/` | `Status`, `Currency`, `CurrencyConversionRate`, `EffectiveDate` |
+| `JournalPostData` | `src/Data/Journal/` | the same |
+| `JournalPutData` | `src/Data/Journal/` | the same, and `TaskID` |
+| `JournalLineData` | `src/Data/Journal/` | `Debit`, `Credit`, `Amount`, `BaseAmount` |
+
+`TransactionData` is in `src/Data/Transactions/` and requires nothing.
 
 `ref/fixedassettype` and `ref/paymentterm` have a class per verb because the ID is taken by PUT and
 the response only:
