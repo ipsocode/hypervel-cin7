@@ -1,0 +1,48 @@
+{
+    "ID": "57144411-51ce-446f-9c96-db4243c477dc",
+    "Name": "PUT Supplier testing 3",
+    "Currency": "AUD",
+    "PaymentTerm": "30 days",
+    "TaxRule": "BAS Excluded",
+    "Discount": 0,
+    "Comments": "",
+    "AccountPayable": "800",
+    "TaxNumber": "",
+    "Status": "Active",
+    "AdditionalAttribute1": "Black",
+    "AdditionalAttribute2": "True",
+    "AdditionalAttribute3": "Test string",
+    "AdditionalAttribute4": null,
+    "AdditionalAttribute5": null,
+    "AdditionalAttribute6": null,
+    "AdditionalAttribute7": null,
+    "AdditionalAttribute8": null,
+    "AdditionalAttribute9": null,
+    "AdditionalAttribute10": null,
+    "AttributeSet": "Test set",
+    "Addresses": [
+        {
+            "Line1": "PUT TEST address",
+            "Line2": "",
+            "City": "",
+            "State": "",
+            "Postcode": "",
+            "Country": "Australia",
+            "Type": "Shipping",
+            "DefaultForType": false
+        }
+    ],
+    "Contacts": [
+        {
+            "Name": "PUT TEST contact",
+            "Phone": "",
+            "MobilePhone": "",
+            "Fax": "",
+            "Email": "",
+            "Website": "",
+            "Default": true,
+            "Comment": "",
+            "IncludeInEmail": false
+        }
+    ]
+}

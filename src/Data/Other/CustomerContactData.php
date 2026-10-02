@@ -9,9 +9,11 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
- * Customer Contact Model (the reference's Supplier/Customer Contact Model), one entry of a customer's `Contacts`.
+ * Customer Contact Model (the reference's Supplier/Customer Contact Model, SupplierContactModel),
+ * one entry of a customer's or a supplier's `Contacts`.
  *
- * The reference's examples also carry `JobTitle` and `CustomerID` on each contact.
+ * The reference's examples also carry `JobTitle` and the owner's `CustomerID` or `SupplierID` on
+ * each contact.
  *
  * @see docs/data.md
  */
@@ -23,6 +25,7 @@ final class CustomerContactData extends Data
         #[Uuid]
         public ?string $ID = null,
         public ?string $CustomerID = null,
+        public ?string $SupplierID = null,
         public ?string $JobTitle = null,
         #[Max(50)]
         public ?string $Phone = null,

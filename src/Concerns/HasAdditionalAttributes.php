@@ -7,10 +7,10 @@ namespace Ipsocode\Cin7\Concerns;
 use Hypervel\Data\Attributes\Validation\Max;
 
 /**
- * `AdditionalAttribute1` to `AdditionalAttribute10`, which a customer, a product and a sale's
- * `AdditionalAttributes` carry. The Customer table documents them as one row,
- * `AdditionalAttribute#`, with no length; the Product table and the Additional Attribute Model
- * give each 256 characters, and that limit applies to all three.
+ * `AdditionalAttribute1` to `AdditionalAttribute10`, which a customer, a supplier, a product and
+ * a sale's `AdditionalAttributes` carry. The Customer and Supplier tables document them as one
+ * row, `AdditionalAttribute#`, with no length; the Product table and the Additional Attribute
+ * Model give each 256 characters, and that limit applies to all of them.
  *
  * @see docs/data.md
  */
