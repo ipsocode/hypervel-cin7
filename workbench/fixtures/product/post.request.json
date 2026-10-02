@@ -81,7 +81,7 @@
             "FixedCost": 1,
             "Currency": "RUB",
             "DropShip": false,
-            "URL": ""
+            "SupplierProductURL": ""
         }
     ],
     "ReorderLevels": [
