@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data;
+namespace Ipsocode\Cin7\Data\Other;
 
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\RequiredWithout;

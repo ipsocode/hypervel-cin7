@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Data\Customer\CustomerContactData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Customer\CustomerPutData;
-use Ipsocode\Cin7\Data\ProductPriceData;
+use Ipsocode\Cin7\Data\Other\ProductPriceData;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;

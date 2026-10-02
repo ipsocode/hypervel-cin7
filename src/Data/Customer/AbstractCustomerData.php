@@ -9,7 +9,7 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Concerns\HasAdditionalAttributes;
-use Ipsocode\Cin7\Data\ProductPriceData;
+use Ipsocode\Cin7\Data\Other\ProductPriceData;
 
 /**
  * The fields of the Customer table: the response of `customer` and the body of its POST and PUT.

@@ -8,7 +8,7 @@ use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Attributes\DateTime;
-use Ipsocode\Cin7\Data\AttachmentLineData;
+use Ipsocode\Cin7\Data\Other\AttachmentLineData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Enums\MoneyTaskType;
 
