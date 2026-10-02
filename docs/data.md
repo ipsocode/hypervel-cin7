@@ -209,6 +209,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `reference/shipZones` | POST: `ShippingZonePostData`; PUT: `ShippingZonePutData`, which also requires `ZoneID` (Shipping Zone, with `AppliesTo`: `ShipZoneAppliesToData` and `Conditions`: `ShipZoneConditionData`) | GET: `list<ShippingZoneData>`; POST, PUT: `ShippingZoneData`, the saved zone, read from `ShipZones.0`; DELETE: `{Success}`, left to `json()` |
 | `reference/shipZonesEnabled` | PUT: `ShipZonesEnabledData` | GET, PUT: `ShipZonesEnabledData` |
 | `reference/discount` | POST: `ProductDiscountRulesPostData`, a list of `ProductDiscountRulePostData`; PUT: `ProductDiscountRulePutData`, one bare rule, which also requires `ID` (Product Discount Rule, with `DiscountLines`: `DiscountLineData`, Discount Line Model) | GET: `list<ProductDiscountRuleData>`; POST, PUT: `ProductDiscountRuleData`, the saved rule, read from `DiscountRules.0` |
+| `reference/deals` | POST: `ProductDealPostData`; PUT: `ProductDealPutData`, which also requires `ID` (Product Deal, with `DealCustomers`: `ProductDealCustomerData`, `DealCustomerTags`: `ProductDealTagData` and `DealDiscounts`: `ProductDealDiscountData`, whose brands, categories, tags and products are `ProductDealDiscountBrandData`, `ProductDealDiscountCategoryData`, `ProductDealDiscountTagData` and `ProductDealDiscountProductData`) | GET: `list<ProductDealData>`; POST, PUT: `ProductDealData`, the saved deal, read from `Deals.0` |
 | `ref/priceTier` | none | GET: `list<PriceTierData>` (Price Tier), read from `PriceTiers` |
 | `ref/fixedassettype` | POST: `FixedAssetTypePostData`; PUT: `FixedAssetTypePutData`, which also requires `FixedAssetTypeID` (Fixed Asset Types) | GET: `list<FixedAssetTypeData>`; POST, PUT: `FixedAssetTypeData`, the saved type (`FixedAssetTypeList.0`) |
 | `ref/paymentterm` | POST: `PaymentTermPostData`; PUT: `PaymentTermPutData`, which also requires `ID` (Payment Term) | GET: `list<PaymentTermData>`; POST, PUT: `PaymentTermData`, the saved term (`PaymentTermList.0`); DELETE: `{Success}`, left to `json()` |
@@ -1160,6 +1161,23 @@ bare rule. Each class requires:
   example sends none for a line it adds.
 - **`Type`** is a `DiscountRuleType` and a line's `DiscountType` a `DiscountLineType`, from the values
   the table lists.
+- **Examples.** The examples need no correction.
+`reference/deals` splits by verb the same way. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `ProductDealData` (response) | `src/Data/Reference/Deals/` | `ID`, `Name`, `IsActive`, `AllowCoupons`, `SingleCouponCodeUsage` |
+| `ProductDealPostData` | `src/Data/Reference/Deals/` | `Name` |
+| `ProductDealPutData` | `src/Data/Reference/Deals/` | `Name`, `ID` |
+| `ProductDealDiscountData` | `src/Data/Reference/Deals/` | `DiscountType` (a `DiscountRuleType`), `IsOrderLevel` |
+| `ProductDealCustomerData`, `ProductDealTagData` and the four discount filters | `src/Data/Reference/Deals/` | nothing |
+
+- **What the examples drop.** The table requires `IsActive`, `AllowCoupons` and
+  `SingleCouponCodeUsage`, but the POST and PUT examples send none, so a body makes them optional.
+  The discount's brand, category, tag and product entries require a `Type` (and a product its
+  `IsFamily`), which no example sends, so those stay optional.
+- **`CategoryID`** is sent by the examples for a discount's category, and is in no table.
+- **`BuyMore`** is listed twice in the Product Deal Discount table; it is one field.
 - **Examples.** The examples need no correction.
 ## Purchases
 
