@@ -1,0 +1,79 @@
+{
+    "ProductSuppliers": [
+        {
+            "ProductSupplierID": "b1b86605-716f-492e-b7a9-ce7e095c0913",
+            "SupplierID": "33a22f89-c8a2-43e1-8b4a-f677b39f521b",
+            "SupplierName": null,
+            "ProductID": "2fcb8c53-9183-4bd3-aefa-b8f78167e159",
+            "ProductSKU": null,
+            "Cost": 1,
+            "FixedCost": 2,
+            "SupplierInventoryCode": "SupplierInventoryCode",
+            "SupplierProductName": "SupplierProductName",
+            "SupplierProductURL": "SupplierProductURL",
+            "DropShip": false,
+            "Currency": "RUB",
+            "PurchaseCost": 1,
+            "ProductSupplierOptions": [
+                {
+                    "ID": "fb8cfe54-cdce-41bb-8086-932cd7b6e553",
+                    "LocationID": "e822dd3f-f24d-4724-a938-6adcf126228d",
+                    "LocationName": "Larek 2",
+                    "ReorderQuantity": 130,
+                    "Lead": 130,
+                    "Safety": 130,
+                    "MinimumToReorder": null,
+                    "SupplyIntervals": [
+                        {
+                            "ID": "fef55b2b-2d18-4882-b123-97f5f4c8c808",
+                            "DeliveryMethod": "Fixed",
+                            "IntervalDays": 0,
+                            "IntervalStartDate": null,
+                            "IsMonday": false,
+                            "IsTuesday": true,
+                            "IsWednesday": false,
+                            "IsThursday": false,
+                            "IsFriday": false,
+                            "IsSaturday": false,
+                            "IsSunday": false
+                        }
+                    ]
+                },
+                {
+                    "ID": "7b6d8b63-b791-49b0-bda5-1094c7616e60",
+                    "LocationID": "f54e58e6-5f75-4829-a924-5b7ae16ae7d1",
+                    "LocationName": "Larek",
+                    "ReorderQuantity": 120,
+                    "Lead": 120,
+                    "Safety": 120,
+                    "MinimumToReorder": null,
+                    "SupplyIntervals": [
+                        {
+                            "ID": "a4915aa5-504c-4439-95b6-8c461da61ddd",
+                            "DeliveryMethod": "Interval",
+                            "IntervalDays": 12,
+                            "IntervalStartDate": "2022-01-19T00:00:00",
+                            "IsMonday": false,
+                            "IsTuesday": false,
+                            "IsWednesday": false,
+                            "IsThursday": false,
+                            "IsFriday": false,
+                            "IsSaturday": false,
+                            "IsSunday": false
+                        }
+                    ]
+                },
+                {
+                    "ID": "74494d37-0e38-43a4-94e2-c32c965ecfd7",
+                    "LocationID": null,
+                    "LocationName": null,
+                    "ReorderQuantity": 40,
+                    "Lead": 50,
+                    "Safety": 60,
+                    "MinimumToReorder": 70,
+                    "SupplyIntervals": []
+                }
+            ]
+        }
+    ]
+}

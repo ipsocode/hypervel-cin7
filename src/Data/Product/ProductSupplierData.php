@@ -16,6 +16,9 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * `SupplierID` or `SupplierName`, so a write body without either fails validation. Nested in a
  * product, the supplier needs no `ProductID` or `ProductSKU`.
  *
+ * `PurchaseCost` is in the `product-suppliers` examples but in no table: it is kept as an optional
+ * number.
+ *
  * The supplier's link is `SupplierProductURL`, as the table names it; the reference's examples
  * send `URL`, which is not the wire key.
  *
@@ -45,6 +48,7 @@ final class ProductSupplierData extends Data
         public ?string $SupplierProductName = null,
         public ?float $Cost = null,
         public ?float $FixedCost = null,
+        public ?float $PurchaseCost = null,
         public ?string $Currency = null,
         public ?bool $DropShip = null,
         #[Max(256)]
