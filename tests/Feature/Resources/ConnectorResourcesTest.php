@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
+use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource as AdvancedPurchaseStockResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
 use Ipsocode\Cin7\Resources\Me\ContactsResource;
@@ -153,6 +155,22 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(PurchaseCreditNoteListResource::class, $connector->purchaseCreditNoteList());
         $this->assertNotSame($connector->purchaseList(), $connector->purchaseList());
         $this->assertNotSame($connector->purchaseCreditNoteList(), $connector->purchaseCreditNoteList());
+    }
+
+    public function testAdvancedPurchaseReturnsAFreshAdvancedPurchaseResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(AdvancedPurchaseResource::class, $connector->advancedPurchase());
+        $this->assertNotSame($connector->advancedPurchase(), $connector->advancedPurchase());
+    }
+
+    public function testAdvancedPurchaseReturnsItsNestedResources(): void
+    {
+        $advancedPurchase = $this->connector()->advancedPurchase();
+
+        $this->assertInstanceOf(AdvancedPurchaseStockResource::class, $advancedPurchase->stock());
+        $this->assertNotSame($advancedPurchase->stock(), $advancedPurchase->stock());
     }
 
     public function testSupplierReturnsAFreshSupplierResource(): void

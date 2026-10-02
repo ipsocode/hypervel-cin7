@@ -13,6 +13,7 @@ use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\HasPagination;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
+use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
@@ -107,6 +108,14 @@ final class Cin7Connector extends Connector implements HasPagination
         $error = array_is_list($body) ? ($body[0] ?? null) : $body;
 
         return is_array($error) && array_key_exists('ErrorCode', $error) ? true : null;
+    }
+
+    /**
+     * The `advanced-purchase` resource, the advanced purchase.
+     */
+    public function advancedPurchase(): AdvancedPurchaseResource
+    {
+        return new AdvancedPurchaseResource($this);
     }
 
     /**
