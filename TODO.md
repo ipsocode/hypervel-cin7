@@ -32,39 +32,10 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [x] `customer-credits` · `ref/customer/credits` · GET
   - [x] Customer Credits: `CustomerCreditData`
 
-### `reference/inventory-write-off/**` Inventory Write-Off (2 resources, 5 operations)
-
-- [ ] `inventory-write-off-list` · `inventoryWriteOffList` · GET
-  - [ ] Inventory Write-Off List: `InventoryWriteOffListData`
-- [ ] `inventory-write-off` · `inventoryWriteOff` · GET POST PUT DELETE
-  - [ ] Inventory Write-Off: `InventoryWriteOffData`
-  - [ ] Inventory Write-Off POST/PUT body: `InventoryWriteOffPostData`
-  - [ ] Inventory Write-Off POST/PUT body: `InventoryWriteOffPutData`
-
 ### `reference/location/**` Location (1 resource, 4 operations)
 
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
-
-### `reference/stock/**` Stock (7 resources, 17 operations)
-
-- [ ] `stock-adjustment-list` · `stockadjustmentList` · GET
-  - [x] product fields: `trait HasProductFields`
-  - [ ] Stock Adjustment List: `StockAdjustmentListData`
-- [ ] `stock-adjustment` · `stockadjustment` · GET POST PUT DELETE
-  - [ ] Stock Adjustment: `StockAdjustmentData`
-  - [ ] Stock Adjustment POST/PUT body: `StockAdjustmentPostData`
-  - [ ] Stock Adjustment POST/PUT body: `StockAdjustmentPutData`
-- [ ] `stock-take-list` · `stockTakeList` · GET
-  - [ ] Stock Take List: `StockTakeListData`
-- [ ] `stock-take` · `stocktake` · GET POST PUT DELETE
-  - [ ] Stock Take: `StockTakeData`
-- [ ] `stock-transfer-list` · `stockTransferList` · GET
-  - [ ] Stock Transfer List: `StockTransferListData`
-- [ ] `stock-transfer` · `stockTransfer` · GET POST PUT DELETE
-  - [ ] Stock Transfer: `StockTransferData`
-- [ ] `stock-transfer-order` · `stockTransfer/order` · GET POST
-  - [ ] Stock Transfer Order: `StockTransferOrderData`
 
 ### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
 
@@ -114,10 +85,10 @@ Built with the first resource that uses it.
 - [x] PurchaseCreditNoteModel: `PurchaseCreditNoteData` · used by purchase
 - [x] PurchaseInvoiceLineModel: `PurchaseInvoiceLineData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
 - [x] PurchaseInvoiceAdditionalChargeModel: `PurchaseInvoiceAdditionalChargeData` · used by purchase, purchase-invoice, purchase-credit-note, advanced-purchase, advanced-purchase-invoice, advanced-purchase-credit-note
-- [ ] ExistingStockLineModel: `ExistingStockLineData` · used by stock-adjustment, stock-take
-- [ ] NewStockLineModel: `NewStockLineData` · used by stock-adjustment, stock-take
+- [x] ExistingStockLineModel: `ExistingStockLineData` · used by stock-adjustment, stock-take
+- [x] NewStockLineModel: `NewStockLineData` · used by stock-adjustment, stock-take
 - [x] TransactionStockLineModel: `TransactionStockLineData` · used by disassembly, finished-goods, inventory-write-off, money-operation, bank-transfer, stock-adjustment, stock-take
-- [ ] StockTransferLineModel: `StockTransferLineData` · used by stock-transfer
+- [x] StockTransferLineModel: `StockTransferLineData` · used by stock-transfer
 - [x] PriceTierModel: no class: a map of tier names to prices · used by product
 - [x] ProductSupplierModel: `ProductSupplierData` · used by product, product-suppliers
 - [x] ProductSupplierOptionsModel: `ProductSupplierOptionData` · used by product, product-suppliers
@@ -128,7 +99,7 @@ Built with the first resource that uses it.
 - [x] ProductMovementModel: `ProductMovementData` · used by product
 - [x] ErrorModel: `ErrorData` · used by disassembly, finished-goods, inventory-write-off
 - [x] AttributeSetLineModel: `AttributeSetLineData` · used by attribute-set
-- [ ] InventoryWriteOffLineModel: `InventoryWriteOffLineData` · used by inventory-write-off
+- [x] InventoryWriteOffLineModel: `InventoryWriteOffLineData` · used by inventory-write-off
 - [x] TaxComponentModel: `TaxComponentData` · used by tax
 - [x] MoneyTaskLineModel: `MoneyTaskLineData` · used by money-operation
 - [x] SupplierAddressModel: `CustomerAddressData` · used by customer, supplier, lead
@@ -144,9 +115,9 @@ Built with the first resource that uses it.
 - [x] AdvancedPurchaseInvoiceModel: `AdvancedPurchaseInvoiceData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseCreditNoteModel: `AdvancedPurchaseCreditNoteData` · used by purchase, advanced-purchase
 - [x] AdvancedPurchaseManualJournalModel: `AdvancedPurchaseManualJournalData` · used by purchase, advanced-purchase
-- [ ] IDNameModel: `IdNameData` · used by stock-take
-- [ ] StockTransferOrderModel: `StockTransferOrderData` · used by stock-transfer
-- [ ] StockTransferOrderLineModel: `StockTransferOrderLineData` · used by stock-transfer, stock-transfer-order
+- [x] IDNameModel: `IdNameData` · used by stock-take
+- [x] StockTransferOrderModel: `StockTransferOrderData` · used by stock-transfer
+- [x] StockTransferOrderLineModel: `StockTransferOrderLineData` · used by stock-transfer, stock-transfer-order
 
 ## Low
 
@@ -303,6 +274,15 @@ Every resource in these groups is in.
 
 - [x] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
   - [x] Fixed Asset Types: `FixedAssetTypeData`
+
+### `reference/inventory-write-off/**` Inventory Write-Off (2 resources, 5 operations)
+
+- [x] `inventory-write-off-list` · `inventoryWriteOffList` · GET
+  - [x] Inventory Write-Off List: `InventoryWriteOffListData`
+- [x] `inventory-write-off` · `inventoryWriteOff` · GET POST PUT DELETE
+  - [x] Inventory Write-Off: `InventoryWriteOffData`
+  - [x] Inventory Write-Off POST/PUT body: `InventoryWriteOffPostData`
+  - [x] Inventory Write-Off POST/PUT body: `InventoryWriteOffPutData`
 
 ### `reference/journal/**` Journal (1 resource, 4 operations)
 
@@ -474,6 +454,26 @@ Every resource in these groups is in.
 - [x] `sale-attachments` · `sale/attachment` · GET POST DELETE
   - [x] Sale Attachments: `SaleAttachmentsData`
   - [x] Sale Attachments POST body: `SaleAttachmentPostData`
+
+### `reference/stock/**` Stock (7 resources, 17 operations)
+
+- [x] `stock-adjustment-list` · `stockadjustmentList` · GET
+  - [x] product fields: `trait HasProductFields`
+  - [x] Stock Adjustment List: `StockAdjustmentListData`
+- [x] `stock-adjustment` · `stockadjustment` · GET POST PUT DELETE
+  - [x] Stock Adjustment: `StockAdjustmentData`
+  - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPostData`
+  - [x] Stock Adjustment POST/PUT body: `StockAdjustmentPutData`
+- [x] `stock-take-list` · `stockTakeList` · GET
+  - [x] Stock Take List: `StockTakeListData`
+- [x] `stock-take` · `stocktake` · GET POST PUT DELETE
+  - [x] Stock Take: `StockTakeData`
+- [x] `stock-transfer-list` · `stockTransferList` · GET
+  - [x] Stock Transfer List: `StockTransferListData`
+- [x] `stock-transfer` · `stockTransfer` · GET POST PUT DELETE
+  - [x] Stock Transfer: `StockTransferData`
+- [x] `stock-transfer-order` · `stockTransfer/order` · GET POST
+  - [x] Stock Transfer Order: `StockTransferOrderData`
 
 ### `reference/supplier/**` Supplier (2 resources, 4 operations)
 

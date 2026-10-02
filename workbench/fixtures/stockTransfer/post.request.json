@@ -1,0 +1,26 @@
+{
+    "Status": "DRAFT",
+    "From": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+    "FromLocation": "Main Warehouse",
+    "To": "284a6935-d54a-40f6-b91d-c707604d5bec",
+    "ToLocation": "Main Warehouse: Bin 1",
+    "CostDistributionType": "Cost",
+    "InTransitAccount": "715",
+    "DepartureDate": "2018-03-12T00:00:00",
+    "CompletionDate": "2017-12-19T00:00:00",
+    "RequiredByDate": "2017-12-19T00:00:00",
+    "Reference": "",
+    "Lines": [
+        {
+            "ProductID": "c08b3876-89cc-46c4-af52-b77f058fdf81",
+            "SKU": "Bread",
+            "ProductName": "Baked Bread",
+            "TransferQuantity": 100,
+            "BatchSN": "1",
+            "ExpiryDate": "2017-12-13T00:00:00",
+            "Comments": ""
+        }
+    ],
+    "ManualJournals": [],
+    "SkipOrder": true
+}
