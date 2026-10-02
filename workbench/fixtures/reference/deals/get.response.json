@@ -1,0 +1,70 @@
+{
+    "Deals": [
+        {
+            "ID": "ad02cdd0-5813-45bb-ba62-9ca8a69e2505",
+            "Name": "Product Deal 1",
+            "DateFrom": "2021-09-28T00:00:00",
+            "DateTo": "2021-09-30T00:00:00",
+            "IsActive": false,
+            "AllowCoupons": false,
+            "SingleCouponCodeUsage": false,
+            "CustomersGroup": "POS",
+            "CouponCodes": "",
+            "DealCustomers": [],
+            "DealCustomerTags": [],
+            "DealDiscounts": [
+                {
+                    "ID": "a18997f7-1a8c-48f9-b0d3-b22534521fe9",
+                    "DiscountName": "Alles fur Freunds",
+                    "DiscountType": "Simple",
+                    "DiscountID": "98fcb436-988d-437c-b135-7dcf19c94719",
+                    "Sequence": 1,
+                    "IsOrderLevel": false,
+                    "BuyType": "",
+                    "BuyValue": null,
+                    "BuyValueType": "",
+                    "BuyMore": false,
+                    "GetType": "",
+                    "GetValue": null,
+                    "GetValueType": "",
+                    "DealDiscountBrands": [],
+                    "DealDiscountCategories": [],
+                    "DealDiscountTags": [
+                        {
+                            "ID": "8308d3db-1885-48b9-bac3-d4659352122d",
+                            "TagName": "Freund"
+                        }
+                    ],
+                    "DealDiscountProducts": []
+                },
+                {
+                    "ID": "c53d3cc8-69f5-4ee5-bb5c-3911bb181740",
+                    "DiscountName": "Test 12",
+                    "DiscountType": "Simple",
+                    "DiscountID": "da9bdb07-484e-4a1b-bfdb-5ab49c252d8b",
+                    "Sequence": 2,
+                    "IsOrderLevel": false,
+                    "BuyType": "",
+                    "BuyValue": null,
+                    "BuyValueType": "",
+                    "BuyMore": false,
+                    "GetType": "",
+                    "GetValue": null,
+                    "GetValueType": "",
+                    "DealDiscountBrands": [],
+                    "DealDiscountCategories": [],
+                    "DealDiscountTags": [],
+                    "DealDiscountProducts": [
+                        {
+                            "ID": "fd2aec29-6f56-4861-a1e1-e25800764ffa",
+                            "ProductID": "1cd995b0-a8f1-456c-9784-ecf3a8fc2804",
+                            "ProductName": "Screws Drive Cross",
+                            "ProductSKU": "Screws-SKU - 002",
+                            "IsFamily": false
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
