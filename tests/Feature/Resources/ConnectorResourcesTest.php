@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
+use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
@@ -129,10 +130,12 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->supplier(), $connector->supplier());
     }
 
-    public function testJournalAndTransactionsReturnFreshResources(): void
+    public function testBankTransferJournalAndTransactionsReturnFreshResources(): void
     {
         $connector = $this->connector();
 
+        $this->assertInstanceOf(BankTransferResource::class, $connector->bankTransfer());
+        $this->assertNotSame($connector->bankTransfer(), $connector->bankTransfer());
         $this->assertInstanceOf(JournalResource::class, $connector->journal());
         $this->assertInstanceOf(TransactionsResource::class, $connector->transactions());
         $this->assertNotSame($connector->journal(), $connector->journal());

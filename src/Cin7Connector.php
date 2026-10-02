@@ -13,6 +13,7 @@ use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\HasPagination;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
+use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\MeResource;
@@ -179,6 +180,14 @@ final class Cin7Connector extends Connector implements HasPagination
     public function saleList(): SaleListResource
     {
         return new SaleListResource($this);
+    }
+
+    /**
+     * The `bankTransfer` resource.
+     */
+    public function bankTransfer(): BankTransferResource
+    {
+        return new BankTransferResource($this);
     }
 
     /**

@@ -1,0 +1,29 @@
+{
+    "TaskID": "675e7c7c-f660-49d4-a1d4-0a644c4e177c",
+    "Status": "COMPLETED",
+    "FromAccount": "198489",
+    "ToAccount": "713",
+    "FromAmount": 3,
+    "ToAmount": 6,
+    "CurrencyConversionRate": 2,
+    "Reference": "Test",
+    "Date": "2018-01-17T00:00:00",
+    "Note": "Memo",
+    "Transactions": [
+        {
+            "ID": "dab76b48-6b2a-4e8f-be01-2143e612a73e",
+            "EffectiveDate": "2018-01-17T00:00:00",
+            "Debit": "713",
+            "Credit": "CROSS-CURRENCY-TRANSFER",
+            "Amount": 6
+        },
+        {
+            "ID": "51c4400e-9abe-4ac3-8b58-eb4b448b69be",
+            "EffectiveDate": "2018-01-17T00:00:00",
+            "Debit": "CROSS-CURRENCY-TRANSFER",
+            "Credit": "198489",
+            "Amount": 6
+        }
+    ],
+    "Attachments": []
+}

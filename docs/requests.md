@@ -92,6 +92,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
 | `GetMeContacts` | `page`, `limit`, `id`, `name`, `type` (`ContactType`), `defaultForType`, `phone`, `fax`, `email` |
 | `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
+| `GetBankTransfer` | **`taskId`** |
+| `DeleteBankTransfer` | **`id`**, `void` |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
 | `DeleteJournal` | **`id`**, `void` |
 | `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
@@ -167,6 +169,12 @@ to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
 `PaymentTermList`), `PostPaymentTerm`, `PutPaymentTerm` (the PUT body carries `ID`) and
 `DeletePaymentTerm` (`ID`). Their GET `dto()` is a list of `FixedAssetTypeData` or
 `PaymentTermData`, and POST and PUT answer the saved record (`<list key>.0`).
+
+The `bankTransfer` actions live under `src/Requests/BankTransfer/`, and follow the Money Task's:
+`GetBankTransfer` (keyed `TaskID`), `DeleteBankTransfer` (keyed `ID`, with `Void`), and
+`PostBankTransfer` and `PutBankTransfer` (`WriteRequest`s, whose data object bodies are
+`BankTransferPostData` and `BankTransferPutData`; the PUT body carries `TaskID`). Every one's
+`dto()` is a `BankTransferData`.
 
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are

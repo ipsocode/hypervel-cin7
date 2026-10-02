@@ -136,15 +136,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
   - [ ] Location: `LocationData`
 
-### `reference/money-task/**` Money Task (3 resources, 9 operations, 1 left)
-
-- [x] `money-task-list` · `moneyTaskList` · GET
-  - [x] Money Task List: `MoneyTaskListData`
-- [x] `money-operation` · `moneyOperation` · GET POST PUT DELETE
-  - [x] Money Task: `MoneyTaskData`
-- [ ] `bank-transfer` · `bankTransfer` · GET POST PUT DELETE
-  - [ ] Bank Transfer: `BankTransferData`
-
 ### `reference/price-tiers/**` Price Tiers (1 resource, 1 operation)
 
 - [ ] `price-tiers` · `ref/priceTier` · GET
@@ -441,6 +432,15 @@ Every resource in these groups is in.
   - [x] Me Address: `MeAddressData`
 - [x] `me-contact` · `me/contacts` · GET POST PUT DELETE
   - [x] Me Contact: `MeContactData`
+
+### `reference/money-task/**` Money Task (3 resources, 9 operations)
+
+- [x] `money-task-list` · `moneyTaskList` · GET
+  - [x] Money Task List: `MoneyTaskListData`
+- [x] `money-operation` · `moneyOperation` · GET POST PUT DELETE
+  - [x] Money Task: `MoneyTaskData`
+- [x] `bank-transfer` · `bankTransfer` · GET POST PUT DELETE
+  - [x] Bank Transfer: `BankTransferData`
 
 ### `reference/payment-term/**` Payment Term (1 resource, 4 operations)
 
