@@ -11,12 +11,11 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\CreateRecord;
-use Ipsocode\Cin7\Requests\DeleteRecord;
-use Ipsocode\Cin7\Requests\FindRecord;
-use Ipsocode\Cin7\Requests\ListRecords;
-use Ipsocode\Cin7\Requests\UpdateRecord;
+use InvalidArgumentException;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\Customer\PutCustomer;
+use Ipsocode\Cin7\Requests\KeyedRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -39,7 +38,7 @@ class RequestBuildingTest extends TestCase
 
     public function testEveryRequestCarriesTheAuthAndContentTypeHeaders(): void
     {
-        $pending = $this->send(new ListRecords(Endpoint::Customer));
+        $pending = $this->send(new GetCustomer);
 
         $this->assertSame('acct-test', $pending->headers()['api-auth-accountid']);
         $this->assertSame('key-test', $pending->headers()['api-auth-applicationkey']);
@@ -48,33 +47,17 @@ class RequestBuildingTest extends TestCase
 
     public function testTheBaseUrlAndEndpointPathAreJoined(): void
     {
-        $pending = $this->send(new ListRecords(Endpoint::SaleInvoice));
+        $pending = $this->send(new GetCustomer);
 
         $this->assertSame(
-            'https://inventory.dearsystems.com/ExternalApi/v2/sale/invoice',
+            'https://inventory.dearsystems.com/ExternalApi/v2/customer',
             $pending->uri()->getScheme() . '://' . $pending->uri()->getHost() . $pending->uri()->getPath(),
         );
     }
 
-    public function testEveryEndpointResolvesToItsOwnPath(): void
-    {
-        foreach (Endpoint::cases() as $endpoint) {
-            $this->assertSame($endpoint->path(), new ListRecords($endpoint)->resolveEndpoint());
-        }
-    }
-
-    public function testARequestExposesTheEndpointItTargets(): void
-    {
-        $this->assertSame(Endpoint::SaleInvoice, new ListRecords(Endpoint::SaleInvoice)->endpoint());
-        $this->assertSame(Endpoint::Customer, new FindRecord(Endpoint::Customer, 'guid')->endpoint());
-        $this->assertSame(Endpoint::Product, new CreateRecord(Endpoint::Product, [])->endpoint());
-        $this->assertSame(Endpoint::Tax, new UpdateRecord(Endpoint::Tax, 'guid', [])->endpoint());
-        $this->assertSame(Endpoint::Sale, new DeleteRecord(Endpoint::Sale, 'guid')->endpoint());
-    }
-
     public function testListInjectsThePageDefaults(): void
     {
-        $pending = $this->send(new ListRecords(Endpoint::Customer));
+        $pending = $this->send(new GetCustomer);
 
         $this->assertSame(Method::GET, $pending->method());
         $this->assertSame(['page' => 1, 'limit' => 100], $pending->queryParameters());
@@ -82,7 +65,7 @@ class RequestBuildingTest extends TestCase
 
     public function testListLetsCallerValuesWin(): void
     {
-        $pending = $this->send(new ListRecords(Endpoint::Customer, ['page' => 4, 'limit' => 10, 'Name' => 'ACME']));
+        $pending = $this->send(new GetCustomer(['page' => 4, 'limit' => 10, 'Name' => 'ACME']));
 
         $this->assertSame(
             ['page' => 4, 'limit' => 10, 'Name' => 'ACME'],
@@ -90,45 +73,47 @@ class RequestBuildingTest extends TestCase
         );
     }
 
-    public function testOnlyTheListRequestIsPaginatable(): void
+    public function testANullFilterIsTreatedAsAbsent(): void
     {
-        $this->assertInstanceOf(Paginatable::class, new ListRecords(Endpoint::Customer));
-        $this->assertNotInstanceOf(Paginatable::class, new FindRecord(Endpoint::Customer, 'guid'));
-        $this->assertNotInstanceOf(Paginatable::class, new CreateRecord(Endpoint::Customer, []));
+        $pending = $this->send(new GetCustomer(['page' => null, 'limit' => null]));
+
+        $this->assertSame(['page' => 1, 'limit' => 100], $pending->queryParameters());
     }
 
-    public function testFindSendsTheGuidAsAQueryParameter(): void
+    public function testBooleanFiltersAreSentAsTrueAndFalseStrings(): void
     {
-        $pending = $this->send(new FindRecord(Endpoint::Customer, 'guid-1'));
+        $pending = $this->send(new GetCustomer(['IncludeDeprecated' => true, 'IncludeBOM' => false]));
 
-        $this->assertSame(Method::GET, $pending->method());
         $this->assertSame(
-            ['ID' => 'guid-1', 'page' => 1, 'limit' => 100],
+            ['IncludeDeprecated' => 'true', 'IncludeBOM' => 'false', 'page' => 1, 'limit' => 100],
             $pending->queryParameters(),
         );
     }
 
-    public function testFindUsesTheSaleIdKeyOnSaleSubEndpoints(): void
+    public function testOnlyAListRequestIsPaginatable(): void
     {
-        $pending = $this->send(new FindRecord(Endpoint::SaleInvoice, 'guid-2'));
-
-        $this->assertSame(
-            ['SaleID' => 'guid-2', 'page' => 1, 'limit' => 100],
-            $pending->queryParameters(),
-        );
-        $this->assertArrayNotHasKey('ID', $pending->queryParameters());
+        $this->assertInstanceOf(Paginatable::class, new GetCustomer);
+        $this->assertNotInstanceOf(Paginatable::class, new PostCustomer);
+        $this->assertNotInstanceOf(Paginatable::class, new PutCustomer);
     }
 
-    public function testFindGuidWinsOverACallerSuppliedValue(): void
+    public function testPaginatingAKeyedRequestThrows(): void
     {
-        $pending = $this->send(new FindRecord(Endpoint::Customer, 'guid-3', ['ID' => 'ignored']));
+        $this->expectException(InvalidArgumentException::class);
 
-        $this->assertSame('guid-3', $pending->queryParameters()['ID']);
+        $this->connector()->paginate($this->anonymousKeyedRequest('guid-1'));
     }
 
-    public function testCreateSendsAnUntouchedJsonBodyAndNoPageDefaults(): void
+    public function testTheIdentifierIsPlacedFirstAndWinsOverACallerSuppliedValue(): void
     {
-        $pending = $this->send(new CreateRecord(Endpoint::Customer, ['Name' => 'ACME']));
+        $pending = $this->send($this->anonymousKeyedRequest('guid-1', ['ID' => 'ignored', 'Extra' => 'kept']));
+
+        $this->assertSame(['ID' => 'guid-1', 'Extra' => 'kept'], $pending->queryParameters());
+    }
+
+    public function testCreateSendsAnUntouchedJsonBodyAndNoQueryString(): void
+    {
+        $pending = $this->send(new PostCustomer(['Name' => 'ACME']));
 
         $this->assertSame(Method::POST, $pending->method());
         $this->assertSame(['Name' => 'ACME'], $pending->body());
@@ -140,61 +125,18 @@ class RequestBuildingTest extends TestCase
      */
     public function testCreateSendsAnEmptyBodyWhenGivenNoData(): void
     {
-        $pending = $this->send(new CreateRecord(Endpoint::Customer));
+        $pending = $this->send(new PostCustomer);
 
         $this->assertSame([], $pending->body());
     }
 
-    public function testUpdateMergesTheGuidIntoTheBody(): void
+    public function testUpdateSendsTheBodyVerbatim(): void
     {
-        $pending = $this->send(new UpdateRecord(Endpoint::Customer, 'guid-4', ['Name' => 'ACME Ltd']));
+        $pending = $this->send(new PutCustomer(['ID' => 'guid-4', 'Name' => 'ACME Ltd']));
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(
-            ['Name' => 'ACME Ltd', 'ID' => 'guid-4'],
-            $pending->body(),
-        );
+        $this->assertSame(['ID' => 'guid-4', 'Name' => 'ACME Ltd'], $pending->body());
         $this->assertSame([], $pending->queryParameters());
-    }
-
-    public function testUpdateGuidWinsOverACallerSuppliedValue(): void
-    {
-        $pending = $this->send(new UpdateRecord(Endpoint::Customer, 'guid-8', ['ID' => 'ignored']));
-
-        $this->assertSame(['ID' => 'guid-8'], $pending->body());
-    }
-
-    /**
-     * An update carries the GUID under `guidKey()`, the find key; `sale` finds by `ID`, and no
-     * endpoint that finds by `SaleID` accepts a PUT.
-     */
-    public function testUpdateUsesTheFindKeyOnSaleSubEndpoints(): void
-    {
-        $pending = $this->send(new UpdateRecord(Endpoint::Sale, 'guid-9', ['Status' => 'AUTHORISED']));
-
-        $this->assertSame(['Status' => 'AUTHORISED', 'ID' => 'guid-9'], $pending->body());
-    }
-
-    public function testDeleteUsesTheDeleteGuidKeyAndKeepsThePageDefaults(): void
-    {
-        // `sale/invoice` finds by SaleID, but Cin7 reads a delete's GUID under ID.
-        $pending = $this->send(new DeleteRecord(Endpoint::SaleInvoice, 'guid-5'));
-
-        $this->assertSame(Method::DELETE, $pending->method());
-        $this->assertSame(
-            ['ID' => 'guid-5', 'page' => 1, 'limit' => 100],
-            $pending->queryParameters(),
-        );
-    }
-
-    public function testDeleteGuidWinsOverACallerSuppliedValue(): void
-    {
-        $pending = $this->send(new DeleteRecord(Endpoint::Sale, 'guid-10', ['ID' => 'ignored', 'Force' => 'true']));
-
-        $this->assertSame(
-            ['ID' => 'guid-10', 'Force' => 'true', 'page' => 1, 'limit' => 100],
-            $pending->queryParameters(),
-        );
     }
 
     public function testTheDecodedBodyIsReturnedAsAnArray(): void
@@ -204,7 +146,7 @@ class RequestBuildingTest extends TestCase
         Saloon::clearFake();
         Saloon::fake([MockResponse::make($body)]);
 
-        $response = $this->connector()->send(new ListRecords(Endpoint::Customer));
+        $response = $this->connector()->send(new GetCustomer);
 
         $this->assertSame($body, $response->json());
         $this->assertSame('a', $response->json('CustomerList')[0]['ID']);
@@ -222,5 +164,23 @@ class RequestBuildingTest extends TestCase
         $this->assertNotNull($pending);
 
         return $pending;
+    }
+
+    /**
+     * No concrete `KeyedRequest` ships yet, so the GET/DELETE contract is exercised through
+     * an anonymous one built on the `customer` path.
+     *
+     * @param array<string, mixed> $parameters
+     */
+    private function anonymousKeyedRequest(string $id, array $parameters = []): KeyedRequest
+    {
+        return new class($id, $parameters) extends KeyedRequest {
+            protected Method $method = Method::GET;
+
+            public function resolveEndpoint(): string
+            {
+                return 'customer';
+            }
+        };
     }
 }

@@ -12,8 +12,7 @@ use Hypervel\Saloon\Http\Request;
 use Hypervel\Testbench\Concerns\WithWorkbench;
 use Hypervel\Testbench\TestCase as BaseTestCase;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\ListRecords;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 
 /**
  * Base for tests that boot the Testbench application, whose environment comes only from
@@ -41,7 +40,7 @@ abstract class TestCase extends BaseTestCase
     {
         return new PendingRequest(
             $connector,
-            $request ?? new ListRecords(Endpoint::Customer),
+            $request ?? new GetCustomer,
             $this->app->make(CacheFactory::class),
             $this->app->make(RateLimiter::class),
         );
