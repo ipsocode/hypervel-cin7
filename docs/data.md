@@ -83,7 +83,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData`, `PurchasePaymentLineData` | none |
   | `AbstractManualJournalLineData` | `SaleManualJournalLineData`, `PurchaseManualJournalLineData` | `Amount`, `Date`, `Debit`, `Credit` |
   | `AbstractPurchaseStockLineData` | `PurchaseStockLineData`, `AdvancedPurchaseStockLineData`, `AdvancedPurchasePutAwayLineData` | `Date`, `Quantity`; and `Location` or `LocationID` on a write body (`#[RequiredWithout]`) of `PurchaseStockLineData` and `AdvancedPurchasePutAwayLineData`, which declare the pair, as `AdvancedPurchaseStockLineData` does without the rule (see [below](#where-the-references-tables-and-examples-disagree)) |
-  | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData`, `PurchaseShippingAddressData` | none; `SaleShippingAddressData` requires `Line1` and `Country` (see [below](#where-the-references-tables-and-examples-disagree)) |
+  | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData`, `PurchaseShippingAddressData` | none; each child requires `Line1` and `Country`: `SaleShippingAddressData` by type, `AddressData` and `PurchaseShippingAddressData` on a write body (`#[Required]`) (see [below](#where-the-references-tables-and-examples-disagree)) |
 
   The line and charge requirements hold in the purchase tables as well, so a purchase model
   can extend those parents. `Account`, which the purchase invoice tables require and the sale
@@ -255,8 +255,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 The additional charge and shipping address classes stay in `src/Data/Sale/` because several
 sale paths share them. The billing address, additional attributes, payment line
 (`SalePaymentLineData`, a quote's `Prepayments`) and inventory movement line are in
-`src/Data/Other/` because the purchase family carries them too. The billing address leaves `Line1`
-and `Country` optional for both families (see
+`src/Data/Other/` because the purchase family carries them too. The billing address takes a `null`
+`Line1` and `Country` in a response but requires both on a write body, for both families (see
 [below](#where-the-references-tables-and-examples-disagree)).
 
 ## Typed pages
@@ -330,17 +330,18 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   string too, as on the purchase lists (see below). Every response example sends `OrderDate`,
   which no Purchase table lists; `PurchaseData` models it as a date, as the purchase lists'
   `OrderDate` is.
-- **Billing and purchase shipping addresses.** The Address Model and the Purchase Shipping Address
-  Model require `Line1` and `Country`, but every `purchase` response example sends a
-  `BillingAddress` with both `null`, even after a POST that sent them, and the GET example a
-  `ShippingAddress` too. So `AddressData` and `PurchaseShippingAddressData` leave both optional,
-  and a write body is not checked for them. `AddressData` is the one class for the Address Model,
-  and a sale bills to it too, so a `SalePostData` or `SalePutData` `BillingAddress` is not checked
-  for `Line1` and `Country` either, which is left to Cin7. The `sale` request examples send both,
-  though the PUT response example's billing `Country` is `null`. `SaleShippingAddressData`, a model
-  of its own that no example sends without them, still requires them, so `AbstractAddressData`
-  declares neither. `AddressData` and `SaleShippingAddressData` declare the optional `ID` their
-  tables list; `AbstractAddressData` does not, as the Purchase Shipping Address Model has none.
+- **Billing and purchase shipping addresses.** Every address table (the Address Model, the Sale
+  and Purchase Shipping Address Models, the Supplier/Customer Address Model and Me Address)
+  requires `Line1` and `Country`, and every request example sends both. But every `purchase`
+  response example sends a `BillingAddress` with both `null`, even after a POST that sent them,
+  and the GET example a `ShippingAddress` too; the `sale` PUT response example's billing `Country`
+  is `null` as well. One class reads the response and builds the write body, so `AddressData` and
+  `PurchaseShippingAddressData` type both as `?string`, for the responses, and mark both
+  `#[Required]`, which only a write body checks: a sale's or a purchase's `BillingAddress`, or a
+  purchase's `ShippingAddress`, without them is not sent. `SaleShippingAddressData`, which no
+  example sends without them, requires them by type, so `AbstractAddressData` declares neither.
+  `AddressData` and `SaleShippingAddressData` declare the optional `ID` their tables list;
+  `AbstractAddressData` does not, as the Purchase Shipping Address Model has none.
 - **Product fields on lines.** "All objects that contain `ProductID` also contain additional
   fields": `ProductLength`, `ProductWidth`, `ProductHeight`, `ProductWeight`, `WeightUnits`,
   `DimensionsUnits` and `ProductCustomField1`–`10`. The product line classes (every child of
@@ -948,7 +949,7 @@ reference marks the endpoint deprecated: it supports only simple purchases. Each
 | `PurchaseData` (response) | `src/Data/Purchase/` | `Location`, `Approach` |
 | `PurchasePostData` | `src/Data/Purchase/` | `Location`, `Approach`; and `Supplier` or `SupplierID` (`#[RequiredWithout]`) |
 | `PurchasePutData` | `src/Data/Purchase/` | `Location`, `ID`, `Approach`; and `Supplier` or `SupplierID` (`#[RequiredWithout]`) |
-| `PurchaseShippingAddressData` | `src/Data/Other/` | none |
+| `PurchaseShippingAddressData` | `src/Data/Other/` | `Line1`, `Country` on a write body (`#[Required]`); a response may send them `null` |
 | `SimplePurchaseCreditNoteData` | `src/Data/Purchase/CreditNote/` | `CreditNoteNumber`, `Status`, `Lines`, `Unstock` |
 | `PurchaseUnStockData` | `src/Data/Purchase/` | `Status`, `Lines` |
 
