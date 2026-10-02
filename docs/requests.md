@@ -124,6 +124,9 @@ The `supplier` actions, under `src/Requests/Supplier/`, are the customer's in sh
 body carries `ID`). `GetSupplier`'s `dto()` is a `list<SupplierData>`, and the POST and PUT
 `dto()` is the saved supplier (`SupplierList.0`).
 
+The `me` action, under `src/Requests/Me/`, is `GetMe`: a `Cin7Request` that takes no parameters,
+on `me`, whose `dto()` is a `MeData`.
+
 The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
 `TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are
 `TaxPostData` and `TaxPutData`; the PUT body carries `ID`), all

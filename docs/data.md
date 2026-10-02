@@ -81,8 +81,8 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   [customers](#customers), [suppliers](#suppliers), [products](#products), [tax rules and money
   tasks](#tax-rules-and-money-tasks) and
   [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)), as do
-  the parents above; the Money Task List, Customer Credits and Supplier Deposits tables require
-  none. Where the
+  the parents above; the Money Task List, Customer Credits, Supplier Deposits, ME and Rounding
+  Table tables require none. Where the
   reference requires different fields per verb, the body is a class per verb.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
@@ -96,7 +96,9 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   is typed with a string-backed enum from `src/Enums/`: `?SaleStatus $Status = null`, or
   `TaskStatus $Status` when required. Case names are PascalCase and the values are the wire
   strings verbatim (`TaskStatus::NotAvailable` is `'NOT AVAILABLE'`), so `toArray()` sends
-  what Cin7 expects. Fields with the same list share one enum, and a field whose list is a
+  what Cin7 expects. Where the wire values are abbreviations, the cases take the names the
+  reference gives them: `WeightUnit::Gram` is `'g'` and `AdjustmentRule::NoAdjustment` is `'N'`.
+  Fields with the same list share one enum, and a field whose list is a
   subset of another's uses the larger enum. A response value outside its enum fails `dto()`
   with a `Hypervel\Data\Exceptions\CannotCastEnum`; the fix is a new case. Where the
   examples contradict a list, the field stays a string (see
@@ -174,6 +176,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/tax` | POST: `TaxPostData`; PUT: `TaxPutData`, which also requires `ID` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
+| `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
@@ -386,6 +389,23 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Sale attachment delete.** The reference marks the `ID` of `DELETE sale/attachment` optional;
   a delete names what it deletes, so `DeleteSaleAttachment` requires it. The POST example's base64
   `Content` is a 62 KB image; the fixture keeps its first 32 characters.
+- **ME value lists in the Required column.** The ME table writes the values of
+  `TaxCalculationMethod` (`Row Total`, `Total`) and `DiscountRule` (`Discount`, `Price`) in its
+  Required column, and the Rounding Table its `AdjustmentRule` letters (`N`, `S`, `A`). They are
+  value lists, not requirements: the fields are optional, typed `TaxCalculationMethod`,
+  `DiscountRule` and `AdjustmentRule`. The product's `DiscountRule`, the name of a discount, is
+  another field, and stays a string.
+- **Units of weight and length.** The Dimension Unit Available Values give each unit an
+  abbreviation and a name. The abbreviation is the wire value, as the `me` example's `g` and `cm`
+  show, so `MeData`'s `DefaultWeightUnits` and `DefaultDimensionsUnits` are `WeightUnit` and
+  `DimensionUnit`, whose cases take the names, spelt correctly: the table's `ounces`, `miligramm`
+  and `kilogramm` are `Ounce`, `Milligram` and `Kilogram`. The product's `WeightUnits` and
+  `DimensionsUnits`, and the lines' (`HasProductFields`), were built before these enums and stay
+  strings; the sale examples send `""` for a line's units, outside the list.
+- **Rounding Table `AdjustmentValue`.** The table types it `String`, but the example sends `0`;
+  `RoundingTableData` accepts both (`string|float`).
+- **A staff account in the `me` example.** Its company name is a Cin7 staff test account's; the
+  fixture says `Example Company`.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -422,6 +442,22 @@ Its `Addresses` and `Contacts` are the customer's `CustomerAddressData` and
 `CustomerContactData`, from `src/Data/Other/` (see [customers](#customers)). `LastModifiedOn` is
 on `SupplierData` alone. A response missing a required field fails `dto()` with a
 `CannotCreateData`.
+
+## Me
+
+`me` is the company the API application belongs to and the settings its documents follow. Its
+tables require no field:
+
+| Class | Folder | Required |
+|---|---|---|
+| `MeData` (response) | `src/Data/Me/` | none |
+| `RoundingTableData` | `src/Data/Me/` | none |
+
+The settings with a value list are enums: `DefaultWeightUnits` is a `WeightUnit`,
+`DefaultDimensionsUnits` a `DimensionUnit`, `TaxCalculationMethod` a `TaxCalculationMethod`,
+`DiscountRule` a `DiscountRule`, and a rounding row's `AdjustmentRule` an `AdjustmentRule` (see
+[above](#where-the-references-tables-and-examples-disagree)). `LockDate` and `OpeningBalanceDate`
+are dates, which the example sends as `yyyy-MM-ddTHH:mm:ss`.
 
 ## Products
 
