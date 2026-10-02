@@ -29,6 +29,8 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   their common folder (`SaleAdditionalChargeData` in `src/Data/Sale/`), and one shared
   across families in `src/Data/` itself. The Money Task's classes are in
   `src/Data/MoneyTask/`, like its requests (see [resources](resources.md#conventions)).
+  `src/Data/` holds nothing else: the traits the models share are in `src/Concerns/` and the
+  validation attribute in `src/Attributes/`.
 - **One class per model name.** Where the reference documents one name twice with
   different fields, the class carries the union. A request body gets its own class
   only where the reference documents one, or where the verbs need different fields.
@@ -59,7 +61,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   can extend those parents unchanged. `Account`, which the purchase invoice tables require
   and the sale invoice tables do not, belongs on the children.
 
-  Two field sets several unrelated models carry are traits in `src/Data/Concerns/`:
+  Two field sets several unrelated models carry are traits in `src/Concerns/`:
   `HasProductFields` (the product fields of every line with a `ProductID`) and
   `HasAdditionalAttributes` (`AdditionalAttribute1` to `10`).
 - **Property names are the wire keys, verbatim** (`ID`, `TaxRuleList`), with no name
@@ -99,7 +101,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   carry the rule.
 - **String fields carry the reference's rules** as validation attributes: `#[Max(n)]` for
   its Length column, `#[Uuid]` for a `Guid`, `#[DateTime]`
-  (`Ipsocode\Cin7\Data\Attributes\DateTime`) for a `DateTime`, and `#[Date]` for a `Date`.
+  (`Ipsocode\Cin7\Attributes\DateTime`) for a `DateTime`, and `#[Date]` for a `Date`.
   They are checked when the model is sent as a write body, never when a response is read,
   so a response Cin7 sends outside them still becomes a data object. A `Decimal` with a
   Length (the product dimensions' `50`) gets no rule, since `#[Max]` on a number caps its

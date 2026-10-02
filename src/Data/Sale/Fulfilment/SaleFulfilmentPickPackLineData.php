@@ -8,8 +8,8 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
-use Ipsocode\Cin7\Data\Concerns\HasProductFields;
+use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasProductFields;
 
 /**
  * Sale Fulfilment Pick Pack Line Model. `Box` and `WarrantyRegistrationNumber` are for packing; the `Restock…` keys are for credit notes.

@@ -6,8 +6,8 @@ namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
-use Ipsocode\Cin7\Data\Concerns\HasProductFields;
+use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasProductFields;
 
 /**
  * Inventory Movement Line Model.

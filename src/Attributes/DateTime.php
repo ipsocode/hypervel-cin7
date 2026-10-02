@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Attributes;
+namespace Ipsocode\Cin7\Attributes;
 
 use Attribute;
 use Hypervel\Data\Attributes\Validation\CustomValidationAttribute;

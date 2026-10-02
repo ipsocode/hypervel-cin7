@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Data\Product;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
-use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Enums\CostingMethod;
 use Ipsocode\Cin7\Enums\ProductStatus;
 use Ipsocode\Cin7\Enums\ProductType;
