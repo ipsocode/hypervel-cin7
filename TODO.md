@@ -108,20 +108,10 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `attribute-set` · `ref/attributeset` · GET POST PUT DELETE
   - [ ] Attribute Set: `AttributeSetData`
 
-### `reference/bank-accounts/**` Bank Accounts (1 resource, 1 operation)
-
-- [ ] `bank-accounts` · `ref/account/bank` · GET
-  - [ ] Bank Accounts: `BankAccountData`
-
 ### `reference/brand/**` Brand (1 resource, 4 operations)
 
 - [ ] `brand` · `ref/brand` · GET POST PUT DELETE
   - [ ] Brand: `BrandData`
-
-### `reference/carrier/**` Carrier (1 resource, 4 operations)
-
-- [ ] `carrier` · `ref/carrier` · GET POST PUT DELETE
-  - [ ] Carrier: `CarrierData`
 
 ### `reference/chart-of-accounts/**` Chart of Accounts (1 resource, 4 operations)
 
@@ -136,11 +126,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [ ] Customer Default Template: `CustomerDefaultTemplateData`
 - [x] `customer-credits` · `ref/customer/credits` · GET
   - [x] Customer Credits: `CustomerCreditData`
-
-### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
-
-- [ ] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
-  - [ ] Fixed Asset Types: `FixedAssetTypeData`
 
 ### `reference/inventory-write-off/**` Inventory Write-Off (2 resources, 5 operations)
 
@@ -207,30 +192,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
   - [ ] Markup Prices: `MarkupPricesData`
   - [ ] MarkupPriceLineModel: `MarkupPriceLineData`
 
-### `reference/reference-books/**` Reference Books (6 resources, 19 operations)
-
-- [ ] `custom-prices` · `custom-prices` · POST PUT DELETE
-  - uses ProductPriceModel
-- [ ] `deals` · `reference/deals` · GET POST PUT
-  - [ ] ProductDeal: `ProductDealData`
-  - [ ] ProductDealCustomerModel: `ProductDealCustomerData`
-  - [ ] ProductDealTagModel: `ProductDealTagData`
-  - [ ] ProductDealDiscountModel: `ProductDealDiscountData`
-  - [ ] ProductDealDiscountBrandModel: `ProductDealDiscountBrandData`
-  - [ ] ProductDealDiscountProductModel: `ProductDealDiscountProductData`
-  - [ ] ProductDealDiscountTagModel: `ProductDealDiscountTagData`
-  - [ ] ProductDealDiscountCategoryModel: `ProductDealDiscountCategoryData`
-- [ ] `product-discounts` · `reference/discount` · GET POST PUT
-  - [ ] ProductDiscountRuleModel: `ProductDiscountRuleData`
-  - [ ] DiscountLineModel: `DiscountLineData`
-- [ ] `product-suppliers` · `product-suppliers` · GET POST PUT DELETE
-  - uses ProductSupplierModel, ProductSupplierOptionsModel, ProductSupplierOptionsIntervalModel
-- [ ] `ship-zones` · `reference/shipZones` · GET POST PUT DELETE
-  - [ ] ShippingZoneModel: `ShippingZoneData`
-  - [ ] ShipZoneAppliesToModel: `ShipZoneAppliesToData`
-  - [ ] ShipZoneConditionModel: `ShipZoneConditionData`
-- [ ] `ship-zones-enabled` · `reference/shipZonesEnabled` · GET PUT
-
 ### `reference/stock/**` Stock (7 resources, 17 operations)
 
 - [ ] `stock-adjustment-list` · `stockadjustmentList` · GET
@@ -251,20 +212,10 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `stock-transfer-order` · `stockTransfer/order` · GET POST
   - [ ] Stock Transfer Order: `StockTransferOrderData`
 
-### `reference/templates/**` Templates (1 resource, 1 operation)
-
-- [ ] `templates` · `ref/templates` · GET
-  - [ ] Templates: `TemplateData`
-
 ### `reference/transactions/**` Transactions (1 resource, 1 operation)
 
 - [ ] `transactions` · `transactions` · GET
   - [ ] Transactions: `TransactionData`
-
-### `reference/unit-of-measure/**` Unit of Measure (1 resource, 4 operations)
-
-- [ ] `unit-of-measure` · `ref/unit` · GET POST PUT DELETE
-  - [ ] Unit of Measure: `UnitOfMeasureData`
 
 ### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
 
@@ -325,6 +276,16 @@ Built with the first resource that uses it.
 
 CRM, disassembly, finished goods and production, the maintainer's choice.
 
+### `reference/bank-accounts/**` Bank Accounts (1 resource, 1 operation)
+
+- [ ] `bank-accounts` · `ref/account/bank` · GET
+  - [ ] Bank Accounts: `BankAccountData`
+
+### `reference/carrier/**` Carrier (1 resource, 4 operations)
+
+- [ ] `carrier` · `ref/carrier` · GET POST PUT DELETE
+  - [ ] Carrier: `CarrierData`
+
 ### `reference/disassembly/**` Disassembly (3 resources, 6 operations)
 
 - [ ] `disassembly-list` · `disassemblyList` · GET
@@ -347,6 +308,11 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] Finished Goods Order: `FinishedGoodsOrderData`
 - [ ] `finished-goods-pick` · `finishedGoods/pick` · GET POST
   - [ ] Finished Goods Pick: `FinishedGoodsPickData`
+
+### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
+
+- [ ] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
+  - [ ] Fixed Asset Types: `FixedAssetTypeData`
 
 ### `reference/production/**` Production (10 resources, 46 operations)
 
@@ -409,6 +375,40 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] WorkCenter: `WorkCenterData`
   - [ ] WorkCenterLocation: `WorkCenterLocationData`
   - [ ] WorkCenterSupplier: `WorkCenterSupplierData`
+
+### `reference/reference-books/**` Reference Books (6 resources, 19 operations)
+
+- [ ] `custom-prices` · `custom-prices` · POST PUT DELETE
+  - uses ProductPriceModel
+- [ ] `deals` · `reference/deals` · GET POST PUT
+  - [ ] ProductDeal: `ProductDealData`
+  - [ ] ProductDealCustomerModel: `ProductDealCustomerData`
+  - [ ] ProductDealTagModel: `ProductDealTagData`
+  - [ ] ProductDealDiscountModel: `ProductDealDiscountData`
+  - [ ] ProductDealDiscountBrandModel: `ProductDealDiscountBrandData`
+  - [ ] ProductDealDiscountProductModel: `ProductDealDiscountProductData`
+  - [ ] ProductDealDiscountTagModel: `ProductDealDiscountTagData`
+  - [ ] ProductDealDiscountCategoryModel: `ProductDealDiscountCategoryData`
+- [ ] `product-discounts` · `reference/discount` · GET POST PUT
+  - [ ] ProductDiscountRuleModel: `ProductDiscountRuleData`
+  - [ ] DiscountLineModel: `DiscountLineData`
+- [ ] `product-suppliers` · `product-suppliers` · GET POST PUT DELETE
+  - uses ProductSupplierModel, ProductSupplierOptionsModel, ProductSupplierOptionsIntervalModel
+- [ ] `ship-zones` · `reference/shipZones` · GET POST PUT DELETE
+  - [ ] ShippingZoneModel: `ShippingZoneData`
+  - [ ] ShipZoneAppliesToModel: `ShipZoneAppliesToData`
+  - [ ] ShipZoneConditionModel: `ShipZoneConditionData`
+- [ ] `ship-zones-enabled` · `reference/shipZonesEnabled` · GET PUT
+
+### `reference/templates/**` Templates (1 resource, 1 operation)
+
+- [ ] `templates` · `ref/templates` · GET
+  - [ ] Templates: `TemplateData`
+
+### `reference/unit-of-measure/**` Unit of Measure (1 resource, 4 operations)
+
+- [ ] `unit-of-measure` · `ref/unit` · GET POST PUT DELETE
+  - [ ] Unit of Measure: `UnitOfMeasureData`
 
 ### `reference/crm/**` CRM (6 resources, 16 operations)
 
