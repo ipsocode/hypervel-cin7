@@ -14,6 +14,7 @@ use Hypervel\Saloon\Pagination\Contracts\HasPagination;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
+use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -119,6 +120,14 @@ final class Cin7Connector extends Connector implements HasPagination
     public function advancedPurchase(): AdvancedPurchaseResource
     {
         return new AdvancedPurchaseResource($this);
+    }
+
+    /**
+     * The advanced sale, served by the `sale` endpoints.
+     */
+    public function advancedSale(): AdvancedSaleResource
+    {
+        return new AdvancedSaleResource($this);
     }
 
     /**
