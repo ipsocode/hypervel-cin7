@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
+use Ipsocode\Cin7\Resources\AdvancedPurchase\CreditNoteResource as AdvancedPurchaseCreditNoteResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\InvoiceResource as AdvancedPurchaseInvoiceResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\ManualJournalResource as AdvancedPurchaseManualJournalResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\PaymentResource as AdvancedPurchasePaymentResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\PutAwayResource as AdvancedPurchasePutAwayResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource as AdvancedPurchaseStockResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
 use Ipsocode\Cin7\Resources\Me\ContactsResource;
@@ -11,6 +18,16 @@ use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductResource;
+use Ipsocode\Cin7\Resources\Purchase\AttachmentResource as PurchaseAttachmentResource;
+use Ipsocode\Cin7\Resources\Purchase\CreditNoteResource as PurchaseCreditNoteResource;
+use Ipsocode\Cin7\Resources\Purchase\InvoiceResource as PurchaseInvoiceResource;
+use Ipsocode\Cin7\Resources\Purchase\ManualJournalResource as PurchaseManualJournalResource;
+use Ipsocode\Cin7\Resources\Purchase\OrderResource as PurchaseOrderResource;
+use Ipsocode\Cin7\Resources\Purchase\PaymentResource as PurchasePaymentResource;
+use Ipsocode\Cin7\Resources\Purchase\StockResource as PurchaseStockResource;
+use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
+use Ipsocode\Cin7\Resources\PurchaseListResource;
+use Ipsocode\Cin7\Resources\PurchaseResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
 use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
@@ -113,6 +130,70 @@ class ConnectorResourcesTest extends TestCase
 
         $this->assertInstanceOf(SaleCreditNoteListResource::class, $connector->saleCreditNoteList());
         $this->assertNotSame($connector->saleCreditNoteList(), $connector->saleCreditNoteList());
+    }
+
+    public function testPurchaseReturnsAFreshPurchaseResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(PurchaseResource::class, $connector->purchase());
+        $this->assertNotSame($connector->purchase(), $connector->purchase());
+    }
+
+    public function testPurchaseReturnsItsNestedResources(): void
+    {
+        $purchase = $this->connector()->purchase();
+
+        $this->assertInstanceOf(PurchaseOrderResource::class, $purchase->order());
+        $this->assertNotSame($purchase->order(), $purchase->order());
+        $this->assertInstanceOf(PurchaseStockResource::class, $purchase->stock());
+        $this->assertNotSame($purchase->stock(), $purchase->stock());
+        $this->assertInstanceOf(PurchaseInvoiceResource::class, $purchase->invoice());
+        $this->assertNotSame($purchase->invoice(), $purchase->invoice());
+        $this->assertInstanceOf(PurchaseCreditNoteResource::class, $purchase->creditNote());
+        $this->assertNotSame($purchase->creditNote(), $purchase->creditNote());
+        $this->assertInstanceOf(PurchasePaymentResource::class, $purchase->payment());
+        $this->assertNotSame($purchase->payment(), $purchase->payment());
+        $this->assertInstanceOf(PurchaseManualJournalResource::class, $purchase->manualJournal());
+        $this->assertNotSame($purchase->manualJournal(), $purchase->manualJournal());
+        $this->assertInstanceOf(PurchaseAttachmentResource::class, $purchase->attachment());
+        $this->assertNotSame($purchase->attachment(), $purchase->attachment());
+    }
+
+    public function testPurchaseListAndPurchaseCreditNoteListReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(PurchaseListResource::class, $connector->purchaseList());
+        $this->assertInstanceOf(PurchaseCreditNoteListResource::class, $connector->purchaseCreditNoteList());
+        $this->assertNotSame($connector->purchaseList(), $connector->purchaseList());
+        $this->assertNotSame($connector->purchaseCreditNoteList(), $connector->purchaseCreditNoteList());
+    }
+
+    public function testAdvancedPurchaseReturnsAFreshAdvancedPurchaseResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(AdvancedPurchaseResource::class, $connector->advancedPurchase());
+        $this->assertNotSame($connector->advancedPurchase(), $connector->advancedPurchase());
+    }
+
+    public function testAdvancedPurchaseReturnsItsNestedResources(): void
+    {
+        $advancedPurchase = $this->connector()->advancedPurchase();
+
+        $this->assertInstanceOf(AdvancedPurchaseStockResource::class, $advancedPurchase->stock());
+        $this->assertNotSame($advancedPurchase->stock(), $advancedPurchase->stock());
+        $this->assertInstanceOf(AdvancedPurchasePutAwayResource::class, $advancedPurchase->putAway());
+        $this->assertNotSame($advancedPurchase->putAway(), $advancedPurchase->putAway());
+        $this->assertInstanceOf(AdvancedPurchaseInvoiceResource::class, $advancedPurchase->invoice());
+        $this->assertNotSame($advancedPurchase->invoice(), $advancedPurchase->invoice());
+        $this->assertInstanceOf(AdvancedPurchaseCreditNoteResource::class, $advancedPurchase->creditNote());
+        $this->assertNotSame($advancedPurchase->creditNote(), $advancedPurchase->creditNote());
+        $this->assertInstanceOf(AdvancedPurchasePaymentResource::class, $advancedPurchase->payment());
+        $this->assertNotSame($advancedPurchase->payment(), $advancedPurchase->payment());
+        $this->assertInstanceOf(AdvancedPurchaseManualJournalResource::class, $advancedPurchase->manualJournal());
+        $this->assertNotSame($advancedPurchase->manualJournal(), $advancedPurchase->manualJournal());
     }
 
     public function testSupplierReturnsAFreshSupplierResource(): void

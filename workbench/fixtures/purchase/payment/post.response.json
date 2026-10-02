@@ -1,0 +1,12 @@
+{
+    "TaskID": "02b08cd2-51d2-41e6-ab97-85bcd13e7136",
+    "ID": "d3d96860-648f-462a-9e19-eb61e03da136",
+    "Type": "Payment",
+    "Reference": "",
+    "Amount": 1,
+    "DatePaid": "2017-12-21T00:00:00",
+    "Account": "718",
+    "CurrencyRate": 1,
+    "DateCreated": "2017-12-12T04:16:39.5685412Z",
+    "DepositID": null
+}
