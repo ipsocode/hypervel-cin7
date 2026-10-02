@@ -194,30 +194,6 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] WorkCenterLocation: `WorkCenterLocationData`
   - [ ] WorkCenterSupplier: `WorkCenterSupplierData`
 
-### `reference/reference-books/**` Reference Books (6 resources, 19 operations)
-
-- [ ] `custom-prices` · `custom-prices` · POST PUT DELETE
-  - uses ProductPriceModel
-- [ ] `deals` · `reference/deals` · GET POST PUT
-  - [ ] ProductDeal: `ProductDealData`
-  - [ ] ProductDealCustomerModel: `ProductDealCustomerData`
-  - [ ] ProductDealTagModel: `ProductDealTagData`
-  - [ ] ProductDealDiscountModel: `ProductDealDiscountData`
-  - [ ] ProductDealDiscountBrandModel: `ProductDealDiscountBrandData`
-  - [ ] ProductDealDiscountProductModel: `ProductDealDiscountProductData`
-  - [ ] ProductDealDiscountTagModel: `ProductDealDiscountTagData`
-  - [ ] ProductDealDiscountCategoryModel: `ProductDealDiscountCategoryData`
-- [ ] `product-discounts` · `reference/discount` · GET POST PUT
-  - [ ] ProductDiscountRuleModel: `ProductDiscountRuleData`
-  - [ ] DiscountLineModel: `DiscountLineData`
-- [ ] `product-suppliers` · `product-suppliers` · GET POST PUT DELETE
-  - uses ProductSupplierModel, ProductSupplierOptionsModel, ProductSupplierOptionsIntervalModel
-- [ ] `ship-zones` · `reference/shipZones` · GET POST PUT DELETE
-  - [ ] ShippingZoneModel: `ShippingZoneData`
-  - [ ] ShipZoneAppliesToModel: `ShipZoneAppliesToData`
-  - [ ] ShipZoneConditionModel: `ShipZoneConditionData`
-- [ ] `ship-zones-enabled` · `reference/shipZonesEnabled` · GET PUT
-
 ### `reference/crm/**` CRM (6 resources, 16 operations)
 
 - [ ] `lead` · `crm/lead` · GET POST PUT
@@ -410,6 +386,30 @@ Every resource in these groups is in.
 - [x] `advanced-purchase-manual-journals` · `advanced-purchase/manualJournal` · GET POST
   - [x] Purchase Manual Journal: `AdvancedPurchaseManualJournalsData`
   - [x] AdvancedPurchasePartialMAnJModel: `AdvancedPurchasePartialManualJournalData`
+
+### `reference/reference-books/**` Reference Books (6 resources, 19 operations)
+
+- [x] `custom-prices` · `custom-prices` · POST PUT DELETE
+  - uses ProductPriceModel
+- [x] `deals` · `reference/deals` · GET POST PUT
+  - [x] ProductDeal: `ProductDealData`
+  - [x] ProductDealCustomerModel: `ProductDealCustomerData`
+  - [x] ProductDealTagModel: `ProductDealTagData`
+  - [x] ProductDealDiscountModel: `ProductDealDiscountData`
+  - [x] ProductDealDiscountBrandModel: `ProductDealDiscountBrandData`
+  - [x] ProductDealDiscountProductModel: `ProductDealDiscountProductData`
+  - [x] ProductDealDiscountTagModel: `ProductDealDiscountTagData`
+  - [x] ProductDealDiscountCategoryModel: `ProductDealDiscountCategoryData`
+- [x] `product-discounts` · `reference/discount` · GET POST PUT
+  - [x] ProductDiscountRuleModel: `ProductDiscountRuleData`
+  - [x] DiscountLineModel: `DiscountLineData`
+- [x] `product-suppliers` · `product-suppliers` · GET POST PUT DELETE
+  - uses ProductSupplierModel, ProductSupplierOptionsModel, ProductSupplierOptionsIntervalModel
+- [x] `ship-zones` · `reference/shipZones` · GET POST PUT DELETE
+  - [x] ShippingZoneModel: `ShippingZoneData`
+  - [x] ShipZoneAppliesToModel: `ShipZoneAppliesToData`
+  - [x] ShipZoneConditionModel: `ShipZoneConditionData`
+- [x] `ship-zones-enabled` · `reference/shipZonesEnabled` · GET PUT
 
 ### `reference/sale/**` Sale (14 resources, 38 operations)
 
