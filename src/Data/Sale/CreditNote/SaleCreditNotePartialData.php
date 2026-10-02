@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
  * Sale Credit Note Invoice Partial Model, one entry of `CreditNotes` in the `sale/creditnote`
@@ -22,7 +23,7 @@ final class SaleCreditNotePartialData extends AbstractSaleCreditNoteData
     public function __construct(
         string $TaskID,
         public bool $CombineAdditionalCharges,
-        string $Status,
+        TaskStatus $Status,
         string $CreditNoteDate,
         public ?string $CreditNoteInvoiceNumber = null,
         public ?string $CreditNoteNumber = null,

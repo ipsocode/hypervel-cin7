@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Data\Sale\Fulfilment;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
+use Ipsocode\Cin7\Enums\FulfilmentStatus;
 
 /**
  * Sale Fulfilment Model.
@@ -20,7 +21,7 @@ final class SaleFulfilmentData extends Data
         public ?string $TaskID = null,
         public ?int $FulfillmentNumber = null,
         public ?string $LinkedInvoiceNumber = null,
-        public ?string $FulFilmentStatus = null,
+        public ?FulfilmentStatus $FulFilmentStatus = null,
         public ?SaleFulfilmentPickPackData $Pick = null,
         public ?SaleFulfilmentPickPackData $Pack = null,
         public ?SaleFulfilmentShipData $Ship = null,

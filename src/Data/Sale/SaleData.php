@@ -15,6 +15,14 @@ use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceData;
 use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
+use Ipsocode\Cin7\Enums\FulfilmentStatus;
+use Ipsocode\Cin7\Enums\PackingStatus;
+use Ipsocode\Cin7\Enums\PickingStatus;
+use Ipsocode\Cin7\Enums\SalePaymentStatus;
+use Ipsocode\Cin7\Enums\SaleStatus;
+use Ipsocode\Cin7\Enums\SaleType;
+use Ipsocode\Cin7\Enums\ShippingStatus;
+use Ipsocode\Cin7\Enums\TaxCalculation;
 
 /**
  * Sale, the response of `sale` GET, POST, PUT and DELETE.
@@ -40,26 +48,19 @@ final class SaleData extends AbstractSaleData implements WithResponse
         public ?string $BaseCurrency = null,
         #[Max(3)]
         public ?string $CustomerCurrency = null,
-        public ?string $TaxCalculation = null,
+        public ?TaxCalculation $TaxCalculation = null,
         public ?float $COGSAmount = null,
-        #[Max(25)]
-        public ?string $Status = null,
-        #[Max(20)]
-        public ?string $CombinedPickingStatus = null,
-        #[Max(20)]
-        public ?string $CombinedPackingStatus = null,
-        #[Max(20)]
-        public ?string $CombinedShippingStatus = null,
-        #[Max(20)]
-        public ?string $FulFilmentStatus = null,
+        public ?SaleStatus $Status = null,
+        public ?PickingStatus $CombinedPickingStatus = null,
+        public ?PackingStatus $CombinedPackingStatus = null,
+        public ?ShippingStatus $CombinedShippingStatus = null,
+        public ?FulfilmentStatus $FulFilmentStatus = null,
         #[Max(20)]
         public ?string $CombinedInvoiceStatus = null,
-        #[Max(20)]
-        public ?string $CombinedPaymentStatus = null,
+        public ?SalePaymentStatus $CombinedPaymentStatus = null,
         #[Max(256)]
         public ?string $CombinedTrackingNumbers = null,
-        #[Max(50)]
-        public ?string $Type = null,
+        public ?SaleType $Type = null,
         #[Max(32)]
         public ?string $SourceChannel = null,
         public ?bool $ServiceOnly = null,

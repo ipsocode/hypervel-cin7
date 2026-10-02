@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
+use Hypervel\Data\Attributes\Validation\In;
 use Hypervel\Data\Attributes\Validation\Uuid;
+use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
  * Sale Credit Note POST Model, the body of `sale/creditnote` POST. The fields the reference marks
@@ -20,7 +22,8 @@ final class SaleCreditNotePostData extends AbstractSaleCreditNoteData
         string $TaskID,
         public bool $CombineAdditionalCharges,
         public string $CreditNoteInvoiceNumber,
-        string $Status,
+        #[In(TaskStatus::Draft, TaskStatus::Authorised)]
+        public TaskStatus $Status,
         string $CreditNoteDate,
     ) {
         parent::__construct($TaskID, $Status, $CreditNoteDate);

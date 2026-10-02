@@ -46,6 +46,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
+use ReflectionEnum;
 use ReflectionNamedType;
 use ReflectionProperty;
 use ReflectionUnionType;
@@ -249,6 +250,34 @@ class DataCatalogueTest extends TestCase
             if (! new ReflectionClass($class)->isAbstract()) {
                 $this->assertArrayHasKey($class, $reached, "No catalogue row reaches {$class}.");
             }
+        }
+    }
+
+    /**
+     * Every enum in `src/Enums/` is string-backed, so its cases are the wire values, and types
+     * a field of at least one model.
+     */
+    public function testEveryEnumIsStringBackedAndTypesAField(): void
+    {
+        $used = [];
+
+        foreach (self::dataClasses() as $class) {
+            foreach (new ReflectionClass($class)->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
+                $type = $property->getType();
+
+                foreach ($type instanceof ReflectionUnionType ? $type->getTypes() : [$type] as $named) {
+                    if ($named instanceof ReflectionNamedType && enum_exists($named->getName())) {
+                        $used[$named->getName()] = true;
+                    }
+                }
+            }
+        }
+
+        foreach (glob(__DIR__ . '/../../../src/Enums/*.php') ?: [] as $file) {
+            $enum = 'Ipsocode\Cin7\Enums\\' . basename($file, '.php');
+
+            $this->assertSame('string', (string) new ReflectionEnum($enum)->getBackingType(), $enum);
+            $this->assertArrayHasKey($enum, $used, "No model field is typed {$enum}.");
         }
     }
 

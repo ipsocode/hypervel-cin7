@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Data\Sale\Invoice;
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Sale\SalePaymentLineData;
+use Ipsocode\Cin7\Enums\InvoiceStatus;
 
 /**
  * Sale Invoice Model.
@@ -21,7 +22,7 @@ final class SaleInvoiceData extends AbstractSaleInvoiceData
     public function __construct(
         string $TaskID,
         public ?string $InvoiceNumber = null,
-        public ?string $Status = null,
+        public ?InvoiceStatus $Status = null,
         #[DateTime]
         public ?string $InvoiceDate = null,
         #[DateTime]

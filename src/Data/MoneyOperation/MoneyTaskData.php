@@ -11,6 +11,8 @@ use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
 use Ipsocode\Cin7\Data\Attributes\DateTime;
+use Ipsocode\Cin7\Enums\CompletionStatus;
+use Ipsocode\Cin7\Enums\MoneyTaskType;
 
 /**
  * Money Task, the body of `moneyOperation` POST and PUT and the response of every
@@ -33,8 +35,8 @@ final class MoneyTaskData extends Data implements WithResponse
     public function __construct(
         #[Uuid]
         public ?string $TaskID = null,
-        public ?string $TaskType = null,
-        public ?string $Status = null,
+        public ?MoneyTaskType $TaskType = null,
+        public ?CompletionStatus $Status = null,
         public ?string $BankAccount = null,
         public ?float $CurrencyConversionRate = null,
         public ?string $SupplierCustomer = null,

@@ -9,6 +9,7 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Data\Sale\SaleAdditionalChargeData;
 use Ipsocode\Cin7\Data\Sale\SalePaymentLineData;
+use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
  * Sale Quote Model.
@@ -25,7 +26,7 @@ final class SaleQuoteData extends Data
     public function __construct(
         #[Max(1024)]
         public ?string $Memo = null,
-        public ?string $Status = null,
+        public ?TaskStatus $Status = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
         public ?array $Prepayments = null,
         #[DataCollectionOf(SaleQuoteLineData::class)]

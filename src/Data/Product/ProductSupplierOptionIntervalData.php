@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Attributes\Validation\Date;
-use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
+use Ipsocode\Cin7\Enums\DeliveryMethod;
 
 /**
  * Product Supplier Options Interval Model, one entry of a supplier option's `SupplyIntervals`.
@@ -19,8 +19,7 @@ final class ProductSupplierOptionIntervalData extends Data
     public function __construct(
         #[Uuid]
         public ?string $ID = null,
-        #[Max(256)]
-        public ?string $DeliveryMethod = null,
+        public ?DeliveryMethod $DeliveryMethod = null,
         public ?int $IntervalDays = null,
         #[Date]
         public ?string $IntervalStartDate = null,

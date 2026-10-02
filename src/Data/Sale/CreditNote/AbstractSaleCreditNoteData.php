@@ -12,6 +12,7 @@ use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentPickPackLineData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceAdditionalChargeData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoiceLineData;
+use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
  * The fields every sale credit note model shares: the Sale Credit Note Model a Sale embeds, the
@@ -50,7 +51,7 @@ abstract class AbstractSaleCreditNoteData extends Data
     public function __construct(
         #[Uuid]
         public string $TaskID,
-        public string $Status,
+        public TaskStatus $Status,
         #[DateTime]
         public string $CreditNoteDate,
     ) {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale;
 
-use Hypervel\Data\Attributes\Validation\Max;
+use Ipsocode\Cin7\Enums\ProcessType;
 
 /**
  * Sale POST/PUT Attributes, the body of `sale` POST and PUT.
@@ -19,8 +19,7 @@ final class SalePostPutData extends AbstractSaleData
         string $Location,
         float $CurrencyRate,
         public ?bool $TaxInclusive = null,
-        #[Max(50)]
-        public ?string $SaleType = null,
+        public ?ProcessType $SaleType = null,
         public ?string $AutoPickPackShipMode = null,
     ) {
         parent::__construct($Location, $CurrencyRate);
