@@ -61,6 +61,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
 | `$cin7->supplier()` | `SupplierResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|SupplierPostData $body)`, `put(array\|SupplierPutData $body)` |
+| `$cin7->me()` | `MeResource` | `get()` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
@@ -135,6 +136,21 @@ $saved = $this->cin7->supplier()->post(SupplierPostData::from([
     'TaxRule' => 'BAS Excluded',
     'Contacts' => [['Name' => 'Bob Partridge', 'Default' => true]],
 ]))->dto(); // SupplierData
+```
+
+## Me
+
+`$cin7->me()` is `me`, the company the API application belongs to. `get()` takes no parameters,
+and its `dto()` is a `MeData`: the company's name, base currency and time zone, its default units
+and sale tax rule, its lock and opening balance dates, and how it applies discounts and rounds
+prices (`RoundingTable`, a list of `RoundingTableData`).
+
+```php
+use Ipsocode\Cin7\Enums\WeightUnit;
+
+$me = $this->cin7->me()->get()->dto(); // MeData
+
+$inGrams = $me->DefaultWeightUnits === WeightUnit::Gram;
 ```
 
 ## Product
