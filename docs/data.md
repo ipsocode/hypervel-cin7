@@ -38,8 +38,8 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractSaleData` | `SaleData`, `SalePostPutData` |
   | `AbstractSaleInvoiceData` | `SaleInvoiceData`, `SaleInvoicePartialData`, `SaleInvoicePostData`, `SaleInvoicePutData` |
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` |
-  | `AbstractSaleLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData` |
-  | `AbstractSaleChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData` |
+  | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`; shaped to serve the purchase line models too |
+  | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`; shaped to serve the purchase charge models too |
   | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` |
   | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData` |
 
