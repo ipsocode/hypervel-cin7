@@ -16,13 +16,11 @@ A [Cin7 Core](https://www.cin7.com/) API client for
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\FindRecord;
 
 public function __construct(private readonly Cin7Connector $cin7) {}
 
-// GET sale/invoice?SaleID=…&page=1&limit=100
-$invoice = $this->cin7->send(new FindRecord(Endpoint::SaleInvoice, $saleId))->json();
+// GET customer?page=1&limit=100
+$customers = $this->cin7->customer()->get()->json();
 ```
 
 ## What this is
@@ -77,33 +75,26 @@ Every configuration key, with its environment variable and default, is in
 
 ## Usage
 
-Inject `Cin7Connector` and send one of the five generic requests.
+Inject `Cin7Connector` and call a [resource](docs/resources.md) accessor.
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\CreateRecord;
-use Ipsocode\Cin7\Requests\DeleteRecord;
-use Ipsocode\Cin7\Requests\FindRecord;
-use Ipsocode\Cin7\Requests\ListRecords;
-use Ipsocode\Cin7\Requests\UpdateRecord;
 
 public function __construct(private readonly Cin7Connector $cin7) {}
 
 // GET customer?page=1&limit=100
-$all = $this->cin7->send(new ListRecords(Endpoint::Customer))->json();
-
-// GET sale/invoice?SaleID=…&page=1&limit=100
-$one = $this->cin7->send(new FindRecord(Endpoint::SaleInvoice, $guid))->json();
+$all = $this->cin7->customer()->get()->json();
 
 // POST customer, raw JSON body, no page/limit
-$new = $this->cin7->send(new CreateRecord(Endpoint::Customer, ['Name' => 'ACME']))->json();
+$new = $this->cin7->customer()->post(['Name' => 'ACME'])->json();
 
-// PUT customer, GUID merged into the body under the endpoint's GUID key
-$this->cin7->send(new UpdateRecord(Endpoint::Customer, $guid, ['Name' => 'ACME Ltd']));
+// PUT customer, body carries ID
+$this->cin7->customer()->put(['ID' => $guid, 'Name' => 'ACME Ltd']);
 
-// DELETE sale/invoice?ID=…&page=1&limit=100
-$this->cin7->send(new DeleteRecord(Endpoint::SaleInvoice, $guid));
+// Every customer, across all pages
+foreach ($this->cin7->customer()->paginate()->items() as $customer) {
+    // …
+}
 ```
 
 The connector is registered as a singleton. It holds only readonly scalars and
@@ -115,11 +106,11 @@ worker's lifetime is safe.
 - [docs/configuration.md](docs/configuration.md) — every configuration key with
   its environment variable and default, publishing the config, and when the
   values are read.
-- [docs/requests.md](docs/requests.md) — the five requests and the request lines
-  they send, the wire protocol, the exceptions a failed call throws, and the
-  bounded 503 retry.
-- [docs/endpoints.md](docs/endpoints.md) — the endpoint table, resolving an
-  endpoint from a string with `Endpoint::fromAccessor()`, and adding a new one.
+- [docs/resources.md](docs/resources.md) — the accessor tree, the conventions
+  every resource and request follows, and adding a new resource method.
+- [docs/requests.md](docs/requests.md) — the three request bases and the
+  request lines they send, the wire protocol, the exceptions a failed call
+  throws, and the bounded 503 retry.
 - [docs/pagination.md](docs/pagination.md) — walking every page of a listing or
   sending the pages concurrently, and how the last page is worked out from
   Cin7's list envelope.

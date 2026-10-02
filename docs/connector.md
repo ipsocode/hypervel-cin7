@@ -40,6 +40,20 @@ $sandbox = new Cin7Connector($sandboxAccountId, $sandboxApplicationKey);
 | `rateLimitPeriod` | `60` | `cin7.rate_limit.period` |
 | `rateLimitStore` | `null` | `cin7.rate_limit.store` |
 
+## Resources
+
+The connector exposes one accessor per Cin7 resource, each returning a fresh
+instance built on the connector:
+
+```php
+$this->cin7->customer(); // CustomerResource
+```
+
+A resource holds no state of its own beyond the connector, so a fresh
+instance per call never threatens the connector's coroutine safety. The
+accessor tree, the conventions every resource follows and the requests a
+resource builds are in [resources](resources.md).
+
 ## Transport
 
 The base URL is `https://inventory.dearsystems.com/ExternalApi/v2/`, and every

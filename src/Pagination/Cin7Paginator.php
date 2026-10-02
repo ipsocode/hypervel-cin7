@@ -10,7 +10,7 @@ use Hypervel\Saloon\Pagination\PagedPaginator;
 use Ipsocode\Cin7\PageDefaults;
 
 /**
- * Page pagination over Cin7's `{Total, Page, <Thing>List}` envelope.
+ * Page pagination over Cin7's `{Total, Page, <list key>}` envelope.
  *
  * Cin7 never echoes the limit back, so the last page comes from `Total` over the limit sent.
  *
@@ -38,7 +38,8 @@ class Cin7Paginator extends PagedPaginator
     }
 
     /**
-     * Return the envelope's `<Thing>List`, found by suffix as `Errors`/`Warnings` are arrays too.
+     * The fallback for a request that does not map its own items: the envelope's `<Thing>List`,
+     * found by suffix as `Errors`/`Warnings` are arrays too.
      *
      * @return array<array-key, mixed>
      */

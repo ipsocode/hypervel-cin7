@@ -9,8 +9,7 @@ use Hypervel\Saloon\Exceptions\Request\ServerException;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Sleep;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\ListRecords;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -39,7 +38,7 @@ class RetryTest extends TestCase
         $mock = Saloon::fake(array_fill(0, 4, MockResponse::make(Cin7Payloads::throttled(), 503)));
 
         try {
-            $this->connector()->send(new ListRecords(Endpoint::Customer));
+            $this->connector()->send(new GetCustomer);
             $this->fail('The exhausted retry should have surfaced a ServerException.');
         } catch (ServerException $exception) {
             $this->assertSame(503, $exception->status());
@@ -61,7 +60,7 @@ class RetryTest extends TestCase
             MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer()])),
         ]);
 
-        $response = $this->connector()->send(new ListRecords(Endpoint::Customer));
+        $response = $this->connector()->send(new GetCustomer);
 
         $this->assertSame(200, $response->status());
         $this->assertCount(1, $response->json('CustomerList'));
@@ -76,7 +75,7 @@ class RetryTest extends TestCase
         ]);
 
         try {
-            $this->connector()->send(new ListRecords(Endpoint::Customer));
+            $this->connector()->send(new GetCustomer);
             $this->fail('A 400 should have surfaced a ClientException.');
         } catch (ClientException $exception) {
             $this->assertSame(400, $exception->status());
@@ -98,7 +97,7 @@ class RetryTest extends TestCase
         $this->expectException(ClientException::class);
 
         try {
-            $this->connector()->send(new ListRecords(Endpoint::Customer));
+            $this->connector()->send(new GetCustomer);
         } finally {
             $mock->assertSentCount(1);
             Sleep::assertNeverSlept();
@@ -114,7 +113,7 @@ class RetryTest extends TestCase
         $this->expectException(ServerException::class);
 
         try {
-            $this->connector()->send(new ListRecords(Endpoint::Customer));
+            $this->connector()->send(new GetCustomer);
         } finally {
             $mock->assertSentCount(1);
             Sleep::assertNeverSlept();
@@ -125,7 +124,7 @@ class RetryTest extends TestCase
     {
         $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
 
-        $this->connector()->send(new ListRecords(Endpoint::Customer));
+        $this->connector()->send(new GetCustomer);
 
         $mock->assertSentCount(1);
         Sleep::assertNeverSlept();
@@ -139,7 +138,7 @@ class RetryTest extends TestCase
         $mock = Saloon::fake(array_fill(0, 2, MockResponse::make(Cin7Payloads::throttled(), 503)));
 
         // The retry policy is read at construction, so config must be set first.
-        $request = new ListRecords(Endpoint::Customer);
+        $request = new GetCustomer;
 
         $this->expectException(ServerException::class);
 
@@ -157,7 +156,7 @@ class RetryTest extends TestCase
 
         $mock = Saloon::fake([MockResponse::make(Cin7Payloads::throttled(), 503)]);
 
-        $request = new ListRecords(Endpoint::Customer);
+        $request = new GetCustomer;
 
         $this->expectException(ServerException::class);
 
@@ -179,7 +178,7 @@ class RetryTest extends TestCase
 
         $mock = Saloon::fake(array_fill(0, 2, MockResponse::make(Cin7Payloads::throttled(), 503)));
 
-        $request = new ListRecords(Endpoint::Customer);
+        $request = new GetCustomer;
 
         $this->expectException(ServerException::class);
 
@@ -198,7 +197,7 @@ class RetryTest extends TestCase
 
         $mock = Saloon::fake(array_fill(0, 4, MockResponse::make(Cin7Payloads::throttled(), 503)));
 
-        $request = new ListRecords(Endpoint::Customer);
+        $request = new GetCustomer;
 
         $this->expectException(ServerException::class);
 

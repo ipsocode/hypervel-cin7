@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7;
 
 /**
- * The `page`/`limit` defaults for list, find and delete query strings, never create/update bodies.
+ * The `page`/`limit` defaults for list query strings, never keyed reads, deletes or write bodies.
  *
  * The keys are lowercase on purpose, so a caller's `Page`/`Limit` does not suppress them.
  *

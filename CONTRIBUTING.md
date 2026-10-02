@@ -51,9 +51,9 @@ Arguments after `--` reach PHPUnit or ParaTest, e.g.
 
 The suite is split in two, and the split is enforced rather than conventional:
 
-- **`tests/Unit`** — the endpoint table, the page defaults, the exception. Every
-  method carries `#[UnitTest]`, so the framework is never booted for it and
-  anything reaching for the container fails outright.
+- **`tests/Unit`** — the page defaults. Every method carries `#[UnitTest]`, so
+  the framework is never booted for it and anything reaching for the container
+  fails outright.
   The line is drawn by what the code actually touches, not by how simple it
   looks: the request classes read `config('cin7.retry.*')` in their
   constructor, so they are Feature tests.
