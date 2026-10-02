@@ -7,10 +7,11 @@ namespace Ipsocode\Cin7\Data\Purchase\Payment;
 use Hypervel\Data\Attributes\Validation\Uuid;
 
 /**
- * The body of `purchase/payment` PUT: the Purchase Payments fields available for PUT, with the
- * `ID` of the payment to change and without the POST-only `Type` and `DepositID`. `Amount` and
- * `Account` are not available when the payment is a deposit, so they are optional; the other
- * fields the reference marks required have no default. A prepayment cannot be changed.
+ * The body of `purchase/payment` PUT: the Available Fields for Purchase Payments table's fields
+ * available for PUT, with the `ID` of the payment to change, which PUT requires, and without the
+ * POST-only `Type` and `DepositID`. `Amount` and `Account` are not available when the payment is
+ * taken from a deposit, so they are optional; `TaskID`, `DatePaid` and `CurrencyRate` stay
+ * required. A prepayment cannot be changed. The POST body is `PurchasePaymentPostData`.
  *
  * @see docs/data.md
  */

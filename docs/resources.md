@@ -71,6 +71,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
+| `$cin7->purchase()` | `PurchaseResource` | `payment()` |
+| `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -385,6 +387,40 @@ $this->cin7->sale()->fulfilment()->pick()->post(SaleFulfilmentPickPostData::from
 ]));
 ```
 
+## Purchase
+
+`$cin7->purchase()` is `purchase`, the simple purchase, and its documents are sub-resources below
+it, as the paths are.
+
+`$cin7->purchase()->payment()` is `purchase/payment`, a purchase's payments, which the reference
+marks deprecated: it supports only simple purchases, and an advanced purchase's payments are on
+`advanced-purchase/payment`. `get($taskId)` sends `purchase/payment?TaskID=…`, and its `dto()` is a
+`list<PurchasePaymentData>`, read from a bare array. `post()` takes a `PurchasePaymentPostData` and
+`put()` a `PurchasePaymentPutData` as well as an array; both answer with the saved payment, a
+`PurchasePaymentData`. A payment POST needs `TaskID`, `Type`, `Amount`, `DatePaid`, `Account` and
+`CurrencyRate`, and takes a `DepositID` to pay from a supplier deposit; a payment PUT needs `TaskID`,
+`ID`, `DatePaid` and `CurrencyRate`, and takes no `Amount` or `Account` for a payment from a deposit.
+A prepayment cannot be changed. `delete($id)` sends `purchase/payment?ID=…` and answers `{Success}`;
+`deleteAllocation` says whether the allocated payments go too. Without it no `DeleteAllocation` is
+sent, and the reference defaults it to `true`, so `deleteAllocation: false` keeps them.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\Payment\PurchasePaymentPostData;
+
+$payments = $this->cin7->purchase()->payment()->get($taskId)->dto(); // list<PurchasePaymentData>
+
+$saved = $this->cin7->purchase()->payment()->post(PurchasePaymentPostData::from([
+    'TaskID' => $taskId,
+    'Type' => 'Payment',
+    'Amount' => 9.0,
+    'DatePaid' => '2017-12-21T00:00:00',
+    'Account' => '718',
+    'CurrencyRate' => 1.0,
+]))->dto(); // PurchasePaymentData
+
+$this->cin7->purchase()->payment()->delete($paymentId, deleteAllocation: false); // DELETE purchase/payment?ID=…&DeleteAllocation=false
+```
+
 ## PUT identifiers
 
 A PUT body carries the identifier V2 documents for that resource. The caller
@@ -402,6 +438,7 @@ key:
 | `sale` | `ID` |
 | `sale/invoice` | `SaleID` and `TaskID` |
 | `sale/payment` | `ID` |
+| `purchase/payment` | `TaskID` and `ID` |
 | `moneyOperation` | `TaskID` |
 
 ```php

@@ -65,6 +65,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractSaleFulfilmentPickPackTaskData` | `SaleFulfilmentPickData`, `SaleFulfilmentPickPostData`, `SaleFulfilmentPickPutData`, `SaleFulfilmentPackData`, `SaleFulfilmentPackPostData` | `TaskID` |
   | `AbstractSaleFulfilmentShipTaskData` | `SaleFulfilmentShipPostData`, `SaleFulfilmentShipPutData` | `TaskID`, `Status` (`DRAFT`, `PARTIALLY AUTHORISED` or `AUTHORISED`) |
   | `AbstractSaleCreditNoteData` | `SaleCreditNoteData`, `SaleCreditNotePartialData`, `SaleCreditNotePostData` | `TaskID`, `Status`, `CreditNoteDate` |
+  | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
   | `AbstractLineData` | `SaleQuoteLineData`, `SaleOrderLineData`, `SaleInvoiceLineData`; shaped to serve the purchase line models too | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractChargeData` | `SaleAdditionalChargeData`, `SaleInvoiceAdditionalChargeData`; shaped to serve the purchase charge models too | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule` |
   | `AbstractSalePaymentLineData` | `SalePaymentLineData`, `SaleCreditNotePaymentData` | none |
@@ -83,8 +84,9 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   without it: `from()` throws a `Hypervel\Data\Exceptions\CannotCreateData`. Required fields
   come first in the constructor. Every class requires the fields its table does (see
   [customers](#customers), [suppliers](#suppliers), [me](#me), [products](#products),
-  [tax rules and money tasks](#tax-rules-and-money-tasks) and
-  [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)), as do
+  [tax rules and money tasks](#tax-rules-and-money-tasks),
+  [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments) and
+  [purchases](#purchases)), as do
   the parents above; the Money Task List, Customer Credits, Supplier Deposits, ME and Rounding
   Table tables require none. Where the reference requires different fields per verb, the body
   is a class per verb.
@@ -199,6 +201,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `sale/manualJournal` | POST: `SaleManualJournalPostData` (Sale Manual Journal, with `Lines`: `SaleManualJournalLineData`) | GET, POST: `SaleManualJournalData` |
 | `sale/attachment` | POST: `SaleAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `SaleAttachmentsData` (`{SaleID, Lines}`, with `Lines`: `AttachmentLineData`) |
 | `sale/payment` | POST: `SalePaymentPostData`; PUT: `SalePaymentPutData` (the Sale Payment Line Partial Model's fields for each verb) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
+| `purchase/payment` | POST: `PurchasePaymentPostData`; PUT: `PurchasePaymentPutData`, which also requires `ID` (Available Fields for Purchase Payments, the fields each verb takes) | GET: `list<PurchasePaymentData>`, a bare array; POST, PUT: `PurchasePaymentData`, the saved payment; DELETE: `{Success}`, left to `json()` |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
 `SaleData` nests one class per model, each in the folder of the sale path it belongs to:
@@ -331,8 +334,9 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   neither.
 - **Product `Movements.BatchSN`.** The table types it `Decimal`, but the example has `"1"`
   and a batch or serial number is not a quantity, so it is a nullable string.
-- **Payment `Type`.** The Sale Payment Line Partial table lists `PREPAYMENT`, `PAYMENT` and
-  `REFUND`; every example sends `Payment` or `Refund`, and the notes write `Prepayment`. The
+- **Payment `Type`.** The Sale Payment Line Partial table and the Available Fields for Purchase
+  Payments table list `PREPAYMENT`, `PAYMENT` and `REFUND`; every `sale/payment` and
+  `purchase/payment` example sends `Payment` or `Refund`, and the notes write `Prepayment`. The
   classes document the examples' spelling and do not restrict the value, so it is a string,
   not an enum.
 - **Sale `CombinedInvoiceStatus`.** The Sale and Sale List tables list the invoice statuses
@@ -365,6 +369,23 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   credit, so `SalePaymentPutData` requires only `ID`.
 - **Payment `CreditID` on POST.** The table makes `CreditID` PUT-only, but the POST example
   sends `"CreditID": null`; `SalePaymentPostData` has no `CreditID`.
+- **Purchase payment fields per verb.** The Available Fields for Purchase Payments table has one
+  Required column, and its notes say which verb takes a field: `ID` is for PUT, `Type` and
+  `DepositID` are for POST, and a PUT of a payment taken from a deposit takes no `Amount` or
+  `Account`. So `PurchasePaymentPostData` has no `ID`, and `PurchasePaymentPutData` requires `ID`,
+  has no `Type` or `DepositID`, and leaves `Amount` and `Account` optional. `TaskID`, `DatePaid`
+  and `CurrencyRate`, which the table requires for every verb, stay required on every class, where
+  `SalePaymentPutData` requires only `ID` (the sale's `TaskID` is POST-only, and its `CurrencyRate`
+  is ignored for a payment from a credit). `ID` is a bare `Yes*`, so `PurchasePaymentData` leaves
+  it optional.
+- **Purchase payment `Type` on PUT.** The PUT example sends `"Type": "Payment"`, which the table
+  makes POST-only. `PutPurchasePayment` leaves `Type` and `DepositID` out of the body, as
+  `PostPurchasePayment` leaves out `ID`, and the catalogue round-trips the PUT example through
+  `PurchasePaymentPutData` without its `Type`.
+- **Purchase payment `DateCreated`.** The table does not mark it read-only, but it is the date Cin7
+  stamps on the payment record: the POST response's `DateCreated` is not the one its request sent.
+  The POST and PUT examples send it, so the classes model it and the requests leave it out of the
+  body.
 - **Auto-generated numbers.** The invoice and credit note POST tables have no `InvoiceNumber`
   or `CreditNoteNumber` (Cin7 generates them), so the POST classes leave them out.
 - **Fulfilment pick and pack.** The Sale Fulfilment Pick and Pack tables, `sale/fulfilment/pick`
@@ -559,3 +580,19 @@ missing a required field fails `dto()` with a `CannotCreateData`.
   [the empty-collection rule](#the-empty-collection-rule)).
 - The reference's `sale/invoice` and `sale/creditnote` examples carry trailing commas, and the
   credit note POST example an unquoted `SaleID:` key; the fixtures are the corrected JSON.
+
+## Purchases
+
+`purchase/payment` follows the Available Fields for Purchase Payments table, with a class per verb
+because `ID`, `Type`, `DepositID`, `Amount` and `Account` are taken by different verbs (see
+[above](#where-the-references-tables-and-examples-disagree)). Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `PurchasePaymentData` (response) | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
+| `PurchasePaymentPostData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
+| `PurchasePaymentPutData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `ID` |
+
+`Type` is a string, and `DepositID`, which takes a payment from a supplier deposit and goes only
+with `Type` `PAYMENT`, is on the response and the POST body. `DateCreated` is on every class and
+never sent. A response missing a required field fails `dto()` with a `CannotCreateData`.

@@ -107,6 +107,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetSaleManualJournal`, `GetSaleAttachment` | **`saleId`** |
 | `DeleteSaleAttachment` | **`id`** |
 | `GetSaleCreditNoteList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` (`SaleStatus`) |
+| `GetPurchasePayment` | **`taskId`** |
+| `DeletePurchasePayment` | **`id`**, `deleteAllocation` |
 
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
@@ -187,6 +189,15 @@ The write bodies are per verb where the reference's fields differ: `SaleInvoiceP
 the fulfilment's pick, pack and ship. Each makes the fields the reference requires for that verb
 mandatory; see [data](data.md).
 
+The `purchase/…` documents live under `src/Requests/Purchase/`, one folder per path:
+
+| Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
+|---|---|---|
+| `Payment/` | `GetPurchasePayment` (`TaskID`), `PostPurchasePayment`, `PutPurchasePayment`, `DeletePurchasePayment` (`ID`, with `DeleteAllocation`) | `list<PurchasePaymentData>` for the GET, a bare array, `PurchasePaymentData` for POST and PUT; none for the DELETE, whose `{Success}` is left to `json()` |
+
+The payment's write bodies are `PurchasePaymentPostData` and `PurchasePaymentPutData`, the PUT one
+carrying the payment's `ID`.
+
 ## Wire protocol
 
 These are the requests Cin7 receives.
@@ -240,6 +251,8 @@ data object's body is also stripped of nulls and validated after the omission; s
 | `PostSaleOrder` | `Lines.*.BackorderQuantity` |
 | `PostSalePayment` | `ID`, `CreditID` (PUT only) |
 | `PutSalePayment` | `TaskID`, `Type` (POST only) |
+| `PostPurchasePayment` | `ID` (PUT only), `DateCreated` |
+| `PutPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
 
 ## Page defaults
 
