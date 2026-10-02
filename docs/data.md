@@ -81,7 +81,8 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   [customers](#customers), [suppliers](#suppliers), [products](#products), [tax rules and money
   tasks](#tax-rules-and-money-tasks) and
   [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)), as do
-  the parents above; the Money Task List and Customer Credits tables require none. Where the
+  the parents above; the Money Task List, Customer Credits and Supplier Deposits tables require
+  none. Where the
   reference requires different fields per verb, the body is a class per verb.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
@@ -172,6 +173,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `product` | POST: `ProductPostData`, which also requires `Type`; PUT: `ProductPutData`, which also requires `ID` (Product, with `Suppliers`: `ProductSupplierData` and its `ProductSupplierOptions`: `ProductSupplierOptionData` and `SupplyIntervals`: `ProductSupplierOptionIntervalData`, `ReorderLevels`: `ReorderLevelData`, `BillOfMaterialsProducts`: `BillOfMaterialProductData`, `BillOfMaterialsServices`: `BillOfMaterialServiceData`, `Movements`: `ProductMovementData`, `Attachments`: `AttachmentLineData` and `CustomPrices`: `ProductPriceData`) | GET: `list<ProductData>`; POST, PUT: `ProductData`, the saved product (`Products.0`) |
 | `ref/tax` | POST: `TaxPostData`; PUT: `TaxPutData`, which also requires `ID` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
+| `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |

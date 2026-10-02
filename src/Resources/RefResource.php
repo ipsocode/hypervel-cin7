@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource;
+use Ipsocode\Cin7\Resources\Ref\SupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
 
 /**
@@ -30,5 +31,13 @@ final class RefResource extends BaseResource
     public function customer(): CustomerResource
     {
         return new CustomerResource($this->connector);
+    }
+
+    /**
+     * The `ref/supplier` grouping.
+     */
+    public function supplier(): SupplierResource
+    {
+        return new SupplierResource($this->connector);
     }
 }
