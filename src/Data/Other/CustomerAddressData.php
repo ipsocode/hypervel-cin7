@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Customer;
+namespace Ipsocode\Cin7\Data\Other;
 
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
@@ -10,9 +10,10 @@ use Hypervel\Data\Data;
 use Ipsocode\Cin7\Enums\AddressType;
 
 /**
- * Customer Address Model (the reference's Supplier/Customer Address Model), one entry of a customer's `Addresses`.
+ * Customer Address Model (the reference's Supplier/Customer Address Model, SupplierAddressModel),
+ * one entry of a customer's or a supplier's `Addresses`.
  *
- * The reference's examples also carry `CustomerID` on each address.
+ * The reference's examples also carry the owner's `CustomerID` or `SupplierID` on each address.
  *
  * @see docs/data.md
  */
@@ -26,6 +27,7 @@ final class CustomerAddressData extends Data
         #[Uuid]
         public ?string $ID = null,
         public ?string $CustomerID = null,
+        public ?string $SupplierID = null,
         #[Max(256)]
         public ?string $Line2 = null,
         #[Max(256)]

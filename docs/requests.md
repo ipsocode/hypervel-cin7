@@ -78,9 +78,11 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | Request | Arguments |
 |---|---|
 | `GetCustomer` | `page`, `limit`, `id`, `name`, `modifiedSince`, `includeDeprecated`, `includeProductPrices`, `contactFilter` |
+| `GetSupplier` | `page`, `limit`, `id`, `name`, `modifiedSince`, `includeDeprecated` |
 | `GetProduct` | `page`, `limit`, `id`, `name`, `sku`, `modifiedSince`, `includeDeprecated`, `includeBom`, `includeSuppliers`, `includeMovements`, `includeAttachments`, `includeReorderLevels`, `includeCustomPrices` |
 | `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
 | `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
+| `GetSupplierDeposits` | `page`, `limit`, `supplierId`, `showUsedDeposits` |
 | `GetMoneyTaskList` | `page`, `limit`, `status` (`CompletionStatus`), `search`, `taskType` (`MoneyTaskType`) |
 | `GetMoneyTask` | **`taskId`** |
 | `DeleteMoneyTask` | **`id`**, `void` |
@@ -116,11 +118,18 @@ requests' `dto()` is a
 `list<CustomerData>` or `list<ProductData>`, and their POST and PUT `dto()` is the saved
 record (`CustomerList.0`, `Products.0`).
 
+The `supplier` actions, under `src/Requests/Supplier/`, are the customer's in shape:
+`GetSupplier` (a `ListRequest` keyed `SupplierList`), and `PostSupplier` and `PutSupplier`
+(`WriteRequest`s, whose data object bodies are `SupplierPostData` and `SupplierPutData`; the PUT
+body carries `ID`). `GetSupplier`'s `dto()` is a `list<SupplierData>`, and the POST and PUT
+`dto()` is the saved supplier (`SupplierList.0`).
+
 The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
 `TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are
 `TaxPostData` and `TaxPutData`; the PUT body carries `ID`), all
-on `ref/tax`; and `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
-`ref/customer/credits`.
+on `ref/tax`; `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
+`ref/customer/credits`; and `GetSupplierDeposits` (a `ListRequest` keyed `SupplierDeposits`) on
+`ref/supplier/deposits`.
 
 The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
 model they serve: `GetMoneyTask`
@@ -208,6 +217,7 @@ data object's body is also stripped of nulls and validated after the omission; s
 | Request | Left out |
 | --- | --- |
 | `PostCustomer`, `PutCustomer` | `LastModifiedOn`, `ChildCustomers`, `ProductPrices.*.ProductName` |
+| `PostSupplier`, `PutSupplier` | `LastModifiedOn` (see [data](data.md#where-the-references-tables-and-examples-disagree)) |
 | `PostProduct` | `ID`, `AverageCost`, `LastModifiedOn`, `BOMType`, `Suppliers.*.Currency`, `BillOfMaterialsProducts.*.Name`, `CustomPrices.*.ProductName` |
 | `PutProduct` | the same, with `Type` (read-only for PUT) in place of `ID`; `PutProduct` also needs an `ID` |
 | `PostTax`, `PutTax` | `TaxPercent` |
