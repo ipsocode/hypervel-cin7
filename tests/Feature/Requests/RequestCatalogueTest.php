@@ -509,6 +509,21 @@ class RequestCatalogueTest extends TestCase
         ];
     }
 
+    public function testPutSaleLeavesThePostOnlySaleTypeOutOfTheBody(): void
+    {
+        $this->connector()->send(new PutSale(['ID' => 'guid-1', 'SaleType' => 'Advanced']));
+        $this->assertSame(['ID' => 'guid-1'], $this->mock->lastPendingRequest()?->body());
+
+        $this->connector()->send(new PutSale(SalePostPutData::from(['ID' => 'guid-1', 'SaleType' => 'Advanced'])));
+        $this->assertSame(['ID' => 'guid-1'], $this->mock->lastPendingRequest()?->body());
+    }
+
+    public function testPostSaleKeepsTheSaleType(): void
+    {
+        $this->connector()->send(new PostSale(['Customer' => 'ACME', 'SaleType' => 'Simple']));
+        $this->assertSame(['Customer' => 'ACME', 'SaleType' => 'Simple'], $this->mock->lastPendingRequest()?->body());
+    }
+
     public function testPostProductLeavesTheIgnoredIdOutOfTheBody(): void
     {
         $this->connector()->send(new PostProduct(['ID' => 'guid-1', 'SKU' => 'Bread']));
