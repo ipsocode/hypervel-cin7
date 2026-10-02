@@ -320,6 +320,10 @@ and `PutInventoryWriteOff`, whose bodies are `InventoryWriteOffPostData` and
 `InventoryWriteOffPutData`; every one's `dto()` is an `InventoryWriteOffData`.
 `GetInventoryWriteOffList` (`src/Requests/InventoryWriteOffList/`) lists them under
 `InventoryWriteOffs`, filtered by `status` and `search`.
+The `webhooks` actions live under `src/Requests/Webhooks/`: `GetWebhooks` (a plain `Cin7Request`, as the
+reference takes no page or limit), `PostWebhooks` and `PutWebhooks` (bodies `WebhookPostData` and
+`WebhookPutData`, which carries `ID`) and `DeleteWebhooks` (keyed `ID`). A GET, POST or PUT answers a
+`Webhooks` list, so `dto()` is a `list<WebhookData>`; a DELETE answers an empty one, left to `json()`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed

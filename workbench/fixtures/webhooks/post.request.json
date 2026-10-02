@@ -1,0 +1,19 @@
+{
+    "Type": "Sale/OrderAuthorised",
+    "IsActive": true,
+    "ExternalURL": "https://hookb.in/Zn8950P7",
+    "ExternalAuthorizationType": "basicauth",
+    "ExternalUserName": "Hello",
+    "ExternalPassword": "123",
+    "ExternalBearerToken": "",
+    "ExternalHeaders": [
+        {
+            "Key": "Key",
+            "Value": "123"
+        },
+        {
+            "Key": "6",
+            "Value": "0"
+        }
+    ]
+}

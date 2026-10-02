@@ -83,6 +83,7 @@ use Ipsocode\Cin7\Resources\StockTransferListResource;
 use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
+use Ipsocode\Cin7\Resources\WebhooksResource;
 use Ipsocode\Cin7\Tests\TestCase;
 
 /**
@@ -356,6 +357,14 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->inventoryWriteOff(), $connector->inventoryWriteOff());
         $this->assertInstanceOf(InventoryWriteOffListResource::class, $connector->inventoryWriteOffList());
         $this->assertNotSame($connector->inventoryWriteOffList(), $connector->inventoryWriteOffList());
+    }
+
+    public function testWebhooksResourceReturnsAFreshResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(WebhooksResource::class, $connector->webhooks());
+        $this->assertNotSame($connector->webhooks(), $connector->webhooks());
     }
 
     public function testMeReturnsAFreshMeResource(): void

@@ -222,6 +222,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
 | `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
+| `webhooks` | POST: `WebhookPostData`; PUT: `WebhookPutData`, which also requires `ID` (Webhooks, with `ExternalHeaders`: `WebhookHeaderData`) | GET, POST, PUT: `list<WebhookData>`, read from `Webhooks`; DELETE: an empty `Webhooks` list, left to `json()` |
 | `stockadjustmentList` | none | GET: `list<StockAdjustmentListData>` (Stock Adjustment List), read from `StockAdjustmentList` |
 | `stockadjustment` | POST: `StockAdjustmentPostData`; PUT: `StockAdjustmentPutData`, which also requires `TaskID` (Stock Adjustment POST/PUT, with `Lines`: `NewStockLineData`, New Stock Line Model) | GET, POST, PUT, DELETE: `StockAdjustmentData` (Stock Adjustment, with `ExistingStockLines`: `ExistingStockLineData`, `NewStockLines`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
 | `stockTakeList` | none | GET: `list<StockTakeListData>` (Stock Take List), read from `StockAdjustmentList` |
@@ -1552,3 +1553,24 @@ class requires:
   cannot tell, so they stay optional; `TotalCost` is read-only.
 - **Examples.** The examples send `""` and `null` for fields they leave out; the fixtures are the
   seven of them, unchanged.
+
+## Webhooks
+
+`webhooks` has a class per verb because the ID is taken by PUT and the response only. Each class
+requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `WebhookData`, `WebhookPostData` | `src/Data/Webhooks/` | `Type`, `IsActive`, `ExternalURL`, `ExternalAuthorizationType` |
+| `WebhookPutData` | `src/Data/Webhooks/` | the same, and `ID` |
+| `WebhookHeaderData` | `src/Data/Webhooks/` | nothing |
+
+- **Credentials.** `ExternalUserName` and `ExternalPassword` are "Yes*", required when
+  `ExternalAuthorizationType` is `basicauth`, and `ExternalBearerToken` when it is `bearerauth`
+  (`#[RequiredIf]` on the enum cases).
+- **`Type`.** The table says "Available values are", then nothing; the values are the table in
+  "Available values for Webhook Type", the `WebhookType` enum. `ExternalAuthorizationType` is
+  `WebhookAuthorizationType`.
+- **`Name`.** Read-only, but the PUT example sends it, so the bodies take it as optional.
+- **Payload examples.** The group's examples describe incoming events, not this endpoint: out of
+  scope, as the issue decided.
