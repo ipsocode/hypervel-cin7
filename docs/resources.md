@@ -71,10 +71,11 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->sale()->fulfilment()->pick()` | `Sale\Fulfilment\PickResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPickPostData $body)`, `put(array\|SaleFulfilmentPickPutData $body)` |
 | `$cin7->sale()->fulfilment()->pack()` | `Sale\Fulfilment\PackResource` | `get(string $taskId, …)`, `post(array\|SaleFulfilmentPackPostData $body)`, `put(array\|SaleFulfilmentPackData $body)` |
 | `$cin7->sale()->fulfilment()->ship()` | `Sale\Fulfilment\ShipResource` | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData $body)`, `put(array\|SaleFulfilmentShipPutData $body)` |
-| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `payment()` |
+| `$cin7->purchase()` | `PurchaseResource` | `order()`, `stock()`, `payment()`, `manualJournal()` |
 | `$cin7->purchase()->order()` | `Purchase\OrderResource` | `get(string $taskId, ?bool $combineAdditionalCharges = null)`, `post(array\|PurchaseOrderPostData $body)` |
 | `$cin7->purchase()->stock()` | `Purchase\StockResource` | `get(string $taskId)`, `post(array\|PurchaseStockPostData $body)` |
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
+| `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -514,6 +515,24 @@ $saved = $this->cin7->purchase()->payment()->post(PurchasePaymentPostData::from(
 ]))->dto(); // PurchasePaymentData
 
 $this->cin7->purchase()->payment()->delete($paymentId, deleteAllocation: false); // DELETE purchase/payment?ID=…&DeleteAllocation=false
+```
+
+`$cin7->purchase()->manualJournal()` is `purchase/manualJournal`, a purchase's manual journal, which
+the reference also marks deprecated: an advanced purchase's manual journals are on
+`advanced-purchase/manualJournal`. `get($taskId)` sends `purchase/manualJournal?TaskID=…`, and
+`post()` takes a `PurchaseManualJournalPostData` as well as an array; both answer with the manual
+journal, a `PurchaseManualJournalData`. A POST needs `TaskID` and a `Status` of `DRAFT` or
+`AUTHORISED`, and can be sent even when the journal is authorised. A line's `IsSystem` is read-only
+and never sent: a line Cin7 posted (`IsSystem` `true`) cannot be changed or deleted.
+
+```php
+use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
+
+$journal = $this->cin7->purchase()->manualJournal()->post(PurchaseManualJournalPostData::from([
+    'TaskID' => $taskId,
+    'Status' => 'DRAFT',
+    'Lines' => [['Reference' => 'Rounding', 'Amount' => 2.0, 'Date' => '2017-12-06T00:00:00', 'Debit' => '720', 'Credit' => '404']],
+]))->dto(); // PurchaseManualJournalData
 ```
 
 ## PUT identifiers

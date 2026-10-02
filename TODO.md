@@ -19,7 +19,7 @@ tiers in that script's HIGH and LOW lists.
 
 Purchase, supplier and me, the maintainer's choice, with every shared model they use.
 
-### `reference/purchase/**` Purchase (17 resources, 45 operations, 12 left)
+### `reference/purchase/**` Purchase (17 resources, 45 operations, 11 left)
 
 - [x] `purchase-list` · `purchaseList` · GET
   - [x] Purchase List: `PurchaseListData`
@@ -40,8 +40,8 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
   - [ ] Purchase Credit Note: `PurchaseCreditNoteData`
 - [x] `purchase-payments` · `purchase/payment` · GET POST PUT DELETE
   - [x] Purchase Payments: `PurchasePaymentData`
-- [ ] `purchase-manual-journals` · `purchase/manualJournal` · GET POST
-  - [ ] Purchase Manual Journal: `PurchaseManualJournalData`
+- [x] `purchase-manual-journals` · `purchase/manualJournal` · GET POST
+  - [x] Purchase Manual Journal: `PurchaseManualJournalData`
 - [ ] `purchase-attachments` · `purchase/attachment` · GET POST DELETE
   - [ ] Purchase Attachments: `PurchaseAttachmentsData`
   - [ ] Purchase Attachments POST body: `PurchaseAttachmentPostData`
@@ -78,8 +78,8 @@ Each is built with the first resource here that uses it; a ticked one is built, 
 - [x] SalePaymentLineModel: `SalePaymentLineData` · used by purchase, advanced-purchase, sale
 - [x] AttachmentLineModel: `AttachmentLineData` · used by journal, money-operation, bank-transfer, product, product-attachments, product-family, product-family-attachments, purchase, purchase-attachments, advanced-purchase, sale, sale-attachments, stock-adjustment, stock-take
 - [x] InventoryMovementLineModel: `InventoryMovementLineData` · used by purchase, advanced-purchase, sale
-- [ ] PurchaseManualJournalModel: `PurchaseManualJournalData` · used by purchase
-- [ ] PurchaseManualJournalLineModel: `PurchaseManualJournalLineData` · used by purchase, purchase-manual-journals, advanced-purchase, advanced-purchase-manual-journals
+- [x] PurchaseManualJournalModel: `PurchaseManualJournalData` · used by purchase
+- [x] PurchaseManualJournalLineModel: `PurchaseManualJournalLineData` · used by purchase, purchase-manual-journals, advanced-purchase, advanced-purchase-manual-journals
 - [x] PurchaseOrderModel: `PurchaseOrderData` · used by purchase, advanced-purchase
 - [x] PurchaseOrderLineModel: `PurchaseOrderLineData` · used by purchase, purchase-order, advanced-purchase
 - [x] PurchaseAdditionalChargeModel: `PurchaseAdditionalChargeData` · used by purchase, purchase-order, advanced-purchase
