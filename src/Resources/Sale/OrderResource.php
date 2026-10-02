@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Resources\Sale;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Sale\SaleOrderData;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 

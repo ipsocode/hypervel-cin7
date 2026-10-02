@@ -22,8 +22,12 @@ $raw = $saved->getResponse()->json();                 // the untouched body
 - **One `final` class per V2 model**, extending `Hypervel\Data\Data`, under `src/Data/`.
   Folders mirror the V2 path, as in `src/Requests/` (`src/Data/Ref/Tax/`). The class
   name is the reference's model name without "Model", plus `Data`: Tax Component Model
-  is `TaxComponentData`. A nested model lives beside its parent; one that several
-  paths use lives in `src/Data/` itself.
+  is `TaxComponentData`. A model lives in the folder of the path it belongs to: the path
+  that returns it, or the sale path a model the Sale embeds is named for
+  (`src/Data/Sale/Order/SaleOrderData.php`, the fulfilment's ship model in
+  `src/Data/Sale/Fulfilment/Ship/`). A model several paths of one family share lives in
+  their common folder (`SaleAdditionalChargeData` in `src/Data/Sale/`), and one shared
+  across families in `src/Data/` itself.
 - **One class per model name.** Where the reference documents one name twice with
   different fields, the class carries the union. A request body gets its own class
   only where the reference documents one, or where the verbs need different fields.
@@ -138,20 +142,22 @@ $this->cin7->customer()->put(CustomerData::from([...$customer->toArray(), 'ID' =
 | `sale/payment` | POST: `SalePaymentPostData`; PUT: `SalePaymentPutData` (the Sale Payment Line Partial Model's fields for each verb) | GET: `list<SalePaymentLinePartialData>`, a bare array; POST, PUT: `SalePaymentLinePartialData`; DELETE: `{Success}`, left to `json()` |
 | any | none | `ErrorData` (Error Model, `{ErrorCode, Exception}`): not a `dto()`, since an Error Model body throws; read it from the exception's response, see [errors](requests.md#errors) |
 
-`SaleData` nests one class per model, all under `src/Data/Sale/` beside it and reused by the
-later sale paths:
+`SaleData` nests one class per model, each in the folder of the sale path it belongs to:
 
-| Key | Class (reference model) |
-|---|---|
-| `BillingAddress`, `ShippingAddress`, `AdditionalAttributes` | `AddressData`, `SaleShippingAddressData`, `AdditionalAttributeData` |
-| `Quote` | `SaleQuoteData`, with `Prepayments` (`SalePaymentLineData`), `Lines` (`SaleQuoteLineData`) and `AdditionalCharges` (`SaleAdditionalChargeData`) |
-| `Order` | `SaleOrderData`, with `Lines` (`SaleOrderLineData`) and `AdditionalCharges` (`SaleAdditionalChargeData`) |
-| `Fulfilments` | `SaleFulfilmentData`: `Pick` and `Pack` are `SaleFulfilmentPickPackData` (`Lines`: `SaleFulfilmentPickPackLineData`), `Ship` is `SaleFulfilmentShipData` (`Lines`: `SaleFulfilmentShipLineData`) |
-| `Invoices` | `SaleInvoiceData`, with `Lines` (`SaleInvoiceLineData`), `AdditionalCharges` (`SaleInvoiceAdditionalChargeData`) and `Payments` (`SalePaymentLineData`) |
-| `CreditNotes` | `SaleCreditNoteData`, with the same lines plus `Refunds` (`SalePaymentLineData`) and `Restock` (`SaleFulfilmentPickPackLineData`) |
-| `ManualJournals` | `SaleManualJournalData`, with `Lines` (`SaleManualJournalLineData`) |
-| `Attachments` | `AttachmentLineData`, in `src/Data/` because several paths use it |
-| `InventoryMovements`, `Transactions` | `InventoryMovementLineData`, `SaleTransactionLineData` |
+| Key | Class (reference model) | Folder |
+|---|---|---|
+| `BillingAddress`, `ShippingAddress`, `AdditionalAttributes` | `AddressData`, `SaleShippingAddressData`, `AdditionalAttributeData` | `src/Data/Sale/` |
+| `Quote` | `SaleQuoteData`, with `Prepayments` (`SalePaymentLineData`), `Lines` (`SaleQuoteLineData`) and `AdditionalCharges` (`SaleAdditionalChargeData`) | `src/Data/Sale/Quote/` |
+| `Order` | `SaleOrderData`, with `Lines` (`SaleOrderLineData`) and `AdditionalCharges` (`SaleAdditionalChargeData`) | `src/Data/Sale/Order/` |
+| `Fulfilments` | `SaleFulfilmentData`: `Pick` and `Pack` are `SaleFulfilmentPickPackData` (`Lines`: `SaleFulfilmentPickPackLineData`), `Ship` is `SaleFulfilmentShipData` (`Lines`: `SaleFulfilmentShipLineData`) | `src/Data/Sale/Fulfilment/`, the ship models in `Ship/` |
+| `Invoices` | `SaleInvoiceData`, with `Lines` (`SaleInvoiceLineData`), `AdditionalCharges` (`SaleInvoiceAdditionalChargeData`) and `Payments` (`SalePaymentLineData`) | `src/Data/Sale/Invoice/` |
+| `CreditNotes` | `SaleCreditNoteData`, with the invoice's lines plus `Refunds` (`SalePaymentLineData`) and `Restock` (`SaleFulfilmentPickPackLineData`) | `src/Data/Sale/CreditNote/` |
+| `ManualJournals` | `SaleManualJournalData`, with `Lines` (`SaleManualJournalLineData`) | `src/Data/Sale/ManualJournal/` |
+| `Attachments` | `AttachmentLineData`, shared across families | `src/Data/` |
+| `InventoryMovements`, `Transactions` | `InventoryMovementLineData`, `SaleTransactionLineData` | `src/Data/Sale/` |
+
+The payment line, additional charge and address classes stay in `src/Data/Sale/` because
+several sale paths share them.
 
 ## Typed pages
 
@@ -268,7 +274,8 @@ need different fields, and the required fields of each table without a default:
 | `SalePaymentPostData` | `src/Data/Sale/Payment/` | `TaskID`, `Type`, `Amount`, `DatePaid`, `Account`, `CurrencyRate` |
 | `SalePaymentPutData` | `src/Data/Sale/Payment/` | `ID` |
 
-They reuse the line, additional-charge and restock classes from `src/Data/Sale/`. A response
+They reuse the invoice line and additional charge classes from `src/Data/Sale/Invoice/` and the
+restock line from `src/Data/Sale/Fulfilment/`. A response
 missing a required field fails `dto()` with a `CannotCreateData`.
 
 - The credit note Partial table does not list `CreditNoteInvoiceNumber`, which every example

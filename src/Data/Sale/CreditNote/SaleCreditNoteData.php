@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Ipsocode\Cin7\Data\Sale;
+namespace Ipsocode\Cin7\Data\Sale\CreditNote;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
-use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
+use Ipsocode\Cin7\Data\Sale\SalePaymentLineData;
 
 /**
  * Sale Credit Note Model.

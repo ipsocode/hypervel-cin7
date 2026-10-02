@@ -8,8 +8,6 @@ use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceAdditionalChargeData;
-use Ipsocode\Cin7\Data\Sale\SaleInvoiceLineData;
 
 /**
  * The fields every sale invoice model shares: the Sale Invoice Model a Sale embeds, the Sale
