@@ -195,6 +195,9 @@ one decision each.
 - Markup prices: the heading says `/ref/markupprices`, the operations `/product/markupprices`.
   Follow the operations: `product()->markupPrices()`.
 - CRM task category and workflow: their GET URIs say `/crm/task`. Follow their headings.
+- Advanced sale: the reference has no `advanced-sale` endpoint, it serves one through `sale`. It is
+  modelled anyway: `AdvancedSalePostData` (`SaleType: Advanced`) and `advancedSale()`, which sends the
+  `sale` requests and returns the `sale/…` resources, with no request or response class of its own.
 - Advanced purchase payment DELETE: its URI is `/purchase/payment`, so it sends
   `DeletePurchasePayment`.
 - `production/productionBOM` is documented twice. Its requests are named after the titles:
