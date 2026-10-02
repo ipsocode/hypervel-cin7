@@ -153,9 +153,11 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(PurchaseCreditNoteResource::class, $purchase->creditNote());
         $this->assertNotSame($purchase->creditNote(), $purchase->creditNote());
         $this->assertInstanceOf(PurchasePaymentResource::class, $purchase->payment());
-        $this->assertInstanceOf(PurchaseManualJournalResource::class, $purchase->manualJournal());
-        $this->assertInstanceOf(PurchaseAttachmentResource::class, $purchase->attachment());
         $this->assertNotSame($purchase->payment(), $purchase->payment());
+        $this->assertInstanceOf(PurchaseManualJournalResource::class, $purchase->manualJournal());
+        $this->assertNotSame($purchase->manualJournal(), $purchase->manualJournal());
+        $this->assertInstanceOf(PurchaseAttachmentResource::class, $purchase->attachment());
+        $this->assertNotSame($purchase->attachment(), $purchase->attachment());
     }
 
     public function testPurchaseListAndPurchaseCreditNoteListReturnFreshResources(): void
@@ -182,28 +184,16 @@ class ConnectorResourcesTest extends TestCase
 
         $this->assertInstanceOf(AdvancedPurchaseStockResource::class, $advancedPurchase->stock());
         $this->assertNotSame($advancedPurchase->stock(), $advancedPurchase->stock());
-        $this->assertInstanceOf(AdvancedPurchaseManualJournalResource::class, $advancedPurchase->manualJournal());
-        $this->assertNotSame($advancedPurchase->manualJournal(), $advancedPurchase->manualJournal());
-        $this->assertInstanceOf(AdvancedPurchaseInvoiceResource::class, $advancedPurchase->invoice());
-        $this->assertNotSame($advancedPurchase->invoice(), $advancedPurchase->invoice());
-    }
-
-    public function testAdvancedPurchasePutAwayReturnsAFreshPutAwayResource(): void
-    {
-        $advancedPurchase = $this->connector()->advancedPurchase();
-
         $this->assertInstanceOf(AdvancedPurchasePutAwayResource::class, $advancedPurchase->putAway());
         $this->assertNotSame($advancedPurchase->putAway(), $advancedPurchase->putAway());
-    }
-
-    public function testAdvancedPurchasePaymentReturnsAFreshPaymentResource(): void
-    {
-        $advancedPurchase = $this->connector()->advancedPurchase();
-
-        $this->assertInstanceOf(AdvancedPurchasePaymentResource::class, $advancedPurchase->payment());
-        $this->assertNotSame($advancedPurchase->payment(), $advancedPurchase->payment());
+        $this->assertInstanceOf(AdvancedPurchaseInvoiceResource::class, $advancedPurchase->invoice());
+        $this->assertNotSame($advancedPurchase->invoice(), $advancedPurchase->invoice());
         $this->assertInstanceOf(AdvancedPurchaseCreditNoteResource::class, $advancedPurchase->creditNote());
         $this->assertNotSame($advancedPurchase->creditNote(), $advancedPurchase->creditNote());
+        $this->assertInstanceOf(AdvancedPurchasePaymentResource::class, $advancedPurchase->payment());
+        $this->assertNotSame($advancedPurchase->payment(), $advancedPurchase->payment());
+        $this->assertInstanceOf(AdvancedPurchaseManualJournalResource::class, $advancedPurchase->manualJournal());
+        $this->assertNotSame($advancedPurchase->manualJournal(), $advancedPurchase->manualJournal());
     }
 
     public function testSupplierReturnsAFreshSupplierResource(): void

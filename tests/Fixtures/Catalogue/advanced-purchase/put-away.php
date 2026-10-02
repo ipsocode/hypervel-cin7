@@ -15,8 +15,10 @@ use Workbench\App\Support\Cin7Payloads;
 
 // The catalogue rows for `advanced-purchase/put-away`; tests/Catalogue.php merges every file's rows by kind.
 
+// One line, and as a POST sends it: the line's own `Location` first, then
+// `AbstractPurchaseStockLineData`'s fields, `Date` and `Quantity` last.
 $line = ['Date' => '2018-04-20T00:00:00', 'Quantity' => 4, 'SKU' => 'Bread', 'Name' => 'Baked Bread', 'Location' => 'Main Warehouse', 'BatchSN' => '6318846844'];
-$lineSent = ['Date' => '2018-04-20T00:00:00', 'Quantity' => 4.0, 'SKU' => 'Bread', 'Location' => 'Main Warehouse', 'BatchSN' => '6318846844'];
+$lineSent = ['Location' => 'Main Warehouse', 'SKU' => 'Bread', 'BatchSN' => '6318846844', 'Date' => '2018-04-20T00:00:00', 'Quantity' => 4.0];
 
 // A body as it is sent: each line without its read-only `Name` and `Received`.
 $withoutReadOnly = static function (array $body): array {

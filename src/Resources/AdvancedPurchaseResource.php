@@ -22,9 +22,9 @@ use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource;
 
 /**
  * `advanced-purchase`, a purchase of any kind, simple, advanced or service: `get()`, `post()`,
- * `put()` and `delete()` read, create, change and void one, each answering with the purchase and
- * every document it holds. `advanced-purchase` has no list action; list purchases through
- * `purchaseList()`.
+ * `put()` and `delete()` read, create, change and void one, or undo a void, each answering with the
+ * purchase and every document it holds. `advanced-purchase` has no list action; list purchases
+ * through `purchaseList()`.
  *
  * `stock()`, `putAway()`, `invoice()`, `creditNote()`, `payment()` and `manualJournal()` are the
  * `advanced-purchase/stock`, `advanced-purchase/put-away`, `advanced-purchase/invoice`,
@@ -65,9 +65,9 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * Void the purchase (`void: true`), or undo it (`false`, the default Cin7 applies).
+     * Void the purchase (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
-     * @param null|bool $void void (true) or undo (false)
+     * @param null|bool $void void (true) or undo a void (false)
      */
     public function delete(
         string $id,

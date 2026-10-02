@@ -23,6 +23,7 @@ use Ipsocode\Cin7\Data\AbstractPurchaseInvoiceData;
 use Ipsocode\Cin7\Data\AbstractPurchaseListData;
 use Ipsocode\Cin7\Data\AbstractPurchaseManualJournalData;
 use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
+use Ipsocode\Cin7\Data\AbstractPurchaseStockLineData;
 use Ipsocode\Cin7\Data\AbstractSaleListData;
 use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchaseData;
@@ -445,6 +446,7 @@ class DataCatalogueTest extends TestCase
             AbstractPurchaseListData::class,
             AbstractPurchaseManualJournalData::class,
             AbstractPurchasePaymentData::class,
+            AbstractPurchaseStockLineData::class,
             AbstractSaleListData::class,
             AbstractSalePaymentLineData::class,
             AbstractAdvancedPurchasePutAwayData::class,

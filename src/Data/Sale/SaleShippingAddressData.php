@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Sale;
 
 use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Ipsocode\Cin7\Data\AbstractAddressData;
 
 /**
@@ -15,6 +16,9 @@ use Ipsocode\Cin7\Data\AbstractAddressData;
  */
 final class SaleShippingAddressData extends AbstractAddressData
 {
+    #[Uuid]
+    public ?string $ID = null;
+
     #[Max(128)]
     public ?string $Company = null;
 

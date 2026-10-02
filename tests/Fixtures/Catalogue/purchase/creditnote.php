@@ -73,11 +73,11 @@ return [
             null,
         ],
         'purchase creditNote get with combined charges' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->purchase()->creditNote()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136', combineAdditionalCharges: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->purchase()->creditNote()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136', combineAdditionalCharges: true),
             GetPurchaseCreditNote::class,
             Method::GET,
             '/ExternalApi/v2/purchase/creditnote',
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => 'false'],
+            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => 'true'],
             null,
         ],
         'purchase creditNote post' => [

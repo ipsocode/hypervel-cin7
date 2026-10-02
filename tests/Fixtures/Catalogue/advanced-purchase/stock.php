@@ -18,8 +18,10 @@ use Workbench\App\Support\Cin7Payloads;
 
 // The catalogue rows for `advanced-purchase/stock`; tests/Catalogue.php merges every file's rows by kind.
 
+// One line, and as a write sends it: `AbstractPurchaseStockLineData`'s fields, `Date` and
+// `Quantity` last.
 $line = ['Date' => '2018-04-23T00:00:00', 'Quantity' => 6, 'SKU' => 'Bread', 'Name' => 'Baked Bread', 'BatchSN' => '632154845354'];
-$lineSent = ['Date' => '2018-04-23T00:00:00', 'Quantity' => 6.0, 'SKU' => 'Bread', 'BatchSN' => '632154845354'];
+$lineSent = ['SKU' => 'Bread', 'BatchSN' => '632154845354', 'Date' => '2018-04-23T00:00:00', 'Quantity' => 6.0];
 
 // A body as it is sent: each line without its read-only `Name` and `Received`.
 $withoutReadOnly = static function (array $body): array {
@@ -129,11 +131,11 @@ return [
             null,
         ],
         'advancedPurchase stock delete with void' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->stock()->delete('3320ef94-a7e8-4d81-9588-2a3e14cfca6f', void: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->stock()->delete('3320ef94-a7e8-4d81-9588-2a3e14cfca6f', void: true),
             DeleteAdvancedPurchaseStock::class,
             Method::DELETE,
             '/ExternalApi/v2/advanced-purchase/stock',
-            ['TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Void' => 'false'],
+            ['TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Void' => 'true'],
             null,
         ],
     ],

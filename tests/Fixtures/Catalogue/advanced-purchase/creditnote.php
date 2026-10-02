@@ -84,11 +84,11 @@ return [
             null,
         ],
         'advancedPurchase creditNote get with combined charges' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->creditNote()->get('5a7fb526-527a-4229-b331-90b6f5535aab', combineAdditionalCharges: false),
+            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->creditNote()->get('5a7fb526-527a-4229-b331-90b6f5535aab', combineAdditionalCharges: true),
             GetAdvancedPurchaseCreditNote::class,
             Method::GET,
             '/ExternalApi/v2/advanced-purchase/creditnote',
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'CombineAdditionalCharges' => 'false'],
+            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'CombineAdditionalCharges' => 'true'],
             null,
         ],
         'advancedPurchase creditNote post' => [
