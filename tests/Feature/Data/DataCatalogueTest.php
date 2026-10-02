@@ -254,12 +254,33 @@ class DataCatalogueTest extends TestCase
     }
 
     /**
-     * Every enum in `src/Enums/` is string-backed, so its cases are the wire values, and types
-     * a field of at least one model.
+     * Every enum in `src/Enums/` is string-backed, so its cases are the wire values, and types a
+     * field of at least one model or a parameter of at least one request.
      */
-    public function testEveryEnumIsStringBackedAndTypesAField(): void
+    public function testEveryEnumIsStringBackedAndTypesAFieldOrParameter(): void
     {
         $used = [];
+
+        $requests = realpath(__DIR__ . '/../../../src/Requests');
+
+        /** @var SplFileInfo $file */
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator((string) $requests)) as $file) {
+            if ($file->getExtension() !== 'php') {
+                continue;
+            }
+
+            $class = 'Ipsocode\Cin7\Requests\\' . str_replace(['/', '.php'], ['\\', ''], substr($file->getPathname(), strlen((string) $requests) + 1));
+
+            foreach (new ReflectionClass($class)->getConstructor()?->getParameters() ?? [] as $parameter) {
+                $type = $parameter->getType();
+
+                foreach ($type instanceof ReflectionUnionType ? $type->getTypes() : [$type] as $named) {
+                    if ($named instanceof ReflectionNamedType && enum_exists($named->getName())) {
+                        $used[$named->getName()] = true;
+                    }
+                }
+            }
+        }
 
         foreach (self::dataClasses() as $class) {
             foreach (new ReflectionClass($class)->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
@@ -277,7 +298,7 @@ class DataCatalogueTest extends TestCase
             $enum = 'Ipsocode\Cin7\Enums\\' . basename($file, '.php');
 
             $this->assertSame('string', (string) new ReflectionEnum($enum)->getBackingType(), $enum);
-            $this->assertArrayHasKey($enum, $used, "No model field is typed {$enum}.");
+            $this->assertArrayHasKey($enum, $used, "No model field or request parameter is typed {$enum}.");
         }
     }
 
@@ -316,7 +337,7 @@ class DataCatalogueTest extends TestCase
     {
         Saloon::fake([MockResponse::make(Cin7Payloads::saleCreditNotes())]);
 
-        $payment = $this->connector()->send(new GetSaleCreditNote('sale-1', ['IncludePaymentInfo' => true]))->dto()->CreditNotes[0]->Payments[0];
+        $payment = $this->connector()->send(new GetSaleCreditNote('sale-1', includePaymentInfo: true))->dto()->CreditNotes[0]->Payments[0];
 
         $this->assertInstanceOf(SaleCreditNotePaymentData::class, $payment);
         $this->assertSame('Refund', $payment->Type);

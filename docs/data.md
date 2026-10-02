@@ -81,7 +81,10 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   subset of another's uses the larger enum. A response value outside its enum fails `dto()`
   with a `Hypervel\Data\Exceptions\CannotCastEnum`; the fix is a new case. Where the
   examples contradict a list, the field stays a string (see
-  [below](#where-the-references-tables-and-examples-disagree)).
+  [below](#where-the-references-tables-and-examples-disagree)). The same enums type the query
+  parameters that take a listed value, such as `GetSaleList`'s `status`, and `CountryFormat`
+  types the one query parameter whose list no field shares (see
+  [requests](requests.md#query-parameters)).
 - **A verb that takes fewer values says so.** Where a table limits a write ("for POST
   available values are `DRAFT`, `AUTHORISED`"), the write class carries
   `#[In(TaskStatus::Draft, TaskStatus::Authorised)]`, checked with the other rules before

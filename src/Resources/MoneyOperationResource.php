@@ -21,8 +21,12 @@ use Ipsocode\Cin7\Requests\MoneyOperation\PutMoneyOperation;
  */
 final class MoneyOperationResource extends BaseResource
 {
-    public function get(string $taskId): Response
-    {
+    /**
+     * One money task.
+     */
+    public function get(
+        string $taskId,
+    ): Response {
         return $this->connector->send(new GetMoneyOperation($taskId));
     }
 
@@ -43,10 +47,14 @@ final class MoneyOperationResource extends BaseResource
     }
 
     /**
-     * Void the Money Task (`$void = true`), or undo a void.
+     * Void the money task (`void: true`), or undo a void (`false`, the default Cin7 applies).
+     *
+     * @param null|bool $void void (true) or undo a void (false)
      */
-    public function delete(string $id, bool $void = false): Response
-    {
-        return $this->connector->send(new DeleteMoneyOperation($id, ['Void' => $void]));
+    public function delete(
+        string $id,
+        ?bool $void = null,
+    ): Response {
+        return $this->connector->send(new DeleteMoneyOperation($id, $void));
     }
 }

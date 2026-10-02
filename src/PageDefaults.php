@@ -10,8 +10,6 @@ use InvalidArgumentException;
  * The `page`/`limit` defaults and bounds for list query strings, never keyed reads, deletes or
  * write bodies.
  *
- * The keys are lowercase; a caller's `Page`/`Limit` in any case is sent under them.
- *
  * @see docs/requests.md
  */
 final class PageDefaults
@@ -26,10 +24,8 @@ final class PageDefaults
     public const int LIMIT_MAX = 1000;
 
     /**
-     * Add the page and limit defaults, leaving non-null caller values alone.
-     *
-     * A caller's `Page`/`Limit` in any case is sent as lowercase `page`/`limit`, so a request
-     * never carries both spellings and the paginator reads the limit it sent.
+     * Add the page and limit defaults after the other parameters, leaving non-null caller values
+     * alone.
      *
      * @param array<string, mixed> $parameters
      * @return array<string, mixed>
@@ -38,25 +34,13 @@ final class PageDefaults
      */
     public static function apply(array $parameters): array
     {
-        $applied = [];
+        $parameters['page'] ??= self::PAGE;
+        $parameters['limit'] ??= self::LIMIT;
 
-        foreach ($parameters as $name => $value) {
-            $lower = strtolower((string) $name);
+        self::ensureValidPage($parameters['page']);
+        self::ensureValidLimit($parameters['limit']);
 
-            if ($lower !== 'page' && $lower !== 'limit') {
-                $applied[$name] = $value;
-            } elseif ($value !== null && ($name === $lower || ! isset($applied[$lower]))) {
-                $applied[$lower] = $value;
-            }
-        }
-
-        $applied['page'] ??= self::PAGE;
-        $applied['limit'] ??= self::LIMIT;
-
-        self::ensureValidPage($applied['page']);
-        self::ensureValidLimit($applied['limit']);
-
-        return $applied;
+        return $parameters;
     }
 
     /**

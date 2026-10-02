@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Hypervel\Saloon\Enums\Method;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
+use Ipsocode\Cin7\Enums\CompletionStatus;
+use Ipsocode\Cin7\Enums\MoneyTaskType;
 use Ipsocode\Cin7\Requests\MoneyTaskList\GetMoneyTaskList;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -14,7 +16,7 @@ return [
     'requests' => [
         GetMoneyTaskList::class => [
             GetMoneyTaskList::class,
-            [['Status' => 'COMPLETED', 'TaskType' => 'Spend Money']],
+            ['status' => CompletionStatus::Completed, 'taskType' => MoneyTaskType::SpendMoney],
             Method::GET,
             '/ExternalApi/v2/moneyTaskList',
             ['Status' => 'COMPLETED', 'TaskType' => 'Spend Money', 'page' => 1, 'limit' => 100],
@@ -23,7 +25,7 @@ return [
     ],
     'resources' => [
         'moneyTaskList get' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->moneyTaskList()->get(['Status' => 'COMPLETED']),
+            fn (Cin7Connector $cin7): mixed => $cin7->moneyTaskList()->get(status: CompletionStatus::Completed),
             GetMoneyTaskList::class,
             Method::GET,
             '/ExternalApi/v2/moneyTaskList',

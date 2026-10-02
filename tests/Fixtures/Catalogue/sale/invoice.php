@@ -21,7 +21,7 @@ return [
     'requests' => [
         DeleteSaleInvoice::class => [
             DeleteSaleInvoice::class,
-            ['b039f19e-66f8-4309-a4b1-abf928303c88', ['Void' => true]],
+            ['b039f19e-66f8-4309-a4b1-abf928303c88', 'void' => true],
             Method::DELETE,
             '/ExternalApi/v2/sale/invoice',
             ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'true'],
@@ -29,7 +29,7 @@ return [
         ],
         GetSaleInvoice::class => [
             GetSaleInvoice::class,
-            ['916ab4c0-6ccb-4c93-873d-0603859050e4', ['CombineAdditionalCharges' => true]],
+            ['916ab4c0-6ccb-4c93-873d-0603859050e4', 'combineAdditionalCharges' => true],
             Method::GET,
             '/ExternalApi/v2/sale/invoice',
             ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => 'true'],
@@ -114,7 +114,7 @@ return [
             DeleteSaleInvoice::class,
             Method::DELETE,
             '/ExternalApi/v2/sale/invoice',
-            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'false'],
+            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
             null,
         ],
         'sale invoice delete with void' => [

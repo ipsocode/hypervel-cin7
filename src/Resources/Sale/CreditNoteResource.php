@@ -18,11 +18,24 @@ use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 final class CreditNoteResource extends BaseResource
 {
     /**
-     * @param array<string, mixed> $parameters
+     * A sale's credit notes.
+     *
+     * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @param null|bool $includeProductInfo add the products the lines use
+     * @param null|bool $includePaymentInfo add each credit note's payments and balance
      */
-    public function get(string $saleId, array $parameters = []): Response
-    {
-        return $this->connector->send(new GetSaleCreditNote($saleId, $parameters));
+    public function get(
+        string $saleId,
+        ?bool $combineAdditionalCharges = null,
+        ?bool $includeProductInfo = null,
+        ?bool $includePaymentInfo = null,
+    ): Response {
+        return $this->connector->send(new GetSaleCreditNote(
+            $saleId,
+            $combineAdditionalCharges,
+            $includeProductInfo,
+            $includePaymentInfo,
+        ));
     }
 
     /**
@@ -34,10 +47,14 @@ final class CreditNoteResource extends BaseResource
     }
 
     /**
-     * Void the credit note (`$void = true`), or undo a void.
+     * Void the credit note (`void: true`), or undo a void (`false`, the default Cin7 applies).
+     *
+     * @param null|bool $void void (true) or undo a void (false)
      */
-    public function delete(string $taskId, bool $void = false): Response
-    {
-        return $this->connector->send(new DeleteSaleCreditNote($taskId, ['Void' => $void]));
+    public function delete(
+        string $taskId,
+        ?bool $void = null,
+    ): Response {
+        return $this->connector->send(new DeleteSaleCreditNote($taskId, $void));
     }
 }

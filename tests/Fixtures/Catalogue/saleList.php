@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Hypervel\Saloon\Enums\Method;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
+use Ipsocode\Cin7\Enums\SaleStatus;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -14,7 +15,7 @@ return [
     'requests' => [
         GetSaleList::class => [
             GetSaleList::class,
-            [['Status' => 'ORDERED', 'ReadyForShipping' => true]],
+            ['status' => SaleStatus::Ordered, 'readyForShipping' => true],
             Method::GET,
             '/ExternalApi/v2/saleList',
             ['Status' => 'ORDERED', 'ReadyForShipping' => 'true', 'page' => 1, 'limit' => 100],
@@ -23,7 +24,7 @@ return [
     ],
     'resources' => [
         'saleList get' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->saleList()->get(['Status' => 'ORDERED']),
+            fn (Cin7Connector $cin7): mixed => $cin7->saleList()->get(status: SaleStatus::Ordered),
             GetSaleList::class,
             Method::GET,
             '/ExternalApi/v2/saleList',

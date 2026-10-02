@@ -9,6 +9,7 @@ use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Data\Sale\SalePutData;
+use Ipsocode\Cin7\Enums\CountryFormat;
 use Ipsocode\Cin7\Requests\Sale\DeleteSale;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
@@ -27,11 +28,28 @@ use Ipsocode\Cin7\Resources\Sale\PaymentResource;
 final class SaleResource extends BaseResource
 {
     /**
-     * @param array<string, mixed> $parameters
+     * One sale, with every model it nests.
+     *
+     * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @param null|bool $hideInventoryMovements leave out the inventory movements
+     * @param null|bool $includeTransactions include the related transactions
+     * @param null|CountryFormat $countryFormat return each address's country as its name or as a
+     *                                          country code
      */
-    public function get(string $id, array $parameters = []): Response
-    {
-        return $this->connector->send(new GetSale($id, $parameters));
+    public function get(
+        string $id,
+        ?bool $combineAdditionalCharges = null,
+        ?bool $hideInventoryMovements = null,
+        ?bool $includeTransactions = null,
+        ?CountryFormat $countryFormat = null,
+    ): Response {
+        return $this->connector->send(new GetSale(
+            $id,
+            $combineAdditionalCharges,
+            $hideInventoryMovements,
+            $includeTransactions,
+            $countryFormat,
+        ));
     }
 
     /**
@@ -51,11 +69,15 @@ final class SaleResource extends BaseResource
     }
 
     /**
-     * Void the sale (`$void = true`), or undo a void.
+     * Void the sale (`void: true`), or undo a void (`false`, the default Cin7 applies).
+     *
+     * @param null|bool $void void (true) or undo a void (false)
      */
-    public function delete(string $id, bool $void = false): Response
-    {
-        return $this->connector->send(new DeleteSale($id, ['Void' => $void]));
+    public function delete(
+        string $id,
+        ?bool $void = null,
+    ): Response {
+        return $this->connector->send(new DeleteSale($id, $void));
     }
 
     public function order(): OrderResource

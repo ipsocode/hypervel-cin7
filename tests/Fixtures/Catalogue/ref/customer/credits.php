@@ -23,7 +23,7 @@ return [
     ],
     'resources' => [
         'ref customer credits get' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->credits()->get(['CustomerID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'ShowUsedCredits' => true]),
+            fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->credits()->get(customerId: '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', showUsedCredits: true),
             GetCustomerCredits::class,
             Method::GET,
             '/ExternalApi/v2/ref/customer/credits',

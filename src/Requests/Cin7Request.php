@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests;
 
+use BackedEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -40,8 +41,9 @@ abstract class Cin7Request extends Request
     }
 
     /**
-     * Map values the way Cin7 expects them on the wire: a boolean as `true`/`false`, not `1`/empty,
-     * and a date as ISO 8601 in UTC with milliseconds, `yyyy-MM-ddTHH:mm:ss.fff`.
+     * Map query values the way Cin7 expects them on the wire, leaving out the `null` ones: a
+     * boolean as `true`/`false`, not `1`/empty, an enum as its value, and a date as ISO 8601 in
+     * UTC with milliseconds, `yyyy-MM-ddTHH:mm:ss.fff`.
      *
      * @param array<string, mixed> $values
      * @return array<string, mixed>
@@ -51,12 +53,13 @@ abstract class Cin7Request extends Request
         return array_map(
             static fn (mixed $value): mixed => match (true) {
                 is_bool($value) => $value ? 'true' : 'false',
+                $value instanceof BackedEnum => $value->value,
                 $value instanceof DateTimeInterface => DateTimeImmutable::createFromInterface($value)
                     ->setTimezone(new DateTimeZone('UTC'))
                     ->format('Y-m-d\TH:i:s.v'),
                 default => $value,
             },
-            $values,
+            array_filter($values, static fn (mixed $value): bool => $value !== null),
         );
     }
 }

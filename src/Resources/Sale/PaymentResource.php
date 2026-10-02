@@ -20,10 +20,11 @@ use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
 final class PaymentResource extends BaseResource
 {
     /**
-     * A sale's payments; the endpoint takes no parameter but `SaleID`.
+     * A sale's payments.
      */
-    public function get(string $saleId): Response
-    {
+    public function get(
+        string $saleId,
+    ): Response {
         return $this->connector->send(new GetSalePayment($saleId));
     }
 
@@ -43,8 +44,12 @@ final class PaymentResource extends BaseResource
         return $this->connector->send(new PutSalePayment($body));
     }
 
-    public function delete(string $id): Response
-    {
+    /**
+     * Delete one payment; there is no void.
+     */
+    public function delete(
+        string $id,
+    ): Response {
         return $this->connector->send(new DeleteSalePayment($id));
     }
 }

@@ -7,20 +7,38 @@ namespace Ipsocode\Cin7\Requests\MoneyOperation;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
-use Ipsocode\Cin7\Requests\KeyedRequest;
+use Ipsocode\Cin7\Requests\Cin7Request;
 
 /**
  * `DELETE moneyOperation?ID&Void`, voids or undoes a Money Task; the response is the Money Task.
  *
- * @extends KeyedRequest<MoneyTaskData>
+ * @extends Cin7Request<MoneyTaskData>
  */
-final class DeleteMoneyOperation extends KeyedRequest
+final class DeleteMoneyOperation extends Cin7Request
 {
     protected Method $method = Method::DELETE;
+
+    public function __construct(
+        protected readonly string $id,
+        protected readonly ?bool $void = null,
+    ) {
+        parent::__construct();
+    }
 
     public function resolveEndpoint(): string
     {
         return 'moneyOperation';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function defaultQuery(): array
+    {
+        return $this->queryValues([
+            'ID' => $this->id,
+            'Void' => $this->void,
+        ]);
     }
 
     public function createDtoFromResponse(Response $response): MoneyTaskData

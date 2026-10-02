@@ -16,12 +16,16 @@ use InvalidArgumentException;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
+use Ipsocode\Cin7\Enums\CountryFormat;
+use Ipsocode\Cin7\Enums\PickingStatus;
+use Ipsocode\Cin7\Enums\SaleStatus;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
-use Ipsocode\Cin7\Requests\KeyedRequest;
+use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -69,26 +73,26 @@ class RequestBuildingTest extends TestCase
         $this->assertSame(['page' => 1, 'limit' => 100], $pending->queryParameters());
     }
 
-    public function testListLetsCallerValuesWin(): void
+    public function testListSendsTheCallersPageLimitAndFilters(): void
     {
-        $pending = $this->send(new GetCustomer(['page' => 4, 'limit' => 10, 'Name' => 'ACME']));
+        $pending = $this->send(new GetCustomer(page: 4, limit: 10, name: 'ACME'));
 
         $this->assertSame(
-            ['page' => 4, 'limit' => 10, 'Name' => 'ACME'],
+            ['Name' => 'ACME', 'page' => 4, 'limit' => 10],
             $pending->queryParameters(),
         );
     }
 
-    public function testANullFilterIsTreatedAsAbsent(): void
+    public function testANullParameterIsLeftOut(): void
     {
-        $pending = $this->send(new GetCustomer(['page' => null, 'limit' => null]));
+        $pending = $this->send(new GetCustomer(page: null, limit: null, name: null));
 
         $this->assertSame(['page' => 1, 'limit' => 100], $pending->queryParameters());
     }
 
     public function testBooleanFiltersAreSentAsTrueAndFalseStrings(): void
     {
-        $pending = $this->send(new GetCustomer(['IncludeDeprecated' => true, 'IncludeBOM' => false]));
+        $pending = $this->send(new GetProduct(includeDeprecated: true, includeBom: false));
 
         $this->assertSame(
             ['IncludeDeprecated' => 'true', 'IncludeBOM' => 'false', 'page' => 1, 'limit' => 100],
@@ -101,7 +105,7 @@ class RequestBuildingTest extends TestCase
      */
     public function testDateFiltersAreSentInUtcWithMilliseconds(): void
     {
-        $pending = $this->send(new GetCustomer(['ModifiedSince' => new DateTimeImmutable('2012-11-14T23:28:33.363+10:00')]));
+        $pending = $this->send(new GetCustomer(modifiedSince: new DateTimeImmutable('2012-11-14T23:28:33.363+10:00')));
 
         $this->assertSame(
             ['ModifiedSince' => '2012-11-14T13:28:33.363', 'page' => 1, 'limit' => 100],
@@ -109,11 +113,23 @@ class RequestBuildingTest extends TestCase
         );
     }
 
-    public function testDateParametersOfAKeyedRequestAreSentTheSameWay(): void
+    public function testADateGivenAsAStringIsSentAsWritten(): void
     {
-        $pending = $this->send($this->anonymousKeyedRequest('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['Since' => new DateTimeImmutable('2012-11-14T13:28:33Z')]));
+        $pending = $this->send(new GetSaleList(updatedSince: '2012-11-14'));
 
-        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Since' => '2012-11-14T13:28:33.000'], $pending->queryParameters());
+        $this->assertSame(['UpdatedSince' => '2012-11-14', 'page' => 1, 'limit' => 100], $pending->queryParameters());
+    }
+
+    public function testAnEnumParameterIsSentAsItsValue(): void
+    {
+        $this->assertSame(
+            ['CombinedPickStatus' => 'NOT PICKED', 'Status' => 'ORDERED', 'page' => 1, 'limit' => 100],
+            $this->send(new GetSaleList(combinedPickStatus: PickingStatus::NotPicked, status: SaleStatus::Ordered))->queryParameters(),
+        );
+        $this->assertSame(
+            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CountryFormat' => 'Code2'],
+            $this->send(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', countryFormat: CountryFormat::Code2))->queryParameters(),
+        );
     }
 
     public function testOnlyAListRequestIsPaginatable(): void
@@ -123,13 +139,6 @@ class RequestBuildingTest extends TestCase
         $this->assertNotInstanceOf(Paginatable::class, new PutCustomer);
     }
 
-    public function testPaginatingAKeyedRequestThrows(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->connector()->paginate($this->anonymousKeyedRequest('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'));
-    }
-
     public function testPaginatingAGetSaleThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -137,11 +146,11 @@ class RequestBuildingTest extends TestCase
         $this->connector()->paginate(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'));
     }
 
-    public function testTheIdentifierIsPlacedFirstAndWinsOverACallerSuppliedValue(): void
+    public function testTheIdentifierComesFirstAndTheUnsetParametersAreLeftOut(): void
     {
-        $pending = $this->send($this->anonymousKeyedRequest('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ['ID' => 'ignored', 'Extra' => 'kept']));
+        $pending = $this->send(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', includeTransactions: true));
 
-        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Extra' => 'kept'], $pending->queryParameters());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'IncludeTransactions' => 'true'], $pending->queryParameters());
     }
 
     public function testCreateSendsAnUntouchedJsonBodyAndNoQueryString(): void
@@ -248,23 +257,5 @@ class RequestBuildingTest extends TestCase
         $this->assertNotNull($pending);
 
         return $pending;
-    }
-
-    /**
-     * The concrete `KeyedRequest`s are covered by the catalogue; the identifier contract is
-     * exercised through an anonymous one built on the `customer` path.
-     *
-     * @param array<string, mixed> $parameters
-     */
-    private function anonymousKeyedRequest(string $id, array $parameters = []): KeyedRequest
-    {
-        return new class($id, $parameters) extends KeyedRequest {
-            protected Method $method = Method::GET;
-
-            public function resolveEndpoint(): string
-            {
-                return 'customer';
-            }
-        };
     }
 }

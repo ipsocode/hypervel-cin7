@@ -78,7 +78,7 @@ class CustomerDirectoryTest extends TestCase
     {
         $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
 
-        $customers = $this->app->make(CustomerDirectory::class)->all(['Name' => 'ACME', 'limit' => 5]);
+        $customers = $this->app->make(CustomerDirectory::class)->all(limit: 5, name: 'ACME');
 
         $this->assertSame([], $customers);
         $this->assertSame(

@@ -20,11 +20,21 @@ use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
 final class InvoiceResource extends BaseResource
 {
     /**
-     * @param array<string, mixed> $parameters
+     * A sale's invoices.
+     *
+     * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @param null|bool $includeProductInfo add the products the lines use
      */
-    public function get(string $saleId, array $parameters = []): Response
-    {
-        return $this->connector->send(new GetSaleInvoice($saleId, $parameters));
+    public function get(
+        string $saleId,
+        ?bool $combineAdditionalCharges = null,
+        ?bool $includeProductInfo = null,
+    ): Response {
+        return $this->connector->send(new GetSaleInvoice(
+            $saleId,
+            $combineAdditionalCharges,
+            $includeProductInfo,
+        ));
     }
 
     /**
@@ -44,10 +54,14 @@ final class InvoiceResource extends BaseResource
     }
 
     /**
-     * Void the invoice (`$void = true`), or undo a void.
+     * Void the invoice (`void: true`), or undo a void (`false`, the default Cin7 applies).
+     *
+     * @param null|bool $void void (true) or undo a void (false)
      */
-    public function delete(string $taskId, bool $void = false): Response
-    {
-        return $this->connector->send(new DeleteSaleInvoice($taskId, ['Void' => $void]));
+    public function delete(
+        string $taskId,
+        ?bool $void = null,
+    ): Response {
+        return $this->connector->send(new DeleteSaleInvoice($taskId, $void));
     }
 }

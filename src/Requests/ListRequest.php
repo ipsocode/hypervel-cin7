@@ -28,19 +28,31 @@ abstract class ListRequest extends Cin7Request implements MapPaginatedResponseIt
     protected string $listKey;
 
     /**
-     * @param array<string, mixed> $filters
+     * Without a page or limit the request asks for page 1 of 100; the paginator sets both for
+     * each page it fetches.
      */
-    public function __construct(protected readonly array $filters = [])
-    {
+    public function __construct(
+        protected readonly ?int $page = null,
+        protected readonly ?int $limit = null,
+    ) {
         parent::__construct();
     }
+
+    /**
+     * The endpoint's documented filters by wire key, a `null` one left out.
+     *
+     * @return array<string, mixed>
+     */
+    abstract protected function filters(): array;
 
     /**
      * @return array<string, mixed>
      */
     protected function defaultQuery(): array
     {
-        return PageDefaults::apply($this->queryValues($this->filters));
+        return PageDefaults::apply($this->queryValues(
+            $this->filters() + ['page' => $this->page, 'limit' => $this->limit],
+        ));
     }
 
     /**

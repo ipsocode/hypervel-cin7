@@ -17,7 +17,7 @@ return [
     'requests' => [
         DeleteMoneyOperation::class => [
             DeleteMoneyOperation::class,
-            ['b039f19e-66f8-4309-a4b1-abf928303c88', ['Void' => true]],
+            ['b039f19e-66f8-4309-a4b1-abf928303c88', 'void' => true],
             Method::DELETE,
             '/ExternalApi/v2/moneyOperation',
             ['ID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'true'],
@@ -94,7 +94,7 @@ return [
             DeleteMoneyOperation::class,
             Method::DELETE,
             '/ExternalApi/v2/moneyOperation',
-            ['ID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'false'],
+            ['ID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
             null,
         ],
         'moneyOperation delete with void' => [
