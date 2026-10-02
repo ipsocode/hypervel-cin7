@@ -83,6 +83,8 @@ Built with the first resource that uses it.
 - [x] BillOfMaterialProductModel: `BillOfMaterialProductData` · used by product
 - [x] BillOfMaterialServiceModel: `BillOfMaterialServiceData` · used by product
 - [x] ProductMovementModel: `ProductMovementData` · used by product
+- [x] FinishedGoodsOrderLineModel: `FinishedGoodsOrderLineData` · used by finished-goods, finished-goods-order
+- [x] FinishedGoodsPickLineModel: `FinishedGoodsPickLineData` · used by finished-goods, finished-goods-pick
 - [x] ErrorModel: `ErrorData` · used by disassembly, finished-goods, inventory-write-off
 - [x] AttributeSetLineModel: `AttributeSetLineData` · used by attribute-set
 - [x] DisassemblyPickLineModel: `DisassemblyPickLineData` · used by disassembly
@@ -111,19 +113,6 @@ Built with the first resource that uses it.
 ## Low
 
 CRM, disassembly, finished goods and production, the maintainer's choice.
-
-### `reference/finished-goods/**` Finished Goods (4 resources, 9 operations)
-
-- [ ] `finished-goods-list` · `finishedGoodsList` · GET
-  - [ ] Finished Goods List: `FinishedGoodsListData`
-- [ ] `finished-goods` · `finishedGoods` · GET POST PUT DELETE
-  - [ ] Finished Goods: `FinishedGoodsData`
-  - [ ] Finished Goods POST body: `FinishedGoodsPostData`
-  - [ ] Finished Goods PUT body: `FinishedGoodsPutData`
-- [ ] `finished-goods-order` · `finishedGoods/order` · GET POST
-  - [ ] Finished Goods Order: `FinishedGoodsOrderData`
-- [ ] `finished-goods-pick` · `finishedGoods/pick` · GET POST
-  - [ ] Finished Goods Pick: `FinishedGoodsPickData`
 
 ### `reference/production/**` Production (10 resources, 46 operations)
 
@@ -204,14 +193,6 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] WorkflowStep: `WorkflowStepData`
 - [ ] `start-a-workflow` · `crm/workflowstart` · POST
 
-### `reference/other-models/**` Shared models for the low groups only
-
-Each is built with the first resource here that uses it; a ticked one is built, and moves to
-Built with the first resource that uses it.
-
-- [ ] FinishedGoodsOrderLineModel: `FinishedGoodsOrderLineData` · used by finished-goods, finished-goods-order
-- [ ] FinishedGoodsPickLineModel: `FinishedGoodsPickLineData` · used by finished-goods, finished-goods-pick
-
 ## Done
 
 Every resource in these groups is in.
@@ -259,6 +240,19 @@ Every resource in these groups is in.
   - [x] Disassembly POST body: `DisassemblyPostData`
 - [x] `disassembly-order` · `disassembly/order` · GET POST
   - [x] Disassembly Order: `DisassemblyOrderData`
+
+### `reference/finished-goods/**` Finished Goods (4 resources, 9 operations)
+
+- [x] `finished-goods-list` · `finishedGoodsList` · GET
+  - [x] Finished Goods List: `FinishedGoodsListData`
+- [x] `finished-goods` · `finishedGoods` · GET POST PUT DELETE
+  - [x] Finished Goods: `FinishedGoodsData`
+  - [x] Finished Goods POST body: `FinishedGoodsPostData`
+  - [x] Finished Goods PUT body: `FinishedGoodsPutData`
+- [x] `finished-goods-order` · `finishedGoods/order` · GET POST
+  - [x] Finished Goods Order: `FinishedGoodsOrderData`
+- [x] `finished-goods-pick` · `finishedGoods/pick` · GET POST
+  - [x] Finished Goods Pick: `FinishedGoodsPickData`
 
 ### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
 

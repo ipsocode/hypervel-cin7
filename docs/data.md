@@ -234,6 +234,10 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `disassemblyList` | none | GET: `list<DisassemblyListData>` (Disassembly List), read from `Disassemblies` |
 | `disassembly` | POST: `DisassemblyPostData` (Available fields for POST method) | GET, POST, DELETE: `DisassemblyData` (Disassembly, with `PickLines`: `DisassemblyPickLineData`, `OrderLines`: `DisassemblyOrderLineData`, `OrderServiceLines`: `DisassemblyOrderServiceLineData`, `Transactions`: `TransactionStockLineData` and `Errors`: `ErrorData`) |
 | `disassembly/order` | POST: `DisassemblyOrderData` (Disassembly Order) | GET, POST: `DisassemblyOrderData` |
+| `finishedGoodsList` | none | GET: `list<FinishedGoodsListData>` (Finished Goods List), read from `FinishedGoods` |
+| `finishedGoods` | POST: `FinishedGoodsPostData`; PUT: `FinishedGoodsPutData`, which requires only `ID` (Finished Goods POST/PUT fields) | GET, POST, PUT, DELETE: `FinishedGoodsData` (Finished Goods, with `OrderLines`: `FinishedGoodsOrderLineData`, `PickLines`: `FinishedGoodsPickLineData`, `Transactions`: `TransactionStockLineData` and `Errors`: `ErrorData`) |
+| `finishedGoods/order` | POST: `FinishedGoodsOrderData` (Finished Goods Order) | GET, POST: `FinishedGoodsOrderData` |
+| `finishedGoods/pick` | POST: `FinishedGoodsPickData` (Finished Goods Pick) | GET, POST: `FinishedGoodsPickData` |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
 | `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
@@ -1585,3 +1589,35 @@ and its response. Each class requires:
 - **`DisassemblyOrderServiceLineData`** is documented as used by `disassembly` alone, but the order's
   examples carry it, so it lives beside the order line in `Disassembly/Order/`.
 - **Examples.** The examples need no correction: the reference's eight are the fixtures, unchanged.
+
+`finishedGoods` has a class per verb because POST requires fields, PUT requires only the `ID` and
+the response requires none; the fields all three share, optional in each, are on
+`AbstractFinishedGoodsData`. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `FinishedGoodsData` (response) | `src/Data/FinishedGoods/` | nothing |
+| `FinishedGoodsPostData` | `src/Data/FinishedGoods/` | `Status`, `WIPAccount`, `Account`, `Quantity`, `CompletionDate`; and `ProductID` or `ProductCode`, `LocationID` or `Location` (`#[RequiredWithout]`), `WIPDate` when `Status` is `AUTHORISED`, `IN PROGRESS` or `COMPLETED` (`#[RequiredIf]`) |
+| `FinishedGoodsPutData` | `src/Data/FinishedGoods/` | `ID` |
+| `FinishedGoodsOrderData` | `src/Data/FinishedGoods/Order/` | nothing; POST takes `DRAFT` or `AUTHORISED` as `Status` (`#[In]`) |
+| `FinishedGoodsOrderLineData` | `src/Data/FinishedGoods/Order/` | `Quantity`; and `ProductID` or `ProductCode` |
+| `FinishedGoodsPickData` | `src/Data/FinishedGoods/Pick/` | `CompletionDate`; POST takes `AUTHORISED`, `IN PROGRESS` or `COMPLETED` as `Status` (`#[In]`) |
+| `FinishedGoodsPickLineData` | `src/Data/FinishedGoods/Pick/` | `Quantity`; and `ProductID` or `ProductCode` |
+| `FinishedGoodsListData` | `src/Data/FinishedGoodsList/` | nothing |
+
+- **One status enum.** Every list of finished goods statuses is a subset of `DRAFT`, `AUTHORISED`,
+  `IN PROGRESS`, `COMPLETED`, `VOIDED` (`FinishedGoodsStatus`); the POST body, the order and the
+  pick limit it with `#[In]`.
+- **`Bin`** and **`Location`** are typed Decimal in the tables, copied from the field above them:
+  they are names, strings.
+- **`CompletionDate`** is "Yes" in the POST table although its note says it is required if `Status`
+  is `COMPLETED`: the column wins, so the POST body and the pick require it. `ExpiryDate` is required
+  for a product costed `FESN` or `FEBATCH`, which a body cannot tell, so it stays optional, as do the
+  "Yes*" `ExpenseAccount` and `TotalCost` of an order line, required for a service product.
+- **`ProductName`** is in the POST and PUT examples, not their tables, so it is on the abstract parent.
+- **Read-only fields** (`Name`, `Unit`, `TotalQuantity` on an order line; `Name`, `Unit`, `Cost` on a
+  pick line) are sent by the examples, so the classes model them and the requests send what the
+  caller set.
+- **`BinID`** is `""` in the POST and PUT examples, which is not a GUID: the fixtures keep it, and a
+  body built from them fails `#[Uuid]` until the caller sends a GUID or leaves it out.
+- **Examples.** The examples need no correction: the reference's thirteen are the fixtures, unchanged.

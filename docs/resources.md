@@ -86,6 +86,10 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->disassemblyList()` | `DisassemblyListResource` | `get($page, $limit, ?DisassemblyStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->disassembly()` | `DisassemblyResource` | `get(string $taskId)`, `post(array\|DisassemblyPostData $body)`, `delete(string $id, ?bool $void = null)`; `order()` |
 | `$cin7->disassembly()->order()` | `Disassembly\OrderResource` | `get(string $taskId)`, `post(array\|DisassemblyOrderData $body)` |
+| `$cin7->finishedGoodsList()` | `FinishedGoodsListResource` | `get($page, $limit, ?FinishedGoodsStatus $status, ?string $search, ?string $saleId)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->finishedGoods()` | `FinishedGoodsResource` | `get(string $taskId)`, `post(array\|FinishedGoodsPostData $body)`, `put(array\|FinishedGoodsPutData $body)`, `delete(string $id, ?bool $void = null)`; `order()`, `pick()` |
+| `$cin7->finishedGoods()->order()` | `FinishedGoods\OrderResource` | `get(string $taskId)`, `post(array\|FinishedGoodsOrderData $body)` |
+| `$cin7->finishedGoods()->pick()` | `FinishedGoods\PickResource` | `get(string $taskId)`, `post(array\|FinishedGoodsPickData $body)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
@@ -1338,4 +1342,33 @@ $disassembly = $this->cin7->disassembly()->post(DisassemblyPostData::from([
     'WIPAccount' => '715',
     'Quantity' => 1,
 ]))->dto(); // DisassemblyData
+```
+
+`$cin7->finishedGoodsList()` is `finishedGoodsList`, filtered by `status` (a `FinishedGoodsStatus`:
+`DRAFT`, `AUTHORISED`, `IN PROGRESS`, `COMPLETED`, `VOIDED`), `search` and `saleId`.
+
+`$cin7->finishedGoods()` is `finishedGoods`, keyed by `TaskID`. `post()` takes a
+`FinishedGoodsPostData` and `put()` a `FinishedGoodsPutData`, which requires only `ID`, as well as an
+array. A POST body needs its `Status`, `WIPAccount`, `Account`, `Quantity` and `CompletionDate`, a
+product by `ProductID` or `ProductCode`, a location by `LocationID` or `Location`, and a `WIPDate`
+once it is `AUTHORISED`, `IN PROGRESS` or `COMPLETED`. Every action answers with the task, so `dto()`
+is a `FinishedGoodsData`, with its `AssemblyNumber`, its order and pick lines, its `Transactions` and
+the `Errors` of a POST that created the task despite them. `delete($id, void: true)` voids it.
+
+`$cin7->finishedGoods()->order()` is `finishedGoods/order`: `get($taskId)` reads a task's order, and
+`post()` takes a `FinishedGoodsOrderData` (a `Status` of `DRAFT` or `AUTHORISED` and its
+`OrderLines`) as well as an array. `$cin7->finishedGoods()->pick()` is `finishedGoods/pick`:
+`get($taskId)` reads its pick, and `post()` takes a `FinishedGoodsPickData` (a `Status` of
+`AUTHORISED`, `IN PROGRESS` or `COMPLETED`, a `CompletionDate` and its `PickLines`) as well as an array.
+
+```php
+$task = $this->cin7->finishedGoods()->post(FinishedGoodsPostData::from([
+    'Status' => 'DRAFT',
+    'ProductCode' => 'Bread',
+    'Location' => 'Main Warehouse',
+    'WIPAccount' => '715',
+    'Account' => '715',
+    'Quantity' => 1,
+    'CompletionDate' => '2018-01-03T00:00:00',
+]))->dto(); // FinishedGoodsData
 ```

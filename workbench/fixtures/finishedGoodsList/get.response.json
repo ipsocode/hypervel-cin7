@@ -1,0 +1,32 @@
+{
+    "Total": 14,
+    "Page": 1,
+    "FinishedGoods": [
+        {
+            "TaskID": "c1819dba-772c-4689-8032-0ee7acb4bd66",
+            "AssemblyNumber": "FG-00001",
+            "BatchSN": "FG-00001",
+            "ExpiryDate": "2018-01-11T00:00:00",
+            "ProductID": "524c20a3-a8ec-44f2-9685-311f1f7d1498",
+            "ProductCode": "Bread",
+            "ProductName": "Baked Bread",
+            "Quantity": 1,
+            "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Location": "Main Warehouse",
+            "Date": "2018-01-03T00:00:00",
+            "Status": "COMPLETED",
+            "UnitCost": 0,
+            "Notes": "",
+            "CustomField1": "Low",
+            "CustomField2": "false",
+            "CustomField3": "test",
+            "CustomField4": "",
+            "CustomField5": "",
+            "CustomField6": "",
+            "CustomField7": "",
+            "CustomField8": "",
+            "CustomField9": "",
+            "CustomField10": ""
+        }
+    ]
+}

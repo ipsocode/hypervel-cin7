@@ -18,6 +18,10 @@ use Ipsocode\Cin7\Resources\CustomPricesResource;
 use Ipsocode\Cin7\Resources\Disassembly\OrderResource as DisassemblyOrderResource;
 use Ipsocode\Cin7\Resources\DisassemblyListResource;
 use Ipsocode\Cin7\Resources\DisassemblyResource;
+use Ipsocode\Cin7\Resources\FinishedGoods\OrderResource as FinishedGoodsOrderResource;
+use Ipsocode\Cin7\Resources\FinishedGoods\PickResource as FinishedGoodsPickResource;
+use Ipsocode\Cin7\Resources\FinishedGoodsListResource;
+use Ipsocode\Cin7\Resources\FinishedGoodsResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -444,5 +448,19 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->disassemblyList(), $connector->disassemblyList());
         $this->assertInstanceOf(DisassemblyOrderResource::class, $connector->disassembly()->order());
         $this->assertNotSame($connector->disassembly()->order(), $connector->disassembly()->order());
+    }
+
+    public function testFinishedGoodsResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(FinishedGoodsResource::class, $connector->finishedGoods());
+        $this->assertNotSame($connector->finishedGoods(), $connector->finishedGoods());
+        $this->assertInstanceOf(FinishedGoodsListResource::class, $connector->finishedGoodsList());
+        $this->assertNotSame($connector->finishedGoodsList(), $connector->finishedGoodsList());
+        $this->assertInstanceOf(FinishedGoodsOrderResource::class, $connector->finishedGoods()->order());
+        $this->assertNotSame($connector->finishedGoods()->order(), $connector->finishedGoods()->order());
+        $this->assertInstanceOf(FinishedGoodsPickResource::class, $connector->finishedGoods()->pick());
+        $this->assertNotSame($connector->finishedGoods()->pick(), $connector->finishedGoods()->pick());
     }
 }
