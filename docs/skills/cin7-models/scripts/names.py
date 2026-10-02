@@ -75,6 +75,7 @@ TABLES = {
 NOTES = {
     'reference/money-task/money-operation': 'Named after the Money Task it serves (maintainer decision): MoneyTask folders, classes and `moneyTask()`; the URL stays `moneyOperation`.',
     'reference/money-task/bank-transfer': 'The table\'s heading says "Money Task List", copied from the list: the model is the bank transfer.',
+    'reference/sale/sale': 'The advanced sale has no endpoint: the reference serves it through `sale` (`SaleType: Advanced` on POST, `Type: Advanced Sale` in responses). It is modelled anyway (maintainer decision): `AdvancedSalePostData`, and `advancedSale()` sending the existing `sale` requests, with no `AdvancedSale` request or response class.',
     'reference/sale/sale-order': 'Open: the table says the totals are "Not required for POST" and SaleID is required; a `SaleOrderPostData` split, as quote and manual journal have, is not done.',
     'reference/price-tiers/price-tiers': 'Other Models\' PriceTierModel is the product\'s `PriceTiers` map (no class); this `{Code, Name}` table is `PriceTierData`, so correct ProductData\'s docblock that says there is none.',
     'reference/product-markup-prices/markup-prices': 'The heading says `/ref/markupprices`; every operation URI says `/product/markupprices`. Follow the URI: `Product/MarkupPrices`, reached as `product()->markupPrices()`.',
