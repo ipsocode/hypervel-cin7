@@ -34,6 +34,10 @@ use Ipsocode\Cin7\Data\Ref\Account\AbstractAccountData;
 use Ipsocode\Cin7\Data\Ref\Account\AccountData;
 use Ipsocode\Cin7\Data\Ref\Account\Bank\BankAccountData;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
+use Ipsocode\Cin7\Data\Ref\FixedAssetType\AbstractFixedAssetTypeData;
+use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypeData;
+use Ipsocode\Cin7\Data\Ref\PaymentTerm\AbstractPaymentTermData;
+use Ipsocode\Cin7\Data\Ref\PaymentTerm\PaymentTermData;
 use Ipsocode\Cin7\Data\Ref\Supplier\Deposits\SupplierDepositData;
 use Ipsocode\Cin7\Data\Ref\Tax\AbstractTaxData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
@@ -419,6 +423,8 @@ class DataCatalogueTest extends TestCase
             AbstractMoneyTaskData::class,
             AbstractProductData::class,
             AbstractAccountData::class,
+            AbstractFixedAssetTypeData::class,
+            AbstractPaymentTermData::class,
             AbstractTaxData::class,
             AbstractAddressData::class,
             AbstractSaleData::class,
@@ -477,7 +483,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, AccountData::class, BankAccountData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, AccountData::class, BankAccountData::class, FixedAssetTypeData::class, PaymentTermData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }

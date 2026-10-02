@@ -150,11 +150,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `bank-transfer` · `bankTransfer` · GET POST PUT DELETE
   - [ ] Bank Transfer: `BankTransferData`
 
-### `reference/payment-term/**` Payment Term (1 resource, 4 operations)
-
-- [ ] `payment-term` · `ref/paymentterm` · GET POST PUT DELETE
-  - [ ] Payment Term: `PaymentTermData`
-
 ### `reference/price-tiers/**` Price Tiers (1 resource, 1 operation)
 
 - [ ] `price-tiers` · `ref/priceTier` · GET
@@ -299,11 +294,6 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
 - [ ] `finished-goods-pick` · `finishedGoods/pick` · GET POST
   - [ ] Finished Goods Pick: `FinishedGoodsPickData`
 
-### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
-
-- [ ] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
-  - [ ] Fixed Asset Types: `FixedAssetTypeData`
-
 ### `reference/production/**` Production (10 resources, 46 operations)
 
 - [ ] `factory-calendar` · `production/factoryCalendar` · GET POST PUT
@@ -442,6 +432,11 @@ Every resource in these groups is in.
 - [x] `chart-of-accounts` · `ref/account` · GET POST PUT DELETE
   - [x] Chart of Accounts: `AccountData`
 
+### `reference/fixed-asset-type/**` Fixed Asset Type (1 resource, 3 operations)
+
+- [x] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
+  - [x] Fixed Asset Types: `FixedAssetTypeData`
+
 ### `reference/me/**` Me (3 resources, 9 operations)
 
 - [x] `me` · `me` · GET
@@ -451,6 +446,11 @@ Every resource in these groups is in.
   - [x] Me Address: `MeAddressData`
 - [x] `me-contact` · `me/contacts` · GET POST PUT DELETE
   - [x] Me Contact: `MeContactData`
+
+### `reference/payment-term/**` Payment Term (1 resource, 4 operations)
+
+- [x] `payment-term` · `ref/paymentterm` · GET POST PUT DELETE
+  - [x] Payment Term: `PaymentTermData`
 
 ### `reference/sale/**` Sale (14 resources, 38 operations)
 

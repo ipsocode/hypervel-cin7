@@ -180,6 +180,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
 | `ref/account` | POST: `AccountPostData`, which also takes `SystemAccount` and `SystemAccountCode`; PUT: `AccountPutData` (Chart of Accounts) | GET: `list<AccountData>`; POST, PUT: `AccountData`, the saved account (`AccountsList.0`); DELETE: `{Success}`, left to `json()` |
 | `ref/account/bank` | none | GET: `list<BankAccountData>` (Bank Accounts) |
+| `ref/fixedassettype` | POST: `FixedAssetTypePostData`; PUT: `FixedAssetTypePutData`, which also requires `FixedAssetTypeID` (Fixed Asset Types) | GET: `list<FixedAssetTypeData>`; POST, PUT: `FixedAssetTypeData`, the saved type (`FixedAssetTypeList.0`) |
+| `ref/paymentterm` | POST: `PaymentTermPostData`; PUT: `PaymentTermPutData`, which also requires `ID` (Payment Term) | GET: `list<PaymentTermData>`; POST, PUT: `PaymentTermData`, the saved term (`PaymentTermList.0`); DELETE: `{Success}`, left to `json()` |
 | `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
 | `me/addresses` | POST: `MeAddressPostData`; PUT: `MeAddressPutData`, which also requires `AddressID` (Me Address) | GET: `list<MeAddressData>`; POST, PUT: `MeAddressData`, the saved address (`MeAddressesList.0`); DELETE: `{Success}`, left to `json()` |
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
@@ -435,6 +437,14 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `AccountData` too. A write body of a `BANK` account requires both (`#[RequiredIf]`).
 - **Bank Accounts `InitialBalance`.** The table types it `String`, but the example sends `0`;
   `BankAccountData` accepts both (`string|float`).
+- **Fixed Asset Type `Rate` and `EffectiveLife`.** The table marks both required, but says each is
+  "unable to set" when the other is, and the examples send one of them as `null`. Both are
+  optional. `AssetAccountCode` is typed `Decimal`, but the examples send `"710"` and the other
+  account code is a `String`, so it is a string. `DepreciationExpenseAccountCode` and its read-only
+  `DepreciationExpenseAccountName` appear only in the examples, and are modelled.
+- **Fixed Asset Type and Payment Term value lists.** `DepreciationMethod`, `AveragingMethod` and
+  the payment term's `Method` are the enums `DepreciationMethod`, `AveragingMethod` and
+  `PaymentTermMethod`.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -558,6 +568,18 @@ response missing a required field fails `dto()` with a `CannotCreateData`.
 
 `ref/account/bank` lists the bank accounts as `BankAccountData`, in `src/Data/Ref/Account/Bank/`,
 which requires nothing: each names the account it is linked to by `AccountCode` and `AccountName`.
+
+`ref/fixedassettype` and `ref/paymentterm` have a class per verb because the ID is taken by PUT and
+the response only:
+
+| Class | Folder | Required |
+|---|---|---|
+| `FixedAssetTypeData` (response) | `src/Data/Ref/FixedAssetType/` | `Name`, `DepreciationMethod`, `AveragingMethod`, `AssetAccountCode`, `AccumulatedDepreciationAccountCode` |
+| `FixedAssetTypePostData` | `src/Data/Ref/FixedAssetType/` | the same |
+| `FixedAssetTypePutData` | `src/Data/Ref/FixedAssetType/` | the same, and `FixedAssetTypeID` |
+| `PaymentTermData` (response) | `src/Data/Ref/PaymentTerm/` | `Name` |
+| `PaymentTermPostData` | `src/Data/Ref/PaymentTerm/` | `Name` |
+| `PaymentTermPutData` | `src/Data/Ref/PaymentTerm/` | `Name`, `ID` |
 
 ## Sale invoices, credit notes and payments
 
