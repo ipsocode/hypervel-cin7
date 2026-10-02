@@ -320,6 +320,16 @@ and `PutInventoryWriteOff`, whose bodies are `InventoryWriteOffPostData` and
 `InventoryWriteOffPutData`; every one's `dto()` is an `InventoryWriteOffData`.
 `GetInventoryWriteOffList` (`src/Requests/InventoryWriteOffList/`) lists them under
 `InventoryWriteOffs`, filtered by `status` and `search`.
+The `crm/…` actions live under `src/Requests/Crm/`, one folder each: `Lead/`, `Opportunity/`, `Task/`,
+`TaskCategory/` and `Workflow/` each have a `GetCrm…` (a `ListRequest`, keyed `LeadList`,
+`opportunityList`, `Tasks`, `Categories` and `Workflows`), a `PostCrm…` and a `PutCrm…` (bodies
+`LeadPostData` and `LeadPutData`, and so on; the PUT body carries `ID`). There is no DELETE, and every
+action answers a list, so `dto()` is a `list<LeadData>` and so on. `GetCrmLead` and
+`GetCrmOpportunity` filter by `modifiedSince`, and `GetCrmTask` by the start, end and completion
+dates (`startDateFrom`, `startDateTo` and so on), `assignedTo` and `category`.
+`PostCrmWorkflowStart` (`WorkflowStart/`) sends everything in the query and nothing in the body:
+`StartDate`, `EnityType` (the reference's spelling, kept), `EntityID`, and the workflow by `ID` or
+`Name`. It answers `{Success}`, left to `json()`.
 The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
 `Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
 `JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed

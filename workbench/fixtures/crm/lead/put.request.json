@@ -1,0 +1,40 @@
+{
+    "ID": "f192e2ce-6e06-4173-bb90-fb372f07366f",
+    "Name": "new lead",
+    "Currency": "AMD",
+    "LeadStatus": "NEW",
+    "CloseChance": 20,
+    "PaymentTerm": "COD",
+    "TaxRule": "GST Free Income",
+    "SalesRepresentative": "Nikolay Kuznetsov",
+    "Comments": "",
+    "PriceTier": "Tier 1",
+    "CloseDate": "2021-06-19T00:00:00",
+    "Amount": 0,
+    "Addresses": [
+        {
+            "Type": "Billing",
+            "Line1": "Baskov Pereulok",
+            "Line2": "Tsentralnyy rayon",
+            "City": "Sankt-Peterburg",
+            "State": "",
+            "Postcode": "191014",
+            "Country": "Russia",
+            "DefaultForType": false
+        }
+    ],
+    "Contacts": [
+        {
+            "Name": "David Musk",
+            "JobTitle": "Developer",
+            "Phone": "+11234567987",
+            "MobilePhone": "+148444654",
+            "Fax": "",
+            "Email": "dmusk@aol.com",
+            "Website": "",
+            "Default": false,
+            "Comment": "",
+            "IncludeInEmail": true
+        }
+    ]
+}
