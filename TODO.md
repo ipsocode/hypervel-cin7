@@ -23,11 +23,6 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
 
 Every group not ranked yet: move a group up or down as issues are planned.
 
-### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
-
-- [ ] `webhooks` · `webhooks` · GET POST PUT DELETE
-  - [ ] Webhooks: `WebhookData`
-
 ### `reference/other-models/**` Shared models for the groups above
 
 Each is built with the first resource here that uses it; a ticked one is built, and moves to
@@ -479,6 +474,11 @@ Every resource in these groups is in.
 
 - [x] `unit-of-measure` · `ref/unit` · GET POST PUT DELETE
   - [x] Unit of Measure: `UnitOfMeasureData`
+
+### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
+
+- [x] `webhooks` · `webhooks` · GET POST PUT DELETE
+  - [x] Webhooks: `WebhookData`
 
 ### `reference/crm/**` CRM (6 resources, 16 operations)
 

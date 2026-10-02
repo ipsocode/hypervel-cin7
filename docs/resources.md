@@ -91,6 +91,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->crm()->taskCategory()` | `Crm\TaskCategoryResource` | `get($page, $limit, $id, $name)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaskCategoryPostData $body)`, `put(array\|TaskCategoryPutData $body)` |
 | `$cin7->crm()->workflow()` | `Crm\WorkflowResource` | `get($page, $limit, $id, $name)`, `paginate($limit, …): Cin7Paginator`, `post(array\|WorkflowPostData $body)`, `put(array\|WorkflowPutData $body)` |
 | `$cin7->crm()->workflowStart()` | `Crm\WorkflowStartResource` | `post($startDate, $entityType, $entityId, $id, $name)` |
+| `$cin7->webhooks()` | `WebhooksResource` | `get()`, `post(array\|WebhookPostData $body)`, `put(array\|WebhookPutData $body)`, `delete(string $id)` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
 | `$cin7->productFamily()` | `ProductFamilyResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductFamilyPostData $body)`, `put(array\|ProductFamilyPutData $body)`; `attachments()` |
@@ -1333,4 +1334,21 @@ by `$id` or `$name`. Everything goes in the query, and the answer is `{Success}`
 
 ```php
 $tasks = $this->cin7->crm()->task()->get(category: 'Follow-up', startDateFrom: '2022-05-01T00:00:00')->dto();
+```
+
+## Webhooks
+
+`$cin7->webhooks()` is `webhooks`, the callbacks Cin7 sends when an event happens. `get()` lists every
+webhook, with no paging, and `post()` and `put()` take a `WebhookPostData` or `WebhookPutData` as well
+as an array; all three answer a `Webhooks` list, so `dto()` is a `list<WebhookData>`. `delete($id)`
+sends `?ID=…`. Only the registration is modelled: the payloads Cin7 sends to a callback are not.
+
+```php
+$webhook = $this->cin7->webhooks()->post(WebhookPostData::from([
+    'Type' => WebhookType::SaleOrderAuthorised,
+    'IsActive' => true,
+    'ExternalURL' => 'https://example.test/hook',
+    'ExternalAuthorizationType' => WebhookAuthorizationType::BearerAuth,
+    'ExternalBearerToken' => $token,
+]))->dto()[0]; // WebhookData
 ```
