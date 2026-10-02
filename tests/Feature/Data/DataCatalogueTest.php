@@ -20,10 +20,12 @@ use Ipsocode\Cin7\Data\AbstractManualJournalLineData;
 use Ipsocode\Cin7\Data\AbstractPurchaseInvoiceData;
 use Ipsocode\Cin7\Data\AbstractPurchaseListData;
 use Ipsocode\Cin7\Data\AbstractPurchaseManualJournalData;
+use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
 use Ipsocode\Cin7\Data\AbstractSaleListData;
 use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchaseInvoicesData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchaseManualJournalsData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Payment\AdvancedPurchasePaymentData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AbstractAdvancedPurchasePutAwayData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwaysData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AbstractAdvancedPurchaseStockData;
@@ -49,7 +51,6 @@ use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceData;
 use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalData;
 use Ipsocode\Cin7\Data\Purchase\Order\AbstractPurchaseOrderData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderData;
-use Ipsocode\Cin7\Data\Purchase\Payment\AbstractPurchasePaymentData;
 use Ipsocode\Cin7\Data\Purchase\Payment\PurchasePaymentData;
 use Ipsocode\Cin7\Data\Purchase\Stock\AbstractPurchaseStockData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
@@ -437,6 +438,7 @@ class DataCatalogueTest extends TestCase
             AbstractPurchaseInvoiceData::class,
             AbstractPurchaseListData::class,
             AbstractPurchaseManualJournalData::class,
+            AbstractPurchasePaymentData::class,
             AbstractSaleListData::class,
             AbstractSalePaymentLineData::class,
             AbstractAdvancedPurchasePutAwayData::class,
@@ -448,7 +450,6 @@ class DataCatalogueTest extends TestCase
             AbstractProductData::class,
             AbstractPurchaseCreditNoteData::class,
             AbstractPurchaseOrderData::class,
-            AbstractPurchasePaymentData::class,
             AbstractPurchaseStockData::class,
             AbstractTaxData::class,
             AbstractSaleData::class,
@@ -506,7 +507,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class, PurchaseAttachmentsData::class, AdvancedPurchaseStocksData::class, PurchaseInvoiceData::class, PurchaseCreditNoteData::class, AdvancedPurchaseManualJournalsData::class, AdvancedPurchaseInvoicesData::class, AdvancedPurchasePutAwaysData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class, PurchaseAttachmentsData::class, AdvancedPurchaseStocksData::class, PurchaseInvoiceData::class, PurchaseCreditNoteData::class, AdvancedPurchaseManualJournalsData::class, AdvancedPurchaseInvoicesData::class, AdvancedPurchasePutAwaysData::class, AdvancedPurchasePaymentData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }

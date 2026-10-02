@@ -124,6 +124,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetAdvancedPurchaseInvoice` | **`purchaseId`**, `combineAdditionalCharges` |
 | `DeleteAdvancedPurchaseInvoice` | **`taskId`**, `void` |
 | `GetAdvancedPurchasePutAway` | **`purchaseId`** |
+| `GetAdvancedPurchasePayment` | `purchaseId`, `orderNumber`, `invoiceNumber`, `creditNoteNumber` |
 
 `CombinedInvoiceStatus` stays a string: the reference's list for it does not match the values its
 examples return (see
@@ -246,11 +247,16 @@ path:
 | `ManualJournal/` | `GetAdvancedPurchaseManualJournal` (`PurchaseID`), `PostAdvancedPurchaseManualJournal` | `AdvancedPurchaseManualJournalsData`, the `{PurchaseID, ManualJournals}` envelope |
 | `Invoice/` | `GetAdvancedPurchaseInvoice` (`PurchaseID`, with `CombineAdditionalCharges`), `PostAdvancedPurchaseInvoice`, `DeleteAdvancedPurchaseInvoice` (`TaskID`, with `Void`) | `AdvancedPurchaseInvoicesData`, the `{PurchaseID, Invoices}` envelope |
 | `PutAway/` | `GetAdvancedPurchasePutAway` (`PurchaseID`), `PostAdvancedPurchasePutAway` | `AdvancedPurchasePutAwaysData`, the `{PurchaseID, PutAway}` envelope |
+| `Payment/` | `GetAdvancedPurchasePayment` (`PurchaseID`, `OrderNumber`, `InvoiceNumber` or `CreditNoteNumber`), `PostAdvancedPurchasePayment`, `PutAdvancedPurchasePayment`; the DELETE is `Purchase/Payment/`'s `DeletePurchasePayment` | `list<AdvancedPurchasePaymentData>` for the GET, a bare array, `AdvancedPurchasePaymentData` for POST and PUT |
 
 The stock received's write bodies are `AdvancedPurchaseStockPostData` and
 `AdvancedPurchaseStockPutData`, the PUT one carrying the task's `TaskID` as well as the
 `PurchaseID`.
 The put away's write body is `AdvancedPurchasePutAwayPostData`; it has no PUT.
+The payment's write bodies are `AdvancedPurchasePaymentPostData` and
+`AdvancedPurchasePaymentPutData`, the PUT one carrying the payment's `ID`; the reference documents
+its DELETE on `/purchase/payment`, so it has no DELETE class of its own and the resource sends
+`DeletePurchasePayment`.
 
 The manual journals' POST body is `AdvancedPurchasePartialManualJournalPostData`, which carries
 the purchase's `PurchaseID` and the journal's `TaskID`.
@@ -323,6 +329,8 @@ data object's body is also stripped of nulls and validated after the omission; s
 | `PostPurchaseCreditNote` | `Unstock.*.ProductID`, `Unstock.*.SKU`, `Unstock.*.Name`, `Unstock.*.Location`, `Unstock.*.BatchSN`, `Unstock.*.ExpiryDate` |
 | `PostAdvancedPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
 | `PostAdvancedPurchasePutAway` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
+| `PostAdvancedPurchasePayment` | `ID` (PUT only), `DateCreated` |
+| `PutAdvancedPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
 
 ## Page defaults
 

@@ -8,13 +8,15 @@ use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\InvoiceResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\ManualJournalResource;
+use Ipsocode\Cin7\Resources\AdvancedPurchase\PaymentResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\PutAwayResource;
 use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource;
 
 /**
- * `advanced-purchase`, an advanced purchase; `stock()`, `putAway()`, `invoice()` and
+ * `advanced-purchase`, an advanced purchase; `stock()`, `putAway()`, `invoice()`, `payment()` and
  * `manualJournal()` are the `advanced-purchase/stock`, `advanced-purchase/put-away`,
- * `advanced-purchase/invoice` and `advanced-purchase/manualJournal` sub-resources.
+ * `advanced-purchase/invoice`, `advanced-purchase/payment` and `advanced-purchase/manualJournal`
+ * sub-resources.
  *
  * @extends BaseResource<Cin7Connector>
  */
@@ -50,5 +52,13 @@ final class AdvancedPurchaseResource extends BaseResource
     public function putAway(): PutAwayResource
     {
         return new PutAwayResource($this->connector);
+    }
+
+    /**
+     * The `advanced-purchase/payment` resource, an advanced purchase's payments.
+     */
+    public function payment(): PaymentResource
+    {
+        return new PaymentResource($this->connector);
     }
 }

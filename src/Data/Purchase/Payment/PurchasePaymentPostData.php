@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Purchase\Payment;
 
 use Hypervel\Data\Attributes\Validation\Uuid;
+use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
 
 /**
  * The body of `purchase/payment` POST: the Available Fields for Purchase Payments table's fields

@@ -79,11 +79,12 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->purchase()->payment()` | `Purchase\PaymentResource` | `get(string $taskId)`, `post(array\|PurchasePaymentPostData $body)`, `put(array\|PurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->purchase()->manualJournal()` | `Purchase\ManualJournalResource` | `get(string $taskId)`, `post(array\|PurchaseManualJournalPostData $body)` |
 | `$cin7->purchase()->attachment()` | `Purchase\AttachmentResource` | `get(string $taskId)`, `post(array\|PurchaseAttachmentPostData $body)`, `delete(string $id)` |
-| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `putAway()`, `invoice()`, `manualJournal()` |
+| `$cin7->advancedPurchase()` | `AdvancedPurchaseResource` | `stock()`, `putAway()`, `invoice()`, `payment()`, `manualJournal()` |
 | `$cin7->advancedPurchase()->stock()` | `AdvancedPurchase\StockResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchaseStockPostData $body)`, `put(array\|AdvancedPurchaseStockPutData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->advancedPurchase()->manualJournal()` | `AdvancedPurchase\ManualJournalResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePartialManualJournalPostData $body)` |
 | `$cin7->advancedPurchase()->invoice()` | `AdvancedPurchase\InvoiceResource` | `get(string $purchaseId, ?bool $combineAdditionalCharges = null)`, `post(array\|AdvancedPurchasePartialInvoicePostData $body)`, `delete(string $taskId, ?bool $void = null)` |
 | `$cin7->advancedPurchase()->putAway()` | `AdvancedPurchase\PutAwayResource` | `get(string $purchaseId)`, `post(array\|AdvancedPurchasePutAwayPostData $body)` |
+| `$cin7->advancedPurchase()->payment()` | `AdvancedPurchase\PaymentResource` | `get(?string $purchaseId = null, …)`, `post(array\|AdvancedPurchasePaymentPostData $body)`, `put(array\|AdvancedPurchasePaymentPutData $body)`, `delete(string $id, ?bool $deleteAllocation = null)` |
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
@@ -721,6 +722,39 @@ $saved = $this->cin7->advancedPurchase()->putAway()->post(AdvancedPurchasePutAwa
 $taskId = $saved->PutAway[0]->TaskID;
 ```
 
+`$cin7->advancedPurchase()->payment()` is `advanced-purchase/payment`, an advanced purchase's
+payments. `get()` takes the purchase's `purchaseId`, or the number of its order, invoice or credit
+note (`orderNumber`, `invoiceNumber`, `creditNoteNumber`), all optional, and sends the ones given,
+as in `advanced-purchase/payment?PurchaseID=…`; its `dto()` is a `list<AdvancedPurchasePaymentData>`,
+read from a bare array. `post()` takes an `AdvancedPurchasePaymentPostData` and `put()` an
+`AdvancedPurchasePaymentPutData` as well as an array; both answer with the saved payment, an
+`AdvancedPurchasePaymentData`, which also carries the purchase's `PurchaseID`. The bodies are the
+simple purchase's: a payment POST needs `TaskID`, `Type`, `Amount`, `DatePaid`, `Account` and
+`CurrencyRate`, and takes a `DepositID` to pay from a supplier deposit; a payment PUT needs
+`TaskID`, `ID`, `DatePaid` and `CurrencyRate`, and takes no `Amount` or `Account` for a payment
+from a deposit. A payment needs an authorised invoice and a refund an authorised credit note, and
+a prepayment cannot be changed. The reference documents the DELETE on `/purchase/payment`, so
+`delete($id)` sends `DeletePurchasePayment`, `purchase/payment?ID=…`, and answers `{Success}`;
+`deleteAllocation` works as on `$cin7->purchase()->payment()`.
+
+```php
+use Ipsocode\Cin7\Data\AdvancedPurchase\Payment\AdvancedPurchasePaymentPostData;
+
+$payments = $this->cin7->advancedPurchase()->payment()->get($purchaseId)->dto(); // list<AdvancedPurchasePaymentData>
+$invoicePayments = $this->cin7->advancedPurchase()->payment()->get(invoiceNumber: $invoiceNumber)->dto();
+
+$saved = $this->cin7->advancedPurchase()->payment()->post(AdvancedPurchasePaymentPostData::from([
+    'TaskID' => $taskId,
+    'Type' => 'Payment',
+    'Amount' => 9.0,
+    'DatePaid' => '2017-12-21T00:00:00',
+    'Account' => '718',
+    'CurrencyRate' => 1.0,
+]))->dto(); // AdvancedPurchasePaymentData
+
+$this->cin7->advancedPurchase()->payment()->delete($saved->ID); // DELETE purchase/payment?ID=…
+```
+
 ## PUT identifiers
 
 A PUT body carries the identifier V2 documents for that resource. The caller
@@ -740,6 +774,7 @@ key:
 | `sale/payment` | `ID` |
 | `purchase/payment` | `TaskID` and `ID` |
 | `advanced-purchase/stock` | `PurchaseID` and `TaskID` |
+| `advanced-purchase/payment` | `TaskID` and `ID` |
 | `moneyOperation` | `TaskID` |
 
 ```php
