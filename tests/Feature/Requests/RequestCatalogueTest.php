@@ -9,6 +9,7 @@ use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
+use InvalidArgumentException;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\MoneyOperation\MoneyTaskData;
 use Ipsocode\Cin7\Data\Product\ProductData;
@@ -505,6 +506,39 @@ class RequestCatalogueTest extends TestCase
                 [],
                 ['TaskID' => 'task-1', 'Status' => 'COMPLETED'],
             ],
+        ];
+    }
+
+    public function testPostProductLeavesTheIgnoredIdOutOfTheBody(): void
+    {
+        $this->connector()->send(new PostProduct(['ID' => 'guid-1', 'SKU' => 'Bread']));
+        $this->assertSame(['SKU' => 'Bread'], $this->mock->lastPendingRequest()?->body());
+
+        $this->connector()->send(new PostProduct(ProductData::from(['ID' => 'guid-1', 'SKU' => 'Bread'])));
+        $this->assertSame(['SKU' => 'Bread'], $this->mock->lastPendingRequest()?->body());
+    }
+
+    /**
+     * @param array<string, mixed>|Closure(): ProductData $body
+     */
+    #[DataProvider('productPutWithoutIdProvider')]
+    public function testPutProductNeedsTheId(array|Closure $body): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new PutProduct($body instanceof Closure ? $body() : $body);
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>|Closure(): ProductData}>
+     */
+    public static function productPutWithoutIdProvider(): array
+    {
+        return [
+            'array without ID' => [['Name' => 'Widget']],
+            'array with empty ID' => [['ID' => '', 'Name' => 'Widget']],
+            'array with null ID' => [['ID' => null]],
+            'data without ID' => [fn (): ProductData => ProductData::from(['Name' => 'Widget'])],
         ];
     }
 
