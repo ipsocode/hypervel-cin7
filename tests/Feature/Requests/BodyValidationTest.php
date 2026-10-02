@@ -50,6 +50,7 @@ use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentPostData;
 use Ipsocode\Cin7\Data\StockTake\StockTakePostData;
 use Ipsocode\Cin7\Data\StockTransfer\StockTransferPostData;
+use Ipsocode\Cin7\Data\Webhooks\WebhookPostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
@@ -90,6 +91,7 @@ use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
 use Ipsocode\Cin7\Requests\StockAdjustment\PostStockAdjustment;
 use Ipsocode\Cin7\Requests\StockTake\PostStockTake;
 use Ipsocode\Cin7\Requests\StockTransfer\PostStockTransfer;
+use Ipsocode\Cin7\Requests\Webhooks\PostWebhooks;
 use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -750,6 +752,30 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PutProductMarkupPrices(MarkupPricesData::from(['ProductID' => '7c8795c2-1a6b-4318-ba72-291f61444906', 'MarkupPrices' => [['TierNumber' => 3, 'MarkupType' => 'D']]])));
 
         $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A webhook's credentials follow its authorisation type: `basicauth` needs a user name and a
+     * password, `bearerauth` a token, and `noauth` none; a body without them is not sent.
+     */
+    public function testAWebhookNeedsTheCredentialsOfItsAuthorisationType(): void
+    {
+        $body = ['Type' => 'Sale/Created', 'IsActive' => true, 'ExternalURL' => 'https://example.test/hook'];
+
+        foreach ([['basicauth', ['ExternalUserName', 'ExternalPassword']], ['bearerauth', ['ExternalBearerToken']]] as [$type, $fields]) {
+            try {
+                $this->connector()->send(new PostWebhooks(WebhookPostData::from($body + ['ExternalAuthorizationType' => $type])));
+                $this->fail('The body should have failed validation.');
+            } catch (ValidationException $exception) {
+                $this->assertEqualsCanonicalizing($fields, array_keys($exception->errors()));
+            }
+        }
+
+        $this->connector()->send(new PostWebhooks(WebhookPostData::from($body + ['ExternalAuthorizationType' => 'noauth'])));
+        $this->connector()->send(new PostWebhooks(WebhookPostData::from($body + ['ExternalAuthorizationType' => 'basicauth', 'ExternalUserName' => 'u', 'ExternalPassword' => 'p'])));
+        $this->connector()->send(new PostWebhooks(WebhookPostData::from($body + ['ExternalAuthorizationType' => 'bearerauth', 'ExternalBearerToken' => 't'])));
+
+        $this->mock->assertSentCount(3);
     }
 
     /**
