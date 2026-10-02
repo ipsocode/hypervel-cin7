@@ -1,0 +1,8 @@
+{
+    "Code": "001",
+    "Status": "ACTIVE",
+    "Name": "Accounts Payable put test",
+    "Type": "CURRLIAB",
+    "Description": "Put test description",
+    "Class": "LIABILITY"
+}

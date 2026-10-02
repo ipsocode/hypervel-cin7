@@ -83,6 +83,8 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
 | `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
 | `GetSupplierDeposits` | `page`, `limit`, `supplierId`, `showUsedDeposits` |
+| `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
+| `DeleteAccount` | **`code`** |
 | `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
 | `GetMeContacts` | `page`, `limit`, `id`, `name`, `type` (`ContactType`), `defaultForType`, `phone`, `fax`, `email` |
 | `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
@@ -143,8 +145,13 @@ The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keye
 `TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are
 `TaxPostData` and `TaxPutData`; the PUT body carries `ID`), all
 on `ref/tax`; `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
-`ref/customer/credits`; and `GetSupplierDeposits` (a `ListRequest` keyed `SupplierDeposits`) on
-`ref/supplier/deposits`.
+`ref/customer/credits`; `GetSupplierDeposits` (a `ListRequest` keyed `SupplierDeposits`) on
+`ref/supplier/deposits`; and `GetAccount` (a `ListRequest` keyed `AccountsList`), `PostAccount`
+and `PutAccount` (`WriteRequest`s, whose data object bodies are `AccountPostData` and
+`AccountPutData`; the PUT body's `Code` names the account) and `DeleteAccount` (keyed `Code`), all
+on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountData>`, the POST
+and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
+to `json()`.
 
 The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
 model they serve: `GetMoneyTask`

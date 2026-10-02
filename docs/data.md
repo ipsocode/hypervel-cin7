@@ -178,6 +178,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/tax` | POST: `TaxPostData`; PUT: `TaxPutData`, which also requires `ID` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
+| `ref/account` | POST: `AccountPostData`, which also takes `SystemAccount` and `SystemAccountCode`; PUT: `AccountPutData` (Chart of Accounts) | GET: `list<AccountData>`; POST, PUT: `AccountData`, the saved account (`AccountsList.0`); DELETE: `{Success}`, left to `json()` |
 | `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
 | `me/addresses` | POST: `MeAddressPostData`; PUT: `MeAddressPutData`, which also requires `AddressID` (Me Address) | GET: `list<MeAddressData>`; POST, PUT: `MeAddressData`, the saved address (`MeAddressesList.0`); DELETE: `{Success}`, left to `json()` |
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
@@ -421,6 +422,16 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Me Contact `CRMID` and `ReferenceCount`.** The PUT response example carries both, as `null`
   and `0`, and the table lists neither. `MeContactData` models them, `CRMID` as a string and
   `ReferenceCount` as an `int`; the write bodies do not take them.
+- **Chart of Accounts `Type`.** The table lists `BANK`, `CURRLIAB`, `LIABILITY`, `TERMLIA`,
+  `PAYGLIABILITY`, `SUPERANNUATIONLIABILITY` and `WAGESPAYABLELIABILITY`, but the examples return
+  `CURRENT` and `EXPENSE` as well, so `Type` is a string. `Class`, `SystemAccount` and
+  `SystemAccountCode` match their lists, so they are the `AccountClass`, `SystemAccount` and
+  `SystemAccountCode` enums.
+- **Chart of Accounts `ForPayments`.** The table types it `String` and copies `Status`'s note,
+  "Account status"; the examples send `false`, so it is a `bool`.
+- **Chart of Accounts `Bank` and `BankAccountNumber`.** The table says both are "Only for PUT and
+  POST", but every response example carries `BankAccountNumber`, as `null`, so they are on
+  `AccountData` too. A write body of a `BANK` account requires both (`#[RequiredIf]`).
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -525,6 +536,22 @@ missing a required field fails `dto()` with a `CannotCreateData`.
 | `MoneyTaskLineData` | `src/Data/MoneyTask/` | `Name`, `Quantity`, `TaxRuleName`, `AccountCode`, `Total` |
 
 A response missing a required field fails `dto()` with a `CannotCreateData`.
+
+## Accounting
+
+`ref/account` follows the Chart of Accounts table, with a class per verb because `SystemAccount`
+and `SystemAccountCode` are read-only for PUT, and `DisplayName`, `OldCode`, `BankAccountId` and
+`Currency` read-only on both. `Code` names the account a PUT changes. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `AccountData` (response) | `src/Data/Ref/Account/` | `Code`, `Name`, `Type`, `Status` |
+| `AccountPostData` | `src/Data/Ref/Account/` | `Code`, `Name`, `Type`, `Status`; and `Bank` and `BankAccountNumber` when `Type` is `BANK` (`#[RequiredIf]`) |
+| `AccountPutData` | `src/Data/Ref/Account/` | `Code`, `Name`, `Type`, `Status`; and `Bank` and `BankAccountNumber` when `Type` is `BANK` |
+
+`Class` is an `AccountClass`, and `SystemAccount` and `SystemAccountCode`, which name the same
+system account by name and by code, are the `SystemAccount` and `SystemAccountCode` enums. A
+response missing a required field fails `dto()` with a `CannotCreateData`.
 
 ## Sale invoices, credit notes and payments
 

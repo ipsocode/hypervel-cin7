@@ -12,6 +12,8 @@ use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Ref\Account\AccountPostData;
+use Ipsocode\Cin7\Data\Ref\Account\AccountPutData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackPostData;
@@ -28,6 +30,8 @@ use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Ref\Account\PostAccount;
+use Ipsocode\Cin7\Requests\Ref\Account\PutAccount;
 use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PostSaleFulfilmentPack;
@@ -368,6 +372,32 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PostProduct(ProductPostData::from($product(['DeliveryMethod' => 'Interval', 'IntervalDays' => 7, 'IntervalStartDate' => '2017-12-25']))));
 
         $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A `BANK` account needs its bank and account number on either verb; any other type needs
+     * neither.
+     */
+    public function testABankAccountNeedsItsBankAndAccountNumber(): void
+    {
+        $account = ['Code' => '090', 'Name' => 'Business Bank Account', 'Type' => 'BANK', 'Status' => 'ACTIVE'];
+
+        foreach ([
+            'POST' => static fn (): WriteRequest => new PostAccount(AccountPostData::from($account)),
+            'PUT' => static fn (): WriteRequest => new PutAccount(AccountPutData::from($account)),
+        ] as $verb => $request) {
+            try {
+                $this->connector()->send($request());
+                $this->fail("The {$verb} body should have failed validation.");
+            } catch (ValidationException $exception) {
+                $this->assertSame(['Bank', 'BankAccountNumber'], array_keys($exception->errors()), $verb);
+            }
+        }
+
+        $this->connector()->send(new PostAccount(AccountPostData::from(['Type' => 'CURRLIAB'] + $account)));
+        $this->connector()->send(new PutAccount(AccountPutData::from($account + ['Bank' => 'Bank of Example', 'BankAccountNumber' => '12345678'])));
+
+        $this->mock->assertSentCount(2);
     }
 
     /**

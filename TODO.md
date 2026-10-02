@@ -113,11 +113,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [ ] `brand` · `ref/brand` · GET POST PUT DELETE
   - [ ] Brand: `BrandData`
 
-### `reference/chart-of-accounts/**` Chart of Accounts (1 resource, 4 operations)
-
-- [ ] `chart-of-accounts` · `ref/account` · GET POST PUT DELETE
-  - [ ] Chart of Accounts: `AccountData`
-
 ### `reference/customer/**` Customer (3 resources, 7 operations, 1 left)
 
 - [x] `customer` · `customer` · GET POST PUT
@@ -441,6 +436,11 @@ Built with the first resource that uses it.
 ## Done
 
 Every resource in these groups is in.
+
+### `reference/chart-of-accounts/**` Chart of Accounts (1 resource, 4 operations)
+
+- [x] `chart-of-accounts` · `ref/account` · GET POST PUT DELETE
+  - [x] Chart of Accounts: `AccountData`
 
 ### `reference/me/**` Me (3 resources, 9 operations)
 

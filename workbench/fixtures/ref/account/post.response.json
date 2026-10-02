@@ -1,0 +1,21 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "AccountsList": [
+        {
+            "Code": "001",
+            "Status": "ACTIVE",
+            "Name": "Accounts Payable test",
+            "Type": "CURRLIAB",
+            "Description": "Outstanding invoices the company has received from suppliers but has not yet paid at balance date",
+            "Class": "LIABILITY",
+            "SystemAccount": "Accounts payable",
+            "SystemAccountCode": "CREDITORS",
+            "BankAccountNumber": null,
+            "BankAccountId": null,
+            "ForPayments": false,
+            "DisplayName": "001: Accounts Payable test",
+            "OldCode": null
+        }
+    ]
+}

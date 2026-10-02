@@ -74,12 +74,13 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->moneyTaskList()` | `MoneyTaskListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleList()` | `SaleListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->saleCreditNoteList()` | `SaleCreditNoteListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
-| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`; a pure grouping, as V2 has no action on `/ref` |
+| `$cin7->ref()` | `RefResource` | `tax()`, `customer()`, `supplier()`, `account()`; a pure grouping, as V2 has no action on `/ref` |
 | `$cin7->ref()->tax()` | `Ref\TaxResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaxPostData $body)`, `put(array\|TaxPutData $body)` |
 | `$cin7->ref()->customer()` | `Ref\CustomerResource` | `credits()`; also a pure grouping |
 | `$cin7->ref()->customer()->credits()` | `Ref\Customer\CreditsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->ref()->supplier()` | `Ref\SupplierResource` | `deposits()`; also a pure grouping |
 | `$cin7->ref()->supplier()->deposits()` | `Ref\Supplier\DepositsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->ref()->account()` | `Ref\AccountResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|AccountPostData $body)`, `put(array\|AccountPutData $body)`, `delete(string $code)` |
 
 `…` stands for the optional query parameters, listed per request in
 [query parameters](requests.md#query-parameters).
@@ -229,8 +230,8 @@ $saved = $this->cin7->product()->put(ProductPutData::from([
 ## Ref
 
 The reference data lives under `ref/…`, so the chain spells the path:
-`$cin7->ref()->tax()`, `$cin7->ref()->customer()->credits()` and
-`$cin7->ref()->supplier()->deposits()`.
+`$cin7->ref()->tax()`, `$cin7->ref()->customer()->credits()`,
+`$cin7->ref()->supplier()->deposits()` and `$cin7->ref()->account()`.
 
 `ref/tax` lists under `TaxRuleList` (`{Total, Page, TaxRuleList}`). Its data classes are
 `TaxData` and `TaxComponentData`; `get()->dto()` is a `list<TaxData>`. `post()` takes a
@@ -256,6 +257,30 @@ foreach ($this->cin7->ref()->customer()->credits()->paginate(customerId: $guid)-
 foreach ($this->cin7->ref()->supplier()->deposits()->paginate(supplierId: $guid)->items() as $deposit) {
     // $deposit is one entry of SupplierDeposits
 }
+```
+
+`ref/account` is the chart of accounts. It lists under `AccountsList`
+(`{Total, Page, AccountsList}`), filtered by `code`, `name` (accounts whose name starts with it),
+`type` and `status`, and `get()->dto()` is a `list<AccountData>`. `post()` takes an
+`AccountPostData` and `put()` an `AccountPutData` as well as an array; the account's `Code` names
+it, and both answer with the saved `AccountData`. Cin7 refuses a PUT while the Xero or QuickBooks
+integration is on. `delete($code)` sends `ref/account?Code=…` and answers `{Success}`.
+
+```php
+use Ipsocode\Cin7\Data\Ref\Account\AccountPostData;
+
+$banks = $this->cin7->ref()->account()->get(type: 'BANK')->dto(); // list<AccountData>
+
+$saved = $this->cin7->ref()->account()->post(AccountPostData::from([
+    'Code' => '091',
+    'Name' => 'Savings Account',
+    'Type' => 'BANK',
+    'Status' => 'ACTIVE',
+    'Bank' => 'Bank of Example',
+    'BankAccountNumber' => '12345678',
+]))->dto(); // AccountData
+
+$this->cin7->ref()->account()->delete('091'); // DELETE ref/account?Code=091
 ```
 
 ## Money Task

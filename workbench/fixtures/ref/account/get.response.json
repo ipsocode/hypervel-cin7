@@ -1,0 +1,51 @@
+{
+    "Total": 3,
+    "Page": 1,
+    "AccountsList": [
+        {
+            "Code": "800",
+            "Status": "ACTIVE",
+            "Name": "Accounts Payable",
+            "Type": "CURRLIAB",
+            "Description": "Outstanding invoices the company has received from suppliers but has not yet paid at balance date",
+            "Class": "LIABILITY",
+            "SystemAccount": "Accounts payable",
+            "SystemAccountCode": "CREDITORS",
+            "BankAccountNumber": null,
+            "BankAccountId": null,
+            "ForPayments": false,
+            "DisplayName": "800: Accounts Payable",
+            "OldCode": null
+        },
+        {
+            "Code": "610",
+            "Status": "ACTIVE",
+            "Name": "Accounts Receivable",
+            "Type": "CURRENT",
+            "Description": "Outstanding invoices the company has issued out to the client but has not yet received in cash at balance date.",
+            "Class": "ASSET",
+            "SystemAccount": "Accounts receivable",
+            "SystemAccountCode": "DEBTORS",
+            "BankAccountNumber": null,
+            "BankAccountId": null,
+            "ForPayments": false,
+            "DisplayName": "610: Accounts Receivable",
+            "OldCode": null
+        },
+        {
+            "Code": "400",
+            "Status": "ACTIVE",
+            "Name": "Advertising",
+            "Type": "EXPENSE",
+            "Description": "Expenses incurred for advertising while trying to increase sales",
+            "Class": "EXPENSE",
+            "SystemAccount": null,
+            "SystemAccountCode": null,
+            "BankAccountNumber": null,
+            "BankAccountId": null,
+            "ForPayments": false,
+            "DisplayName": "400: Advertising",
+            "OldCode": null
+        }
+    ]
+}
