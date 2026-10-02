@@ -1,6 +1,7 @@
 {
     "name": "ipsocode/hypervel-cin7",
     "description": "Cin7 Core API client for Hypervel, built on hypervel/saloon",
+    "type": "library",
     "license": "MIT",
     "keywords": [
         "hypervel",
@@ -10,22 +11,29 @@
         "saloon",
         "coroutine"
     ],
+    "homepage": "https://github.com/ipsocode/hypervel-cin7",
+    "authors": [
+        {
+            "name": "Ipsocode",
+            "homepage": "https://github.com/ipsocode"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/ipsocode/hypervel-cin7/issues",
+        "source": "https://github.com/ipsocode/hypervel-cin7",
+        "security": "https://github.com/ipsocode/hypervel-cin7/security/policy"
+    },
     "require": {
-        "php": "^8.4",
-        "ext-json": "*",
-        "hypervel/contracts": "^0.4",
-        "hypervel/saloon": "^0.4",
-        "hypervel/support": "^0.4"
+        "hypervel/components": "0.4.x-dev"
     },
     "require-dev": {
         "brianium/paratest": "^7.24",
         "fakerphp/faker": "^1.24",
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "hypervel/components": "0.4.x-dev",
+        "friendsofphp/php-cs-fixer": "^3.57.2",
         "hypervel/testbench": "^0.4",
         "mockery/mockery": "^1.6",
-        "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^13.0.3",
+        "phpstan/phpstan": "^2.2.15",
+        "phpunit/phpunit": ">=13.0.3 <13.4",
         "symfony/yaml": "^8.0.12"
     },
     "autoload": {
@@ -70,9 +78,10 @@
         "test:purge": "@php vendor/bin/testbench package:purge-skeleton"
     },
     "scripts-descriptions": {
-        "analyse": "Run PHPStan at level 5 over src/ \u2014 the level hypervel/components uses.",
-        "lint": "Report coding-standard violations without changing anything.",
-        "lint:fix": "Apply the coding standard in .php-cs-fixer.dist.php.",
+        "analyse": "Run PHPStan over src/ with the level, settings and extensions hypervel/components uses.",
+        "conventions": "Run the conventions check with this package's settings, .github/conventions.php. Plain PHP: it needs no install.",
+        "lint": "Report the coding-standard changes php-cs-fixer would make, without writing them.",
+        "lint:fix": "Apply the coding standard. Risky rules are enabled (see .php-cs-fixer.dist.php) \u2014 run `composer test` afterwards, not just before committing.",
         "test": "Run the package suite through the Testbench CLI.",
         "test:phpunit": "Run the package suite through PHPUnit directly, bypassing the Testbench CLI.",
         "test:parallel": "Run the package suite through ParaTest.",

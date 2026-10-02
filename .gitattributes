@@ -2,6 +2,7 @@
 # gets src/, config/, docs/, composer.json, README.md and LICENSE.
 /.github export-ignore
 /.claude export-ignore
+/CLAUDE.md export-ignore
 /tests export-ignore
 /workbench export-ignore
 /.gitattributes export-ignore
