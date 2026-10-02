@@ -9,6 +9,7 @@ description: Build the rest of the Cin7 V2 reference in this package, by name an
 reference by its anchor, `reference/<group>/<resource>`, the page
 `https://dearinventory.docs.apiary.io/#reference/<group>/<resource>`. It ranks the groups High, Medium
 or Low, lists the models each resource documents with the class each becomes, and ticks what exists.
+`scripts/todo.py` writes it: the ticks come from the code, and the ranking from its `HIGH` and `LOW`.
 
 ## 1. What to build
 
@@ -29,7 +30,7 @@ Build only what is named. Asked for everything, or for no name, ask which groups
 ```sh
 export CIN7_BLUEPRINT="$SCRATCH/dearinventory.apib"   # any temporary directory
 curl -fsSL https://jsapi.apiary.io/apis/dearinventory.apib -o "$CIN7_BLUEPRINT"
-S=.github/claude/skills/cin7-models/scripts           # run with the host's python3
+S=docs/skills/cin7-models/scripts           # run with the host's python3
 python3 $S/names.py list reference/purchase           # the names, with what exists
 ```
 
@@ -103,9 +104,9 @@ one decision each.
   - "Not required for POST" in the notes means optional on the POST class.
 - A documented closed list of values is a string-backed enum in `src/Enums/`. Its cases are
   PascalCase and its values are the wire strings, as in `case NotAvailable = 'NOT AVAILABLE'`.
-  Reuse an enum with the same set, such as `TaskStatus`, `OrderStatus` or `InvoiceStatus`. Make no
-  enum where the examples contradict the list. A write-only subset ("For POST only …") is `#[In]` on
-  the write class.
+  `python3 $S/enums.py <Name> "<summary>" <value>...` writes one. Reuse an enum with the same set,
+  such as `TaskStatus`, `OrderStatus` or `InvoiceStatus`. Make no enum where the examples contradict
+  the list. A write-only subset ("For POST only …") is `#[In]` on the write class.
 - One class serves POST, PUT and the response while their rules agree. When they differ, split by
   verb:
   - `XData` is the response;
@@ -180,7 +181,7 @@ one decision each.
    `ci composer conventions` and `ci composer test:coverage`. The last must hold 100% line coverage:
    cover a line rather than ignore it.
 2. Re-read the diff against `names.py show`: every field, type, length, rule and operation.
-3. Tick the resource and its models in `TODO.md`.
+3. Refresh `TODO.md` with `python3 $S/todo.py`: it ticks the resource and its models from the code.
 4. Commit one resource, or one small group, per commit. The message says what it adds, and names the
    issue as `#<n>` when there is one.
 5. Push your branch only after the checks pass.

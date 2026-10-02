@@ -5,14 +5,15 @@ This file lives on `feature/saloon` only: delete it before `feature/saloon` merg
 Every resource of the reference, by its name `reference/<group>/<resource>` (the page
 `https://dearinventory.docs.apiary.io/#reference/<group>/<resource>`), grouped by reference group and
 ranked High, Medium or Low. Pick groups, or single resources, for an issue, then ask Claude Code to
-follow the cin7-models skill for them by name: `.github/claude/skills/cin7-models/SKILL.md`. Tick a
-resource when its requests, models, fixtures and tests are in and CI is green.
+follow the cin7-models skill for them by name: `docs/skills/cin7-models/SKILL.md`.
 
 Each resource gives its API path and operations, then the models its section documents, each with
 the class it becomes: ticked when the class exists.
 Each tier ends with the shared models (the reference's Other Models) its groups use.
 
-A resource is ticked once every operation has its request class.
+A resource is ticked once every operation has its request class. The ticks come from the code:
+refresh them with `python3 docs/skills/cin7-models/scripts/todo.py`, and move a group between
+tiers in that script's HIGH and LOW lists.
 
 ## High
 

@@ -9,7 +9,7 @@ CIN7_BLUEPRINT names the file; unset, it is dearinventory.apib in the system's t
 import hashlib, json, os, pathlib, re, sys, tempfile
 from functools import lru_cache
 
-REPO = pathlib.Path(__file__).resolve().parents[5]
+REPO = next(p for p in pathlib.Path(__file__).resolve().parents if (p / 'composer.json').is_file())
 SOURCE = 'https://jsapi.apiary.io/apis/dearinventory.apib'
 DOCS = 'https://dearinventory.docs.apiary.io/#'
 
