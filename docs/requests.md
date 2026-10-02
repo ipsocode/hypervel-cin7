@@ -36,7 +36,9 @@ $new = $this->cin7->customer()->post(['Name' => 'ACME'])->json();
 $this->cin7->customer()->put(['ID' => $guid, 'Name' => 'ACME Ltd']);
 ```
 
-`json()` returns Cin7's response decoded to an associative array. Requests are
+`json()` returns Cin7's response decoded to an associative array; `dto()` returns a typed
+data object where the request has one ([data](data.md)), and a `WriteRequest` takes a data
+object as its body as well as an array. Requests are
 never constructed directly by application code; go through the
 [resource](resources.md) accessor instead. Walking every page of a
 `ListRequest` is covered in [pagination](pagination.md).
