@@ -83,6 +83,9 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
 | `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
 | `GetSupplierDeposits` | `page`, `limit`, `supplierId`, `showUsedDeposits` |
+| `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
+| `GetMeContacts` | `page`, `limit`, `id`, `name`, `type` (`ContactType`), `defaultForType`, `phone`, `fax`, `email` |
+| `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
 | `GetMoneyTaskList` | `page`, `limit`, `status` (`CompletionStatus`), `search`, `taskType` (`MoneyTaskType`) |
 | `GetMoneyTask` | **`taskId`** |
 | `DeleteMoneyTask` | **`id`**, `void` |
@@ -123,6 +126,18 @@ The `supplier` actions, under `src/Requests/Supplier/`, are the customer's in sh
 (`WriteRequest`s, whose data object bodies are `SupplierPostData` and `SupplierPutData`; the PUT
 body carries `ID`). `GetSupplier`'s `dto()` is a `list<SupplierData>`, and the POST and PUT
 `dto()` is the saved supplier (`SupplierList.0`).
+
+The `me` actions live under `src/Requests/Me/`: `GetMe`, a `Cin7Request` that takes no
+parameters, on `me`, whose `dto()` is a `MeData`; and one folder per sub-path, where each path
+has the same four classes:
+
+| Folder | Classes | `dto()` |
+|---|---|---|
+| `Addresses/` | `GetMeAddresses` (a `ListRequest` keyed `MeAddressesList`), `PostMeAddresses`, `PutMeAddresses` (the PUT body carries `AddressID`), `DeleteMeAddresses` (`ID`) | `list<MeAddressData>` for the GET, `MeAddressData` for POST and PUT (`MeAddressesList.0`); none for the DELETE, whose `{Success}` is left to `json()` |
+| `Contacts/` | `GetMeContacts` (a `ListRequest` keyed `MeContactsList`), `PostMeContacts`, `PutMeContacts` (the PUT body carries `ContactID`), `DeleteMeContacts` (`ID`) | `list<MeContactData>` for the GET, `MeContactData` for POST and PUT (`MeContactsList.0`); none for the DELETE |
+
+Their data object bodies are `MeAddressPostData` and `MeAddressPutData`, and `MeContactPostData`
+and `MeContactPutData`.
 
 The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
 `TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are

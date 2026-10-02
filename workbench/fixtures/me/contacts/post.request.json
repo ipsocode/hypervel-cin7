@@ -1,0 +1,10 @@
+{
+    "Name": "DEFAULT Business contact",
+    "Phone": "12345678",
+    "Fax": null,
+    "Email": "contact@example.com",
+    "Website": null,
+    "Comment": null,
+    "Type": "Business",
+    "DefaultForType": true
+}

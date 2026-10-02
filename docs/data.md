@@ -52,6 +52,8 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   |---|---|---|
   | `AbstractCustomerData` | `CustomerData`, `CustomerPostData`, `CustomerPutData` | `Name`, `Currency`, `PaymentTerm`, `AccountReceivable`, `RevenueAccount`, `TaxRule` |
   | `AbstractSupplierData` | `SupplierData`, `SupplierPostData`, `SupplierPutData` | `Name`, `Currency`, `PaymentTerm`, `AccountPayable`, `TaxRule` |
+  | `AbstractMeAddressData` | `MeAddressData`, `MeAddressPostData`, `MeAddressPutData` | `Line1`, `CitySuburb`, `StateProvince`, `ZipPostCode`, `Country`, `Type` |
+  | `AbstractMeContactData` | `MeContactData`, `MeContactPostData`, `MeContactPutData` | `Name` |
   | `AbstractMoneyTaskData` | `MoneyTaskData`, `MoneyTaskPostData`, `MoneyTaskPutData` | `TaskType`, `Status`, `BankAccount`, `Date` |
   | `AbstractTaxData` | `TaxData`, `TaxPostData`, `TaxPutData` | `Name`, `Account`, `IsActive`, `TaxInclusive` |
   | `AbstractProductData` | `ProductData`, `ProductPostData`, `ProductPutData` | `SKU`, `Name`, `Category`, `CostingMethod`, `UOM`, `Status`; and `QuantityToProduce` and `AssemblyCostEstimationMethod` on a write body with a bill of materials (see [products](#products)) |
@@ -80,12 +82,12 @@ $raw = $saved->getResponse()->json();                 // the untouched body
 - **A required field has no default.** It is not nullable, and the model cannot be built
   without it: `from()` throws a `Hypervel\Data\Exceptions\CannotCreateData`. Required fields
   come first in the constructor. Every class requires the fields its table does (see
-  [customers](#customers), [suppliers](#suppliers), [products](#products), [tax rules and money
-  tasks](#tax-rules-and-money-tasks) and
+  [customers](#customers), [suppliers](#suppliers), [me](#me), [products](#products),
+  [tax rules and money tasks](#tax-rules-and-money-tasks) and
   [sale invoices, credit notes and payments](#sale-invoices-credit-notes-and-payments)), as do
-  the parents above; the Money Task List, Customer Credits and Supplier Deposits tables require
-  none. Where the
-  reference requires different fields per verb, the body is a class per verb.
+  the parents above; the Money Task List, Customer Credits, Supplier Deposits, ME and Rounding
+  Table tables require none. Where the reference requires different fields per verb, the body
+  is a class per verb.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
   key for every field, `null` where the response had none or sent `null`.
@@ -98,7 +100,9 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   is typed with a string-backed enum from `src/Enums/`: `?SaleStatus $Status = null`, or
   `TaskStatus $Status` when required. Case names are PascalCase and the values are the wire
   strings verbatim (`TaskStatus::NotAvailable` is `'NOT AVAILABLE'`), so `toArray()` sends
-  what Cin7 expects. Fields with the same list share one enum, and a field whose list is a
+  what Cin7 expects. Where the wire values are abbreviations, the cases take the names the
+  reference gives them: `WeightUnit::Gram` is `'g'` and `AdjustmentRule::NoAdjustment` is `'N'`.
+  Fields with the same list share one enum, and a field whose list is a
   subset of another's uses the larger enum. A response value outside its enum fails `dto()`
   with a `Hypervel\Data\Exceptions\CannotCastEnum`; the fix is a new case. Where the
   examples contradict a list, the field stays a string (see
@@ -176,6 +180,9 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `ref/tax` | POST: `TaxPostData`; PUT: `TaxPutData`, which also requires `ID` (Tax, with `Components`: `TaxComponentData`, Tax Component Model) | GET: `list<TaxData>`; POST, PUT: `TaxData`, the saved rule (`TaxRuleList.0`) |
 | `ref/customer/credits` | none | GET: `list<CustomerCreditData>` (Customer Credits) |
 | `ref/supplier/deposits` | none | GET: `list<SupplierDepositData>` (Supplier Deposits) |
+| `me` | none | GET: `MeData` (ME, with `RoundingTable`: `RoundingTableData`, Rounding Table Model) |
+| `me/addresses` | POST: `MeAddressPostData`; PUT: `MeAddressPutData`, which also requires `AddressID` (Me Address) | GET: `list<MeAddressData>`; POST, PUT: `MeAddressData`, the saved address (`MeAddressesList.0`); DELETE: `{Success}`, left to `json()` |
+| `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
 | `moneyOperation` | POST: `MoneyTaskPostData`; PUT: `MoneyTaskPutData`, which also requires `TaskID` (Money Task, with `Lines`: `MoneyTaskLineData`, Money Task Line Model) | GET, POST, PUT, DELETE: `MoneyTaskData`, with `Transactions`: `TransactionStockLineData` (Transaction Stock Line Model) and `Attachments`: `AttachmentLineData` |
 | `moneyTaskList` | none | GET: `list<MoneyTaskListData>` (Money Task List) |
 | `sale` | POST: `SalePostData`; PUT: `SalePutData`, which also requires `ID` (Sale POST/PUT Attributes, with `BillingAddress`: `AddressData`, `ShippingAddress`: `SaleShippingAddressData`, `AdditionalAttributes`: `AdditionalAttributeData`) | GET, POST, PUT, DELETE: `SaleData` (Sale) |
@@ -250,10 +257,6 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   fields": `ProductLength`, `ProductWidth`, `ProductHeight`, `ProductWeight`, `WeightUnits`,
   `DimensionsUnits` and `ProductCustomField1`–`10`. The sale line, pick and pack line and
   inventory movement classes take them from the `HasProductFields` trait.
-- **Weight and dimension units.** The Dimension Unit Available Values list `WeightUnits` (`oz`,
-  `mg`, `kg`, `lb`, `g`) and `DimensionsUnits` (`m`, `cm`, `mi`, `mm`, `in`, `ft`, `yd`, `km`)
-  by abbreviation, but most examples send `""`, and some `null`. The `HasProductFields` fields
-  stay strings of up to 10 characters, with no enum.
 - **Nulls.** `ExternalID`, `SourceChannel`, `Ship.RequireBy` and the invoice, due and ship
   dates and numbers of a Sale List row are `null` in the examples, so those properties admit
   `null`.
@@ -396,6 +399,34 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Sale attachment delete.** The reference marks the `ID` of `DELETE sale/attachment` optional;
   a delete names what it deletes, so `DeleteSaleAttachment` requires it. The POST example's base64
   `Content` is a 62 KB image; the fixture keeps its first 32 characters.
+- **ME value lists in the Required column.** The ME table writes the values of
+  `TaxCalculationMethod` (`Row Total`, `Total`) and `DiscountRule` (`Discount`, `Price`) in its
+  Required column, and the Rounding Table its `AdjustmentRule` letters (`N`, `S`, `A`). They are
+  value lists, not requirements: the fields are optional, typed `TaxCalculationMethod`,
+  `DiscountRule` and `AdjustmentRule`. The product's `DiscountRule`, the name of a discount, is
+  another field, and stays a string.
+- **Units of weight and length.** The Dimension Unit Available Values give each unit an
+  abbreviation and a name. The abbreviation is the wire value, as the `me` example's `g` and `cm`
+  show, so `MeData`'s `DefaultWeightUnits` and `DefaultDimensionsUnits` are `WeightUnit` and
+  `DimensionUnit`, whose cases take the names, spelt correctly: the table's `ounces`, `miligramm`
+  and `kilogramm` are `Ounce`, `Milligram` and `Kilogram`. The product's `WeightUnits` and
+  `DimensionsUnits`, and the lines' (`HasProductFields`), were built before these enums and stay
+  strings; the sale examples send `""` for a line's units, outside the list.
+- **Rounding Table `AdjustmentValue`.** The table types it `String`, but the example sends `0`;
+  `RoundingTableData` accepts both (`string|float`).
+- **A staff account in the `me` examples.** The `me` example's company name and the
+  `me/contacts` examples' e-mail addresses are a Cin7 staff test account's; the fixtures say
+  `Example Company` and use `example.com` addresses.
+- **Me Address `AddressID` and Me Contact `ContactID`.** The tables mark neither required, but a
+  PUT changes the record its ID names, so `MeAddressPutData` and `MeContactPutData` require it;
+  the POST classes have none, since Cin7 assigns it, and `MeAddressData` and `MeContactData` leave
+  it optional.
+- **Me Contact `Type`.** It lists `Billing`, `Business`, `Sale`, `Shipping` and `Employee`. The
+  addresses' list is a subset of it, but an address is never a `Sale` or an `Employee` one, so the
+  contact's list is an enum of its own, `ContactType`, and the addresses keep `AddressType`.
+- **Me Contact `CRMID` and `ReferenceCount`.** The PUT response example carries both, as `null`
+  and `0`, and the table lists neither. `MeContactData` models them, `CRMID` as a string and
+  `ReferenceCount` as an `int`; the write bodies do not take them.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
   removed in its fixture.
@@ -432,6 +463,32 @@ Its `Addresses` and `Contacts` are the customer's `CustomerAddressData` and
 `CustomerContactData`, from `src/Data/Other/` (see [customers](#customers)). `LastModifiedOn` is
 on `SupplierData` alone. A response missing a required field fails `dto()` with a
 `CannotCreateData`.
+
+## Me
+
+`me` is the company the API application belongs to and the settings its documents follow, and
+`me/addresses` and `me/contacts` its addresses and contacts, each with a class per verb because
+`AddressID` and `ContactID` are taken by PUT and the response only. Each class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `MeData` (response) | `src/Data/Me/` | none |
+| `RoundingTableData` | `src/Data/Me/` | none |
+| `MeAddressData` (response) | `src/Data/Me/Addresses/` | `Line1`, `CitySuburb`, `StateProvince`, `ZipPostCode`, `Country`, `Type` |
+| `MeAddressPostData` | `src/Data/Me/Addresses/` | `Line1`, `CitySuburb`, `StateProvince`, `ZipPostCode`, `Country`, `Type` |
+| `MeAddressPutData` | `src/Data/Me/Addresses/` | `Line1`, `CitySuburb`, `StateProvince`, `ZipPostCode`, `Country`, `Type`, `AddressID` |
+| `MeContactData` (response) | `src/Data/Me/Contacts/` | `Name` |
+| `MeContactPostData` | `src/Data/Me/Contacts/` | `Name` |
+| `MeContactPutData` | `src/Data/Me/Contacts/` | `Name`, `ContactID` |
+
+The settings with a value list are enums: `DefaultWeightUnits` is a `WeightUnit`,
+`DefaultDimensionsUnits` a `DimensionUnit`, `TaxCalculationMethod` a `TaxCalculationMethod`,
+`DiscountRule` a `DiscountRule`, and a rounding row's `AdjustmentRule` an `AdjustmentRule` (see
+[above](#where-the-references-tables-and-examples-disagree)). `LockDate` and `OpeningBalanceDate`
+are dates, which the example sends as `yyyy-MM-ddTHH:mm:ss`. An address's `Type` is the
+`AddressType` of the customer and supplier addresses, and a contact's a `ContactType`, which the
+contact does not require. `CRMID` and `ReferenceCount` are on `MeContactData` alone. A response
+missing a required field fails `dto()` with a `CannotCreateData`.
 
 ## Products
 
