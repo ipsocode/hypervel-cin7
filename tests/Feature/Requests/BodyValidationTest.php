@@ -19,6 +19,7 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPostData;
 use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
@@ -57,6 +58,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\InventoryWriteOff\PostInventoryWriteOff;
 use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
@@ -438,6 +440,27 @@ class BodyValidationTest extends TestCase
 
         $this->connector()->send(new PostStockTransfer(StockTransferPostData::from([...$body, ...$locations])));
         $this->connector()->send(new PostStockTransfer(StockTransferPostData::from([...$body, ...$locations, 'Status' => 'IN TRANSIT', 'InTransitAccount' => '715', 'DepartureDate' => '2018-03-12T00:00:00'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * An inventory write-off needs a location, by `LocationID` or `Location`, and a completed one
+     * its `EffectiveDate`; a body without them is not sent, and each line needs its product.
+     */
+    public function testAnInventoryWriteOffNeedsItsLocationItsDateAndItsLineProducts(): void
+    {
+        $body = ['Status' => 'COMPLETED', 'Account' => '404'];
+
+        try {
+            $this->connector()->send(new PostInventoryWriteOff(InventoryWriteOffPostData::from($body + ['Lines' => [['Quantity' => 1]]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['LocationID', 'Location', 'EffectiveDate', 'Lines.0.ProductID', 'Lines.0.ProductCode'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostInventoryWriteOff(InventoryWriteOffPostData::from($body + ['Location' => 'Main Warehouse', 'EffectiveDate' => '2018-01-12T00:00:00', 'Lines' => [['Quantity' => 1, 'ProductCode' => 'Bread']]])));
+        $this->connector()->send(new PostInventoryWriteOff(InventoryWriteOffPostData::from(['Status' => 'DRAFT', 'Account' => '404', 'LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb'])));
 
         $this->mock->assertSentCount(2);
     }

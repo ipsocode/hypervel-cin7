@@ -74,6 +74,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->stockTransferList()` | `StockTransferListResource` | `get($page, $limit, ?StockTransferStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->stockTransfer()` | `StockTransferResource` | `get(string $taskId)`, `post(array\|StockTransferPostData $body)`, `put(array\|StockTransferPutData $body)`, `delete(string $id, ?bool $void = null)`; `order()` |
 | `$cin7->stockTransfer()->order()` | `StockTransfer\OrderResource` | `get(string $taskId)`, `post(array\|StockTransferOrderPostData $body)` |
+| `$cin7->inventoryWriteOffList()` | `InventoryWriteOffListResource` | `get($page, $limit, ?CompletionStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->inventoryWriteOff()` | `InventoryWriteOffResource` | `get(string $taskId)`, `post(array\|InventoryWriteOffPostData $body)`, `put(array\|InventoryWriteOffPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
@@ -1210,4 +1212,27 @@ $transfer = $this->cin7->stockTransfer()->post(StockTransferPostData::from([
     'ToLocation' => 'Main Warehouse: Bin 1',
     'Lines' => [['SKU' => 'Bread', 'TransferQuantity' => 100]],
 ]))->dto(); // StockTransferData
+```
+
+## Inventory write-off
+
+`$cin7->inventoryWriteOffList()` is `inventoryWriteOffList`, filtered by `status` (a
+`CompletionStatus`) and `search`; its `dto()` is a `list<InventoryWriteOffListData>`.
+
+`$cin7->inventoryWriteOff()` is `inventoryWriteOff`, keyed by `TaskID`. `post()` takes an
+`InventoryWriteOffPostData` and `put()` an `InventoryWriteOffPutData`, which requires `TaskID`, as
+well as an array. A body needs its `Status` (`DRAFT` or `COMPLETED`), its `Account`, a location by
+`LocationID` or `Location`, and an `EffectiveDate` when it is `COMPLETED`; each line
+(`InventoryWriteOffLineData`) needs its `Quantity` and a product by `ProductID` or `ProductCode`.
+Every action answers with the write-off, so `dto()` is an `InventoryWriteOffData`, with its
+`InventoryWriteOffNumber`, its `Transactions` and the `Errors` of a POST or PUT that created the task
+despite them. `delete($id, void: true)` voids it.
+
+```php
+$writeOff = $this->cin7->inventoryWriteOff()->post(InventoryWriteOffPostData::from([
+    'Status' => 'DRAFT',
+    'Account' => '404',
+    'Location' => 'Main Warehouse',
+    'Lines' => [['ProductCode' => 'Bread', 'Quantity' => 2]],
+]))->dto(); // InventoryWriteOffData
 ```

@@ -32,15 +32,6 @@ Every group not ranked yet: move a group up or down as issues are planned.
 - [x] `customer-credits` · `ref/customer/credits` · GET
   - [x] Customer Credits: `CustomerCreditData`
 
-### `reference/inventory-write-off/**` Inventory Write-Off (2 resources, 5 operations)
-
-- [ ] `inventory-write-off-list` · `inventoryWriteOffList` · GET
-  - [ ] Inventory Write-Off List: `InventoryWriteOffListData`
-- [ ] `inventory-write-off` · `inventoryWriteOff` · GET POST PUT DELETE
-  - [ ] Inventory Write-Off: `InventoryWriteOffData`
-  - [ ] Inventory Write-Off POST/PUT body: `InventoryWriteOffPostData`
-  - [ ] Inventory Write-Off POST/PUT body: `InventoryWriteOffPutData`
-
 ### `reference/location/**` Location (1 resource, 4 operations)
 
 - [ ] `location` · `ref/location` · GET POST PUT DELETE
@@ -108,7 +99,7 @@ Built with the first resource that uses it.
 - [x] ProductMovementModel: `ProductMovementData` · used by product
 - [x] ErrorModel: `ErrorData` · used by disassembly, finished-goods, inventory-write-off
 - [x] AttributeSetLineModel: `AttributeSetLineData` · used by attribute-set
-- [ ] InventoryWriteOffLineModel: `InventoryWriteOffLineData` · used by inventory-write-off
+- [x] InventoryWriteOffLineModel: `InventoryWriteOffLineData` · used by inventory-write-off
 - [x] TaxComponentModel: `TaxComponentData` · used by tax
 - [x] MoneyTaskLineModel: `MoneyTaskLineData` · used by money-operation
 - [x] SupplierAddressModel: `CustomerAddressData` · used by customer, supplier, lead
@@ -307,6 +298,15 @@ Every resource in these groups is in.
 
 - [x] `fixed-asset-type` · `ref/fixedassettype` · GET POST PUT
   - [x] Fixed Asset Types: `FixedAssetTypeData`
+
+### `reference/inventory-write-off/**` Inventory Write-Off (2 resources, 5 operations)
+
+- [x] `inventory-write-off-list` · `inventoryWriteOffList` · GET
+  - [x] Inventory Write-Off List: `InventoryWriteOffListData`
+- [x] `inventory-write-off` · `inventoryWriteOff` · GET POST PUT DELETE
+  - [x] Inventory Write-Off: `InventoryWriteOffData`
+  - [x] Inventory Write-Off POST/PUT body: `InventoryWriteOffPostData`
+  - [x] Inventory Write-Off POST/PUT body: `InventoryWriteOffPutData`
 
 ### `reference/journal/**` Journal (1 resource, 4 operations)
 

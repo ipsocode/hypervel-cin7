@@ -1,0 +1,53 @@
+{
+    "TaskID": "bf0cd3c6-a525-4105-a5a9-067bf4dbb43e",
+    "InventoryWriteOffNumber": "FG-00034",
+    "Status": "DRAFT",
+    "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+    "Location": "Main Warehouse",
+    "Account": "404",
+    "EffectiveDate": "2018-01-12T00:00:00",
+    "Notes": "Test",
+    "Lines": [
+        {
+            "ProductID": "524c20a3-a8ec-44f2-9685-311f1f7d1498",
+            "ProductCode": "Bread",
+            "Name": "Baked Bread",
+            "BinID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Bin": "Main Warehouse",
+            "BatchSN": "FG-00014",
+            "ExpiryDate": "2018-01-10T00:00:00",
+            "ExpenseAccount": null,
+            "Quantity": 2,
+            "Cost": 0,
+            "TotalCost": 0
+        },
+        {
+            "ProductID": "524c20a3-a8ec-44f2-9685-311f1f7d1498",
+            "ProductCode": "Bread",
+            "Name": "Baked Bread",
+            "BinID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Bin": "Main Warehouse",
+            "BatchSN": "FG-00014",
+            "ExpiryDate": "2018-01-10T00:00:00",
+            "ExpenseAccount": null,
+            "Quantity": 2,
+            "Cost": 0,
+            "TotalCost": 0
+        },
+        {
+            "ProductID": "5c6a9204-275f-4a8b-8a90-317d674a4504",
+            "ProductCode": "Train-MS",
+            "Name": "Half day training - Microsoft Office",
+            "BinID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Bin": "Main Warehouse",
+            "BatchSN": null,
+            "ExpiryDate": null,
+            "ExpenseAccount": "404",
+            "Quantity": 1,
+            "Cost": -1,
+            "TotalCost": -1
+        }
+    ],
+    "Transactions": [],
+    "Errors": []
+}

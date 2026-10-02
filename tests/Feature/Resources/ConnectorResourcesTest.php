@@ -14,6 +14,8 @@ use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
+use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
+use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
 use Ipsocode\Cin7\Resources\Me\ContactsResource;
@@ -314,6 +316,16 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->stockTransferList(), $connector->stockTransferList());
         $this->assertInstanceOf(StockTransferOrderResource::class, $connector->stockTransfer()->order());
         $this->assertNotSame($connector->stockTransfer()->order(), $connector->stockTransfer()->order());
+    }
+
+    public function testInventoryWriteOffResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(InventoryWriteOffResource::class, $connector->inventoryWriteOff());
+        $this->assertNotSame($connector->inventoryWriteOff(), $connector->inventoryWriteOff());
+        $this->assertInstanceOf(InventoryWriteOffListResource::class, $connector->inventoryWriteOffList());
+        $this->assertNotSame($connector->inventoryWriteOffList(), $connector->inventoryWriteOffList());
     }
 
     public function testMeReturnsAFreshMeResource(): void

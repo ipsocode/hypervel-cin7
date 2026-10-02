@@ -219,6 +219,8 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `stockTransferList` | none | GET: `list<StockTransferListData>` (Stock Transfer List), read from `StockTransferList` |
 | `stockTransfer` | POST: `StockTransferPostData`; PUT: `StockTransferPutData`, which also requires `TaskID` (Stock Transfer, with `Lines`: `StockTransferLineData`, Stock Transfer Line Model) | GET, POST, PUT, DELETE: `StockTransferData` (Stock Transfer, with `Order`: `StockTransferOrderData`, Stock Transfer Order Model, whose `Lines` are `StockTransferOrderLineData`) |
 | `stockTransfer/order` | POST: `StockTransferOrderPostData` (Stock Transfer Order) | GET, POST: `StockTransferOrderData` |
+| `inventoryWriteOffList` | none | GET: `list<InventoryWriteOffListData>` (Inventory Write-Off List), read from `InventoryWriteOffs` |
+| `inventoryWriteOff` | POST: `InventoryWriteOffPostData`; PUT: `InventoryWriteOffPutData`, which also requires `TaskID` (Inventory Write-Off POST/PUT, with `Lines`: `InventoryWriteOffLineData`, Inventory Write-Off Line Model) | GET, POST, PUT, DELETE: `InventoryWriteOffData` (Inventory Write-Off, with `Transactions`: `TransactionStockLineData` and `Errors`: `ErrorData`) |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
 | `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
@@ -1427,3 +1429,21 @@ requires:
   `#[RequiredIf('Status', …)]`; `BatchSN` and `ExpiryDate` depend on the product's costing method and
   stay optional.
 - **Examples.** The examples need no correction.
+
+`inventoryWriteOff` has a class per verb because `TaskID` is taken by PUT and the response only. Each
+class requires:
+
+| Class | Folder | Required |
+|---|---|---|
+| `InventoryWriteOffData` (response) | `src/Data/InventoryWriteOff/` | `Status`, `Account` |
+| `InventoryWriteOffPostData` | `src/Data/InventoryWriteOff/` | `Status`, `Account`; and `LocationID` or `Location` (`#[RequiredWithout]`), `EffectiveDate` when `Status` is `COMPLETED` (`#[RequiredIf]`) |
+| `InventoryWriteOffPutData` | `src/Data/InventoryWriteOff/` | the same, and `TaskID` |
+| `InventoryWriteOffLineData` | `src/Data/InventoryWriteOff/` | `Quantity`; and `ProductID` or `ProductCode` |
+| `InventoryWriteOffListData` | `src/Data/InventoryWriteOffList/` | nothing |
+
+- **`Location`** is typed Decimal in the POST/PUT table, copied from the field above it: it is the
+  location's name, a string.
+- **`ExpenseAccount` and `Cost`** on a line are "Yes*", required for a service product, which a line
+  cannot tell, so they stay optional; `TotalCost` is read-only.
+- **Examples.** The examples send `""` and `null` for fields they leave out; the fixtures are the
+  seven of them, unchanged.
