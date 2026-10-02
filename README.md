@@ -134,10 +134,18 @@ worker's lifetime is safe.
   top ([docs/data.md](docs/data.md)), shown here for a customer:
 
   ```php
-  use Ipsocode\Cin7\Data\Customer\CustomerData;
+  use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 
-  // Only the keys you set are sent.
-  $response = $cin7->customer()->post(CustomerData::from(['Name' => 'ACME', 'Currency' => 'GBP']));
+  // The fields the reference requires must be given; of the rest, only the keys you set are sent.
+  $response = $cin7->customer()->post(CustomerPostData::from([
+      'Name' => 'ACME',
+      'Status' => 'Active',
+      'Currency' => 'GBP',
+      'PaymentTerm' => '30 days',
+      'AccountReceivable' => '610',
+      'RevenueAccount' => '200',
+      'TaxRule' => 'Tax Exempt',
+  ]));
 
   $customer = $response->dto();                      // CustomerData
   $customers = $cin7->customer()->get()->dto();      // list<CustomerData>

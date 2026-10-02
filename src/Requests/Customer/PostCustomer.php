@@ -10,8 +10,9 @@ use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `POST customer`, body is a Customer; the response is the saved Customer.
- * Cin7 marks `LastModifiedOn`, `ChildCustomers` (response only) and the price's `ProductName` read-only, so they are left out of the body.
+ * `POST customer`, body is a `CustomerPostData`; the response is the saved Customer.
+ * Cin7 marks `LastModifiedOn`, `ChildCustomers` (response only) and the price's `ProductName`
+ * read-only, so they are left out of an array body.
  *
  * @extends WriteRequest<CustomerData>
  */

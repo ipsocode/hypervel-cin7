@@ -13,7 +13,7 @@ use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
 use InvalidArgumentException;
-use Ipsocode\Cin7\Data\Customer\CustomerData;
+use Ipsocode\Cin7\Data\Customer\CustomerPutData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Enums\CountryFormat;
@@ -200,7 +200,9 @@ class RequestBuildingTest extends TestCase
      */
     public function testANullIsSentOnlyFromAnArrayBody(): void
     {
-        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'], $this->send(new PutCustomer(CustomerData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null])))->body());
+        $customer = Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1');
+
+        $this->assertArrayNotHasKey('TaxNumber', $this->send(new PutCustomer(CustomerPutData::from([...$customer, 'TaxNumber' => null])))->body());
         $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null], $this->send(new PutCustomer(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null]))->body());
     }
 

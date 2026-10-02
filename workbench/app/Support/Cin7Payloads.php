@@ -55,6 +55,10 @@ final class Cin7Payloads
             'Name' => $name,
             'Status' => 'Active',
             'Currency' => 'GBP',
+            'PaymentTerm' => '30 days',
+            'AccountReceivable' => '610',
+            'RevenueAccount' => '200',
+            'TaxRule' => 'Tax Exempt',
         ];
     }
 

@@ -55,7 +55,7 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 
 | Accessor | Resource | Methods |
 |---|---|---|
-| `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerData $body)`, `put(array\|CustomerData $body)` |
+| `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductData $body)`, `put(array\|ProductData $body)` |
 | `$cin7->moneyOperation()` | `MoneyOperationResource` | `get(string $taskId)`, `post(array\|MoneyTaskData $body)`, `put(array\|MoneyTaskData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)` |
@@ -82,15 +82,21 @@ $match = $this->cin7->customer()->get(id: $guid)->json('CustomerList')[0] ?? nul
 
 `get()->dto()` is a `list<CustomerData>`, with `Addresses` (`CustomerAddressData`), `Contacts`
 (`CustomerContactData`), `ProductPrices` (`ProductPriceData`) and `ChildCustomers`
-(`ChildCustomerData`). `post()` and `put()` accept a `CustomerData` as well as an array (see
-[data](data.md)), and answer with the saved customer: their `dto()` is a `CustomerData`.
+(`ChildCustomerData`). `post()` takes a `CustomerPostData` and `put()` a `CustomerPutData` as well
+as an array (see [data](data.md)), and both answer with the saved customer: their `dto()` is a
+`CustomerData`.
 
 ```php
 $customers = $this->cin7->customer()->get(id: $guid)->dto(); // list<CustomerData>
 
-$saved = $this->cin7->customer()->post(CustomerData::from([
+$saved = $this->cin7->customer()->post(CustomerPostData::from([
     'Name' => 'ACME',
+    'Status' => 'Active',
     'Currency' => 'GBP',
+    'PaymentTerm' => '30 days',
+    'AccountReceivable' => '610',
+    'RevenueAccount' => '200',
+    'TaxRule' => 'Tax Exempt',
     'Addresses' => [['Line1' => '1 High St', 'Country' => 'UK', 'Type' => 'Billing']],
 ]))->dto(); // CustomerData
 ```
