@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
+use Ipsocode\Cin7\Resources\Me\ContactsResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
@@ -135,7 +136,9 @@ class ConnectorResourcesTest extends TestCase
         $me = $this->connector()->me();
 
         $this->assertInstanceOf(AddressesResource::class, $me->addresses());
+        $this->assertInstanceOf(ContactsResource::class, $me->contacts());
         $this->assertNotSame($me->addresses(), $me->addresses());
+        $this->assertNotSame($me->contacts(), $me->contacts());
     }
 
     public function testAFulfilmentReturnsItsPickPackAndShip(): void

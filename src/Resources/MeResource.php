@@ -9,10 +9,11 @@ use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Requests\Me\GetMe;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
+use Ipsocode\Cin7\Resources\Me\ContactsResource;
 
 /**
- * `me`, the company the API application belongs to; `addresses()` is the `me/addresses`
- * sub-resource.
+ * `me`, the company the API application belongs to; `addresses()` and `contacts()` are the
+ * `me/…` sub-resources.
  *
  * @extends BaseResource<Cin7Connector>
  */
@@ -32,5 +33,13 @@ final class MeResource extends BaseResource
     public function addresses(): AddressesResource
     {
         return new AddressesResource($this->connector);
+    }
+
+    /**
+     * The `me/contacts` resource, the company's contacts.
+     */
+    public function contacts(): ContactsResource
+    {
+        return new ContactsResource($this->connector);
     }
 }

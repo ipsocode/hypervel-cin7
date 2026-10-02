@@ -61,8 +61,9 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 |---|---|---|
 | `$cin7->customer()` | `CustomerResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|CustomerPostData $body)`, `put(array\|CustomerPutData $body)` |
 | `$cin7->supplier()` | `SupplierResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|SupplierPostData $body)`, `put(array\|SupplierPutData $body)` |
-| `$cin7->me()` | `MeResource` | `get()`; `addresses()` |
+| `$cin7->me()` | `MeResource` | `get()`; `addresses()`, `contacts()` |
 | `$cin7->me()->addresses()` | `Me\AddressesResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeAddressPostData $body)`, `put(array\|MeAddressPutData $body)`, `delete(string $id)` |
+| `$cin7->me()->contacts()` | `Me\ContactsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeContactPostData $body)`, `put(array\|MeContactPutData $body)`, `delete(string $id)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
@@ -177,6 +178,21 @@ $saved = $this->cin7->me()->addresses()->post(MeAddressPostData::from([
 ]))->dto(); // MeAddressData
 
 $this->cin7->me()->addresses()->delete($addressId); // DELETE me/addresses?ID=…
+```
+
+`$cin7->me()->contacts()` is its twin for the company's contacts, on `me/contacts`: it lists under
+`MeContactsList`, filtered by `id`, `name` (contacts whose name starts with it), `type` (a
+`ContactType`), `defaultForType`, `phone`, `fax` and `email`, and `get()->dto()` is a
+`list<MeContactData>`. `post()` takes a `MeContactPostData` and `put()` a `MeContactPutData`, which
+requires `ContactID`; both answer with the saved `MeContactData`, and `delete($id)` with
+`{Success}`.
+
+```php
+use Ipsocode\Cin7\Enums\ContactType;
+
+foreach ($this->cin7->me()->contacts()->paginate(type: ContactType::Employee)->items() as $contact) {
+    // $contact is one entry of MeContactsList
+}
 ```
 
 ## Product
@@ -380,6 +396,7 @@ key:
 | `customer` | `ID` |
 | `supplier` | `ID` |
 | `me/addresses` | `AddressID` |
+| `me/contacts` | `ContactID` |
 | `product` | `ID` |
 | `ref/tax` | `ID` |
 | `sale` | `ID` |
