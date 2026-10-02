@@ -956,6 +956,67 @@ final class Cin7Payloads
     }
 
     /**
+     * Money Task, copied from the reference's `moneyOperation` GET example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function moneyTask(): array
+    {
+        return [
+            'TaskID' => 'c1aa3e7b-b085-4ef1-bec0-680505f97491',
+            'TaskType' => 'Receive Money',
+            'Status' => 'COMPLETED',
+            'BankAccount' => '718',
+            'CurrencyConversionRate' => 1,
+            'SupplierCustomer' => 'Bayside Club',
+            'SupplierID' => '71ada099-cc93-4aae-8c12-670d04587db3',
+            'CustomerID' => null,
+            'Reference' => 'Test',
+            'Date' => '2018-01-17T00:00:00',
+            'TaxInclusive' => true,
+            'Note' => 'Note',
+            'Lines' => [
+                [
+                    'Name' => 'Bread Test 1:Baked Bread Test 1',
+                    'Comment' => '',
+                    'Quantity' => 1,
+                    'Price' => 2,
+                    'Discount' => 0,
+                    'Tax' => 0.18,
+                    'TaxRuleName' => 'Tax Exempt',
+                    'AccountCode' => '801',
+                    'Total' => 2,
+                ],
+            ],
+            'Transactions' => [
+                [
+                    'ID' => '5fae73f7-4b46-4c3d-b205-af6fe6ce17be',
+                    'EffectiveDate' => '2018-01-17T00:00:00',
+                    'Debit' => '718',
+                    'Credit' => '801',
+                    'Amount' => 1.82,
+                ],
+                [
+                    'ID' => 'ee11d63c-78f4-4322-99c6-dc2884e6ede5',
+                    'EffectiveDate' => '2018-01-17T00:00:00',
+                    'Debit' => '718',
+                    'Credit' => '820',
+                    'Amount' => 0.18,
+                ],
+            ],
+            'Attachments' => [
+                [
+                    'ID' => '0f1e7c3a-5b6d-4e8f-9a0b-1c2d3e4f5a6b',
+                    'ContentType' => 'application/pdf',
+                    'IsDefault' => false,
+                    'FileName' => 'receipt.pdf',
+                    'DownloadUrl' => 'https://example.test/receipt.pdf',
+                ],
+            ],
+        ];
+    }
+
+    /**
      * The body of the 503 Cin7 returns when throttling; it carries no `Retry-After` header.
      *
      * @return array<string, mixed>
