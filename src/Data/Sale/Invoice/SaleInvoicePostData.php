@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale\Invoice;
 
+use Hypervel\Data\Attributes\Validation\Uuid;
+use Ipsocode\Cin7\Data\Attributes\DateTime;
+
 /**
  * Sale Invoice POST Model, the body of `sale/invoice` POST. The fields the reference marks
  * required have no default; an empty-GUID `TaskID` creates a new invoice. The PUT body is
@@ -14,12 +17,16 @@ namespace Ipsocode\Cin7\Data\Sale\Invoice;
 final class SaleInvoicePostData extends AbstractSaleInvoiceData
 {
     public function __construct(
+        #[Uuid]
         public string $SaleID,
-        public string $TaskID,
+        string $TaskID,
         public bool $CombineAdditionalCharges,
         public string $Status,
+        #[DateTime]
         public string $InvoiceDate,
+        #[DateTime]
         public string $InvoiceDueDate,
     ) {
+        parent::__construct($TaskID);
     }
 }

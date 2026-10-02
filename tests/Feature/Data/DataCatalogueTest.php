@@ -25,6 +25,7 @@ use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Sale\AbstractAddressData;
 use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
 use Ipsocode\Cin7\Data\Sale\AbstractSalePaymentLineData;
+use Ipsocode\Cin7\Data\Sale\AddressData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePartialData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePaymentData;
@@ -38,9 +39,18 @@ use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPutData;
+use Ipsocode\Cin7\Data\Sale\SaleAdditionalChargeData;
+use Ipsocode\Cin7\Data\Sale\SaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\SaleData;
+use Ipsocode\Cin7\Data\Sale\SaleInvoiceAdditionalChargeData;
+use Ipsocode\Cin7\Data\Sale\SaleInvoiceData;
+use Ipsocode\Cin7\Data\Sale\SaleInvoiceLineData;
 use Ipsocode\Cin7\Data\Sale\SaleManualJournalLineData;
 use Ipsocode\Cin7\Data\Sale\SaleOrderData;
+use Ipsocode\Cin7\Data\Sale\SaleOrderLineData;
+use Ipsocode\Cin7\Data\Sale\SalePostPutData;
+use Ipsocode\Cin7\Data\Sale\SaleQuoteLineData;
+use Ipsocode\Cin7\Data\Sale\SaleShippingAddressData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
@@ -94,10 +104,22 @@ class DataCatalogueTest extends TestCase
 {
     /**
      * The properties the reference marks required, per class: not nullable, and with no default.
+     * A field every child of a parent requires is declared on the parent's constructor.
      *
      * @var array<class-string<Data>, list<string>>
      */
     private const array REQUIRED = [
+        SaleQuoteLineData::class => self::LINE_REQUIRED,
+        SaleOrderLineData::class => self::LINE_REQUIRED,
+        SaleInvoiceLineData::class => self::LINE_REQUIRED,
+        SaleAdditionalChargeData::class => self::CHARGE_REQUIRED,
+        SaleInvoiceAdditionalChargeData::class => self::CHARGE_REQUIRED,
+        AddressData::class => ['Line1', 'Country'],
+        SaleShippingAddressData::class => ['Line1', 'Country'],
+        SaleData::class => ['Location', 'CurrencyRate'],
+        SalePostPutData::class => ['Location', 'CurrencyRate'],
+        SaleInvoiceData::class => ['TaskID'],
+        SaleCreditNoteData::class => ['TaskID', 'Status', 'CreditNoteDate'],
         SaleInvoicePartialData::class => ['TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
         SaleInvoicePostData::class => ['SaleID', 'TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
         SaleInvoicePutData::class => ['SaleID', 'TaskID'],
@@ -107,6 +129,20 @@ class DataCatalogueTest extends TestCase
         SalePaymentPostData::class => ['TaskID', 'Type', 'Amount', 'DatePaid', 'Account', 'CurrencyRate'],
         SalePaymentPutData::class => ['ID'],
     ];
+
+    /**
+     * The fields every product line table requires, declared on `AbstractLineData`.
+     *
+     * @var list<string>
+     */
+    private const array LINE_REQUIRED = ['ProductID', 'SKU', 'Name', 'Quantity', 'Price', 'Tax', 'TaxRule'];
+
+    /**
+     * The fields every additional charge table requires, declared on `AbstractChargeData`.
+     *
+     * @var list<string>
+     */
+    private const array CHARGE_REQUIRED = ['Description', 'Quantity', 'Price', 'Tax', 'TaxRule'];
 
     /**
      * @param class-string<Cin7Request> $class
@@ -426,7 +462,8 @@ class DataCatalogueTest extends TestCase
                 $parameters[$parameter->getName()] = $parameter;
             }
 
-            // Inherited and trait fields are properties with a default, not constructor parameters.
+            // A parent's optional and trait fields are properties with a default; its required
+            // fields reach the child through the constructor.
             foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
                 $name = $class . '::$' . $property->getName();
                 $parameter = $parameters[$property->getName()] ?? null;

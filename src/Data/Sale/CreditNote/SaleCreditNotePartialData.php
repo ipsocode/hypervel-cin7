@@ -20,15 +20,16 @@ final class SaleCreditNotePartialData extends AbstractSaleCreditNoteData
      * @param null|list<SaleCreditNotePaymentData> $Payments
      */
     public function __construct(
-        public string $TaskID,
+        string $TaskID,
         public bool $CombineAdditionalCharges,
-        public string $Status,
-        public string $CreditNoteDate,
+        string $Status,
+        string $CreditNoteDate,
         public ?string $CreditNoteInvoiceNumber = null,
         public ?string $CreditNoteNumber = null,
         public ?float $CreditNoteBalance = null,
         #[DataCollectionOf(SaleCreditNotePaymentData::class)]
         public ?array $Payments = null,
     ) {
+        parent::__construct($TaskID, $Status, $CreditNoteDate);
     }
 }

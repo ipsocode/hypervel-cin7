@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale;
 
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
@@ -14,6 +15,7 @@ use Hypervel\Data\Data;
 final class SaleFulfilmentData extends Data
 {
     public function __construct(
+        #[Uuid]
         public ?string $TaskID = null,
         public ?int $FulfillmentNumber = null,
         public ?string $LinkedInvoiceNumber = null,

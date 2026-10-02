@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Concerns;
 
+use Hypervel\Data\Attributes\Validation\Max;
+
 /**
  * The fields the reference adds to an object that carries a `ProductID`: "All objects that
  * contain ProductID also contain additional fields". The sale line, pick and pack line and
@@ -21,8 +23,10 @@ trait HasProductFields
 
     public ?float $ProductWeight = null;
 
+    #[Max(10)]
     public ?string $WeightUnits = null;
 
+    #[Max(10)]
     public ?string $DimensionsUnits = null;
 
     public ?string $ProductCustomField1 = null;

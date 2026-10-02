@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Customer;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
+use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Concerns\HasAdditionalAttributes;
 use Ipsocode\Cin7\Data\ProductPriceData;
 
@@ -32,8 +35,11 @@ final class CustomerData extends Data implements WithResponse
      * @param null|list<ChildCustomerData> $ChildCustomers
      */
     public function __construct(
+        #[Uuid]
         public ?string $ID = null,
+        #[Max(256)]
         public ?string $Name = null,
+        #[Max(256)]
         public ?string $DisplayName = null,
         public ?string $Status = null,
         public ?string $Currency = null,
@@ -46,15 +52,19 @@ final class CustomerData extends Data implements WithResponse
         public ?string $SalesRepresentative = null,
         public ?string $Location = null,
         public ?int $Discount = null,
+        #[Max(2000)]
         public ?string $Comments = null,
         public ?string $TaxNumber = null,
         public ?int $CreditLimit = null,
         public ?string $Tags = null,
         public ?string $AttributeSet = null,
+        #[DateTime]
         public ?string $LastModifiedOn = null,
         public ?bool $IsOnCreditHold = null,
         public ?bool $IsLegalEntity = null,
+        #[Uuid]
         public ?string $CustomerParentID = null,
+        #[Max(256)]
         public ?string $CustomerParentName = null,
         public ?bool $IsBillParent = null,
         #[DataCollectionOf(ProductPriceData::class)]

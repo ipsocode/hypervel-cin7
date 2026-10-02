@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Product;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Data\AttachmentLineData;
+use Ipsocode\Cin7\Data\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Concerns\HasAdditionalAttributes;
 use Ipsocode\Cin7\Data\ProductPriceData;
 
@@ -37,14 +40,21 @@ final class ProductData extends Data implements WithResponse
      * @param null|list<ProductPriceData> $CustomPrices
      */
     public function __construct(
+        #[Uuid]
         public ?string $ID = null,
+        #[Max(50)]
         public ?string $SKU = null,
+        #[Max(256)]
         public ?string $Name = null,
+        #[Max(256)]
         public ?string $Category = null,
+        #[Max(50)]
         public ?string $Brand = null,
         public ?string $Type = null,
+        #[Max(50)]
         public ?string $CostingMethod = null,
         public ?string $DropShipMode = null,
+        #[Max(50)]
         public ?string $DefaultLocation = null,
         public ?float $Length = null,
         public ?float $Width = null,
@@ -55,9 +65,13 @@ final class ProductData extends Data implements WithResponse
         public ?float $CartonHeight = null,
         public ?float $CartonQuantity = null,
         public ?float $CartonInnerQuantity = null,
+        #[Max(50)]
         public ?string $UOM = null,
+        #[Max(10)]
         public ?string $WeightUnits = null,
+        #[Max(10)]
         public ?string $DimensionsUnits = null,
+        #[Max(256)]
         public ?string $Barcode = null,
         public ?float $MinimumBeforeReorder = null,
         public ?float $ReorderQuantity = null,
@@ -73,30 +87,47 @@ final class ProductData extends Data implements WithResponse
         public ?float $PriceTier10 = null,
         public ?array $PriceTiers = null,
         public ?float $AverageCost = null,
+        #[Max(500)]
         public ?string $ShortDescription = null,
         public ?string $Description = null,
+        #[Max(4000)]
         public ?string $InternalNote = null,
+        #[Max(50)]
         public ?string $AttributeSet = null,
+        #[Max(128)]
         public ?string $DiscountRule = null,
+        #[Max(256)]
         public ?string $Tags = null,
         public ?string $Status = null,
+        #[Max(256)]
         public ?string $StockLocator = null,
+        #[Max(50)]
         public ?string $COGSAccount = null,
+        #[Max(50)]
         public ?string $RevenueAccount = null,
+        #[Max(50)]
         public ?string $ExpenseAccount = null,
+        #[Max(50)]
         public ?string $InventoryAccount = null,
+        #[Max(50)]
         public ?string $PurchaseTaxRule = null,
+        #[Max(50)]
         public ?string $SaleTaxRule = null,
+        #[DateTime]
         public ?string $LastModifiedOn = null,
         public ?bool $Sellable = null,
+        #[Max(256)]
         public ?string $PickZones = null,
         public ?bool $BillOfMaterial = null,
         public ?bool $AutoAssembly = null,
         public ?bool $AutoDisassembly = null,
         public ?float $QuantityToProduce = null,
+        #[Max(256)]
         public ?string $AssemblyInstructionURL = null,
+        #[Max(256)]
         public ?string $AssemblyCostEstimationMethod = null,
         public ?string $BOMType = null,
+        #[Max(200)]
         public ?string $HSCode = null,
         public ?string $CountryOfOrigin = null,
         public ?string $CountryOfOriginCode = null,

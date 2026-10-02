@@ -18,10 +18,10 @@ final class SaleCreditNoteData extends AbstractSaleCreditNoteData
      * @param null|list<SalePaymentLineData> $Refunds
      */
     public function __construct(
-        public ?string $TaskID = null,
+        string $TaskID,
+        string $Status,
+        string $CreditNoteDate,
         public ?string $CreditNoteInvoiceNumber = null,
-        public ?string $Status = null,
-        public ?string $CreditNoteDate = null,
         public ?string $CreditNoteNumber = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
         public ?array $Refunds = null,
@@ -29,5 +29,6 @@ final class SaleCreditNoteData extends AbstractSaleCreditNoteData
         public ?float $Tax = null,
         public ?float $Total = null,
     ) {
+        parent::__construct($TaskID, $Status, $CreditNoteDate);
     }
 }

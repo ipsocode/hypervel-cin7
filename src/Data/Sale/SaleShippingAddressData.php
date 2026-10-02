@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Sale;
 
+use Hypervel\Data\Attributes\Validation\Max;
+
 /**
  * Sale Shipping Address Model.
  *
@@ -11,10 +13,11 @@ namespace Ipsocode\Cin7\Data\Sale;
  */
 final class SaleShippingAddressData extends AbstractAddressData
 {
-    public function __construct(
-        public ?string $Company = null,
-        public ?string $Contact = null,
-        public ?bool $ShipToOther = null,
-    ) {
-    }
+    #[Max(128)]
+    public ?string $Company = null;
+
+    #[Max(512)]
+    public ?string $Contact = null;
+
+    public ?bool $ShipToOther = null;
 }

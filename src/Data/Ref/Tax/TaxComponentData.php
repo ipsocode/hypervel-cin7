@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Ref\Tax;
 
+use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Data;
 
 /**
@@ -18,6 +19,7 @@ final class TaxComponentData extends Data
 {
     public function __construct(
         public ?string $ID = null,
+        #[Max(50)]
         public ?string $Name = null,
         public float|string|null $Percent = null,
         public ?string $AccountCode = null,

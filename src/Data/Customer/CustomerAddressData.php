@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Customer;
 
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
@@ -16,12 +18,18 @@ use Hypervel\Data\Data;
 final class CustomerAddressData extends Data
 {
     public function __construct(
+        #[Uuid]
         public ?string $ID = null,
         public ?string $CustomerID = null,
+        #[Max(256)]
         public ?string $Line1 = null,
+        #[Max(256)]
         public ?string $Line2 = null,
+        #[Max(256)]
         public ?string $City = null,
+        #[Max(256)]
         public ?string $State = null,
+        #[Max(20)]
         public ?string $Postcode = null,
         public ?string $Country = null,
         public ?string $Type = null,
