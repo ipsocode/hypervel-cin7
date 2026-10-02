@@ -12,6 +12,9 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
+use Ipsocode\Cin7\Requests\Product\GetProduct;
+use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Product\PutProduct;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
@@ -34,7 +37,7 @@ class RequestCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock = Saloon::fake(array_fill(0, 3, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 6, MockResponse::make(Cin7Payloads::customerList())));
     }
 
     /**
@@ -92,6 +95,30 @@ class RequestCatalogueTest extends TestCase
                 '/ExternalApi/v2/customer',
                 [],
                 ['ID' => 'guid-1', 'Name' => 'ACME'],
+            ],
+            GetProduct::class => [
+                GetProduct::class,
+                [],
+                Method::GET,
+                '/ExternalApi/v2/product',
+                ['page' => 1, 'limit' => 100],
+                null,
+            ],
+            PostProduct::class => [
+                PostProduct::class,
+                [['Name' => 'Widget']],
+                Method::POST,
+                '/ExternalApi/v2/product',
+                [],
+                ['Name' => 'Widget'],
+            ],
+            PutProduct::class => [
+                PutProduct::class,
+                [['ID' => 'guid-1', 'Name' => 'Widget']],
+                Method::PUT,
+                '/ExternalApi/v2/product',
+                [],
+                ['ID' => 'guid-1', 'Name' => 'Widget'],
             ],
         ];
     }
