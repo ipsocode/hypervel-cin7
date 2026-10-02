@@ -222,6 +222,12 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `me/contacts` | POST: `MeContactPostData`; PUT: `MeContactPutData`, which also requires `ContactID` (Me Contact) | GET: `list<MeContactData>`; POST, PUT: `MeContactData`, the saved contact (`MeContactsList.0`); DELETE: `{Success}`, left to `json()` |
 | `bankTransfer` | POST: `BankTransferPostData`; PUT: `BankTransferPutData`, which also requires `TaskID` (Bank Transfer, whose table heading says "Money Task List") | GET, POST, PUT, DELETE: `BankTransferData`, with `Transactions`: `TransactionStockLineData` and `Attachments`: `AttachmentLineData` |
 | `journal` | POST: `JournalPostData`; PUT: `JournalPutData`, which also requires `TaskID` (Journal, with `Lines`: `JournalLineData`, Journal Line Model) | GET: `list<JournalData>`, with `Attachments`: `AttachmentLineData`; POST, PUT, DELETE: `JournalData`, the journal (`Journals.0`) |
+| `crm/lead` | POST: `LeadPostData`; PUT: `LeadPutData`, which also requires `ID` (Lead, with `Contacts`: `CustomerContactData` and `Addresses`: `CustomerAddressData`) | GET, POST, PUT: `list<LeadData>`, read from `LeadList` |
+| `crm/opportunity` | POST: `OpportunityPostData`; PUT: `OpportunityPutData`, which also requires `ID` (Opportunity, with `Lines`: `OpportunityLineData` and `AdditionalCharges`: `OpportunityAdditionalChargeData`) | GET, POST, PUT: `list<OpportunityData>`, read from `opportunityList` |
+| `crm/task` | POST: `TaskPostData`; PUT: `TaskPutData`, which also requires `ID` (Task) | GET, POST, PUT: `list<TaskData>`, read from `Tasks` |
+| `crm/taskcategory` | POST: `TaskCategoryPostData`; PUT: `TaskCategoryPutData`, which also requires `ID` (Task Category) | GET, POST, PUT: `list<TaskCategoryData>`, read from `Categories` |
+| `crm/workflow` | POST: `WorkflowPostData`; PUT: `WorkflowPutData`, which also requires `ID` (Workflow, with `Steps`: `WorkflowStepData`) | GET, POST, PUT: `list<WorkflowData>`, read from `Workflows` |
+| `crm/workflowstart` | none: the query carries it | `{Success}`, left to `json()` |
 | `webhooks` | POST: `WebhookPostData`; PUT: `WebhookPutData`, which also requires `ID` (Webhooks, with `ExternalHeaders`: `WebhookHeaderData`) | GET, POST, PUT: `list<WebhookData>`, read from `Webhooks`; DELETE: an empty `Webhooks` list, left to `json()` |
 | `stockadjustmentList` | none | GET: `list<StockAdjustmentListData>` (Stock Adjustment List), read from `StockAdjustmentList` |
 | `stockadjustment` | POST: `StockAdjustmentPostData`; PUT: `StockAdjustmentPutData`, which also requires `TaskID` (Stock Adjustment POST/PUT, with `Lines`: `NewStockLineData`, New Stock Line Model) | GET, POST, PUT, DELETE: `StockAdjustmentData` (Stock Adjustment, with `ExistingStockLines`: `ExistingStockLineData`, `NewStockLines`: `NewStockLineData` and `Transactions`: `TransactionStockLineData`) |
@@ -1553,6 +1559,42 @@ class requires:
   cannot tell, so they stay optional; `TotalCost` is read-only.
 - **Examples.** The examples send `""` and `null` for fields they leave out; the fixtures are the
   seven of them, unchanged.
+
+## CRM
+
+Each CRM resource has a class per verb because the `ID` is taken by PUT and the response only. The
+classes are in `src/Data/Crm/<Resource>/`, and each requires:
+
+| Class | Required |
+|---|---|
+| `LeadData`, `LeadPostData` | `LeadStatus` (a `LeadStatus`), `Name`, `Currency`, `PaymentTerm`, `PriceTier`, `SalesRepresentative`, `TaxRule`, `CloseChance`, `CloseDate` |
+| `OpportunityData`, `OpportunityPostData` | `CustomerName`, `BillingAddressLine1`, `Currency`, `TaxRule`, `Terms`, `PriceTier`, `OpportunityLocation`, `CustomerCurrency`, `TermMethod`, `SalesRepresentative`, `ShipToOther` |
+| `OpportunityLineData` | `Quantity`, `Price`, `Tax`, `Total`; and `ProductID` or `ProductSku` (`#[RequiredWithout]`) |
+| `OpportunityAdditionalChargeData` | `Description`, `Quantity`, `Amount`, `Tax`, `Total` |
+| `TaskData`, `TaskPostData` | `Name`, `StartDate`, `EndDate`, `EntityType` (a `TaskEntityType`), `EntityID`, `TaskStatus` |
+| `TaskCategoryData`, `TaskCategoryPostData` | `Name` |
+| `WorkflowData`, `WorkflowPostData` | `Name`, `EntityType` (a `TaskEntityType`), `DueDaysType` (a `WorkflowDueDaysType`) |
+| `WorkflowStepData` | `Name`, `SkipHoliday` (a `WorkflowSkipHoliday`) |
+
+Each PUT class also requires `ID`.
+
+- **PUT examples without an `ID`.** The lead and opportunity PUT examples send no `ID`, but the table
+  requires it on a PUT, so the class does and the fixtures are given one.
+- **Lead responses without an `ID`.** The lead POST and PUT response examples carry no `ID` either;
+  `LeadData` takes it as optional, as every response class does.
+- **`PaymentTerm`.** The table says int; the examples send the name, `"COD"`, so it is a string.
+- **`ProductSku`.** The line's table writes `ProductSKU` and the examples `ProductSku`; the class has the
+  examples' key.
+- **`OpportunityStatus`.** The table lists `Draft, In Progress, Won, Lost`; the examples send
+  `IN PROGRESS`, so it stays a string. `TaskStatus` lists no values and is one too.
+- **`Contacts` and `Addresses`.** A lead's are the customer's `CustomerContactData` and
+  `CustomerAddressData`, as the decision says.
+- **Workflow steps.** `ID` is in responses only, so a step takes it as optional. `StartTime` and `EndTime`
+  are strings (`hh:mm:ss`), not dates.
+- **Task category and workflow GET.** Their section's URI says `/crm/task`, copied from the Task
+  section; the requests follow the heading, `crm/taskcategory` and `crm/workflow`. Neither has a GET
+  response example in the blueprint's parser, so the fixtures are read from the blueprint by hand.
+- **`EnityType`.** `crm/workflowstart` keeps the reference's misspelt query key.
 
 ## Webhooks
 

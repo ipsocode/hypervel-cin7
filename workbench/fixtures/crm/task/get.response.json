@@ -1,0 +1,42 @@
+{
+    "Total": 2,
+    "Page": 1,
+    "Tasks": [
+        {
+            "ID": "7a9775ae-35ad-4319-9fa4-234bb0236657",
+            "Name": "Opportunity task",
+            "Description": null,
+            "StartDate": "2022-05-04T13:40:00Z",
+            "EndDate": "2022-05-04T13:40:00Z",
+            "IsAllDay": true,
+            "CompletedDate": null,
+            "Category": "task cat 1",
+            "WorkflowName": null,
+            "AssignedTo": "niknav@yandex.ru",
+            "EntityType": "Opportunity",
+            "EntityID": "f0b0be7b-0c9b-441c-8c0c-fe0b40697f3f",
+            "IsImportant": false,
+            "TaskStatus": "Open",
+            "AssignedBy": "niknav@yandex.ru",
+            "VoidDate": null
+        },
+        {
+            "ID": "2da00ff3-ab5d-47d0-8191-b2549c98b85d",
+            "Name": "Sale task",
+            "Description": "description!",
+            "StartDate": "2022-05-04T13:40:00Z",
+            "EndDate": "2022-05-04T13:40:00Z",
+            "IsAllDay": false,
+            "CompletedDate": null,
+            "Category": null,
+            "WorkflowName": null,
+            "AssignedTo": null,
+            "EntityType": "Sale",
+            "EntityID": "8b63c587-b411-4532-b7d9-cecee7f4dcc4",
+            "IsImportant": false,
+            "TaskStatus": "In progress",
+            "AssignedBy": "niknav@yandex.ru",
+            "VoidDate": null
+        }
+    ]
+}

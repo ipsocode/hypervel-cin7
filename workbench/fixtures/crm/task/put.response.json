@@ -1,0 +1,24 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "Tasks": [
+        {
+            "ID": "a6d28a43-c126-47e3-a8a2-57f84ee34a5a",
+            "Name": "Opportunity task",
+            "Description": null,
+            "StartDate": "2022-05-04T13:40:00Z",
+            "EndDate": "2022-05-04T13:40:00Z",
+            "IsAllDay": true,
+            "CompletedDate": null,
+            "Category": "task cat 1",
+            "WorkflowName": null,
+            "AssignedTo": "niknav@yandex.ru",
+            "EntityType": "Opportunity",
+            "EntityID": "f0b0be7b-0c9b-441c-8c0c-fe0b40697f3f",
+            "IsImportant": false,
+            "TaskStatus": "Open",
+            "AssignedBy": "niknav@yandex.ru",
+            "VoidDate": null
+        }
+    ]
+}
