@@ -20,6 +20,10 @@ use Ipsocode\Cin7\Resources\Me\ContactsResource;
 use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
+use Ipsocode\Cin7\Resources\Product\AttachmentsResource as ProductAttachmentsResource;
+use Ipsocode\Cin7\Resources\Product\MarkupPricesResource;
+use Ipsocode\Cin7\Resources\ProductFamily\AttachmentsResource as ProductFamilyAttachmentsResource;
+use Ipsocode\Cin7\Resources\ProductFamilyResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\Purchase\AttachmentResource as PurchaseAttachmentResource;
 use Ipsocode\Cin7\Resources\Purchase\CreditNoteResource as PurchaseCreditNoteResource;
@@ -33,12 +37,15 @@ use Ipsocode\Cin7\Resources\PurchaseListResource;
 use Ipsocode\Cin7\Resources\PurchaseResource;
 use Ipsocode\Cin7\Resources\Ref\Account\BankResource;
 use Ipsocode\Cin7\Resources\Ref\AccountResource;
+use Ipsocode\Cin7\Resources\Ref\AttributeSetResource;
 use Ipsocode\Cin7\Resources\Ref\BrandResource;
 use Ipsocode\Cin7\Resources\Ref\CategoryResource;
 use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
 use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
 use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
 use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
+use Ipsocode\Cin7\Resources\Ref\PriceTierResource;
+use Ipsocode\Cin7\Resources\Ref\ProductAvailabilityResource;
 use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
 use Ipsocode\Cin7\Resources\Ref\SupplierResource as RefSupplierResource;
 use Ipsocode\Cin7\Resources\Ref\TaxResource;
@@ -93,6 +100,26 @@ class ConnectorResourcesTest extends TestCase
     public function testProductReturnsAProductResource(): void
     {
         $this->assertInstanceOf(ProductResource::class, $this->connector()->product());
+    }
+
+    public function testProductReturnsItsAttachmentsAndMarkupPrices(): void
+    {
+        $product = $this->connector()->product();
+
+        $this->assertInstanceOf(ProductAttachmentsResource::class, $product->attachments());
+        $this->assertNotSame($product->attachments(), $product->attachments());
+        $this->assertInstanceOf(MarkupPricesResource::class, $product->markupPrices());
+        $this->assertNotSame($product->markupPrices(), $product->markupPrices());
+    }
+
+    public function testProductFamilyReturnsItsAttachments(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(ProductFamilyResource::class, $connector->productFamily());
+        $this->assertNotSame($connector->productFamily(), $connector->productFamily());
+        $this->assertInstanceOf(ProductFamilyAttachmentsResource::class, $connector->productFamily()->attachments());
+        $this->assertNotSame($connector->productFamily()->attachments(), $connector->productFamily()->attachments());
     }
 
     public function testProductReturnsAFreshInstanceEveryCall(): void
@@ -289,6 +316,9 @@ class ConnectorResourcesTest extends TestCase
         $this->assertInstanceOf(RefSupplierResource::class, $ref->supplier());
         $this->assertInstanceOf(DepositsResource::class, $ref->supplier()->deposits());
         $this->assertInstanceOf(AccountResource::class, $ref->account());
+        $this->assertInstanceOf(AttributeSetResource::class, $ref->attributeSet());
+        $this->assertInstanceOf(ProductAvailabilityResource::class, $ref->productAvailability());
+        $this->assertInstanceOf(PriceTierResource::class, $ref->priceTier());
         $this->assertInstanceOf(UnitResource::class, $ref->unit());
         $this->assertInstanceOf(CategoryResource::class, $ref->category());
         $this->assertInstanceOf(BrandResource::class, $ref->brand());
@@ -305,6 +335,9 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->ref()->customer(), $connector->ref()->customer());
         $this->assertNotSame($connector->ref()->supplier(), $connector->ref()->supplier());
         $this->assertNotSame($connector->ref()->account(), $connector->ref()->account());
+        $this->assertNotSame($connector->ref()->attributeSet(), $connector->ref()->attributeSet());
+        $this->assertNotSame($connector->ref()->productAvailability(), $connector->ref()->productAvailability());
+        $this->assertNotSame($connector->ref()->priceTier(), $connector->ref()->priceTier());
         $this->assertNotSame($connector->ref()->unit(), $connector->ref()->unit());
         $this->assertNotSame($connector->ref()->category(), $connector->ref()->category());
         $this->assertNotSame($connector->ref()->brand(), $connector->ref()->brand());

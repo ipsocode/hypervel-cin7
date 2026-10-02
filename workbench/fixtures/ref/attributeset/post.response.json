@@ -1,0 +1,86 @@
+{
+    "ID": "0ba27d98-42ca-4bf6-9b9e-9f71538bd53d",
+    "Name": "Test set",
+    "Attribute1Name": "List attribute name",
+    "Attribute1Type": "List",
+    "Attribute1Values": "Red, Black, Blue, Aqua",
+    "Attribute2Name": "Check box attribute name",
+    "Attribute2Type": "Checkbox",
+    "Attribute2Values": "",
+    "Attribute3Name": "Text attribute name",
+    "Attribute3Type": "Text",
+    "Attribute3Values": "",
+    "Attribute4Name": "",
+    "Attribute4Type": "Not used",
+    "Attribute4Values": "",
+    "Attribute5Name": "",
+    "Attribute5Type": "Not used",
+    "Attribute5Values": "",
+    "Attribute6Name": "",
+    "Attribute6Type": "Not used",
+    "Attribute6Values": "",
+    "Attribute7Name": "",
+    "Attribute7Type": "Not used",
+    "Attribute7Values": "",
+    "Attribute8Name": "",
+    "Attribute8Type": "Not used",
+    "Attribute8Values": "",
+    "Attribute9Name": "",
+    "Attribute9Type": "Not used",
+    "Attribute9Values": "",
+    "Attribute10Name": "",
+    "Attribute10Type": "Not used",
+    "Attribute10Values": "",
+    "Attributes": [
+        {
+            "Name": "Color",
+            "Type": "List",
+            "Values": "Red, Black, Blue, Aqua"
+        },
+        {
+            "Name": "Male?",
+            "Type": "Checkbox",
+            "Values": ""
+        },
+        {
+            "Name": "Special wish",
+            "Type": "Text",
+            "Values": ""
+        },
+        {
+            "Name": "",
+            "Type": "Not used",
+            "Values": ""
+        },
+        {
+            "Name": "",
+            "Type": "Not used",
+            "Values": ""
+        },
+        {
+            "Name": "",
+            "Type": "Not used",
+            "Values": ""
+        },
+        {
+            "Name": "",
+            "Type": "Not used",
+            "Values": ""
+        },
+        {
+            "Name": "",
+            "Type": "Not used",
+            "Values": ""
+        },
+        {
+            "Name": "",
+            "Type": "Not used",
+            "Values": ""
+        },
+        {
+            "Name": "",
+            "Type": "Not used",
+            "Values": ""
+        }
+    ]
+}
