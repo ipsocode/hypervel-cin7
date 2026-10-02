@@ -1,0 +1,17 @@
+{
+    "Status": "DRAFT",
+    "Currency": "USD",
+    "CurrencyConversionRate": 50,
+    "EffectiveDate": "2018-01-20T00:00:00",
+    "Narration": "",
+    "Notes": "",
+    "Lines": [
+        {
+            "Debit": "260",
+            "Credit": "270",
+            "Reference": "3",
+            "Amount": 2,
+            "BaseAmount": 100
+        }
+    ]
+}

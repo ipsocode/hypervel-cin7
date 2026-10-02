@@ -65,6 +65,8 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->me()->addresses()` | `Me\AddressesResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeAddressPostData $body)`, `put(array\|MeAddressPutData $body)`, `delete(string $id)` |
 | `$cin7->me()->contacts()` | `Me\ContactsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|MeContactPostData $body)`, `put(array\|MeContactPutData $body)`, `delete(string $id)` |
 | `$cin7->product()` | `ProductResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductPostData $body)`, `put(array\|ProductPutData $body)` |
+| `$cin7->journal()` | `JournalResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|JournalPostData $body)`, `put(array\|JournalPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->moneyTask()` | `MoneyTaskResource` | `get(string $taskId)`, `post(array\|MoneyTaskPostData $body)`, `put(array\|MoneyTaskPutData $body)`, `delete(string $id, ?bool $void = null)` |
 | `$cin7->sale()` | `SaleResource` | `get(string $id, …)`, `post(array\|SalePostData $body)`, `put(array\|SalePutData $body)`, `delete(string $id, ?bool $void = null)`; `quote()`, `order()`, `fulfilment()`, `invoice()`, `creditNote()`, `payment()`, `manualJournal()`, `attachment()` |
 | `$cin7->sale()->fulfilment()` | `Sale\FulfilmentResource` | `get(string $saleId, …)`, `post(array\|SaleFulfilmentsData $body)`, `delete(string $taskId, ?bool $void = null)`; `pick()`, `pack()`, `ship()` |
@@ -310,6 +312,34 @@ a `PaymentTermPutData`, which requires `ID`; `delete($id)` sends `ref/paymentter
 use Ipsocode\Cin7\Enums\PaymentTermMethod;
 
 $terms = $this->cin7->ref()->paymentTerm()->get(method: PaymentTermMethod::NumberOfDays, isActive: true)->dto(); // list<PaymentTermData>
+```
+
+## Journal and transactions
+
+`$cin7->journal()` is `journal`, the manual journals. It lists under `Journals`, filtered by
+`taskId`, `status` (a `CompletionStatus`) and `search`, and `get()->dto()` is a `list<JournalData>`
+with `Lines` (`JournalLineData`) and `Attachments` (`AttachmentLineData`). `post()` takes a
+`JournalPostData` and `put()` a `JournalPutData`, which requires `TaskID`, as well as an array;
+both, and `delete()`, answer with the journal, so their `dto()` is a `JournalData`.
+`delete($id, void: true)` voids the journal and `void: false` undoes the void.
+
+`$cin7->transactions()` is read-only: it lists the ledger's transactions under `Transactions`,
+filtered by `fromDate`, `toDate` and the debit or credit `account` code, as `TransactionData`.
+
+```php
+$journal = $this->cin7->journal()->post(JournalPostData::from([
+    'Status' => 'DRAFT',
+    'Currency' => 'USD',
+    'CurrencyConversionRate' => 50,
+    'EffectiveDate' => '2018-01-20T00:00:00',
+    'Lines' => [['Debit' => '260', 'Credit' => '270', 'Amount' => 2, 'BaseAmount' => 100]],
+]))->dto(); // JournalData
+
+$this->cin7->journal()->delete($journal->TaskID, void: true);
+
+foreach ($this->cin7->transactions()->paginate(account: '610')->items() as $transaction) {
+    // $transaction is one entry of Transactions
+}
 ```
 
 ## Money Task
