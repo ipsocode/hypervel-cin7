@@ -203,7 +203,5 @@ one decision each.
 - `crm/workflowstart` takes query parameters only. Keep its misspelt `EnityType` key.
 - Webhook payload examples describe incoming events: out of scope.
 - Other Models' `PriceTierModel` is the product's `PriceTiers` map, with no class.
-- Other Models' `DimensionUnitAvailableValues` makes no enum: most examples send `""` for
-  `WeightUnits` and `DimensionsUnits`, so they stay strings in `HasProductFields`.
 - `SupplierAddressModel` and `SupplierContactModel` are already `CustomerAddressData` and
   `CustomerContactData`. The supplier and the CRM lead reuse them from `src/Data/Other/`.

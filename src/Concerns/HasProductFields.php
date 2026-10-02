@@ -12,8 +12,8 @@ use Hypervel\Data\Attributes\Validation\Max;
  * inventory movement classes take them from here.
  *
  * `WeightUnits` and `DimensionsUnits` take an abbreviation from the reference's Dimension Unit
- * Available Values (`g`, `kg`, `cm`, `in`, …), but are strings, not enums: most examples send
- * `""`.
+ * Available Values (`g`, `kg`, `cm`, `in`, …), but stay strings rather than the `WeightUnit` and
+ * `DimensionUnit` enums: the sale examples send `""`, outside the list.
  *
  * @see docs/data.md
  */
