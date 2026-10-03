@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
-use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
-use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Enums\DisassemblyStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\DisassemblyList\GetDisassemblyList;
 
 /**
  * `disassemblyList`, the disassembly list.
- *
- * @extends BaseResource<Cin7Connector>
  */
-final class DisassemblyListResource extends BaseResource
+final class DisassemblyListResource extends ListResource
 {
     /**
      * One page of disassemblies; without a page or limit, page 1 of 100.
@@ -32,7 +28,7 @@ final class DisassemblyListResource extends BaseResource
         ?DisassemblyStatus $status = null,
         ?string $search = null,
     ): Response {
-        return $this->connector->send(new GetDisassemblyList(
+        return $this->sendList(new GetDisassemblyList(
             $page,
             $limit,
             $status,
@@ -53,7 +49,7 @@ final class DisassemblyListResource extends BaseResource
         ?DisassemblyStatus $status = null,
         ?string $search = null,
     ): Cin7Paginator {
-        return $this->connector->paginate(new GetDisassemblyList(
+        return $this->paginateList(new GetDisassemblyList(
             null,
             $limit,
             $status,

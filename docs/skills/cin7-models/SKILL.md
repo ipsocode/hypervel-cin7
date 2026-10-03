@@ -141,7 +141,8 @@ one decision each.
 - `python3 $S/requests.py spec.json` writes request classes in these shapes from a JSON list. Copy
   the closest existing class for anything else.
 - A resource per path: its methods are the operations (`get`, `post`, `put`, `delete`, and
-  `paginate` for a list), and its parent's accessor is the last segment in camelCase
+  `paginate` for a list; a `*List` path's resource extends `ListResource` and sends through its
+  `sendList()` and `paginateList()`), and its parent's accessor is the last segment in camelCase
   (`$cin7->purchase()->order()`). A top-level accessor is on `Cin7Connector`. A grouping segment such
   as `ref`, `reference` or `crm` works like `RefResource`. A single-operation action sub-path
   (`production/order/release`) is a method on its parent's resource.

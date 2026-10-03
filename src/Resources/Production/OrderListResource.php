@@ -5,19 +5,16 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources\Production;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
-use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Enums\ProductionOrderListStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Production\OrderList\GetProductionOrderList;
+use Ipsocode\Cin7\Resources\ListResource;
 
 /**
  * `production/orderList`, the orderList resource.
- *
- * @extends BaseResource<Cin7Connector>
  */
-final class OrderListResource extends BaseResource
+final class OrderListResource extends ListResource
 {
     /**
      * One page of ProductionOrderListItems; without a page or limit, page 1 of 100.
@@ -45,7 +42,7 @@ final class OrderListResource extends BaseResource
         DateTimeInterface|string|null $completionDateTo = null,
         ?string $sourceTaskId = null,
     ): Response {
-        return $this->connector->send(new GetProductionOrderList(
+        return $this->sendList(new GetProductionOrderList(
             $page,
             $limit,
             $status,
@@ -84,7 +81,7 @@ final class OrderListResource extends BaseResource
         DateTimeInterface|string|null $completionDateTo = null,
         ?string $sourceTaskId = null,
     ): Cin7Paginator {
-        return $this->connector->paginate(new GetProductionOrderList(
+        return $this->paginateList(new GetProductionOrderList(
             null,
             $limit,
             $status,
