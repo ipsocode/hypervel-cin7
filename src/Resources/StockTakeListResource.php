@@ -4,19 +4,15 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
-use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
-use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Enums\StockTakeStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\StockTakeList\GetStockTakeList;
 
 /**
  * `stockTakeList`, the stock take list.
- *
- * @extends BaseResource<Cin7Connector>
  */
-final class StockTakeListResource extends BaseResource
+final class StockTakeListResource extends ListResource
 {
     /**
      * One page of stock takes; without a page or limit, page 1 of 100.
@@ -30,7 +26,7 @@ final class StockTakeListResource extends BaseResource
         ?int $limit = null,
         ?StockTakeStatus $status = null,
     ): Response {
-        return $this->connector->send(new GetStockTakeList(
+        return $this->sendList(new GetStockTakeList(
             $page,
             $limit,
             $status,
@@ -48,7 +44,7 @@ final class StockTakeListResource extends BaseResource
         ?int $limit = null,
         ?StockTakeStatus $status = null,
     ): Cin7Paginator {
-        return $this->connector->paginate(new GetStockTakeList(
+        return $this->paginateList(new GetStockTakeList(
             null,
             $limit,
             $status,

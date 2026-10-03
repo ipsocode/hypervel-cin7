@@ -4,529 +4,73 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
-use Ipsocode\Cin7\Resources\AdvancedPurchase\CreditNoteResource as AdvancedPurchaseCreditNoteResource;
-use Ipsocode\Cin7\Resources\AdvancedPurchase\InvoiceResource as AdvancedPurchaseInvoiceResource;
-use Ipsocode\Cin7\Resources\AdvancedPurchase\ManualJournalResource as AdvancedPurchaseManualJournalResource;
-use Ipsocode\Cin7\Resources\AdvancedPurchase\PaymentResource as AdvancedPurchasePaymentResource;
-use Ipsocode\Cin7\Resources\AdvancedPurchase\PutAwayResource as AdvancedPurchasePutAwayResource;
-use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource as AdvancedPurchaseStockResource;
-use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
-use Ipsocode\Cin7\Resources\AdvancedSaleResource;
-use Ipsocode\Cin7\Resources\BankTransferResource;
-use Ipsocode\Cin7\Resources\CrmResource;
-use Ipsocode\Cin7\Resources\CustomerResource;
-use Ipsocode\Cin7\Resources\CustomPricesResource;
-use Ipsocode\Cin7\Resources\Disassembly\OrderResource as DisassemblyOrderResource;
-use Ipsocode\Cin7\Resources\DisassemblyListResource;
-use Ipsocode\Cin7\Resources\DisassemblyResource;
-use Ipsocode\Cin7\Resources\FinishedGoods\OrderResource as FinishedGoodsOrderResource;
-use Ipsocode\Cin7\Resources\FinishedGoods\PickResource as FinishedGoodsPickResource;
-use Ipsocode\Cin7\Resources\FinishedGoodsListResource;
-use Ipsocode\Cin7\Resources\FinishedGoodsResource;
-use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
-use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
-use Ipsocode\Cin7\Resources\JournalResource;
-use Ipsocode\Cin7\Resources\Me\AddressesResource;
-use Ipsocode\Cin7\Resources\Me\ContactsResource;
-use Ipsocode\Cin7\Resources\MeResource;
-use Ipsocode\Cin7\Resources\MoneyTaskListResource;
-use Ipsocode\Cin7\Resources\MoneyTaskResource;
-use Ipsocode\Cin7\Resources\Product\AttachmentsResource as ProductAttachmentsResource;
-use Ipsocode\Cin7\Resources\Product\MarkupPricesResource;
-use Ipsocode\Cin7\Resources\ProductFamily\AttachmentsResource as ProductFamilyAttachmentsResource;
-use Ipsocode\Cin7\Resources\ProductFamilyResource;
-use Ipsocode\Cin7\Resources\Production\FactoryCalendarResource as ProductionFactoryCalendarResource;
-use Ipsocode\Cin7\Resources\Production\Order\AttachmentResource as ProductionOrderAttachmentResource;
-use Ipsocode\Cin7\Resources\Production\Order\Run\OperationResource as ProductionOrderRunOperationResource;
-use Ipsocode\Cin7\Resources\Production\Order\RunResource as ProductionOrderRunResource;
-use Ipsocode\Cin7\Resources\Production\OrderListResource as ProductionOrderListResource;
-use Ipsocode\Cin7\Resources\Production\OrderResource as ProductionOrderResource;
-use Ipsocode\Cin7\Resources\Production\ProductionBomResource;
-use Ipsocode\Cin7\Resources\Production\ResourceListResource as ProductionResourceListResource;
-use Ipsocode\Cin7\Resources\Production\ResourceResource as ProductionResourceResource;
-use Ipsocode\Cin7\Resources\Production\SuspendReasonResource as ProductionSuspendReasonResource;
-use Ipsocode\Cin7\Resources\Production\WorkCentersResource as ProductionWorkCentersResource;
-use Ipsocode\Cin7\Resources\ProductionResource;
-use Ipsocode\Cin7\Resources\ProductResource;
-use Ipsocode\Cin7\Resources\ProductSuppliersResource;
-use Ipsocode\Cin7\Resources\Purchase\AttachmentResource as PurchaseAttachmentResource;
-use Ipsocode\Cin7\Resources\Purchase\CreditNoteResource as PurchaseCreditNoteResource;
-use Ipsocode\Cin7\Resources\Purchase\InvoiceResource as PurchaseInvoiceResource;
-use Ipsocode\Cin7\Resources\Purchase\ManualJournalResource as PurchaseManualJournalResource;
-use Ipsocode\Cin7\Resources\Purchase\OrderResource as PurchaseOrderResource;
-use Ipsocode\Cin7\Resources\Purchase\PaymentResource as PurchasePaymentResource;
-use Ipsocode\Cin7\Resources\Purchase\StockResource as PurchaseStockResource;
-use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
-use Ipsocode\Cin7\Resources\PurchaseListResource;
-use Ipsocode\Cin7\Resources\PurchaseResource;
-use Ipsocode\Cin7\Resources\Ref\Account\BankResource;
-use Ipsocode\Cin7\Resources\Ref\AccountResource;
-use Ipsocode\Cin7\Resources\Ref\AttributeSetResource;
-use Ipsocode\Cin7\Resources\Ref\BrandResource;
-use Ipsocode\Cin7\Resources\Ref\CategoryResource;
-use Ipsocode\Cin7\Resources\Ref\Customer\CreditsResource;
-use Ipsocode\Cin7\Resources\Ref\CustomerResource as RefCustomerResource;
-use Ipsocode\Cin7\Resources\Ref\FixedAssetTypeResource;
-use Ipsocode\Cin7\Resources\Ref\PaymentTermResource;
-use Ipsocode\Cin7\Resources\Ref\PriceTierResource;
-use Ipsocode\Cin7\Resources\Ref\ProductAvailabilityResource;
-use Ipsocode\Cin7\Resources\Ref\Supplier\DepositsResource;
-use Ipsocode\Cin7\Resources\Ref\SupplierResource as RefSupplierResource;
-use Ipsocode\Cin7\Resources\Ref\TaxResource;
-use Ipsocode\Cin7\Resources\Ref\UnitResource;
-use Ipsocode\Cin7\Resources\Reference\DealsResource;
-use Ipsocode\Cin7\Resources\Reference\DiscountResource;
-use Ipsocode\Cin7\Resources\Reference\ShipZonesEnabledResource;
-use Ipsocode\Cin7\Resources\Reference\ShipZonesResource;
-use Ipsocode\Cin7\Resources\ReferenceResource;
-use Ipsocode\Cin7\Resources\RefResource;
-use Ipsocode\Cin7\Resources\Sale\AttachmentResource;
-use Ipsocode\Cin7\Resources\Sale\CreditNoteResource;
-use Ipsocode\Cin7\Resources\Sale\Fulfilment\PackResource;
-use Ipsocode\Cin7\Resources\Sale\Fulfilment\PickResource;
-use Ipsocode\Cin7\Resources\Sale\Fulfilment\ShipResource;
-use Ipsocode\Cin7\Resources\Sale\FulfilmentResource;
-use Ipsocode\Cin7\Resources\Sale\InvoiceResource;
-use Ipsocode\Cin7\Resources\Sale\ManualJournalResource;
-use Ipsocode\Cin7\Resources\Sale\OrderResource;
-use Ipsocode\Cin7\Resources\Sale\PaymentResource;
-use Ipsocode\Cin7\Resources\Sale\QuoteResource;
-use Ipsocode\Cin7\Resources\SaleCreditNoteListResource;
-use Ipsocode\Cin7\Resources\SaleListResource;
-use Ipsocode\Cin7\Resources\SaleResource;
-use Ipsocode\Cin7\Resources\StockAdjustmentListResource;
-use Ipsocode\Cin7\Resources\StockAdjustmentResource;
-use Ipsocode\Cin7\Resources\StockTakeListResource;
-use Ipsocode\Cin7\Resources\StockTakeResource;
-use Ipsocode\Cin7\Resources\StockTransfer\OrderResource as StockTransferOrderResource;
-use Ipsocode\Cin7\Resources\StockTransferListResource;
-use Ipsocode\Cin7\Resources\StockTransferResource;
-use Ipsocode\Cin7\Resources\SupplierResource;
-use Ipsocode\Cin7\Resources\TransactionsResource;
-use Ipsocode\Cin7\Resources\WebhooksResource;
+use Hypervel\Saloon\Http\BaseResource;
+use Ipsocode\Cin7\Tests\Resources;
 use Ipsocode\Cin7\Tests\TestCase;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionNamedType;
 
 /**
- * Every accessor on the connector returns its resource class, fresh on each call so the
- * connector singleton stays coroutine-safe.
+ * Every accessor on the connector, and on each resource below it, returns its resource class,
+ * fresh on each call so the connector singleton stays coroutine-safe. The accessor tree is walked
+ * from the connector by reflection, so a new accessor is covered when it is added.
  *
  * @see docs/resources.md
  */
 class ConnectorResourcesTest extends TestCase
 {
-    public function testCustomerReturnsACustomerResource(): void
+    public function testEveryAccessorReturnsAFreshResource(): void
     {
-        $this->assertInstanceOf(CustomerResource::class, $this->connector()->customer());
-    }
+        $reached = [];
 
-    public function testCustomerReturnsAFreshInstanceEveryCall(): void
-    {
-        $connector = $this->connector();
+        $this->walk($this->connector(), $reached);
 
-        $this->assertNotSame($connector->customer(), $connector->customer());
-    }
-
-    public function testMoneyTaskReturnsAFreshMoneyTaskResource(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(MoneyTaskResource::class, $connector->moneyTask());
-        $this->assertNotSame($connector->moneyTask(), $connector->moneyTask());
-    }
-
-    public function testProductReturnsAProductResource(): void
-    {
-        $this->assertInstanceOf(ProductResource::class, $this->connector()->product());
-    }
-
-    public function testProductReturnsItsAttachmentsAndMarkupPrices(): void
-    {
-        $product = $this->connector()->product();
-
-        $this->assertInstanceOf(ProductAttachmentsResource::class, $product->attachments());
-        $this->assertNotSame($product->attachments(), $product->attachments());
-        $this->assertInstanceOf(MarkupPricesResource::class, $product->markupPrices());
-        $this->assertNotSame($product->markupPrices(), $product->markupPrices());
-    }
-
-    public function testProductFamilyReturnsItsAttachments(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(ProductFamilyResource::class, $connector->productFamily());
-        $this->assertNotSame($connector->productFamily(), $connector->productFamily());
-        $this->assertInstanceOf(ProductFamilyAttachmentsResource::class, $connector->productFamily()->attachments());
-        $this->assertNotSame($connector->productFamily()->attachments(), $connector->productFamily()->attachments());
-    }
-
-    public function testProductReturnsAFreshInstanceEveryCall(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertNotSame($connector->product(), $connector->product());
-    }
-
-    public function testMoneyTaskListReturnsAFreshMoneyTaskListResource(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(MoneyTaskListResource::class, $connector->moneyTaskList());
-        $this->assertNotSame($connector->moneyTaskList(), $connector->moneyTaskList());
-    }
-
-    public function testSaleAndSaleListReturnTheirResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(SaleResource::class, $connector->sale());
-        $this->assertInstanceOf(SaleListResource::class, $connector->saleList());
-        $this->assertNotSame($connector->sale(), $connector->sale());
-        $this->assertNotSame($connector->saleList(), $connector->saleList());
-    }
-
-    public function testSaleReturnsItsNestedResources(): void
-    {
-        $sale = $this->connector()->sale();
-
-        $this->assertInstanceOf(QuoteResource::class, $sale->quote());
-        $this->assertInstanceOf(OrderResource::class, $sale->order());
-        $this->assertInstanceOf(FulfilmentResource::class, $sale->fulfilment());
-        $this->assertInstanceOf(InvoiceResource::class, $sale->invoice());
-        $this->assertInstanceOf(CreditNoteResource::class, $sale->creditNote());
-        $this->assertInstanceOf(PaymentResource::class, $sale->payment());
-        $this->assertInstanceOf(ManualJournalResource::class, $sale->manualJournal());
-        $this->assertInstanceOf(AttachmentResource::class, $sale->attachment());
-        $this->assertNotSame($sale->order(), $sale->order());
-    }
-
-    public function testSaleCreditNoteListReturnsAFreshSaleCreditNoteListResource(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(SaleCreditNoteListResource::class, $connector->saleCreditNoteList());
-        $this->assertNotSame($connector->saleCreditNoteList(), $connector->saleCreditNoteList());
-    }
-
-    public function testPurchaseReturnsAFreshPurchaseResource(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(PurchaseResource::class, $connector->purchase());
-        $this->assertNotSame($connector->purchase(), $connector->purchase());
-    }
-
-    public function testPurchaseReturnsItsNestedResources(): void
-    {
-        $purchase = $this->connector()->purchase();
-
-        $this->assertInstanceOf(PurchaseOrderResource::class, $purchase->order());
-        $this->assertNotSame($purchase->order(), $purchase->order());
-        $this->assertInstanceOf(PurchaseStockResource::class, $purchase->stock());
-        $this->assertNotSame($purchase->stock(), $purchase->stock());
-        $this->assertInstanceOf(PurchaseInvoiceResource::class, $purchase->invoice());
-        $this->assertNotSame($purchase->invoice(), $purchase->invoice());
-        $this->assertInstanceOf(PurchaseCreditNoteResource::class, $purchase->creditNote());
-        $this->assertNotSame($purchase->creditNote(), $purchase->creditNote());
-        $this->assertInstanceOf(PurchasePaymentResource::class, $purchase->payment());
-        $this->assertNotSame($purchase->payment(), $purchase->payment());
-        $this->assertInstanceOf(PurchaseManualJournalResource::class, $purchase->manualJournal());
-        $this->assertNotSame($purchase->manualJournal(), $purchase->manualJournal());
-        $this->assertInstanceOf(PurchaseAttachmentResource::class, $purchase->attachment());
-        $this->assertNotSame($purchase->attachment(), $purchase->attachment());
-    }
-
-    public function testPurchaseListAndPurchaseCreditNoteListReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(PurchaseListResource::class, $connector->purchaseList());
-        $this->assertInstanceOf(PurchaseCreditNoteListResource::class, $connector->purchaseCreditNoteList());
-        $this->assertNotSame($connector->purchaseList(), $connector->purchaseList());
-        $this->assertNotSame($connector->purchaseCreditNoteList(), $connector->purchaseCreditNoteList());
-    }
-
-    public function testAdvancedSaleReturnsAFreshAdvancedSaleResource(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(AdvancedSaleResource::class, $connector->advancedSale());
-        $this->assertNotSame($connector->advancedSale(), $connector->advancedSale());
+        $this->assertNotEmpty($reached);
     }
 
     /**
-     * The advanced sale has no endpoints of its own: its sub-resources are the `sale/…` ones.
+     * An accessor that no path from the connector reaches is a resource nobody can call.
      */
-    public function testAdvancedSaleReturnsTheSaleResourcesItSendsThrough(): void
+    public function testEveryResourceIsReachedFromTheConnector(): void
     {
-        $advancedSale = $this->connector()->advancedSale();
+        $reached = [];
 
-        $this->assertInstanceOf(FulfilmentResource::class, $advancedSale->fulfilment());
-        $this->assertInstanceOf(InvoiceResource::class, $advancedSale->invoice());
-        $this->assertInstanceOf(CreditNoteResource::class, $advancedSale->creditNote());
-        $this->assertInstanceOf(PaymentResource::class, $advancedSale->payment());
-        $this->assertInstanceOf(ManualJournalResource::class, $advancedSale->manualJournal());
-        $this->assertNotSame($advancedSale->fulfilment(), $advancedSale->fulfilment());
+        $this->walk($this->connector(), $reached);
+
+        $reached = array_keys($reached);
+        sort($reached);
+
+        $this->assertSame(Resources::classes(), $reached);
     }
 
-    public function testAdvancedPurchaseReturnsAFreshAdvancedPurchaseResource(): void
+    /**
+     * Call each accessor twice, assert it returns its declared resource class, a new instance each
+     * time, and walk into what it returned.
+     *
+     * @param array<class-string<BaseResource>, true> $reached
+     */
+    private function walk(object $parent, array &$reached): void
     {
-        $connector = $this->connector();
+        foreach (new ReflectionClass($parent)->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            $returns = $method->getReturnType();
 
-        $this->assertInstanceOf(AdvancedPurchaseResource::class, $connector->advancedPurchase());
-        $this->assertNotSame($connector->advancedPurchase(), $connector->advancedPurchase());
-    }
+            if ($method->isStatic()
+                || $method->getNumberOfParameters() > 0
+                || ! $returns instanceof ReflectionNamedType
+                || ! is_a($returns->getName(), BaseResource::class, true)) {
+                continue;
+            }
 
-    public function testAdvancedPurchaseReturnsItsNestedResources(): void
-    {
-        $advancedPurchase = $this->connector()->advancedPurchase();
+            $first = $method->invoke($parent);
+            $second = $method->invoke($parent);
 
-        $this->assertInstanceOf(AdvancedPurchaseStockResource::class, $advancedPurchase->stock());
-        $this->assertNotSame($advancedPurchase->stock(), $advancedPurchase->stock());
-        $this->assertInstanceOf(AdvancedPurchasePutAwayResource::class, $advancedPurchase->putAway());
-        $this->assertNotSame($advancedPurchase->putAway(), $advancedPurchase->putAway());
-        $this->assertInstanceOf(AdvancedPurchaseInvoiceResource::class, $advancedPurchase->invoice());
-        $this->assertNotSame($advancedPurchase->invoice(), $advancedPurchase->invoice());
-        $this->assertInstanceOf(AdvancedPurchaseCreditNoteResource::class, $advancedPurchase->creditNote());
-        $this->assertNotSame($advancedPurchase->creditNote(), $advancedPurchase->creditNote());
-        $this->assertInstanceOf(AdvancedPurchasePaymentResource::class, $advancedPurchase->payment());
-        $this->assertNotSame($advancedPurchase->payment(), $advancedPurchase->payment());
-        $this->assertInstanceOf(AdvancedPurchaseManualJournalResource::class, $advancedPurchase->manualJournal());
-        $this->assertNotSame($advancedPurchase->manualJournal(), $advancedPurchase->manualJournal());
-    }
+            $this->assertInstanceOf($returns->getName(), $first, $method->getName());
+            $this->assertNotSame($first, $second, $method->getName());
 
-    public function testSupplierReturnsAFreshSupplierResource(): void
-    {
-        $connector = $this->connector();
+            $reached[$first::class] = true;
 
-        $this->assertInstanceOf(SupplierResource::class, $connector->supplier());
-        $this->assertNotSame($connector->supplier(), $connector->supplier());
-    }
-
-    public function testBankTransferJournalAndTransactionsReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(BankTransferResource::class, $connector->bankTransfer());
-        $this->assertNotSame($connector->bankTransfer(), $connector->bankTransfer());
-        $this->assertInstanceOf(JournalResource::class, $connector->journal());
-        $this->assertInstanceOf(TransactionsResource::class, $connector->transactions());
-        $this->assertNotSame($connector->journal(), $connector->journal());
-        $this->assertNotSame($connector->transactions(), $connector->transactions());
-    }
-
-    public function testCustomPricesAndProductSuppliersReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(CustomPricesResource::class, $connector->customPrices());
-        $this->assertNotSame($connector->customPrices(), $connector->customPrices());
-        $this->assertInstanceOf(ProductSuppliersResource::class, $connector->productSuppliers());
-        $this->assertNotSame($connector->productSuppliers(), $connector->productSuppliers());
-    }
-
-    public function testReferenceReturnsItsBooks(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(ReferenceResource::class, $connector->reference());
-        $this->assertNotSame($connector->reference(), $connector->reference());
-        $this->assertInstanceOf(DealsResource::class, $connector->reference()->deals());
-        $this->assertInstanceOf(DiscountResource::class, $connector->reference()->discount());
-        $this->assertInstanceOf(ShipZonesResource::class, $connector->reference()->shipZones());
-        $this->assertInstanceOf(ShipZonesEnabledResource::class, $connector->reference()->shipZonesEnabled());
-        $this->assertNotSame($connector->reference()->shipZones(), $connector->reference()->shipZones());
-    }
-
-    public function testStockAdjustmentResourcesReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(StockAdjustmentResource::class, $connector->stockAdjustment());
-        $this->assertNotSame($connector->stockAdjustment(), $connector->stockAdjustment());
-        $this->assertInstanceOf(StockAdjustmentListResource::class, $connector->stockAdjustmentList());
-        $this->assertNotSame($connector->stockAdjustmentList(), $connector->stockAdjustmentList());
-    }
-
-    public function testStockTakeResourcesReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(StockTakeResource::class, $connector->stockTake());
-        $this->assertNotSame($connector->stockTake(), $connector->stockTake());
-        $this->assertInstanceOf(StockTakeListResource::class, $connector->stockTakeList());
-        $this->assertNotSame($connector->stockTakeList(), $connector->stockTakeList());
-    }
-
-    public function testStockTransferResourcesReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(StockTransferResource::class, $connector->stockTransfer());
-        $this->assertNotSame($connector->stockTransfer(), $connector->stockTransfer());
-        $this->assertInstanceOf(StockTransferListResource::class, $connector->stockTransferList());
-        $this->assertNotSame($connector->stockTransferList(), $connector->stockTransferList());
-        $this->assertInstanceOf(StockTransferOrderResource::class, $connector->stockTransfer()->order());
-        $this->assertNotSame($connector->stockTransfer()->order(), $connector->stockTransfer()->order());
-    }
-
-    public function testInventoryWriteOffResourcesReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(InventoryWriteOffResource::class, $connector->inventoryWriteOff());
-        $this->assertNotSame($connector->inventoryWriteOff(), $connector->inventoryWriteOff());
-        $this->assertInstanceOf(InventoryWriteOffListResource::class, $connector->inventoryWriteOffList());
-        $this->assertNotSame($connector->inventoryWriteOffList(), $connector->inventoryWriteOffList());
-    }
-
-    public function testCrmResourcesReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(CrmResource::class, $connector->crm());
-        $this->assertNotSame($connector->crm(), $connector->crm());
-        $this->assertNotSame($connector->crm()->lead(), $connector->crm()->lead());
-        $this->assertNotSame($connector->crm()->opportunity(), $connector->crm()->opportunity());
-        $this->assertNotSame($connector->crm()->task(), $connector->crm()->task());
-        $this->assertNotSame($connector->crm()->taskCategory(), $connector->crm()->taskCategory());
-        $this->assertNotSame($connector->crm()->workflow(), $connector->crm()->workflow());
-        $this->assertNotSame($connector->crm()->workflowStart(), $connector->crm()->workflowStart());
-    }
-
-    public function testWebhooksResourceReturnsAFreshResource(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(WebhooksResource::class, $connector->webhooks());
-        $this->assertNotSame($connector->webhooks(), $connector->webhooks());
-    }
-
-    public function testMeReturnsAFreshMeResource(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(MeResource::class, $connector->me());
-        $this->assertNotSame($connector->me(), $connector->me());
-    }
-
-    public function testMeReturnsItsNestedResources(): void
-    {
-        $me = $this->connector()->me();
-
-        $this->assertInstanceOf(AddressesResource::class, $me->addresses());
-        $this->assertInstanceOf(ContactsResource::class, $me->contacts());
-        $this->assertNotSame($me->addresses(), $me->addresses());
-        $this->assertNotSame($me->contacts(), $me->contacts());
-    }
-
-    public function testAFulfilmentReturnsItsPickPackAndShip(): void
-    {
-        $fulfilment = $this->connector()->sale()->fulfilment();
-
-        $this->assertInstanceOf(PickResource::class, $fulfilment->pick());
-        $this->assertInstanceOf(PackResource::class, $fulfilment->pack());
-        $this->assertInstanceOf(ShipResource::class, $fulfilment->ship());
-        $this->assertNotSame($fulfilment->pick(), $fulfilment->pick());
-    }
-
-    public function testRefReturnsARefResourceWithItsGroupings(): void
-    {
-        $ref = $this->connector()->ref();
-
-        $this->assertInstanceOf(RefResource::class, $ref);
-        $this->assertInstanceOf(TaxResource::class, $ref->tax());
-        $this->assertInstanceOf(RefCustomerResource::class, $ref->customer());
-        $this->assertInstanceOf(CreditsResource::class, $ref->customer()->credits());
-        $this->assertInstanceOf(RefSupplierResource::class, $ref->supplier());
-        $this->assertInstanceOf(DepositsResource::class, $ref->supplier()->deposits());
-        $this->assertInstanceOf(AccountResource::class, $ref->account());
-        $this->assertInstanceOf(AttributeSetResource::class, $ref->attributeSet());
-        $this->assertInstanceOf(ProductAvailabilityResource::class, $ref->productAvailability());
-        $this->assertInstanceOf(PriceTierResource::class, $ref->priceTier());
-        $this->assertInstanceOf(UnitResource::class, $ref->unit());
-        $this->assertInstanceOf(CategoryResource::class, $ref->category());
-        $this->assertInstanceOf(BrandResource::class, $ref->brand());
-        $this->assertInstanceOf(BankResource::class, $ref->account()->bank());
-        $this->assertInstanceOf(FixedAssetTypeResource::class, $ref->fixedAssetType());
-        $this->assertInstanceOf(PaymentTermResource::class, $ref->paymentTerm());
-    }
-
-    public function testRefReturnsAFreshInstanceEveryCall(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertNotSame($connector->ref(), $connector->ref());
-        $this->assertNotSame($connector->ref()->customer(), $connector->ref()->customer());
-        $this->assertNotSame($connector->ref()->supplier(), $connector->ref()->supplier());
-        $this->assertNotSame($connector->ref()->account(), $connector->ref()->account());
-        $this->assertNotSame($connector->ref()->attributeSet(), $connector->ref()->attributeSet());
-        $this->assertNotSame($connector->ref()->productAvailability(), $connector->ref()->productAvailability());
-        $this->assertNotSame($connector->ref()->priceTier(), $connector->ref()->priceTier());
-        $this->assertNotSame($connector->ref()->unit(), $connector->ref()->unit());
-        $this->assertNotSame($connector->ref()->category(), $connector->ref()->category());
-        $this->assertNotSame($connector->ref()->brand(), $connector->ref()->brand());
-        $this->assertNotSame($connector->ref()->location(), $connector->ref()->location());
-        $this->assertNotSame($connector->ref()->carrier(), $connector->ref()->carrier());
-        $this->assertNotSame($connector->ref()->templates(), $connector->ref()->templates());
-        $this->assertNotSame($connector->ref()->customer()->templates(), $connector->ref()->customer()->templates());
-        $this->assertNotSame($connector->ref()->account()->bank(), $connector->ref()->account()->bank());
-        $this->assertNotSame($connector->ref()->fixedAssetType(), $connector->ref()->fixedAssetType());
-        $this->assertNotSame($connector->ref()->paymentTerm(), $connector->ref()->paymentTerm());
-    }
-
-    public function testDisassemblyResourcesReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(DisassemblyResource::class, $connector->disassembly());
-        $this->assertNotSame($connector->disassembly(), $connector->disassembly());
-        $this->assertInstanceOf(DisassemblyListResource::class, $connector->disassemblyList());
-        $this->assertNotSame($connector->disassemblyList(), $connector->disassemblyList());
-        $this->assertInstanceOf(DisassemblyOrderResource::class, $connector->disassembly()->order());
-        $this->assertNotSame($connector->disassembly()->order(), $connector->disassembly()->order());
-    }
-
-    public function testFinishedGoodsResourcesReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(FinishedGoodsResource::class, $connector->finishedGoods());
-        $this->assertNotSame($connector->finishedGoods(), $connector->finishedGoods());
-        $this->assertInstanceOf(FinishedGoodsListResource::class, $connector->finishedGoodsList());
-        $this->assertNotSame($connector->finishedGoodsList(), $connector->finishedGoodsList());
-        $this->assertInstanceOf(FinishedGoodsOrderResource::class, $connector->finishedGoods()->order());
-        $this->assertNotSame($connector->finishedGoods()->order(), $connector->finishedGoods()->order());
-        $this->assertInstanceOf(FinishedGoodsPickResource::class, $connector->finishedGoods()->pick());
-        $this->assertNotSame($connector->finishedGoods()->pick(), $connector->finishedGoods()->pick());
-    }
-
-    public function testProductionResourcesReturnFreshResources(): void
-    {
-        $connector = $this->connector();
-
-        $this->assertInstanceOf(ProductionResource::class, $connector->production());
-        $this->assertNotSame($connector->production(), $connector->production());
-        $this->assertInstanceOf(ProductionFactoryCalendarResource::class, $connector->production()->factoryCalendar());
-        $this->assertNotSame($connector->production()->factoryCalendar(), $connector->production()->factoryCalendar());
-        $this->assertInstanceOf(ProductionBomResource::class, $connector->production()->productionBom());
-        $this->assertNotSame($connector->production()->productionBom(), $connector->production()->productionBom());
-        $this->assertInstanceOf(ProductionOrderResource::class, $connector->production()->order());
-        $this->assertNotSame($connector->production()->order(), $connector->production()->order());
-        $this->assertInstanceOf(ProductionOrderAttachmentResource::class, $connector->production()->order()->attachment());
-        $this->assertNotSame($connector->production()->order()->attachment(), $connector->production()->order()->attachment());
-        $this->assertInstanceOf(ProductionOrderRunResource::class, $connector->production()->order()->run());
-        $this->assertNotSame($connector->production()->order()->run(), $connector->production()->order()->run());
-        $this->assertInstanceOf(ProductionOrderRunOperationResource::class, $connector->production()->order()->run()->operation());
-        $this->assertNotSame($connector->production()->order()->run()->operation(), $connector->production()->order()->run()->operation());
-        $this->assertInstanceOf(ProductionOrderListResource::class, $connector->production()->orderList());
-        $this->assertNotSame($connector->production()->orderList(), $connector->production()->orderList());
-        $this->assertInstanceOf(ProductionResourceListResource::class, $connector->production()->resourceList());
-        $this->assertNotSame($connector->production()->resourceList(), $connector->production()->resourceList());
-        $this->assertInstanceOf(ProductionResourceResource::class, $connector->production()->resource());
-        $this->assertNotSame($connector->production()->resource(), $connector->production()->resource());
-        $this->assertInstanceOf(ProductionSuspendReasonResource::class, $connector->production()->suspendReason());
-        $this->assertNotSame($connector->production()->suspendReason(), $connector->production()->suspendReason());
-        $this->assertInstanceOf(ProductionWorkCentersResource::class, $connector->production()->workCenters());
-        $this->assertNotSame($connector->production()->workCenters(), $connector->production()->workCenters());
+            $this->walk($first, $reached);
+        }
     }
 }
