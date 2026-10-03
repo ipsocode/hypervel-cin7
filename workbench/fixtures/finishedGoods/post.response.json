@@ -1,0 +1,61 @@
+{
+    "TaskID": "f1671c8c-c7ef-4529-996e-6e229d268bdc",
+    "AssemblyNumber": "FG-00016",
+    "Status": "COMPLETED",
+    "ProductID": "524c20a3-a8ec-44f2-9685-311f1f7d1498",
+    "ProductCode": "Bread",
+    "ProductName": "Baked Bread",
+    "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+    "Location": "Main Warehouse",
+    "BinID": null,
+    "Bin": null,
+    "WIPAccount": "715",
+    "WIPDate": "2018-01-03T00:00:00",
+    "Account": "715",
+    "Quantity": 1,
+    "AssemblyInstructionURL": "",
+    "CompletionDate": "2018-01-03T00:00:00",
+    "BatchSN": "FG-00001",
+    "ExpiryDate": "2018-01-11T00:00:00",
+    "Notes": null,
+    "CustomField1": "Low",
+    "CustomField2": "false",
+    "CustomField3": "test",
+    "CustomField4": "",
+    "CustomField5": "",
+    "CustomField6": "",
+    "CustomField7": "",
+    "CustomField8": "",
+    "CustomField9": "",
+    "CustomField10": "",
+    "OrderLines": [
+        {
+            "ProductID": "8879b7f5-3aa7-4c7c-ba2c-d0bcc48ba7c3",
+            "ProductCode": "GB3-White",
+            "Name": "Golf balls white 3-pack",
+            "ExpenseAccount": null,
+            "Quantity": 1,
+            "Unit": "",
+            "WastagePercent": 0,
+            "WastageQuantity": 1,
+            "TotalQuantity": 2,
+            "TotalCost": 24
+        }
+    ],
+    "PickLines": [
+        {
+            "ProductID": "8879b7f5-3aa7-4c7c-ba2c-d0bcc48ba7c3",
+            "ProductCode": "GB3-White",
+            "Name": "Golf balls white 3-pack",
+            "BinID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+            "Bin": "Main Warehouse",
+            "BatchSN": null,
+            "ExpiryDate": null,
+            "Quantity": 2,
+            "Unit": "Item",
+            "Cost": 12
+        }
+    ],
+    "Transactions": [],
+    "Errors": []
+}

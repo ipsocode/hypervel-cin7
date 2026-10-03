@@ -49,6 +49,14 @@ use Ipsocode\Cin7\Data\Crm\Workflow\AbstractWorkflowData;
 use Ipsocode\Cin7\Data\Crm\Workflow\WorkflowData;
 use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
+use Ipsocode\Cin7\Data\Disassembly\DisassemblyData;
+use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderData;
+use Ipsocode\Cin7\Data\DisassemblyList\DisassemblyListData;
+use Ipsocode\Cin7\Data\FinishedGoods\AbstractFinishedGoodsData;
+use Ipsocode\Cin7\Data\FinishedGoods\FinishedGoodsData;
+use Ipsocode\Cin7\Data\FinishedGoods\Order\FinishedGoodsOrderData;
+use Ipsocode\Cin7\Data\FinishedGoods\Pick\FinishedGoodsPickData;
+use Ipsocode\Cin7\Data\FinishedGoodsList\FinishedGoodsListData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\AbstractInventoryWriteOffData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffData;
 use Ipsocode\Cin7\Data\InventoryWriteOffList\InventoryWriteOffListData;
@@ -69,6 +77,23 @@ use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
 use Ipsocode\Cin7\Data\ProductFamily\AbstractProductFamilyData;
 use Ipsocode\Cin7\Data\ProductFamily\ProductFamilyData;
+use Ipsocode\Cin7\Data\Production\FactoryCalendar\FactoryCalendarData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentsData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderMessageData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderReferenceData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrdersData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunUndoData;
+use Ipsocode\Cin7\Data\Production\OrderList\ProductionOrderListData;
+use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomsData;
+use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomsData;
+use Ipsocode\Cin7\Data\Production\Resource\ResourceData;
+use Ipsocode\Cin7\Data\Production\Resource\ResourcesData;
+use Ipsocode\Cin7\Data\Production\SuspendReason\SuspendReasonData;
+use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCenterData;
+use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCentersData;
 use Ipsocode\Cin7\Data\ProductSuppliers\ProductSuppliersData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentsData;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNoteData;
@@ -517,6 +542,7 @@ class DataCatalogueTest extends TestCase
             AbstractTaskData::class,
             AbstractWorkflowData::class,
             AbstractCustomerData::class,
+            AbstractFinishedGoodsData::class,
             AbstractInventoryWriteOffData::class,
             AbstractJournalData::class,
             AbstractMeAddressData::class,
@@ -598,7 +624,7 @@ class DataCatalogueTest extends TestCase
 
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class, PurchaseAttachmentsData::class, AdvancedPurchaseStocksData::class, PurchaseInvoiceData::class, PurchaseCreditNoteData::class, AdvancedPurchaseManualJournalsData::class, AdvancedPurchaseInvoicesData::class, AdvancedPurchasePutAwaysData::class, AdvancedPurchasePaymentData::class, AdvancedPurchaseCreditNotesData::class, PurchaseData::class, AdvancedPurchaseData::class, AccountData::class, BankAccountData::class, FixedAssetTypeData::class, PaymentTermData::class, JournalData::class, TransactionData::class, BankTransferData::class, MarkupPricesData::class, ProductFamilyData::class, BrandData::class, StockAdjustmentData::class, StockAdjustmentListData::class, StockTakeData::class, StockTakeListData::class, StockTransferData::class, StockTransferListData::class, StockTransferOrderData::class, InventoryWriteOffData::class, InventoryWriteOffListData::class, LocationData::class, CarrierData::class, TemplateData::class, CustomerDefaultTemplateData::class, ProductSuppliersData::class, ShippingZoneData::class, ShipZonesEnabledData::class, ProductDiscountRuleData::class, ProductDealData::class, LeadData::class, OpportunityData::class, TaskData::class, TaskCategoryData::class, WorkflowData::class, WebhookData::class] as $class) {
+        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class, PurchaseAttachmentsData::class, AdvancedPurchaseStocksData::class, PurchaseInvoiceData::class, PurchaseCreditNoteData::class, AdvancedPurchaseManualJournalsData::class, AdvancedPurchaseInvoicesData::class, AdvancedPurchasePutAwaysData::class, AdvancedPurchasePaymentData::class, AdvancedPurchaseCreditNotesData::class, PurchaseData::class, AdvancedPurchaseData::class, AccountData::class, BankAccountData::class, FixedAssetTypeData::class, PaymentTermData::class, JournalData::class, TransactionData::class, BankTransferData::class, MarkupPricesData::class, ProductFamilyData::class, BrandData::class, StockAdjustmentData::class, StockAdjustmentListData::class, StockTakeData::class, StockTakeListData::class, StockTransferData::class, StockTransferListData::class, StockTransferOrderData::class, InventoryWriteOffData::class, InventoryWriteOffListData::class, LocationData::class, CarrierData::class, TemplateData::class, CustomerDefaultTemplateData::class, ProductSuppliersData::class, ShippingZoneData::class, ShipZonesEnabledData::class, ProductDiscountRuleData::class, ProductDealData::class, LeadData::class, OpportunityData::class, TaskData::class, TaskCategoryData::class, WorkflowData::class, WebhookData::class, DisassemblyData::class, DisassemblyListData::class, DisassemblyOrderData::class, FinishedGoodsData::class, FinishedGoodsListData::class, FinishedGoodsOrderData::class, FinishedGoodsPickData::class, FactoryCalendarData::class, ProductionOrderAttachmentData::class, ProductionOrderAttachmentsData::class, ProductionOrderMessageData::class, ProductionOrderReferenceData::class, ProductionOrdersData::class, ProductionRunData::class, ProductionRunUndoData::class, ProductionRunsData::class, ProductionOrderListData::class, ProductFamilyProductionBomsData::class, ProductProductionBomsData::class, ResourceData::class, ResourcesData::class, SuspendReasonData::class, WorkCenterData::class, WorkCentersData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }

@@ -1,0 +1,112 @@
+{
+    "Warnings": [],
+    "ProductionOrderID": "1c634596-eb51-4ff1-828b-ee1b42a9a5f1",
+    "OrderNumber": "MO-00485",
+    "Runs": [
+        {
+            "RunID": "5dae221f-7c8d-403d-91b5-1b48c01fcfc1",
+            "Number": 2,
+            "Status": "PLANNED",
+            "Quantity": 1.0,
+            "WIPAccount": "12345",
+            "StartDate": null,
+            "EndDate": null,
+            "DueDate": null,
+            "ReceivedDate": null,
+            "IssueMethodParameter": 1,
+            "Operations": [
+                {
+                    "OperationID": "ea571947-c937-4e2a-a030-952801687c83",
+                    "Status": "PLANNED",
+                    "Order": 0,
+                    "Name": "Mixing",
+                    "PlannedTime": 1800,
+                    "ActualTime": null,
+                    "UnitsPerCycle": 1.0,
+                    "WorkCenterID": "d8c64083-e8cf-4705-bb6c-abd2d5a2183a",
+                    "WorkCenterName": "Mixing Area",
+                    "OperationType": "Manufacturing",
+                    "WorkCenterCode": "WC2",
+                    "StartDate": null,
+                    "EndDate": null,
+                    "DueDate": null,
+                    "IsDropShip": false,
+                    "IsBackflush": false,
+                    "Components": [
+                        {
+                            "RunComponentID": "d883b80e-a61a-4ed1-a233-938a78f10b0b",
+                            "ProductID": "c01846b3-a33b-47a6-baba-bfd4f85df9c6",
+                            "ProductName": "Eggs",
+                            "ProductCode": "Eggs1",
+                            "Quantity": 0.0,
+                            "ExpectedQuantity": 2.0,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "BatchSN": null,
+                            "ExpiryDate": null,
+                            "UnitCost": 1.2,
+                            "LocationID": "92974be9-c7e0-4866-bf0f-24a244012c61",
+                            "LocationName": "LA Shop Floor",
+                            "ProductCost": 1.2,
+                            "Available": 15.7,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "ReservedQuantity": null,
+                            "IsReserved": false,
+                            "IsBackflush": false
+                        },
+                        {
+                            "RunComponentID": "bd014ea6-8108-40f7-bae5-4c3cd6bdced7",
+                            "ProductID": "ca65670f-31bb-4209-a69a-47a96c89c5af",
+                            "ProductName": "Flour",
+                            "ProductCode": "Flour1",
+                            "Quantity": 0.0,
+                            "ExpectedQuantity": 0.5,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "BatchSN": null,
+                            "ExpiryDate": null,
+                            "UnitCost": 1.9,
+                            "LocationID": "92974be9-c7e0-4866-bf0f-24a244012c61",
+                            "LocationName": "LA Shop Floor",
+                            "ProductCost": 1.9,
+                            "Available": 87.55,
+                            "CostingMethod": "FIFO",
+                            "Unit": "kg",
+                            "ReservedQuantity": null,
+                            "IsReserved": false
+                        }
+                    ],
+                    "Resources": [
+                        {
+                            "ResourceID": "d52fbd3f-79bf-4203-86c2-34fea06c0f5c",
+                            "ResourceName": "Mixer",
+                            "ResourceCode": "R-4",
+                            "UnitCost": 6.0,
+                            "Quantity": 1.0,
+                            "Cost": 6.0,
+                            "CycleTime": 3600,
+                            "Available": 0
+                        }
+                    ],
+                    "ResourceCosts": [],
+                    "FinishedProducts": [],
+                    "OutputProducts": [],
+                    "InputProducts": [],
+                    "CoManTasks": [],
+                    "CoManTaskLines": [],
+                    "Attachments": [],
+                    "Notes": [],
+                    "SuspendReason": null,
+                    "CoManStatus": null,
+                    "ManualStartDate": null,
+                    "ManualEndDate": null
+                }
+            ],
+            "Output": [],
+            "PendingOutput": [],
+            "ManualJournals": [],
+            "Traceability": []
+        }
+    ]
+}

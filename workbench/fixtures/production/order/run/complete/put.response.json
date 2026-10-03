@@ -1,0 +1,99 @@
+{
+    "Warnings": [],
+    "ProductionOrderID": "1c634596-eb51-4ff1-828b-ee1b42a9a5f1",
+    "OrderNumber": "MO-01753",
+    "Runs": [
+        {
+            "RunID": "1c634596-eb51-4ff1-828b-ee1b42a9a5f1",
+            "Number": 1,
+            "Status": "COMPLETED",
+            "Quantity": 4920.0,
+            "WIPAccount": "1325",
+            "StartDate": "2022-05-12T00:00:00",
+            "EndDate": "2022-05-12T00:00:00",
+            "DueDate": null,
+            "ReceivedDate": "2022-05-12T00:00:00",
+            "ScheduleStart": "2022-05-12T12:26:00Z",
+            "ScheduleDue": "2022-05-12T12:26:00Z",
+            "IssueMethodParameter": 0,
+            "Operations": [
+                {
+                    "OperationID": "bc2e1ce7-50bb-8484-e671-c8155d9557d6",
+                    "Status": "COMPLETED",
+                    "Order": 0,
+                    "Name": "OPer 1",
+                    "PlannedTime": 1416960,
+                    "ActualTime": 4,
+                    "UnitsPerCycle": 100.0,
+                    "WorkCenterID": "9ad4366d-172f-4712-81ae-681efadc0205",
+                    "WorkCenterName": "Main kitchen",
+                    "OperationType": "Manufacturing",
+                    "WorkCenterCode": "WC1",
+                    "StartDate": "2022-05-12T00:00:00",
+                    "EndDate": "2022-05-12T00:00:00",
+                    "DueDate": null,
+                    "IsDropShip": false,
+                    "Components": [
+                        {
+                            "RunComponentID": "486df13b-5f96-4266-904c-29c07d1e688d",
+                            "ProductID": "7e2c23da-ea12-4443-976e-3a50644a7548",
+                            "ProductName": "Cheese - Vityaz 70% (BATCH)",
+                            "ProductCode": "Cheese3",
+                            "Quantity": 0.4503,
+                            "ExpectedQuantity": 1.2103,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "BatchSN": "PO-00538-1",
+                            "ExpiryDate": null,
+                            "UnitCost": 10.0,
+                            "LocationID": "92974be9-c7e0-4866-bf0f-24a244012c61",
+                            "LocationName": "LA Shop Floor",
+                            "ProductCost": 10.2481,
+                            "Available": 0.0,
+                            "CostingMethod": "BATCH",
+                            "Unit": "kg",
+                            "ReservedQuantity": 0.0,
+                            "IsReserved": false,
+                            "IsBackflush": false
+                        }
+                    ],
+                    "Resources": [],
+                    "ResourceCosts": [],
+                    "FinishedProducts": [],
+                    "OutputProducts": [],
+                    "InputProducts": [],
+                    "CoManTasks": [],
+                    "CoManTaskLines": [],
+                    "Attachments": [],
+                    "Notes": [],
+                    "SuspendReason": null,
+                    "CoManStatus": null,
+                    "IsBackflush": false,
+                    "ManualStartDate": null,
+                    "ManualEndDate": null
+                }
+            ],
+            "Output": [
+                {
+                    "ProductName": "Product Name",
+                    "Unit": "Item",
+                    "UnitCost": 0.0015,
+                    "CostingMethod": "BATCH",
+                    "Quantity": 4920.0,
+                    "WastageQuantity": 0.0,
+                    "Received": true,
+                    "ReceivedDate": "2022-05-12T00:00:00",
+                    "LocationID": "70c7737c-4233-4655-a960-f7cd742bab4b",
+                    "LocationName": "Shopfloor Name",
+                    "ProductID": "27670203-9136-4ef8-96c3-33ffc41149da",
+                    "ProductCode": "SKU1",
+                    "BatchSN": "MO-01753/1-1",
+                    "ExpiryDate": null
+                }
+            ],
+            "PendingOutput": [],
+            "ManualJournals": [],
+            "Traceability": []
+        }
+    ]
+}

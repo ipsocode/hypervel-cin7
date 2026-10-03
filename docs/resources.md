@@ -83,6 +83,25 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->stockTransfer()->order()` | `StockTransfer\OrderResource` | `get(string $taskId)`, `post(array\|StockTransferOrderPostData $body)` |
 | `$cin7->inventoryWriteOffList()` | `InventoryWriteOffListResource` | `get($page, $limit, ?CompletionStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->inventoryWriteOff()` | `InventoryWriteOffResource` | `get(string $taskId)`, `post(array\|InventoryWriteOffPostData $body)`, `put(array\|InventoryWriteOffPutData $body)`, `delete(string $id, ?bool $void = null)` |
+| `$cin7->disassemblyList()` | `DisassemblyListResource` | `get($page, $limit, ?DisassemblyStatus $status, ?string $search)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->disassembly()` | `DisassemblyResource` | `get(string $taskId)`, `post(array\|DisassemblyPostData $body)`, `delete(string $id, ?bool $void = null)`; `order()` |
+| `$cin7->disassembly()->order()` | `Disassembly\OrderResource` | `get(string $taskId)`, `post(array\|DisassemblyOrderData $body)` |
+| `$cin7->finishedGoodsList()` | `FinishedGoodsListResource` | `get($page, $limit, ?FinishedGoodsStatus $status, ?string $search, ?string $saleId)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->finishedGoods()` | `FinishedGoodsResource` | `get(string $taskId)`, `post(array\|FinishedGoodsPostData $body)`, `put(array\|FinishedGoodsPutData $body)`, `delete(string $id, ?bool $void = null)`; `order()`, `pick()` |
+| `$cin7->finishedGoods()->order()` | `FinishedGoods\OrderResource` | `get(string $taskId)`, `post(array\|FinishedGoodsOrderData $body)` |
+| `$cin7->finishedGoods()->pick()` | `FinishedGoods\PickResource` | `get(string $taskId)`, `post(array\|FinishedGoodsPickData $body)` |
+| `$cin7->production()` | `ProductionResource` | `factoryCalendar()`, `productionBom()`, `order()`, `orderList()`, `resourceList()`, `resource()`, `suspendReason()`, `workCenters()` |
+| `$cin7->production()->factoryCalendar()` | `FactoryCalendarResource` | `get(int $year)`, `post(array\|FactoryCalendarPostData $body)`, `put(array\|FactoryCalendarPutData $body)` |
+| `$cin7->production()->productionBom()` | `ProductionBomResource` | `getProduct(string $productId, ?bool $returnAttachmentsContent = null)`, `postProduct(array\|ProductProductionBomPostData $body)`, `putProduct(array\|ProductProductionBomPutData $body)`, `deleteProduct(string $productId, string $bomId)`, `getProductFamily(string $productFamilyId, ?bool $returnAttachmentsContent = null)`, `postProductFamily(array\|ProductFamilyProductionBomPostData $body)`, `putProductFamily(array\|ProductFamilyProductionBomPutData $body)`, `deleteProductFamily(string $productFamilyId, string $bomId)` |
+| `$cin7->production()->order()` | `OrderResource` | `get(string $productionOrderId, ?bool $returnAttachmentsContent = null)`, `post(array\|ProductionOrderPostData $body, ?bool $recalculateDates = null)`, `put(array\|ProductionOrderPutData $body, ?bool $allowRecalculateDates = null, ?bool $allowRecalculateCyclesAndQuantities = null)`, `authorise(array\|ProductionOrderAuthorisePostData $body)`, `release(array\|ProductionOrderReleasePostData $body)`, `undo(array\|ProductionOrderUndoPostData $body)`, `void(array\|ProductionOrderVoidPostData $body)`, `referenceData()`; `attachment()`, `run()` |
+| `$cin7->production()->order()->attachment()` | `Order\AttachmentResource` | `post(array\|ProductionOrderAttachmentData $body, string $productionOrderId)`, `put(array\|ProductionOrderAttachmentPutData $body)`, `delete(string $productionOrderAttachmentId)`, `get(string $productionOrderId, ?bool $returnAttachmentsContent = null)` |
+| `$cin7->production()->orderList()` | `OrderListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->production()->order()->run()` | `Order\RunResource` | `post(array\|ProductionRunPostData $body)`, `get(string $productionOrderId, ?bool $includeAttachmentContent = null)`, `put(array\|ProductionRunData $body, string $productionOrderId, bool $increaseOrderQuantity)`, `complete(array\|ProductionRunCompletePutData $body)`, `undo(array\|ProductionRunUndoData $body)`, `void(array\|ProductionRunUndoData $body)`, `manualJournal(array\|ProductionRunManualJournalsPutData $body, string $productionOrderId)`; `operation()` |
+| `$cin7->production()->order()->run()->operation()` | `Order\Run\OperationResource` | `start(array\|ProductionRunOperationStartPutData $body)`, `suspend(array\|ProductionRunOperationSuspendPutData $body)`, `resume(array\|ProductionRunOperationResumePutData $body)`, `complete(array\|ProductionRunOperationCompletePutData $body)` |
+| `$cin7->production()->resourceList()` | `ResourceListResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->production()->resource()` | `ResourceResource` | `get(string $resourceId, ?bool $includeAttachments = null)`, `post(array\|ResourcesPostData $body)`, `put(array\|ResourcePutData $body)`, `delete(string $resourceId)` |
+| `$cin7->production()->suspendReason()` | `SuspendReasonResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `put(array\|SuspendReasonData $body)` |
+| `$cin7->production()->workCenters()` | `WorkCentersResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|WorkCentersData $body)`, `put(array\|WorkCentersData $body)`, `delete(string $workCenterId)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
 | `$cin7->crm()` | `CrmResource` | `lead()`, `opportunity()`, `task()`, `taskCategory()`, `workflow()`, `workflowStart()`; a pure grouping, as V2 has no action on `/crm` |
 | `$cin7->crm()->lead()` | `Crm\LeadResource` | `get($page, $limit, $id, $name, $modifiedSince)`, `paginate($limit, …): Cin7Paginator`, `post(array\|LeadPostData $body)`, `put(array\|LeadPutData $body)` |
@@ -1320,6 +1339,59 @@ $writeOff = $this->cin7->inventoryWriteOff()->post(InventoryWriteOffPostData::fr
 ]))->dto(); // InventoryWriteOffData
 ```
 
+`$cin7->disassemblyList()` is `disassemblyList`, filtered by `status` (a `DisassemblyStatus`: `DRAFT`,
+`WORK IN PROGRESS`, `COMPLETED`, `VOIDED`) and `search`.
+
+`$cin7->disassembly()` is `disassembly`, keyed by `TaskID`. `post()` takes a `DisassemblyPostData`
+as well as an array: a `Status` (`DRAFT`, `AUTHORISED`, `IN PROGRESS` or `COMPLETED`), the
+`WIPAccount`, the `Quantity`, a product by `ProductID` or `ProductCode` and a location by `LocationID`
+or `Location`. Every action answers with the disassembly, so `dto()` is a `DisassemblyData`, with its
+`DisassemblyNumber`, its pick, order and service lines, its `Transactions` and the `Errors` of a POST
+that created the task despite them. `delete($id, void: true)` voids it.
+
+`$cin7->disassembly()->order()` is `disassembly/order`: `get($taskId)` reads the order of a
+disassembly, and `post()` takes a `DisassemblyOrderData` (a `Status` of `WORK IN PROGRESS` or
+`COMPLETED`, its `OrderLines` and `OrderServiceLines`) as well as an array; `dto()` is a
+`DisassemblyOrderData`.
+
+```php
+$disassembly = $this->cin7->disassembly()->post(DisassemblyPostData::from([
+    'Status' => 'DRAFT',
+    'ProductCode' => 'Bread',
+    'Location' => 'Main Warehouse',
+    'WIPAccount' => '715',
+    'Quantity' => 1,
+]))->dto(); // DisassemblyData
+```
+
+`$cin7->finishedGoodsList()` is `finishedGoodsList`, filtered by `status` (a `FinishedGoodsStatus`:
+`DRAFT`, `AUTHORISED`, `IN PROGRESS`, `COMPLETED`, `VOIDED`), `search` and `saleId`.
+
+`$cin7->finishedGoods()` is `finishedGoods`, keyed by `TaskID`. `post()` takes a
+`FinishedGoodsPostData` and `put()` a `FinishedGoodsPutData`, which requires only `ID`, as well as an
+array. A POST body needs its `Status`, `WIPAccount`, `Account`, `Quantity` and `CompletionDate`, a
+product by `ProductID` or `ProductCode`, a location by `LocationID` or `Location`, and a `WIPDate`
+once it is `AUTHORISED`, `IN PROGRESS` or `COMPLETED`. Every action answers with the task, so `dto()`
+is a `FinishedGoodsData`, with its `AssemblyNumber`, its order and pick lines, its `Transactions` and
+the `Errors` of a POST that created the task despite them. `delete($id, void: true)` voids it.
+
+`$cin7->finishedGoods()->order()` is `finishedGoods/order`: `get($taskId)` reads a task's order, and
+`post()` takes a `FinishedGoodsOrderData` (a `Status` of `DRAFT` or `AUTHORISED` and its
+`OrderLines`) as well as an array. `$cin7->finishedGoods()->pick()` is `finishedGoods/pick`:
+`get($taskId)` reads its pick, and `post()` takes a `FinishedGoodsPickData` (a `Status` of
+`AUTHORISED`, `IN PROGRESS` or `COMPLETED`, a `CompletionDate` and its `PickLines`) as well as an array.
+
+```php
+$task = $this->cin7->finishedGoods()->post(FinishedGoodsPostData::from([
+    'Status' => 'DRAFT',
+    'ProductCode' => 'Bread',
+    'Location' => 'Main Warehouse',
+    'WIPAccount' => '715',
+    'Account' => '715',
+    'Quantity' => 1,
+    'CompletionDate' => '2018-01-03T00:00:00',
+]))->dto(); // FinishedGoodsData
+
 ## CRM
 
 `$cin7->crm()` groups the CRM resources: leads, opportunities, tasks, task categories, workflows, and
@@ -1351,4 +1423,39 @@ $webhook = $this->cin7->webhooks()->post(WebhookPostData::from([
     'ExternalAuthorizationType' => WebhookAuthorizationType::BearerAuth,
     'ExternalBearerToken' => $token,
 ]))->dto()[0]; // WebhookData
+```
+
+`$cin7->production()` groups the `production/…` resources, like `ref()`; V2 has no action on
+`/production` itself.
+
+- `factoryCalendar()` is `production/factoryCalendar`: `get(int $year)`, and `post()` and `put()`,
+  which take a `FactoryCalendarPostData` or `FactoryCalendarPutData` as well as an array; every action
+  answers a `FactoryCalendarData`.
+- `productionBom()` is `production/productionBOM`, whose methods are named for the two documentations:
+  `getProduct($productId, $returnAttachmentsContent)`, `postProduct()`, `putProduct()` and
+  `deleteProduct($productId, $bomId)`, and `getProductFamily()`, `postProductFamily()`,
+  `putProductFamily()` and `deleteProductFamily()` for a product family. `dto()` is a
+  `ProductProductionBomsData` or a `ProductFamilyProductionBomsData`, with `ProductionBOMs`.
+- `order()` is `production/order`: `get($productionOrderId)`, `post($body, $recalculateDates)`,
+  `put($body, $allowRecalculateDates, $allowRecalculateCyclesAndQuantities)`, and the actions
+  `authorise()`, `release()`, `undo()` and `void()`, which take their bodies, and `referenceData()`.
+  `dto()` is a `ProductionOrdersData` with the orders under `ProductionOrders`, or for an undo or void a
+  `ProductionOrderMessageData`.
+- `order()->attachment()` is `production/order/attachment`: `get($productionOrderId)`,
+  `post($body, $productionOrderId)`, `put($body)` and `delete($productionOrderAttachmentId)`.
+- `order()->run()` is `production/order/run`: `get($productionOrderId)`, `post($body)`,
+  `put($body, $productionOrderId, $increaseOrderQuantity)`, the actions `complete()`, `undo()`,
+  `void()` and `manualJournal($body, $productionOrderId)`, and `operation()`, whose `start()`,
+  `suspend()`, `resume()` and `complete()` act on one operation of a run.
+- `orderList()`, `resourceList()` and `suspendReason()` list, with `get()` and `paginate()`;
+  `resource()` and `workCenters()` read, create, update and delete.
+
+```php
+$order = $this->cin7->production()->order()->post(ProductionOrderPostData::from([
+    'ProductID' => '524c20a3-a8ec-44f2-9685-311f1f7d1498',
+    'LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb',
+    'Quantity' => 10,
+    'CapacityCalculationType' => 'FromStartForward',
+    'StartDate' => '2024-05-01T00:00:00',
+]), recalculateDates: true)->dto(); // ProductionOrdersData
 ```

@@ -1,0 +1,112 @@
+{
+    "Warnings": [],
+    "ProductionOrderID": "44ea87b5-f104-479e-9d78-4427f192cb41",
+    "OrderNumber": "MO-00482",
+    "Runs": [
+        {
+            "RunID": "2f4b8820-3676-4795-b867-4ba28ad84df7",
+            "Number": 1,
+            "Status": "COMPLETED",
+            "Quantity": 3.0,
+            "WIPAccount": "1600",
+            "StartDate": "2021-02-22T00:00:00",
+            "EndDate": "2021-02-22T00:00:00",
+            "DueDate": null,
+            "ReceivedDate": "2021-02-22T00:00:00",
+            "Operations": [
+                {
+                    "OperationID": "09d05e7c-d960-416a-8036-8c3b89e41dd1",
+                    "Status": "COMPLETED",
+                    "Order": 0,
+                    "Name": "Mixing new name",
+                    "PlannedTime": 5400,
+                    "ActualTime": 7,
+                    "UnitsPerCycle": 1.0,
+                    "WorkCenterID": "d8c64083-e8cf-4705-bb6c-abd2d5a2183a",
+                    "WorkCenterName": "Mixing Area",
+                    "OperationType": "Manufacturing",
+                    "WorkCenterCode": "WC2",
+                    "StartDate": "2021-02-22T00:00:00",
+                    "EndDate": "2021-02-23T00:00:00",
+                    "DueDate": null,
+                    "IsDropShip": false,
+                    "Components": [
+                        {
+                            "RunComponentID": "82e4f443-5999-4e2c-83ff-5ea544b0848c",
+                            "ProductID": "c01846b3-a33b-47a6-baba-bfd4f85df9c6",
+                            "ProductName": "Eggs",
+                            "ProductCode": "Eggs1",
+                            "Quantity": 0.6,
+                            "ExpectedQuantity": 0.6,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "BatchSN": null,
+                            "ExpiryDate": null,
+                            "UnitCost": 1.2,
+                            "LocationID": "92974be9-c7e0-4866-bf0f-24a244012c61",
+                            "LocationName": "LA Shop Floor",
+                            "ProductCost": 1.2,
+                            "Available": 250.5,
+                            "CostingMethod": null,
+                            "Unit": "Item",
+                            "ReservedQuantity": 0.6,
+                            "IsReserved": true
+                        }
+                    ],
+                    "Resources": [],
+                    "ResourceCosts": [],
+                    "FinishedProducts": [],
+                    "OutputProducts": [],
+                    "InputProducts": [],
+                    "CoManTasks": [],
+                    "CoManTaskLines": [],
+                    "Attachments": [],
+                    "Notes": [],
+                    "SuspendReason": null,
+                    "CoManStatus": null,
+                    "ManualStartDate": null,
+                    "ManualEndDate": null
+                }
+            ],
+            "Output": [
+                {
+                    "ProductName": "Cheese - Vityaz 35% - pack 100 gramm",
+                    "Unit": "pack",
+                    "UnitCost": 14.332,
+                    "CostingMethod": "SN",
+                    "Quantity": 1.0,
+                    "WastageQuantity": 0.0,
+                    "Received": true,
+                    "ReceivedDate": "2021-02-22T00:00:00",
+                    "LocationID": "92974be9-c7e0-4866-bf0f-24a244012c61",
+                    "LocationName": "LA Shop Floor",
+                    "ProductID": "c0392612-fdbb-4816-8a5c-299753b615c0",
+                    "ProductCode": "Cheese4",
+                    "BatchSN": "MO-00482/1-1",
+                    "ExpiryDate": null
+                }
+            ],
+            "PendingOutput": [],
+            "ManualJournals": [
+                {
+                    "Reference": "ref 1",
+                    "Amount": 34.0,
+                    "Date": "2021-02-22T00:00:00",
+                    "Debit": "1320",
+                    "Credit": "1530",
+                    "OperationID": "feef1b7d-58c8-4c81-9ba0-4f24a4dbeba6",
+                    "OperationName": "Co-man operation"
+                },
+                {
+                    "Reference": "ref 2",
+                    "Amount": 12.0,
+                    "Date": "2021-02-22T00:00:00",
+                    "Debit": "1320",
+                    "Credit": "1530",
+                    "OperationID": null,
+                    "OperationName": null
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Ipsocode\Cin7\Data\FinishedGoods\Pick;
+
+use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\RequiredWithout;
+use Hypervel\Data\Attributes\Validation\Uuid;
+use Hypervel\Data\Data;
+use Ipsocode\Cin7\Attributes\DateTime;
+
+/**
+ * Finished Goods Pick Line Model, a line of a finished goods pick: a product, found by `ProductID`
+ * or `ProductCode`, with its `Quantity`. `Name`, `Unit` and `Cost` are read-only.
+ *
+ * @see docs/data.md
+ */
+final class FinishedGoodsPickLineData extends Data
+{
+    public function __construct(
+        public float $Quantity,
+        #[RequiredWithout('ProductCode')]
+        #[Uuid]
+        public ?string $ProductID = null,
+        #[RequiredWithout('ProductID')]
+        #[Max(256)]
+        public ?string $ProductCode = null,
+        #[Max(256)]
+        public ?string $Name = null,
+        #[Uuid]
+        public ?string $BinID = null,
+        #[Max(256)]
+        public ?string $Bin = null,
+        public ?string $BatchSN = null,
+        #[DateTime]
+        public ?string $ExpiryDate = null,
+        public ?string $Unit = null,
+        public ?float $Cost = null,
+    ) {
+    }
+}

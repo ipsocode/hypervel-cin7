@@ -1,0 +1,79 @@
+{
+    "ProductID": "b8cb2705-fdfb-48f0-99a4-419e11d63053",
+    "ProductionBOMs": [
+        {
+            "BOMID": "ac25f767-fbbf-4a56-98d9-648ef1bfe478",
+            "OutputQuantity": 10.0,
+            "BufferPercent": 0.0,
+            "InstructionUrl": "",
+            "IgnoreCumulativeLeadTime": false,
+            "ComponentProductionLeadTime": 0,
+            "Version": 12,
+            "Name": "",
+            "IsDefault": true,
+            "CreatedDate": "2021-02-11T00:00:00",
+            "DeliveryToID": null,
+            "DeliveryToName": null,
+            "IssueMethod": 4,
+            "IsTracing": false,
+            "IssueMethodComponent": 2,
+            "IssueMethodParameter": 1,
+            "MinQuantity": 50,
+            "MaxQuantity": 100,
+            "DeviationPercent": 5,
+            "RunSize": 10,
+            "Operations": [
+                {
+                    "OperationID": "8e3154c5-b3b5-49b5-a151-68ae49097b72",
+                    "Order": 1,
+                    "Name": "Operation 1++",
+                    "CycleTime": 3600,
+                    "UnitsPerCycle": 1.0,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "WorkCenterName": "Default Workcenter",
+                    "WorkCenterCoManProcurementType": null,
+                    "OperationType": "Manufacturing",
+                    "IsDropShip": false,
+                    "IsBackflush": false,
+                    "Resources": [
+                        {
+                            "BOMResourceID": "e5fdbd02-1422-4a54-a74f-e097397c0c26",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 2.0,
+                            "Cost": 20.0,
+                            "CycleTime": 3600,
+                            "Position": 1,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Components": [
+                        {
+                            "BOMComponentID": "a6124c21-b561-4faa-9bce-755869144b2a",
+                            "ProductID": "86875aba-9143-435e-b5f7-b036b1873dcf",
+                            "ProductName": "Eggs",
+                            "ProductSKU": "Eggs",
+                            "Quantity": 3.0,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "Cost": 0.3864,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 2,
+                            "SalePriceTier": null,
+                            "IsBackflush": false
+                        }
+                    ],
+                    "Attachments": [],
+                    "Notes": [],
+                    "OperationLinks": [],
+                    "InputProducts": [],
+                    "OutputProducts": [],
+                    "FinishedProducts": [],
+                    "VariationComponents": []
+                }
+            ]
+        }
+    ]
+}

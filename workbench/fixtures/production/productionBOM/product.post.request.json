@@ -1,0 +1,131 @@
+{
+    "ProductID": "b8cb2705-fdfb-48f0-99a4-419e11d63053",
+    "SetParentHasProductionBom": true,
+    "ProductionBOMs": [
+        {
+            "BOMID": "",
+            "ProductID": "",
+            "OutputQuantity": 1,
+            "BufferPercent": 0,
+            "InstructionUrl": "",
+            "IssueMethod": 1,
+            "IgnoreCumulativeLeadTime": false,
+            "ComponentProductionLeadTime": 0,
+            "Version": 3,
+            "Name": "",
+            "IsDefault": true,
+            "CreatedDate": "2021-01-29T00:00:00",
+            "CreatedBy": "",
+            "DeliveryTo": "",
+            "IsTracing": true,
+            "IssueMethodComponent": 2,
+            "IssueMethodParameter": 1,
+            "MinQuantity": 50,
+            "MaxQuantity": 100,
+            "DeviationPercent": 5,
+            "RunSize": 10,
+            "Operations": [
+                {
+                    "OperationID": "",
+                    "Order": 1,
+                    "Name": "Operation 1",
+                    "CycleTime": 3600,
+                    "CycleTimeString": "1h",
+                    "UnitsPerCycle": 1,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "OperationType": 1,
+                    "TotalCost": 20.7728,
+                    "IsDropShip": false,
+                    "IsBackflush": false,
+                    "Resources": [
+                        {
+                            "BOMResourceID": "",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 1,
+                            "CycleTime": 3600,
+                            "Cost": 20,
+                            "Position": 1,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Components": [
+                        {
+                            "BOMComponentID": "",
+                            "ProductID": "86875aba-9143-435e-b5f7-b036b1873dcf",
+                            "ProductName": "Eggs",
+                            "ProductSKU": "Eggs",
+                            "Quantity": 2,
+                            "WastageQty": 0,
+                            "WastagePercent": 0,
+                            "Cost": 0.3864,
+                            "CostingMethod": "FIFO",
+                            "Position": 2,
+                            "Unit": "Item",
+                            "SalePriceTier": null,
+                            "IsBackflush": false
+                        }
+                    ],
+                    "Attachments": [
+                        {
+                            "FileName": "AudMade Update Sheet - IMPORTED DONE v2 (1).csv",
+                            "ContentType": "application/octet-stream",
+                            "Position": 3,
+                            "Content": "QWN0aW9uLFByb2R1Y3RTS1UsUHJvZHVjdE5hbWUsUXVhbnRpdHlUb1Byb"
+                        }
+                    ],
+                    "Notes": [],
+                    "OperationLinks": [],
+                    "InputProducts": [],
+                    "OutputProducts": [],
+                    "FinishedProducts": []
+                },
+                {
+                    "OperationID": "",
+                    "Order": 1,
+                    "Name": "Operation 2",
+                    "CycleTime": 3600,
+                    "CycleTimeString": "1h",
+                    "UnitsPerCycle": 1,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "OperationType": 1,
+                    "TotalCost": 20.7728,
+                    "IsDropShip": false,
+                    "IsBackflush": false,
+                    "Resources": [
+                        {
+                            "BOMResourceID": "",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 1,
+                            "CycleTime": 3600,
+                            "Cost": 20,
+                            "Position": 1,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Attachments": [
+                        {
+                            "FileName": "AudMade Update Sheet - IMPORTED DONE v2 (1).csv",
+                            "ContentType": "application/octet-stream",
+                            "Position": 3,
+                            "Content": "QWN0aW9uLFByb2R1Y3RTS1UsUHJvZHVjdE5hbWUsUXVhbnRpdHlUb1Byb"
+                        }
+                    ],
+                    "Notes": [],
+                    "OperationLinks": [
+                        {
+                            "RelatedOperationName": "Operation 1",
+                            "RelationType": 1
+                        }
+                    ],
+                    "InputProducts": [],
+                    "OutputProducts": [],
+                    "FinishedProducts": []
+                }
+            ]
+        }
+    ]
+}
