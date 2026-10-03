@@ -38,4 +38,54 @@ return [
         'times' => (int) env('CIN7_RETRY_TIMES', 4),
         'delay_ms' => (int) env('CIN7_RETRY_DELAY_MS', 5000),
     ],
+
+    // A scheduled copy of Cin7's records in one local table, off by default. Off, the package
+    // creates no table, schedules nothing and runs no query. See docs/sync.md.
+    'sync' => [
+        'enabled' => (bool) env('CIN7_SYNC', false),
+
+        // One time for every module that can ask Cin7 for only what changed, as a cron expression.
+        // The reference books, which Cin7 sends only whole, wait for the full pull below or for
+        // `cin7:sync`. Null schedules no common pull.
+        'cron' => env('CIN7_SYNC_CRON', '0 * * * *'),
+
+        // The modules pulled at that time, in this order: what records point to before them, and
+        // a document module after its list. '*' is every module in that order: the reference
+        // books (ref/account, ref/account/bank, ref/location, ref/tax, ref/paymentterm,
+        // ref/category, ref/brand, ref/unit, ref/carrier, ref/attributeset,
+        // ref/fixedassettype), then customer, supplier, product, saleList, purchaseList, sale and
+        // advanced-purchase.
+        'modules' => '*',
+
+        // Exceptions: a module pulled at a time of its own as well, usually a more frequent one.
+        // Not a reference book: those are read whole, so only the full pull reads them.
+        'exceptions' => [
+            // 'saleList' => '*/5 * * * *',
+        ],
+
+        // A full pull of every module, the reference books included, which also removes what Cin7
+        // no longer returns. Null: never.
+        'full' => env('CIN7_SYNC_FULL', '0 2 * * 0'),
+
+        // Minutes an incremental pull reaches back.
+        'lookback' => (int) env('CIN7_SYNC_LOOKBACK', 1440),
+
+        // Records a page, 1 to 1000.
+        'limit' => (int) env('CIN7_SYNC_LIMIT', 500),
+
+        // Milliseconds between the sync's own calls, which share the rate-limit window.
+        'pause_ms' => (int) env('CIN7_SYNC_PAUSE_MS', 1000),
+
+        // Documents read per module per run, one call each.
+        'documents' => (int) env('CIN7_SYNC_DOCUMENTS', 250),
+
+        // The queue the scheduled pulls go on; null is the connection's default queue.
+        'queue' => env('CIN7_SYNC_QUEUE'),
+
+        // Seconds a queued pull may run.
+        'timeout' => (int) env('CIN7_SYNC_TIMEOUT', 3600),
+
+        // The database connection the table lives on; null is the default one.
+        'connection' => env('CIN7_SYNC_CONNECTION'),
+    ],
 ];

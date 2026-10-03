@@ -23,6 +23,12 @@ env:
   CIN7_RATE_PERIOD: 60
   CIN7_RETRY_TIMES: 4
   CIN7_RETRY_DELAY_MS: 5000
+  # The sync's table lives in an in-memory database, so each test starts empty and the suite
+  # stays parallel-safe. CIN7_SYNC stays unset: the sync tests turn it on with #[WithConfig].
+  DB_CONNECTION: sqlite
+  DB_DATABASE: ":memory:"
+  # The sync's module locks, in memory too: the skeleton's database store has no table here.
+  CACHE_STORE: array
 
 workbench:
   # An outbound API client: nothing to authenticate, no HTTP surface to health-check.

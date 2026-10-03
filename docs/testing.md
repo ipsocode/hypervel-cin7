@@ -166,6 +166,17 @@ default; a test that needs a store sets `cin7.rate_limit.store`. Nothing is set
 through `defineEnvironment()`; a test that needs a different value sets the
 config key, which is the path a published config takes too.
 
+The [sync](sync.md)'s table needs a database, so both files also set
+`DB_CONNECTION=sqlite` with `DB_DATABASE=:memory:`, which starts every test
+empty and keeps the suite parallel-safe, and `CACHE_STORE=array` for its module
+locks (the skeleton's `database` store has no `cache_locks` table there).
+`CIN7_SYNC` stays unset, so the sync is off as it is by default. The sync tests
+extend `tests/Feature/Sync/SyncTestCase`, which turns it on with
+`#[WithConfig('cin7.sync.enabled', true)]`: that is applied before the provider
+boots, so the provider loads the migration and registers the schedule as it
+would in an application. The case also uses `RefreshDatabase`, fakes `Sleep`
+and fixes the clock at 2026-10-03 12:00:00.
+
 The credentials, `acct-test` and `key-test`, are fake on purpose: a run that
 somehow reached `inventory.dearsystems.com` would be rejected rather than
 authenticated against a real account.

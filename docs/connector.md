@@ -35,6 +35,9 @@ of the same account:
 $sandbox = new Cin7Connector($sandboxAccountId, $sandboxApplicationKey);
 ```
 
+`accountId()` returns the account the connector calls, which the [sync](sync.md) keys its rows
+by. It is a credential: log or print neither it nor the application key.
+
 | Constructor argument | Default | Config key |
 |---|---|---|
 | `accountId` | none | `cin7.account_id` |

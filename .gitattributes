@@ -1,5 +1,5 @@
 # A Composer install of a release leaves out every export-ignore path. An application
-# gets src/, config/, docs/, composer.json, README.md and LICENSE.
+# gets src/, config/, database/, docs/, composer.json, README.md and LICENSE.
 /.github export-ignore
 /.claude export-ignore
 /CLAUDE.md export-ignore

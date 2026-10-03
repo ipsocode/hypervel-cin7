@@ -106,6 +106,15 @@ final class Cin7Connector extends Connector implements HasPagination
             : [];
     }
 
+    /**
+     * The Cin7 account the connector calls, which the sync keys its rows by. A credential:
+     * never print it.
+     */
+    public function accountId(): string
+    {
+        return $this->accountId;
+    }
+
     public function resolveBaseUrl(): string
     {
         return 'https://inventory.dearsystems.com/ExternalApi/v2/';
