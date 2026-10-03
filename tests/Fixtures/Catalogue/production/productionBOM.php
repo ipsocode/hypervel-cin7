@@ -247,6 +247,6 @@ return [
         ProductProductionBomPostData::class => ['ProductID', 'ProductionBOMs'],
         ProductFamilyProductionBomPostData::class => ['ProductFamilyID', 'ProductionBOMs'],
         ProductProductionBomPutData::class => ['BOMID', 'OutputQuantity', 'Version'],
-        ProductFamilyProductionBomPutData::class => ['BOMID', 'OutputQuantity'],
+        ProductFamilyProductionBomPutData::class => ['OutputQuantity', 'BOMID'],
     ],
 ];

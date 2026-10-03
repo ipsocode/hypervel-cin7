@@ -128,7 +128,7 @@ return [
         ResourceRemarkData::class => ['Remark'],
         ResourceAttachmentData::class => ['FileName'],
         ResourceData::class => ['ResourceType', 'CycleDuration'],
-        ResourcePostData::class => ['Name', 'ResourceType', 'CycleDuration'],
+        ResourcePostData::class => ['ResourceType', 'CycleDuration', 'Name'],
         ResourcePutData::class => ['ResourceType', 'CycleDuration'],
         ResourcesPostData::class => ['Resources'],
     ],

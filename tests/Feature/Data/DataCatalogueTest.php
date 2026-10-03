@@ -14,6 +14,7 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\AbstractAddressData;
+use Ipsocode\Cin7\Data\AbstractCatalogueItemData;
 use Ipsocode\Cin7\Data\AbstractChargeData;
 use Ipsocode\Cin7\Data\AbstractLineData;
 use Ipsocode\Cin7\Data\AbstractManualJournalLineData;
@@ -26,6 +27,7 @@ use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
 use Ipsocode\Cin7\Data\AbstractPurchaseStockLineData;
 use Ipsocode\Cin7\Data\AbstractSaleListData;
 use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
+use Ipsocode\Cin7\Data\AbstractStockLineData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchaseData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchaseCreditNotesData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchaseInvoicesData;
@@ -49,6 +51,7 @@ use Ipsocode\Cin7\Data\Crm\Workflow\AbstractWorkflowData;
 use Ipsocode\Cin7\Data\Crm\Workflow\WorkflowData;
 use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
+use Ipsocode\Cin7\Data\Disassembly\AbstractDisassemblyData;
 use Ipsocode\Cin7\Data\Disassembly\DisassemblyData;
 use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderData;
 use Ipsocode\Cin7\Data\DisassemblyList\DisassemblyListData;
@@ -78,6 +81,7 @@ use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
 use Ipsocode\Cin7\Data\ProductFamily\AbstractProductFamilyData;
 use Ipsocode\Cin7\Data\ProductFamily\ProductFamilyData;
 use Ipsocode\Cin7\Data\Production\FactoryCalendar\FactoryCalendarData;
+use Ipsocode\Cin7\Data\Production\Order\AbstractProductionOrderData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentsData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderMessageData;
@@ -87,8 +91,10 @@ use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunUndoData;
 use Ipsocode\Cin7\Data\Production\OrderList\ProductionOrderListData;
+use Ipsocode\Cin7\Data\Production\ProductionBom\AbstractProductFamilyProductionBomData;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomsData;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomsData;
+use Ipsocode\Cin7\Data\Production\Resource\AbstractResourceData;
 use Ipsocode\Cin7\Data\Production\Resource\ResourceData;
 use Ipsocode\Cin7\Data\Production\Resource\ResourcesData;
 use Ipsocode\Cin7\Data\Production\SuspendReason\SuspendReasonData;
@@ -521,6 +527,7 @@ class DataCatalogueTest extends TestCase
 
         $this->assertSame([
             AbstractAddressData::class,
+            AbstractCatalogueItemData::class,
             AbstractChargeData::class,
             AbstractLineData::class,
             AbstractManualJournalLineData::class,
@@ -533,6 +540,7 @@ class DataCatalogueTest extends TestCase
             AbstractPurchaseStockLineData::class,
             AbstractSaleListData::class,
             AbstractSalePaymentLineData::class,
+            AbstractStockLineData::class,
             AbstractAdvancedPurchasePutAwayData::class,
             AbstractAdvancedPurchaseStockData::class,
             AbstractBankTransferData::class,
@@ -542,6 +550,7 @@ class DataCatalogueTest extends TestCase
             AbstractTaskData::class,
             AbstractWorkflowData::class,
             AbstractCustomerData::class,
+            AbstractDisassemblyData::class,
             AbstractFinishedGoodsData::class,
             AbstractInventoryWriteOffData::class,
             AbstractJournalData::class,
@@ -550,6 +559,9 @@ class DataCatalogueTest extends TestCase
             AbstractMoneyTaskData::class,
             AbstractProductFamilyData::class,
             AbstractProductData::class,
+            AbstractProductionOrderData::class,
+            AbstractProductFamilyProductionBomData::class,
+            AbstractResourceData::class,
             AbstractPurchaseOrderData::class,
             AbstractPurchaseStockData::class,
             AbstractAccountData::class,

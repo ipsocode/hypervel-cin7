@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Production\ProductionBom;
 
-use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
@@ -16,37 +15,20 @@ use Hypervel\Data\Data;
  *
  * @see docs/data.md
  */
-final class ProductFamilyProductionBomPutData extends Data
+final class ProductFamilyProductionBomPutData extends AbstractProductFamilyProductionBomData
 {
-    /**
-     * @param null|list<ProductFamilyProductionBomOperationData> $Operations
-     */
     public function __construct(
+        float $OutputQuantity,
         #[Uuid]
         public string $BOMID,
-        public float $OutputQuantity,
         #[Uuid]
         public ?string $ProductFamilyID = null,
         public ?float $BufferPercent = null,
-        public ?string $InstructionUrl = null,
-        public ?bool $IgnoreCumulativeLeadTime = null,
-        public ?int $ComponentProductionLeadTime = null,
         public ?int $Version = null,
         #[Max(256)]
         public ?string $Name = null,
         public ?bool $IsDefault = null,
-        #[Uuid]
-        public ?string $DeliveryToID = null,
-        #[Max(256)]
-        public ?string $DeliveryToName = null,
-        public string|int|null $IssueMethodComponent = null,
-        public string|int|null $IssueMethodParameter = null,
-        public ?float $MinQuantity = null,
-        public ?float $MaxQuantity = null,
-        public ?float $DeviationPercent = null,
-        public ?float $RunSize = null,
-        #[DataCollectionOf(ProductFamilyProductionBomOperationData::class)]
-        public ?array $Operations = null,
     ) {
+        parent::__construct($OutputQuantity);
     }
 }

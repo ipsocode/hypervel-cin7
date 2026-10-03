@@ -37,7 +37,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   (`AbstractLineData`, `AbstractChargeData`, `AbstractAddressData`, `AbstractSalePaymentLineData`,
   `AbstractManualJournalLineData`, `AbstractPurchaseData`, `AbstractPurchaseStockLineData`,
   `AbstractPurchaseInvoiceData`, `AbstractPurchaseCreditNoteData`, `AbstractPurchasePaymentData`,
-  `AbstractPurchaseManualJournalData`). The Money Task's classes are in `src/Data/MoneyTask/`, like
+  `AbstractPurchaseManualJournalData`, `AbstractCatalogueItemData`, `AbstractStockLineData`). The Money Task's classes are in `src/Data/MoneyTask/`, like
   its requests (see [resources](resources.md#conventions)). `src/Data/` holds nothing else: the
   traits the models share are in `src/Concerns/` and the validation attribute in `src/Attributes/`.
 - **One class per model name.** Where the reference documents one name twice with
@@ -84,6 +84,12 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractManualJournalLineData` | `SaleManualJournalLineData`, `PurchaseManualJournalLineData` | `Amount`, `Date`, `Debit`, `Credit` |
   | `AbstractPurchaseStockLineData` | `PurchaseStockLineData`, `AdvancedPurchaseStockLineData`, `AdvancedPurchasePutAwayLineData` | `Date`, `Quantity`; and `Location` or `LocationID` on a write body (`#[RequiredWithout]`) of `PurchaseStockLineData` and `AdvancedPurchasePutAwayLineData`, which declare the pair, as `AdvancedPurchaseStockLineData` does without the rule (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractAddressData` | `AddressData`, `SaleShippingAddressData`, `PurchaseShippingAddressData` | none; each child requires `Line1` and `Country`: `SaleShippingAddressData` by type, `AddressData` and `PurchaseShippingAddressData` on a write body (`#[Required]`) (see [below](#where-the-references-tables-and-examples-disagree)) |
+  | `AbstractCatalogueItemData` | `AbstractProductData` and `AbstractProductFamilyData`, a parent of parents | none: the 25 optional fields a product and a product family declare alike (the price tiers, the descriptions, the accounts and tax rules, `Tags`, `HSCode`, …); each parent keeps its own constructor, since their order is part of each class's signature |
+  | `AbstractStockLineData` | `FinishedGoodsPickLineData`, `InventoryWriteOffLineData`, `DisassemblyOrderLineData` | `Quantity` |
+  | `AbstractDisassemblyData` | `DisassemblyData`, `DisassemblyPostData` | none |
+  | `AbstractProductionOrderData` | `ProductionOrderData`, `ProductionOrderPostData`, `ProductionOrderPutData` | `LocationID`; `ProductID` and `ProductionOrderID` stay in the children |
+  | `AbstractResourceData` | `ResourceData`, `ResourcePostData`, `ResourcePutData` | `ResourceType`, `CycleDuration`; `Name` stays in the POST body |
+  | `AbstractProductFamilyProductionBomData` | `ProductFamilyProductionBomData`, `ProductFamilyProductionBomPutData` | `OutputQuantity`; `BufferPercent` and `BOMID` stay in the children |
 
   The line and charge requirements hold in the purchase tables as well, so a purchase model
   can extend those parents. `Account`, which the purchase invoice tables require and the sale
@@ -91,9 +97,12 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   and Purchase Additional Charge Models require it and the sale charge tables do not, so each
   line and charge class declares its own.
 
-  Two field sets several unrelated models carry are traits in `src/Concerns/`:
-  `HasProductFields` (the product fields of every line with a `ProductID`) and
-  `HasAdditionalAttributes` (`AdditionalAttribute1` to `10`).
+  Four field sets several unrelated models carry are traits in `src/Concerns/`:
+  `HasProductFields` (the product fields of every line with a `ProductID`),
+  `HasAdditionalAttributes` (`AdditionalAttribute1` to `10`), `HasCustomFields` (`CustomField1` to
+  `10`, which a finished goods task, a production order, a production run and their list rows carry;
+  an opportunity's have a length and stay inline) and `HasProductionProductFields` (the six product
+  fields of a production run's component, output, pending output and co-manufacturing line).
 - **Property names are the wire keys, verbatim** (`ID`, `TaxRuleList`), with no name
   mapper, so `toArray()` is the JSON Cin7 expects.
 - **A required field has no default.** It is not nullable, and the model cannot be built
@@ -1739,7 +1748,11 @@ that follow hold for all of them.
     POST example does not.
 
   A body built from those examples as they are therefore fails validation on `send()`.
-- **A class per verb where the top-level table differs.** `FactoryCalendarPostData` requires
+- **A class per verb where the top-level table differs, under one abstract parent.** The classes of
+  one path that share fields extend an `Abstract…Data` (`AbstractProductionOrderData`,
+  `AbstractResourceData`, `AbstractProductFamilyProductionBomData`), whose constructor takes the
+  fields every verb requires and passes them first, so the required fields of a child come in the
+  parent's order. `FactoryCalendarPostData` requires
   `WeekStart` and `FactoryCalendarDays` as well as `Year`; `ProductionOrderPostData` requires
   `ProductID` and `LocationID`, `ProductionOrderPutData` the `ProductionOrderID` and `LocationID`
   (its `ProductID` is optional: the PUT example sends none); `ResourcePostData` a `Name`,
