@@ -135,6 +135,28 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `DeleteFinishedGoods` | **`id`**, `void` |
 | `GetFinishedGoodsOrder` | **`taskId`** |
 | `GetFinishedGoodsPick` | **`taskId`** |
+| `GetProductionFactoryCalendar` | **`year`** |
+| `GetProductProductionBom` | **`productId`**, `returnAttachmentsContent` |
+| `DeleteProductProductionBom` | **`productId`**, **`bomid`** |
+| `GetProductFamilyProductionBom` | **`productFamilyId`**, `returnAttachmentsContent` |
+| `DeleteProductFamilyProductionBom` | **`productFamilyId`**, **`bomid`** |
+| `GetProductionOrder` | **`productionOrderId`**, `returnAttachmentsContent` |
+| `PostProductionOrder` | `recalculateDates` |
+| `PutProductionOrder` | `allowRecalculateDates`, `allowRecalculateCyclesAndQuantities` |
+| `PostProductionOrderAttachment` | **`productionOrderId`** |
+| `DeleteProductionOrderAttachment` | **`productionOrderAttachmentId`** |
+| `GetProductionOrderAttachment` | **`productionOrderId`**, `returnAttachmentsContent` |
+| `GetProductionOrderReferenceData` |  |
+| `GetProductionOrderList` | `page`, `limit`, `status` (`ProductionOrderListStatus`), `search`, `locationId`, `requiredByDateFrom`, `requiredByDateTo`, `completionDateFrom`, `completionDateTo`, `sourceTaskId` |
+| `GetProductionOrderRun` | **`productionOrderId`**, `includeAttachmentContent` |
+| `PutProductionOrderRun` | **`productionOrderId`**, **`increaseOrderQuantity`** |
+| `PutProductionOrderRunManualJournal` | **`productionOrderId`** |
+| `GetProductionResourceList` | `page`, `limit`, `name`, `onlyActive` |
+| `GetProductionResource` | **`resourceId`**, `includeAttachments` |
+| `DeleteProductionResource` | **`resourceId`** |
+| `GetProductionSuspendReason` | `page`, `limit`, `workcenterId` |
+| `GetProductionWorkCenters` | `page`, `limit`, `name` |
+| `DeleteProductionWorkCenters` | **`workCenterId`** |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
 | `DeleteJournal` | **`id`**, `void` |
 | `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
@@ -345,6 +367,36 @@ one's `dto()` is a `FinishedGoodsData`. Its order and pick are `src/Requests/Fin
 `FinishedGoodsPickData`), whose `dto()` is the same class. `GetFinishedGoodsList`
 (`src/Requests/FinishedGoodsList/`) lists tasks under `FinishedGoods`, filtered by `status`,
 `search` and `saleId`.
+The `production/…` actions live under `src/Requests/Production/`, a folder per path segment, so
+`production/order/run/operation/start` is `Order/Run/Operation/Start/`. `production/productionBOM` is
+documented twice, so its requests are named after the titles: `GetProductProductionBom`,
+`PostProductProductionBom`, `PutProductProductionBom` and `DeleteProductProductionBom`, and the same
+four for `ProductFamily`, all in `ProductionBom/`; a GET is keyed `ProductID` or `ProductFamilyID`, and
+a DELETE by it and the `BOMID`. `GetProductionOrder` (keyed `ProductionOrderID`) answers a
+`ProductionOrdersData`, and so do `PostProductionOrder`, `PutProductionOrder`,
+`PostProductionOrderAuthorise` and `PostProductionOrderRelease`; `…Undo` and `…Void` answer a
+`ProductionOrderMessageData`, and the bodies of the four actions are `ProductionOrderAuthorisePostData`,
+`…ReleasePostData`, `…UndoPostData` and `…VoidPostData`. The attachments are `Order/Attachment/`:
+`GetProductionOrderAttachment`, `PostProductionOrderAttachment` (with the `ProductionOrderID` in the
+query), `PutProductionOrderAttachment` and `DeleteProductionOrderAttachment`, and
+`GetProductionOrderReferenceData` is `Order/ReferenceData/`. The runs are `Order/Run/`:
+`PostProductionOrderRun`, `GetProductionOrderRun`, `PutProductionOrderRun` and the actions
+`PutProductionOrderRunComplete`, `…Undo`, `…Void`, `…ManualJournal` and the four `…Operation…`
+(`Start`, `Suspend`, `Resume`, `Complete`), whose `dto()` is a `ProductionRunsData`, except the PUT's
+(a `ProductionRunData`) and the undo's and void's (a `ProductionRunUndoData`). The lists
+(`GetProductionOrderList`, keyed `ProductionOrderListItems`, `GetProductionResourceList`, keyed
+`Resources`, `GetProductionSuspendReason`, keyed `SuspendReasons`, and `GetProductionWorkCenters`, keyed
+`Workcenters`) are `ListRequest`s. `GetProductionFactoryCalendar`, `GetProductionResource`, their
+POST, PUT and DELETE and the work centers' and suspend reasons' writes are as the other paths. A
+DELETE the reference documents no response for (a BOM, an order attachment, a work center) sends no
+`dto()`.
+
+Five writes take query parameters beside their body, which the other POSTs and PUTs do not:
+`PostProductionOrder` (`recalculateDates`), `PutProductionOrder` (`allowRecalculateDates`,
+`allowRecalculateCyclesAndQuantities`), `PostProductionOrderAttachment` (**`productionOrderId`**),
+`PutProductionOrderRun` (**`productionOrderId`**, **`increaseOrderQuantity`**) and
+`PutProductionOrderRunManualJournal` (**`productionOrderId`**). Their constructor takes the body
+first, then the parameters.
 
 The `crm/…` actions live under `src/Requests/Crm/`, one folder each: `Lead/`, `Opportunity/`, `Task/`,
 `TaskCategory/` and `Workflow/` each have a `GetCrm…` (a `ListRequest`, keyed `LeadList`,
@@ -495,7 +547,9 @@ These are the requests Cin7 receives.
   [configuration](configuration.md).
 - **Parameters.** GET and DELETE carry their parameters in the query string.
   POST and PUT carry theirs as a raw JSON body and send no query string, except
-  `PostCrmWorkflowStart`, which sends everything in the query string and no body.
+  `PostCrmWorkflowStart`, which sends everything in the query string and no body, and the five
+  production writes that take query parameters beside their body (see the `production/…`
+  paragraph above).
 - **Page defaults.** `page=1` and `limit=100` are added to the
   query string of every `ListRequest` when the caller has not set them. They
   are never added to a read or delete of one record, or a `WriteRequest`. A page below 1 or a

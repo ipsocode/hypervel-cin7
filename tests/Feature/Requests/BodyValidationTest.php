@@ -28,6 +28,11 @@ use Ipsocode\Cin7\Data\FinishedGoods\Pick\FinishedGoodsPickData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPostData;
 use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderPutData;
+use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomPostData;
+use Ipsocode\Cin7\Data\Production\Resource\ResourcePutData;
+use Ipsocode\Cin7\Data\Production\Resource\ResourcesPostData;
+use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCentersData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
 use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
@@ -75,6 +80,11 @@ use Ipsocode\Cin7\Requests\FinishedGoods\PostFinishedGoods;
 use Ipsocode\Cin7\Requests\InventoryWriteOff\PostInventoryWriteOff;
 use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Production\Order\PutProductionOrder;
+use Ipsocode\Cin7\Requests\Production\ProductionBom\PostProductProductionBom;
+use Ipsocode\Cin7\Requests\Production\Resource\PostProductionResource;
+use Ipsocode\Cin7\Requests\Production\Resource\PutProductionResource;
+use Ipsocode\Cin7\Requests\Production\WorkCenters\PostProductionWorkCenters;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
 use Ipsocode\Cin7\Requests\Purchase\CreditNote\PostPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\Purchase\Invoice\PostPurchaseInvoice;
@@ -926,5 +936,84 @@ class BodyValidationTest extends TestCase
         }
 
         $this->mock->assertNothingSent();
+    }
+
+    /**
+     * A production BOM component and a production order's components and resources need a product
+     * or a resource, by ID or by code; one with neither is not sent.
+     */
+    public function testAProductionLineNeedsItsProductOrItsResource(): void
+    {
+        $operation = ['Order' => 1, 'Name' => 'Mix', 'CycleTime' => 60, 'UnitsPerCycle' => 1, 'WorkCenterID' => '38cddb52-9a81-4c07-9791-362936efa552', 'OperationType' => 'Manufacturing', 'IsDropShip' => false];
+        $bom = ['OutputQuantity' => 1, 'BufferPercent' => 0, 'Version' => 1, 'Name' => 'Bread', 'IsDefault' => true, 'Operations' => [$operation + ['Components' => [['Quantity' => 1, 'Position' => 1]]]]];
+
+        try {
+            $this->connector()->send(new PostProductProductionBom(ProductProductionBomPostData::from(['ProductID' => '38cddb52-9a81-4c07-9791-362936efa552', 'ProductionBOMs' => [$bom]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['ProductionBOMs.0.Operations.0.Components.0.ProductID', 'ProductionBOMs.0.Operations.0.Components.0.ProductSKU'], array_keys($exception->errors()));
+        }
+
+        $order = ['ProductionOrderID' => '38cddb52-9a81-4c07-9791-362936efa552', 'ProductionOrderOperations' => [$operation + ['TotalCycleTime' => 60, 'Components' => [['Quantity' => 1, 'Position' => 1]], 'Resources' => [['Quantity' => 1, 'Position' => 1, 'CostCalculationType' => 'CostPerUnitTime']]]]];
+
+        try {
+            $this->connector()->send(new PutProductionOrder(ProductionOrderPutData::from($order)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing([
+                'ProductionOrderOperations.0.Components.0.ProductID',
+                'ProductionOrderOperations.0.Components.0.ProductSKU',
+                'ProductionOrderOperations.0.Resources.0.ResourceID',
+                'ProductionOrderOperations.0.Resources.0.ResourceCode',
+            ], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * A resource is found by ID or by code to update, and a capacity names its location by ID or
+     * by name; a body with neither is not sent.
+     */
+    public function testAProductionResourceNeedsItsIdentifierAndItsCapacityLocation(): void
+    {
+        try {
+            $this->connector()->send(new PutProductionResource(ResourcePutData::from(['Name' => 'Oven'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['ResourceID', 'Code'], array_keys($exception->errors()));
+        }
+
+        $resource = ['Name' => 'Oven', 'ResourceType' => 'Machine', 'CycleDuration' => 60, 'ResourceCapacities' => [['ResourceQuantity' => 1]]];
+
+        try {
+            $this->connector()->send(new PostProductionResource(ResourcesPostData::from(['Resources' => [$resource]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Resources.0.ResourceCapacities.0.LocationID', 'Resources.0.ResourceCapacities.0.LocationName'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PutProductionResource(ResourcePutData::from(['Code' => 'OVEN'])));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A co-manufacturing work center needs its supplier, and a supplier is named by ID or by name.
+     */
+    public function testACoManWorkCenterNeedsItsSupplier(): void
+    {
+        $center = ['WorkCenterID' => '38cddb52-9a81-4c07-9791-362936efa552', 'Code' => 'WC', 'Name' => 'Work center', 'IsActive' => true, 'IsCoMan' => true, 'IsCoManPurchase' => false];
+
+        try {
+            $this->connector()->send(new PostProductionWorkCenters(WorkCentersData::from(['Workcenters' => [$center + ['WorkCenterSuppliers' => [['Unrelated' => 1]]]]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Workcenters.0.SupplierID', 'Workcenters.0.WorkCenterSuppliers.0.SupplierID', 'Workcenters.0.WorkCenterSuppliers.0.SupplierName'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostProductionWorkCenters(WorkCentersData::from(['Workcenters' => [[...$center, 'SupplierID' => '38cddb52-9a81-4c07-9791-362936efa552']]])));
+
+        $this->mock->assertSentCount(1);
     }
 }

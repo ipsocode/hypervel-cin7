@@ -1,0 +1,302 @@
+{
+    "ProductionOrderTags": [
+        "One-Two-Three",
+        "Three",
+        "Two",
+        "Twoundefined"
+    ],
+    "ChartOfAccounts": [
+        {
+            "Code": "200",
+            "Status": "ACTIVE",
+            "Name": "Sales",
+            "Type": "REVENUE",
+            "Description": "Income from any normal business activity",
+            "Class": "REVENUE",
+            "SystemAccount": null,
+            "SystemAccountCode": null,
+            "BankAccountNumber": null,
+            "BankAccountId": null,
+            "ForPayments": false,
+            "DisplayName": "200: Sales"
+        },
+        {
+            "Code": "260",
+            "Status": "ACTIVE",
+            "Name": "Other Revenue",
+            "Type": "REVENUE",
+            "Description": "Any other income that does not relate to normal business activities and is not recurring",
+            "Class": "REVENUE",
+            "SystemAccount": null,
+            "SystemAccountCode": null,
+            "BankAccountNumber": null,
+            "BankAccountId": null,
+            "ForPayments": false,
+            "DisplayName": "260: Other Revenue"
+        },
+        {
+            "Code": "970",
+            "Status": "ACTIVE",
+            "Name": "Owner A Share Capital",
+            "Type": "EQUITY",
+            "Description": "The value of shares purchased by the shareholders",
+            "Class": "EQUITY",
+            "SystemAccount": null,
+            "SystemAccountCode": null,
+            "BankAccountNumber": null,
+            "BankAccountId": null,
+            "ForPayments": false,
+            "DisplayName": "970: Owner A Share Capital"
+        }
+    ],
+    "ShopFloorLocations": [
+        {
+            "LocationID": "35c5646b-6a6d-4045-9512-04e1064a3e90",
+            "Description": "BFBin Shop Floor",
+            "IsDefault": false,
+            "UseForFixedAssetsOnly": false,
+            "IsShopFloor": true,
+            "IsCoMan": false
+        },
+        {
+            "LocationID": "e579b996-eba9-45a2-8b09-5b3280b7c0af",
+            "Description": "Assembly Shopfloor",
+            "IsDefault": false,
+            "UseForFixedAssetsOnly": false,
+            "IsShopFloor": true,
+            "IsCoMan": false
+        }
+    ],
+    "LogisticsPaths": [
+        {
+            "PathID": "3a2e1641-9131-4be4-b2f2-206def600332",
+            "WarehouseLocationID": "79987fb9-6bd4-480c-858e-9b5ed90a0347",
+            "WarehouseLocation": "Remote Warehouse",
+            "ShopFloorLocationID": "e579b996-eba9-45a2-8b09-5b3280b7c0af",
+            "ShopFloorLocation": "Assembly Shopfloor",
+            "RetailLocationID": "992d50b2-427d-4cba-b729-6dd18fe21f40",
+            "RetailLocation": "Larek"
+        },
+        {
+            "PathID": "fcf1a434-54f8-4c0d-9d8c-7ec5976ff0cb",
+            "WarehouseLocationID": "bbe0ff82-2044-413c-aba2-14ee2fc5f27d",
+            "WarehouseLocation": "Main Warehouse",
+            "ShopFloorLocationID": "35c5646b-6a6d-4045-9512-04e1064a3e90",
+            "ShopFloorLocation": "BFBin Shop Floor",
+            "RetailLocationID": "79987fb9-6bd4-480c-858e-9b5ed90a0347",
+            "RetailLocation": "Remote Warehouse"
+        },
+        {
+            "PathID": "9d6144dd-1fa4-4bf7-8a6a-acfc50e0e111",
+            "WarehouseLocationID": "bbe0ff82-2044-413c-aba2-14ee2fc5f27d",
+            "WarehouseLocation": "Main Warehouse",
+            "ShopFloorLocationID": "35c5646b-6a6d-4045-9512-04e1064a3e90",
+            "ShopFloorLocation": "BFBin Shop Floor",
+            "RetailLocationID": "35c5646b-6a6d-4045-9512-04e1064a3e90",
+            "RetailLocation": "BFBin Shop Floor"
+        },
+        {
+            "PathID": "3e598f09-7ecf-4ba8-8c2b-aff8c4a09495",
+            "WarehouseLocationID": "bbe0ff82-2044-413c-aba2-14ee2fc5f27d",
+            "WarehouseLocation": "Main Warehouse",
+            "ShopFloorLocationID": "35c5646b-6a6d-4045-9512-04e1064a3e90",
+            "ShopFloorLocation": "BFBin Shop Floor",
+            "RetailLocationID": "bbe0ff82-2044-413c-aba2-14ee2fc5f27d",
+            "RetailLocation": "Main Warehouse"
+        }
+    ],
+    "WorkCenters": [
+        {
+            "WorkCenterID": "b4d60677-a968-4eba-b8da-03fd0ec341af",
+            "Code": "API Test 4",
+            "Name": "Workcenter test 4 for API",
+            "IsActive": true,
+            "IsCoMan": false,
+            "Locations": [
+                {
+                    "ID": "06b96652-1bbf-46a2-967f-8e18248972c9",
+                    "LocationID": "d1a2cfd2-93b8-4c2f-aeec-a392f905466f",
+                    "Type": "Consumption",
+                    "LocationName": "BFBin"
+                },
+                {
+                    "ID": "7248b599-2965-49d3-a5fd-6f824861e283",
+                    "LocationID": "18e884c4-6d2e-4c06-9143-c3c8985814a5",
+                    "Type": "Consumption",
+                    "LocationName": "Assembly Shopfloor: Big Box with details"
+                }
+            ],
+            "CoManProcurementType": null
+        },
+        {
+            "WorkCenterID": "c9c41727-e690-41ff-b27e-28d60291e35c",
+            "Code": "WC-A-F1",
+            "Name": "Accembly Floor 1",
+            "IsActive": true,
+            "IsCoMan": false,
+            "Locations": [
+                {
+                    "ID": "1bc02f41-edd4-43b8-a47a-eec422e99034",
+                    "LocationID": "18e884c4-6d2e-4c06-9143-c3c8985814a5",
+                    "Type": "Consumption",
+                    "LocationName": "Assembly Shopfloor: Big Box with details"
+                }
+            ],
+            "CoManProcurementType": null
+        },
+        {
+            "WorkCenterID": "a24d2609-563d-4053-913b-29bc94019556",
+            "Code": "Co-man workcenter",
+            "Name": "Tom the Supplier",
+            "IsActive": true,
+            "IsCoMan": true,
+            "Locations": [
+                {
+                    "ID": "d1e24560-aa0b-4d1e-a221-55532cf7441d",
+                    "LocationID": "d1a2cfd2-93b8-4c2f-aeec-a392f905466f",
+                    "Type": "Consumption",
+                    "LocationName": "BFBin"
+                }
+            ],
+            "CoManProcurementType": "transfer"
+        },
+        {
+            "WorkCenterID": "8b50a21f-1c68-417c-8755-4aa029a9e117",
+            "Code": "API Test",
+            "Name": "Workcenter test for API",
+            "IsActive": true,
+            "IsCoMan": true,
+            "Locations": [
+                {
+                    "ID": "4e3c961a-06c2-47f9-bdad-4296d21ddd57",
+                    "LocationID": "d1a2cfd2-93b8-4c2f-aeec-a392f905466f",
+                    "Type": "Consumption",
+                    "LocationName": "BFBin"
+                }
+            ],
+            "CoManProcurementType": "transfer"
+        },
+        {
+            "WorkCenterID": "9810a2f3-7760-446a-b6a9-4d8d79c5f4bb",
+            "Code": "API Test 3",
+            "Name": "Workcenter test 3 for API",
+            "IsActive": true,
+            "IsCoMan": false,
+            "Locations": [
+                {
+                    "ID": "842c3152-3908-4caf-8571-871199b7f773",
+                    "LocationID": "d1a2cfd2-93b8-4c2f-aeec-a392f905466f",
+                    "Type": "Consumption",
+                    "LocationName": "BFBin"
+                },
+                {
+                    "ID": "16d0cb3e-ffb6-439b-8554-2a4ea45b8693",
+                    "LocationID": "18e884c4-6d2e-4c06-9143-c3c8985814a5",
+                    "Type": "Output",
+                    "LocationName": "Assembly Shopfloor: Big Box with details"
+                }
+            ],
+            "CoManProcurementType": null
+        },
+        {
+            "WorkCenterID": "b617715d-bcdd-4734-b8eb-6f3c0732fb7e",
+            "Code": "Test 1 Co-man",
+            "Name": "Jane The Supplier",
+            "IsActive": true,
+            "IsCoMan": true,
+            "Locations": [
+                {
+                    "ID": "c4692df1-d6b3-4f01-b994-88de01d3b1be",
+                    "LocationID": "d1a2cfd2-93b8-4c2f-aeec-a392f905466f",
+                    "Type": "Consumption",
+                    "LocationName": "BFBin"
+                }
+            ],
+            "CoManProcurementType": "buysell"
+        },
+        {
+            "WorkCenterID": "99360e2f-2a1f-46f7-8d1f-97558bb56ec1",
+            "Code": "WC-A-F2",
+            "Name": "Accembly Floor 2",
+            "IsActive": true,
+            "IsCoMan": false,
+            "Locations": [
+                {
+                    "ID": "7975ac16-b147-4d7b-b770-ea2fc1c84136",
+                    "LocationID": "d7fc5649-5635-4784-8264-66cf64138f5e",
+                    "Type": "Consumption",
+                    "LocationName": "BFBin Shop Floor: Bin 1"
+                },
+                {
+                    "ID": "f530d7e7-bded-42f8-8d7d-28e20b19e44d",
+                    "LocationID": "18e884c4-6d2e-4c06-9143-c3c8985814a5",
+                    "Type": "Consumption",
+                    "LocationName": "Assembly Shopfloor: Big Box with details"
+                }
+            ],
+            "CoManProcurementType": null
+        },
+        {
+            "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+            "Code": "Default Workcenter",
+            "Name": "Default Workcenter",
+            "IsActive": true,
+            "IsCoMan": false,
+            "Locations": [
+                {
+                    "ID": "2df000e8-1d92-423b-bdbb-c0075c36eac8",
+                    "LocationID": "d7fc5649-5635-4784-8264-66cf64138f5e",
+                    "Type": "Consumption",
+                    "LocationName": "BFBin Shop Floor: Bin 1"
+                },
+                {
+                    "ID": "029549c9-79e4-41f8-a0d4-5cb275531c30",
+                    "LocationID": "18e884c4-6d2e-4c06-9143-c3c8985814a5",
+                    "Type": "Consumption",
+                    "LocationName": "Assembly Shopfloor: Big Box with details"
+                }
+            ],
+            "CoManProcurementType": null
+        },
+        {
+            "WorkCenterID": "09599906-cdf4-4447-abee-a3eb7e1be545",
+            "Code": "Test Test",
+            "Name": "Incoming Goods Supplier",
+            "IsActive": true,
+            "IsCoMan": true,
+            "Locations": [
+                {
+                    "ID": "cf58d4f9-ec2d-47e9-bf65-28a5abdf8226",
+                    "LocationID": "d1a2cfd2-93b8-4c2f-aeec-a392f905466f",
+                    "Type": "Consumption",
+                    "LocationName": "BFBin"
+                }
+            ],
+            "CoManProcurementType": "transfer"
+        },
+        {
+            "WorkCenterID": "21de247f-eb96-4c97-9085-e33411f6dc40",
+            "Code": "Tebi",
+            "Name": "Test No Bin",
+            "IsActive": true,
+            "IsCoMan": false,
+            "Locations": [],
+            "CoManProcurementType": null
+        }
+    ],
+    "PriceTiers": [],
+    "InventoryControlAccount": "715",
+    "WipAccount": "726",
+    "SuspendReasons": [
+        {
+            "ID": "868dcd8c-ac27-475d-b59d-b1e3807eb9aa",
+            "Reason": "I don't know.. that's enough for today",
+            "WorkCenterIDs": "a11ac85f-e4ef-487e-8196-9cc0dc954697"
+        },
+        {
+            "ID": "96ab4332-0ece-420d-97ae-be676a758191",
+            "Reason": "I'm gotta tired need some sleep",
+            "WorkCenterIDs": "a11ac85f-e4ef-487e-8196-9cc0dc954697"
+        }
+    ]
+}

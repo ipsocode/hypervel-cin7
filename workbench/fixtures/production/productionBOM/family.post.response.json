@@ -1,0 +1,110 @@
+{
+    "ProductFamilyID": "a1688709-6639-4324-aa53-a2120185a7bf",
+    "ProductionBOMs": [
+        {
+            "BOMID": "9f13328c-de21-45c0-ac29-c8ab29d5e37f",
+            "OutputQuantity": 1.0,
+            "BufferPercent": 0.0,
+            "InstructionUrl": "",
+            "IgnoreCumulativeLeadTime": false,
+            "ComponentProductionLeadTime": 0,
+            "Version": 1,
+            "Name": "",
+            "IsDefault": true,
+            "CreatedDate": "2021-02-11T00:00:00",
+            "DeliveryToID": null,
+            "DeliveryToName": null,
+            "IssueMethod": 4,
+            "Operations": [
+                {
+                    "OperationID": "7bde4f66-6604-430b-aea6-db1e824a9be8",
+                    "Order": 1,
+                    "Name": "Operation F22",
+                    "CycleTime": 3600,
+                    "UnitsPerCycle": 1.0,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "WorkCenterName": "Default Workcenter",
+                    "WorkCenterCoManProcurementType": null,
+                    "OperationType": "Manufacturing",
+                    "IsDropShip": false,
+                    "Resources": [
+                        {
+                            "BOMResourceID": "c096b60c-bfe0-4d2c-9cbc-50a624fecdd0",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 1.0,
+                            "Cost": 20.0,
+                            "CycleTime": 3600,
+                            "Position": 1,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Components": [
+                        {
+                            "BOMComponentID": "6ea12ca8-3ddc-4d64-a3be-42544174d03f",
+                            "ProductID": "86875aba-9143-435e-b5f7-b036b1873dcf",
+                            "ProductName": "Eggs",
+                            "ProductSKU": "Eggs",
+                            "Quantity": 2.0,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "Cost": 0.3864,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 2,
+                            "SalePriceTier": null
+                        }
+                    ],
+                    "Attachments": [],
+                    "Notes": [],
+                    "OperationLinks": [
+                        {
+                            "ID": "4f2ef43b-179e-4ca1-831a-12d627d8a25f",
+                            "RelatedOperationID": null,
+                            "RelatedOperationName": null,
+                            "RelationType": 1
+                        }
+                    ],
+                    "InputProducts": [],
+                    "OutputProducts": [],
+                    "FinishedProducts": [
+                        {
+                            "ID": "86dd793b-3ea1-4065-8510-6f36d206125c",
+                            "ProductID": null,
+                            "ProductFamilyID": "a1688709-6639-4324-aa53-a2120185a7bf",
+                            "CostCalculationType": "SalesValue",
+                            "PriceTier": 1,
+                            "Ratio": 0.0,
+                            "OutputQuantity": 1.0,
+                            "ProductName": "BOM Api Family 1",
+                            "ProductSKU": "BOM Api Family 1 SKU",
+                            "AverageCost": 0.0,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 4,
+                            "WastageCost": null,
+                            "DeliveryTo": null,
+                            "DeliveryToName": null
+                        }
+                    ],
+                    "VariationComponents": [
+                        {
+                            "BOMVariationComponentID": "02c393e7-6dfe-458d-9220-970d6307cf82",
+                            "ProductFamilyID": "e7d3aec4-b91f-4ff9-af2d-ac9b8be35aed",
+                            "ProductFamilyName": "Screws",
+                            "ProductFamilySKU": "Screws-SKU",
+                            "QuantitySettingsJSON": "[{'OptionKey':'Kind 1','OptionValue':22},{'OptionKey':'Kind 2','OptionValue':33}]",
+                            "MapVariationsJSON": "[{\"ProductID\":\"10ece710-1dae-4368-bcee-62912b2682ab\",\"ProductName\":\"Screws Drive Cross \",\"ProductCode\":\"Screws-SKU - 002\",\"Option1SelectedValue\":\"\",\"Option2SelectedValue\":\"\",\"Option3SelectedValue\":\"\",\"IsOption1AllSelected\":false,\"IsOption2AllSelected\":false,\"IsOption3AllSelected\":false,\"QuantitySettingsJSON\":[{\"OptionKey\":\"Kind 1\",\"OptionValue\":null},{\"OptionKey\":\"Kind 2\",\"OptionValue\":35.0}],\"ValidationText\":\"\",\"ValidationState\":\"\"},{\"ProductID\":\"f9888002-5bb7-41bb-8f3d-fc9e611a10c0\",\"ProductName\":\"Screws Phillips Drive Flat\",\"ProductCode\":\"Screws-SKU - 001\",\"Option1SelectedValue\":\"\",\"Option2SelectedValue\":\"\",\"Option3SelectedValue\":\"\",\"IsOption1AllSelected\":false,\"IsOption2AllSelected\":false,\"IsOption3AllSelected\":false,\"QuantitySettingsJSON\":[{\"OptionKey\":\"Kind 1\",\"OptionValue\":22.0},{\"OptionKey\":\"Kind 2\",\"OptionValue\":null}],\"ValidationText\":\"\",\"ValidationState\":\"\"}]",
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 3,
+                            "SalePriceTier": null,
+                            "QuantityOptionName": "Kind"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

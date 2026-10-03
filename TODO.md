@@ -109,68 +109,6 @@ Built with the first resource that uses it.
 
 CRM, disassembly, finished goods and production, the maintainer's choice.
 
-### `reference/production/**` Production (10 resources, 46 operations)
-
-- [ ] `factory-calendar` · `production/factoryCalendar` · GET POST PUT
-  - [ ] FactoryCalendar: `FactoryCalendarData`
-  - [ ] FactoryCalendarDay: `FactoryCalendarDayData`
-  - [ ] FactoryCalendarSpecialDay: `FactoryCalendarSpecialDayData`
-- [ ] `product-production-bom` · `production/productionBOM` · GET POST PUT DELETE
-  - [ ] ProductionBOM: `ProductionBomData`
-  - [ ] ProductionBOMOperation: `ProductionBomOperationData`
-  - [ ] ProductionBOMResource: `ProductionBomResourceData`
-  - [ ] ProductionBOMComponent: `ProductionBomComponentData`
-  - [ ] ProductionBOMAttachment: `ProductionBomAttachmentData`
-  - [ ] ProductionBOMNote: `ProductionBomNoteData`
-  - [ ] ProductionBOMOperationLink: `ProductionBomOperationLinkData`
-  - [ ] ProductionBOMOperationProduct: `ProductionBomOperationProductData`
-- [ ] `product-family-production-bom` · `production/productionBOM` · GET POST PUT DELETE
-  - [ ] Production BOM Operation: `ProductFamilyProductionBomOperationData`
-  - [ ] ProductionBOMVariationComponent: `ProductionBomVariationComponentData`
-- [ ] `production-order` · `production/order` · GET POST PUT POST POST POST POST PUT DELETE GET POST GET
-  - [ ] Production Order: `ProductionOrderData`
-  - [ ] Production Order Operation: `ProductionOrderOperationData`
-  - [ ] ProductionOrderOperationAttachment: `ProductionOrderOperationAttachmentData`
-  - [ ] ProductionOrderComponent: `ProductionOrderComponentData`
-  - [ ] ProductionOrderOperationNote: `ProductionOrderOperationNoteData`
-  - [ ] ProductionOrderResource: `ProductionOrderResourceData`
-  - [ ] ProductionOrderOperationLink: `ProductionOrderOperationLinkData`
-  - [ ] ProductionOrderOperationProduct: `ProductionOrderOperationProductData`
-  - [ ] ProductionOrderSourceTask: `ProductionOrderSourceTaskData`
-- [ ] `production-order-list` · `production/orderList` · GET
-  - [ ] Production Order List Item: `ProductionOrderListData`
-  - [ ] ProductionOrderListSourceTask: `ProductionOrderListSourceTaskData`
-- [ ] `production-run` · `production/order/run` · POST GET PUT PUT PUT PUT PUT PUT PUT PUT PUT
-  - [ ] Production Run: `ProductionRunData`
-  - [ ] ProductionRunOperation: `ProductionRunOperationData`
-  - [ ] ProductionRunOperationComponent: `ProductionRunOperationComponentData`
-  - [ ] ProductionRunOperationResource: `ProductionRunOperationResourceData`
-  - [ ] ProductionRunOperationResourceCost: `ProductionRunOperationResourceCostData`
-  - [ ] ProductionRunOperationProduct: `ProductionRunOperationProductData`
-  - [ ] ProductionRunOperationCoManTask: `ProductionRunOperationCoManTaskData`
-  - [ ] ProductionRunOperationCoManLine: `ProductionRunOperationCoManLineData`
-  - [ ] ProductionRunOperationAttachment: `ProductionRunOperationAttachmentData`
-  - [ ] ProductionRunOperationNote: `ProductionRunOperationNoteData`
-  - [ ] ProductionRunPendingOutput: `ProductionRunPendingOutputData`
-  - [ ] ProductionRunOutput: `ProductionRunOutputData`
-  - [ ] ProductionRunManualJournal: `ProductionRunManualJournalData`
-  - [ ] ProductionRunTraceability: `ProductionRunTraceabilityData`
-- [ ] `resource-list` · `production/resourceList` · GET
-- [ ] `resource` · `production/resource` · GET POST PUT DELETE
-  - [ ] Resource: `ResourceData`
-  - [ ] ResourceCapacity: `ResourceCapacityData`
-  - [ ] CustomWorkingDay: `CustomWorkingDayData`
-  - [ ] ResourceUnit: `ResourceUnitData`
-  - [ ] ResourceCost: `ResourceCostData`
-  - [ ] ResourceRemark: `ResourceRemarkData`
-  - [ ] ResourceAttachment: `ResourceAttachmentData`
-- [ ] `suspend-reason` · `production/suspendReason` · GET PUT
-  - [ ] SuspendReason: `SuspendReasonData`
-- [ ] `work-centers` · `production/workcenters` · GET POST PUT DELETE
-  - [ ] WorkCenter: `WorkCenterData`
-  - [ ] WorkCenterLocation: `WorkCenterLocationData`
-  - [ ] WorkCenterSupplier: `WorkCenterSupplierData`
-
 ## Done
 
 Every resource in these groups is in.
@@ -311,6 +249,68 @@ Every resource in these groups is in.
 - [x] `markup-prices` · `ref/markupprices` · GET PUT
   - [x] Markup Prices: `MarkupPricesData`
   - [x] MarkupPriceLineModel: `MarkupPriceLineData`
+
+### `reference/production/**` Production (10 resources, 46 operations)
+
+- [x] `factory-calendar` · `production/factoryCalendar` · GET POST PUT
+  - [x] FactoryCalendar: `FactoryCalendarData`
+  - [x] FactoryCalendarDay: `FactoryCalendarDayData`
+  - [x] FactoryCalendarSpecialDay: `FactoryCalendarSpecialDayData`
+- [x] `product-production-bom` · `production/productionBOM` · GET POST PUT DELETE
+  - [x] ProductionBOM: `ProductionBomData`
+  - [x] ProductionBOMOperation: `ProductionBomOperationData`
+  - [x] ProductionBOMResource: `ProductionBomResourceData`
+  - [x] ProductionBOMComponent: `ProductionBomComponentData`
+  - [x] ProductionBOMAttachment: `ProductionBomAttachmentData`
+  - [x] ProductionBOMNote: `ProductionBomNoteData`
+  - [x] ProductionBOMOperationLink: `ProductionBomOperationLinkData`
+  - [x] ProductionBOMOperationProduct: `ProductionBomOperationProductData`
+- [x] `product-family-production-bom` · `production/productionBOM` · GET POST PUT DELETE
+  - [x] Production BOM Operation: `ProductFamilyProductionBomOperationData`
+  - [x] ProductionBOMVariationComponent: `ProductionBomVariationComponentData`
+- [x] `production-order` · `production/order` · GET POST PUT POST POST POST POST PUT DELETE GET POST GET
+  - [x] Production Order: `ProductionOrderData`
+  - [x] Production Order Operation: `ProductionOrderOperationData`
+  - [x] ProductionOrderOperationAttachment: `ProductionOrderOperationAttachmentData`
+  - [x] ProductionOrderComponent: `ProductionOrderComponentData`
+  - [x] ProductionOrderOperationNote: `ProductionOrderOperationNoteData`
+  - [x] ProductionOrderResource: `ProductionOrderResourceData`
+  - [x] ProductionOrderOperationLink: `ProductionOrderOperationLinkData`
+  - [x] ProductionOrderOperationProduct: `ProductionOrderOperationProductData`
+  - [x] ProductionOrderSourceTask: `ProductionOrderSourceTaskData`
+- [x] `production-order-list` · `production/orderList` · GET
+  - [x] Production Order List Item: `ProductionOrderListData`
+  - [x] ProductionOrderListSourceTask: `ProductionOrderListSourceTaskData`
+- [x] `production-run` · `production/order/run` · POST GET PUT PUT PUT PUT PUT PUT PUT PUT PUT
+  - [x] Production Run: `ProductionRunData`
+  - [x] ProductionRunOperation: `ProductionRunOperationData`
+  - [x] ProductionRunOperationComponent: `ProductionRunOperationComponentData`
+  - [x] ProductionRunOperationResource: `ProductionRunOperationResourceData`
+  - [x] ProductionRunOperationResourceCost: `ProductionRunOperationResourceCostData`
+  - [x] ProductionRunOperationProduct: `ProductionRunOperationProductData`
+  - [x] ProductionRunOperationCoManTask: `ProductionRunOperationCoManTaskData`
+  - [x] ProductionRunOperationCoManLine: `ProductionRunOperationCoManLineData`
+  - [x] ProductionRunOperationAttachment: `ProductionRunOperationAttachmentData`
+  - [x] ProductionRunOperationNote: `ProductionRunOperationNoteData`
+  - [x] ProductionRunPendingOutput: `ProductionRunPendingOutputData`
+  - [x] ProductionRunOutput: `ProductionRunOutputData`
+  - [x] ProductionRunManualJournal: `ProductionRunManualJournalData`
+  - [x] ProductionRunTraceability: `ProductionRunTraceabilityData`
+- [x] `resource-list` · `production/resourceList` · GET
+- [x] `resource` · `production/resource` · GET POST PUT DELETE
+  - [x] Resource: `ResourceData`
+  - [x] ResourceCapacity: `ResourceCapacityData`
+  - [x] CustomWorkingDay: `CustomWorkingDayData`
+  - [x] ResourceUnit: `ResourceUnitData`
+  - [x] ResourceCost: `ResourceCostData`
+  - [x] ResourceRemark: `ResourceRemarkData`
+  - [x] ResourceAttachment: `ResourceAttachmentData`
+- [x] `suspend-reason` · `production/suspendReason` · GET PUT
+  - [x] SuspendReason: `SuspendReasonData`
+- [x] `work-centers` · `production/workcenters` · GET POST PUT DELETE
+  - [x] WorkCenter: `WorkCenterData`
+  - [x] WorkCenterLocation: `WorkCenterLocationData`
+  - [x] WorkCenterSupplier: `WorkCenterSupplierData`
 
 ### `reference/purchase/**` Purchase (17 resources, 45 operations)
 

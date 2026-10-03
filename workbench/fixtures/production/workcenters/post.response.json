@@ -1,0 +1,27 @@
+{
+    "Workcenters": [
+        {
+            "WorkCenterID": "e180613b-1a63-41c3-a1f3-1316319e60a7",
+            "Code": "API Test",
+            "Name": "Workcenter test for API",
+            "IsActive": true,
+            "IsCoMan": true,
+            "IsCoManPurchase": false,
+            "SupplierID": "f9d6abe7-39b5-4fc1-a7aa-b61d2dc933e9",
+            "SupplierName": "Tom the Supplier",
+            "WorkCenterLocations": [
+                {
+                    "ID": "1f59ac7c-3fba-4e73-8339-92a09486bce8",
+                    "WorkCenterID": "e180613b-1a63-41c3-a1f3-1316319e60a7",
+                    "LocationID": "d1a2cfd2-93b8-4c2f-aeec-a392f905466f",
+                    "LocationName": "BFBin",
+                    "ParentLocationID": null,
+                    "ParentLocationName": null,
+                    "Type": "Consumption"
+                }
+            ],
+            "WorkCenterSuppliers": [],
+            "CoManProcurementType": "Transfer"
+        }
+    ]
+}
