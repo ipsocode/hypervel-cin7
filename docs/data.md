@@ -257,7 +257,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `production/order/referenceData` | none | GET: `ProductionOrderReferenceData` |
 | `production/orderList` | none | GET: `list<ProductionOrderListData>`, read from `ProductionOrderListItems` |
 | `production/order/run` | POST: `ProductionRunPostData`; PUT: `ProductionRunData` | POST, GET: `ProductionRunsData`; PUT: `ProductionRunData` |
-| `production/order/run/complete` | PUT: `ProductionRunCompletePostData` | PUT: `ProductionRunsData` |
+| `production/order/run/complete` | PUT: `ProductionRunCompletePutData` | PUT: `ProductionRunsData` |
 | `production/order/run/undo` | PUT: `ProductionRunUndoData` | PUT: `ProductionRunUndoData` |
 | `production/order/run/void` | PUT: `ProductionRunUndoData` | PUT: `ProductionRunUndoData` |
 | `production/order/run/manualJournal` | PUT: `ProductionRunManualJournalsPutData` | PUT: `ProductionRunsData` |

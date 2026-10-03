@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunCompletePostData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunCompletePutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunManualJournalData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunManualJournalsPutData;
@@ -127,8 +127,8 @@ return [
         'ProductionRunOperationData without OperationID' => [ProductionRunOperationData::class, Arr::except(Cin7Payloads::load('production/order/run', 'get.response')['Runs'][0]['Operations'][0], 'OperationID')],
         'ProductionRunPostData without ProductionOrderID' => [ProductionRunPostData::class, Arr::except(Cin7Payloads::load('production/order/run', 'post.request'), 'ProductionOrderID')],
         'ProductionRunPostData without Runs' => [ProductionRunPostData::class, Arr::except(Cin7Payloads::load('production/order/run', 'post.request'), 'Runs')],
-        'ProductionRunCompletePostData without ProductionOrderID' => [ProductionRunCompletePostData::class, Arr::except(Cin7Payloads::load('production/order/run/complete', 'put.request'), 'ProductionOrderID')],
-        'ProductionRunCompletePostData without ProductionRunID' => [ProductionRunCompletePostData::class, Arr::except(Cin7Payloads::load('production/order/run/complete', 'put.request'), 'ProductionRunID')],
+        'ProductionRunCompletePutData without ProductionOrderID' => [ProductionRunCompletePutData::class, Arr::except(Cin7Payloads::load('production/order/run/complete', 'put.request'), 'ProductionOrderID')],
+        'ProductionRunCompletePutData without ProductionRunID' => [ProductionRunCompletePutData::class, Arr::except(Cin7Payloads::load('production/order/run/complete', 'put.request'), 'ProductionRunID')],
         'ProductionRunUndoData without ProductionOrderID' => [ProductionRunUndoData::class, Arr::except(Cin7Payloads::load('production/order/run/undo', 'put.request'), 'ProductionOrderID')],
         'ProductionRunUndoData without ProductionRunID' => [ProductionRunUndoData::class, Arr::except(Cin7Payloads::load('production/order/run/undo', 'put.request'), 'ProductionRunID')],
         'ProductionRunManualJournalsPutData without RunID' => [ProductionRunManualJournalsPutData::class, Arr::except(Cin7Payloads::load('production/order/run/manualJournal', 'put.request'), 'RunID')],
@@ -156,7 +156,7 @@ return [
         ProductionRunTraceabilityData::class => ['ProducedProductID', 'ProducedProductBatchSN', 'UsedProductID', 'UsedProductBatchSN'],
         ProductionRunOperationData::class => ['OperationID'],
         ProductionRunPostData::class => ['ProductionOrderID', 'Runs'],
-        ProductionRunCompletePostData::class => ['ProductionOrderID', 'ProductionRunID'],
+        ProductionRunCompletePutData::class => ['ProductionOrderID', 'ProductionRunID'],
         ProductionRunUndoData::class => ['ProductionOrderID', 'ProductionRunID'],
         ProductionRunManualJournalsPutData::class => ['RunID', 'ManualJournals'],
         ProductionRunOperationStartPutData::class => ['ProductionOrderID', 'ProductionRunID', 'RunOperationID'],

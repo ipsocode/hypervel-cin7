@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Resources\Production\Order;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunCompletePostData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunCompletePutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunManualJournalsPutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunPostData;
@@ -57,9 +57,9 @@ final class RunResource extends BaseResource
     }
 
     /**
-     * @param array<string, mixed>|ProductionRunCompletePostData $body
+     * @param array<string, mixed>|ProductionRunCompletePutData $body
      */
-    public function complete(array|ProductionRunCompletePostData $body): Response
+    public function complete(array|ProductionRunCompletePutData $body): Response
     {
         return $this->connector->send(new PutProductionOrderRunComplete($body));
     }

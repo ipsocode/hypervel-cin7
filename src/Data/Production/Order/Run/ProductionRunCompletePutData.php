@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  *
  * @see docs/data.md
  */
-final class ProductionRunCompletePostData extends Data
+final class ProductionRunCompletePutData extends Data
 {
     /**
      * @param null|list<ProductionRunOutputData> $FinishedProducts
