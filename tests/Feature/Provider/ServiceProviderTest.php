@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Provider;
 
+use Hypervel\Console\Scheduling\Event;
+use Hypervel\Console\Scheduling\Schedule;
+use Hypervel\Support\Facades\Artisan;
+use Hypervel\Support\Facades\Schema;
 use Hypervel\Support\ServiceProvider;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Cin7ServiceProvider;
@@ -105,5 +109,55 @@ class ServiceProviderTest extends TestCase
         $paths = ServiceProvider::pathsToPublish(Cin7ServiceProvider::class, 'cin7-config');
 
         $this->assertSame([config_path('cin7.php')], array_values($paths));
+    }
+
+    /**
+     * The sync is off by default: no migration, no table, nothing scheduled.
+     */
+    public function testTheSyncIsOffByDefault(): void
+    {
+        $this->assertFalse(config('cin7.sync.enabled'));
+        $this->assertNotContains(
+            realpath(__DIR__ . '/../../../database/migrations'),
+            array_map(realpath(...), $this->app->make('migrator')->paths()),
+        );
+        $this->assertFalse(Schema::hasTable('cin7_sync_payloads'));
+        $this->assertSame([], array_filter(
+            $this->app->make(Schedule::class)->events(),
+            fn (Event $event): bool => str_starts_with((string) $event->description, 'cin7:'),
+        ));
+    }
+
+    public function testTheSyncCommandRefusesWhileTheSyncIsOff(): void
+    {
+        $this->artisan('cin7:sync')
+            ->expectsOutputToContain('The Cin7 sync is off')
+            ->assertExitCode(1);
+    }
+
+    public function testTheConnectorNamesItsAccount(): void
+    {
+        $this->assertSame('acct-test', $this->connector()->accountId());
+    }
+
+    public function testAboutReportsTheConnectorAndTheSyncWithoutTheCredentials(): void
+    {
+        $this->artisan('about')
+            ->expectsOutputToContain('Cin7')
+            ->expectsOutputToContain('60 calls per 60s')
+            ->doesntExpectOutputToContain('acct-test')
+            ->doesntExpectOutputToContain('key-test')
+            ->assertSuccessful();
+    }
+
+    public function testAboutSaysWhenTheRateLimitIsOff(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.max', 0);
+        $this->app->get('config')->set('cin7.rate_limit.store', 'redis');
+
+        Artisan::call('about', ['--json' => true]);
+        $about = json_decode(Artisan::output(), true)['cin7'];
+
+        $this->assertSame(['off', 'redis', 'off', '-', '-'], [$about['rate_limit'], $about['limiter_store'], $about['sync'], $about['sync_pull'], $about['sync_full_pull']]);
     }
 }

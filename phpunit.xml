@@ -49,6 +49,10 @@
         <env name="CIN7_RATE_PERIOD" value="60"/>
         <env name="CIN7_RETRY_TIMES" value="4"/>
         <env name="CIN7_RETRY_DELAY_MS" value="5000"/>
+        <!-- The sync's table, in memory: each test starts empty. -->
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+        <env name="CACHE_STORE" value="array"/>
 
         <ini name="error_reporting" value="-1"/>
         <ini name="display_errors" value="on"/>

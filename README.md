@@ -121,6 +121,9 @@ worker's lifetime is safe.
 - [docs/connector.md](docs/connector.md) — the shared connector, its transport
   and timeouts, rate limiting and the choice of limiter store, and the throttling
   cooldown.
+- [docs/sync.md](docs/sync.md) — the optional scheduled copy of Cin7's records
+  in one local table: the modules and their order, how a pull works, the
+  schedule, the `cin7:sync` command and reading the table.
 - [docs/testing.md](docs/testing.md) — faking Cin7 in the tests of an
   application that uses the package, with the shipped `Cin7Fake` builders for
   list envelopes and the Error Model, and how the package's own suite is built.
@@ -129,7 +132,9 @@ worker's lifetime is safe.
 
 - **No caching.** Response caching, cache-key shape and cache-hit logging
   semantics are consumer policy; `Cacheable`/`HasCaching` can be adopted later
-  once a second consumer's needs are known.
+  once a second consumer's needs are known. The [sync](docs/sync.md), a local
+  copy of Cin7's records, is a separate, opt-in table: off by default, it
+  creates no table and runs no query.
 - **No mandatory DTOs.** Arrays work everywhere: a write takes an array body and
   `json()` returns the decoded array. Typed data objects are an additive layer on
   top ([docs/data.md](docs/data.md)), shown here for a customer:

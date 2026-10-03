@@ -17,6 +17,18 @@ those values through `config()`, never by reading the environment directly.
 | `rate_limit.store` | `CIN7_RATE_STORE` | none | Rate limiter store; unset falls back to `saloon.rate_limiter.store`, then `rate-limiter.default` (see [connector](connector.md)) |
 | `retry.times` | `CIN7_RETRY_TIMES` | `4` | Total attempts on a 429 or 503, not extra ones |
 | `retry.delay_ms` | `CIN7_RETRY_DELAY_MS` | `5000` | Milliseconds between attempts |
+| `sync.enabled` | `CIN7_SYNC` | `false` | The [sync](sync.md): off, it creates no table, schedules nothing and runs no query |
+| `sync.cron` | `CIN7_SYNC_CRON` | `0 * * * *` | When the modules that read only what changed are pulled; `null` schedules none |
+| `sync.modules` | none | `'*'` | The modules synced, in order; `'*'`, alone or in a list, is every module in [dependency order](sync.md#modules) |
+| `sync.exceptions` | none | `[]` | `module => cron`: a module pulled at a time of its own as well; not a reference book |
+| `sync.full` | `CIN7_SYNC_FULL` | `0 2 * * 0` | When every module, the reference books included, is pulled whole; `null` schedules none |
+| `sync.lookback` | `CIN7_SYNC_LOOKBACK` | `1440` | Minutes an incremental pull reaches back |
+| `sync.limit` | `CIN7_SYNC_LIMIT` | `500` | Records a page, 1 to 1000 |
+| `sync.pause_ms` | `CIN7_SYNC_PAUSE_MS` | `1000` | Milliseconds between the sync's own calls |
+| `sync.documents` | `CIN7_SYNC_DOCUMENTS` | `250` | Sale and purchase documents read per module per run |
+| `sync.queue` | `CIN7_SYNC_QUEUE` | none | The queue the scheduled pulls go on |
+| `sync.timeout` | `CIN7_SYNC_TIMEOUT` | `3600` | Seconds a queued pull, and its module lock, may last |
+| `sync.connection` | `CIN7_SYNC_CONNECTION` | none | The database connection the table lives on |
 
 The credentials go in your environment:
 
@@ -55,6 +67,8 @@ which is evaluated when the configuration loads. Everything else goes through
 |---|---|---|
 | `account_id`, `application_key`, `rate_limit.*` | The first time the container resolves `Cin7Connector` | None for that worker: the connector is a singleton built once per worker |
 | `retry.*` | Each time a request is constructed (`new GetCustomer(...)` and the rest) | Applies to requests constructed after the change |
+| `sync.enabled` | When the provider boots | None for that worker: the migration and the schedule are registered at boot |
+| the other `sync.*` | Each time a pull, the schedule or the job reads them | Applies from the next read |
 
 So set any runtime override of `retry.*` before the `new`, not just before
 `send()`.
@@ -69,6 +83,11 @@ The merge covers top-level keys only. A `rate_limit` or `retry` array in the
 published file wins over the packaged array as a whole, so a key you leave out
 of it is absent rather than taken from the packaged file. Absent keys fall back
 as listed under [Casts and fallbacks](#casts-and-fallbacks).
+
+`sync` is merged one level deeper (the provider's `mergeableOptions()`), so a
+published `sync` array that sets only `enabled` keeps the packaged values of
+the others. An array inside it, `modules` or `exceptions`, still wins as a
+whole.
 
 ## Casts and fallbacks
 
@@ -86,3 +105,9 @@ than trusting its type, so a missing or loosely typed value does not throw a
 its own fallbacks: a `null` or absent `retry.times` or `retry.delay_ms` falls
 back to `4` and `5000`, and the results are clamped to at least one attempt and
 at least `0` ms. See [requests](requests.md#retry-policy).
+
+[`SyncConfig`](../src/Sync/SyncConfig.php) reads `sync.*` the same way: an absent or `null`
+number falls back to its default, and each is clamped (`limit` to 1–1000, `timeout` to at
+least 1, the others to at least 0). A blank `cron`, `full` or exception time schedules nothing,
+an empty `queue` or `connection` is the default one, and an unknown module name, or a reference
+book among the exceptions, throws an `InvalidArgumentException` rather than being skipped.
