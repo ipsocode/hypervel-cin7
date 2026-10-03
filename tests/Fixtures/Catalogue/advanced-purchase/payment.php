@@ -54,11 +54,11 @@ return [
         ],
         PutAdvancedPurchasePayment::class . ' with data' => [
             PutAdvancedPurchasePayment::class,
-            [fn (): AdvancedPurchasePaymentPutData => AdvancedPurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0])],
+            [fn (): AdvancedPurchasePaymentPutData => AdvancedPurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0])],
             Method::PUT,
             '/ExternalApi/v2/advanced-purchase/payment',
             [],
-            ['ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0],
+            ['ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0],
         ],
     ],
     'resources' => [
@@ -103,12 +103,12 @@ return [
             ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5],
         ],
         'advancedPurchase payment put with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->payment()->put(AdvancedPurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0, 'Reference' => 'PAY-1'])),
+            fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->payment()->put(AdvancedPurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0, 'Reference' => 'PAY-1'])),
             PutAdvancedPurchasePayment::class,
             Method::PUT,
             '/ExternalApi/v2/advanced-purchase/payment',
             [],
-            ['ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Reference' => 'PAY-1', 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0],
+            ['ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'Reference' => 'PAY-1', 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0],
         ],
         'advancedPurchase payment delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->payment()->delete('d3d96860-648f-462a-9e19-eb61e03da136', deleteAllocation: false),
@@ -132,12 +132,14 @@ return [
     'missing' => [
         'advanced purchase payment POST without Account' => [AdvancedPurchasePaymentPostData::class, Arr::except(Cin7Payloads::load('advanced-purchase/payment', 'post.request'), 'Account')],
         'advanced purchase payment PUT without ID' => [AdvancedPurchasePaymentPutData::class, Arr::except(Cin7Payloads::load('advanced-purchase/payment', 'put.request'), 'ID')],
+        'advanced purchase payment PUT without Amount' => [AdvancedPurchasePaymentPutData::class, Arr::except(Cin7Payloads::load('advanced-purchase/payment', 'put.request'), 'Amount')],
+        'advanced purchase payment PUT without Account' => [AdvancedPurchasePaymentPutData::class, Arr::except(Cin7Payloads::load('advanced-purchase/payment', 'put.request'), 'Account')],
         'advanced purchase payment without TaskID' => [AdvancedPurchasePaymentData::class, Arr::except(Cin7Payloads::load('advanced-purchase/payment', 'get.response')[0], 'TaskID')],
     ],
     'required' => [
         AdvancedPurchasePaymentData::class => ['TaskID', 'DatePaid', 'CurrencyRate', 'Type', 'Amount', 'Account'],
         AdvancedPurchasePaymentPostData::class => ['TaskID', 'DatePaid', 'CurrencyRate', 'Type', 'Amount', 'Account'],
-        AdvancedPurchasePaymentPutData::class => ['TaskID', 'DatePaid', 'CurrencyRate', 'ID'],
+        AdvancedPurchasePaymentPutData::class => ['TaskID', 'DatePaid', 'CurrencyRate', 'ID', 'Amount', 'Account'],
     ],
     'omitted' => [
         PostAdvancedPurchasePayment::class => [

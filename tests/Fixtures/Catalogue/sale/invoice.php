@@ -61,11 +61,11 @@ return [
         ],
         PutSaleInvoice::class . ' with data' => [
             PutSaleInvoice::class,
-            [fn (): SaleInvoicePutData => SaleInvoicePutData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Lines' => []])],
+            [fn (): SaleInvoicePutData => SaleInvoicePutData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'AUTHORISED', 'Lines' => []])],
             Method::PUT,
             '/ExternalApi/v2/sale/invoice',
             [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Lines' => [], 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
+            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Status' => 'AUTHORISED', 'Lines' => [], 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
         ],
     ],
     'resources' => [
@@ -102,12 +102,12 @@ return [
             ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
         ],
         'sale invoice put with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->put(SaleInvoicePutData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'])),
+            fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->put(SaleInvoicePutData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'AUTHORISED'])),
             PutSaleInvoice::class,
             Method::PUT,
             '/ExternalApi/v2/sale/invoice',
             [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
+            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Status' => 'AUTHORISED', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
         ],
         'sale invoice delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->delete('b039f19e-66f8-4309-a4b1-abf928303c88'),
@@ -139,12 +139,13 @@ return [
     'missing' => [
         'invoice POST without Status' => [SaleInvoicePostData::class, Arr::except(Cin7Payloads::saleInvoicePost(), 'Status')],
         'invoice PUT without TaskID' => [SaleInvoicePutData::class, Arr::except(Cin7Payloads::saleInvoicePut(), 'TaskID')],
+        'invoice PUT without Status' => [SaleInvoicePutData::class, Arr::except(Cin7Payloads::saleInvoicePut(), 'Status')],
         'invoice without InvoiceDate' => [SaleInvoicePartialData::class, Arr::except(Cin7Payloads::saleInvoicePartial(), 'InvoiceDate')],
     ],
     'required' => [
         SaleInvoicesData::class => ['SaleID'],
         SaleInvoicePartialData::class => ['TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
         SaleInvoicePostData::class => ['SaleID', 'TaskID', 'CombineAdditionalCharges', 'Status', 'InvoiceDate', 'InvoiceDueDate'],
-        SaleInvoicePutData::class => ['SaleID', 'TaskID'],
+        SaleInvoicePutData::class => ['SaleID', 'TaskID', 'Status'],
     ],
 ];

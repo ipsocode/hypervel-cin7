@@ -10,8 +10,8 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Enums\TaskEntityType;
 
 /**
- * Task, one entry of a response of its endpoint: the table with its `ID`. The bodies of POST
- * and PUT are `TaskPostData` and `TaskPutData`.
+ * Task, one entry of a response of its endpoint: the table with its `ID`, which every response
+ * sends. The bodies of POST and PUT are `TaskPostData` and `TaskPutData`.
  *
  * @see docs/data.md
  */
@@ -27,7 +27,7 @@ final class TaskData extends AbstractTaskData implements WithResponse
         string $EntityID,
         string $TaskStatus,
         #[Uuid]
-        public ?string $ID = null,
+        public string $ID,
     ) {
         parent::__construct($Name, $StartDate, $EndDate, $EntityType, $EntityID, $TaskStatus);
     }

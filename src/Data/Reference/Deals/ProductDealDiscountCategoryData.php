@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Reference\Deals;
 
+use Hypervel\Data\Attributes\Validation\Required;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
@@ -22,6 +23,7 @@ final class ProductDealDiscountCategoryData extends Data
         public ?string $CategoryName = null,
         #[Uuid]
         public ?string $CategoryID = null,
+        #[Required]
         public ?string $Type = null,
     ) {
     }

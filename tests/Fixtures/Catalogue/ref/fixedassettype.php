@@ -87,12 +87,12 @@ return [
             ['Name' => 'Third FixedAssetType', 'Rate' => 10],
         ],
         'ref fixedAssetType post with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->ref()->fixedAssetType()->post(FixedAssetTypePostData::from($fields)),
+            fn (Cin7Connector $cin7): mixed => $cin7->ref()->fixedAssetType()->post(FixedAssetTypePostData::from([...$fields, 'Rate' => 10])),
             PostFixedAssetType::class,
             Method::POST,
             '/ExternalApi/v2/ref/fixedassettype',
             [],
-            $fields,
+            ['Rate' => 10.0, ...$fields],
         ],
         'ref fixedAssetType put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->fixedAssetType()->put(['FixedAssetTypeID' => 'e410a45b-a4c1-47cb-aaad-a6714112ef56', 'Rate' => 15]),
