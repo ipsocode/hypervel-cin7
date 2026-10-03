@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Requests;
 
 use Closure;
+use Hypervel\Data\Data;
+use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
@@ -14,6 +16,7 @@ use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Product\ProductPutData;
 use Ipsocode\Cin7\Data\Sale\SalePutData;
 use Ipsocode\Cin7\Requests\Cin7Request;
+use Ipsocode\Cin7\Requests\ListRequest;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
@@ -181,6 +184,25 @@ class RequestCatalogueTest extends TestCase
                 strtolower($folderAsPath),
                 $class,
             );
+        }
+    }
+
+    /**
+     * A list request names the data class of one item, which `ListRequest::createDtoFromResponse()`
+     * builds its `dto()` from, so it declares neither that method nor a missing `$item`.
+     */
+    public function testEveryListRequestNamesItsItemClass(): void
+    {
+        $lists = array_filter(self::concreteRequestClasses(), static fn (string $class): bool => is_subclass_of($class, ListRequest::class));
+
+        $this->assertNotEmpty($lists);
+
+        foreach ($lists as $class) {
+            $reflection = new ReflectionClass($class);
+            $item = $reflection->getProperty('item')->getDefaultValue();
+
+            $this->assertTrue(is_string($item) && is_subclass_of($item, Data::class) && is_subclass_of($item, WithResponse::class), "{$class}::\$item must name a data class that implements WithResponse.");
+            $this->assertSame(ListRequest::class, $reflection->getMethod('createDtoFromResponse')->getDeclaringClass()->getName(), $class);
         }
     }
 

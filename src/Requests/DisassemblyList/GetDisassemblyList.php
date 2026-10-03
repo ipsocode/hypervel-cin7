@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\DisassemblyList;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\DisassemblyList\DisassemblyListData;
 use Ipsocode\Cin7\Enums\DisassemblyStatus;
 use Ipsocode\Cin7\Requests\ListRequest;
@@ -12,11 +11,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET disassemblyList`, the list envelope is keyed `Disassemblies`.
  *
- * @extends ListRequest<list<DisassemblyListData>>
+ * @extends ListRequest<DisassemblyListData>
  */
 final class GetDisassemblyList extends ListRequest
 {
     protected string $listKey = 'Disassemblies';
+
+    protected string $item = DisassemblyListData::class;
 
     public function __construct(
         ?int $page = null,
@@ -41,16 +42,5 @@ final class GetDisassemblyList extends ListRequest
             'Status' => $this->status,
             'Search' => $this->search,
         ];
-    }
-
-    /**
-     * @return list<DisassemblyListData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): DisassemblyListData => DisassemblyListData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

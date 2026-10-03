@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\Location;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Location\LocationData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET ref/location` — the list envelope is keyed `LocationList`.
  *
- * @extends ListRequest<list<LocationData>>
+ * @extends ListRequest<LocationData>
  */
 final class GetLocation extends ListRequest
 {
     protected string $listKey = 'LocationList';
+
+    protected string $item = LocationData::class;
 
     public function __construct(
         ?int $page = null,
@@ -42,16 +43,5 @@ final class GetLocation extends ListRequest
             'Deprecated' => $this->deprecated,
             'Name' => $this->name,
         ];
-    }
-
-    /**
-     * @return list<LocationData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): LocationData => LocationData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

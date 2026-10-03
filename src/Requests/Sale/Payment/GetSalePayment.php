@@ -44,9 +44,6 @@ final class GetSalePayment extends Cin7Request
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): SalePaymentLinePartialData => SalePaymentLinePartialData::from($item)->setResponse($response),
-            array_values($response->json()),
-        );
+        return $this->listOf(SalePaymentLinePartialData::class, $response, $response->json());
     }
 }

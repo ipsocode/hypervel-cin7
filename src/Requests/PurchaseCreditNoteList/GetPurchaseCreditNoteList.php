@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\PurchaseCreditNoteList;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\PurchaseCreditNoteList\PurchaseCreditNoteListData;
 use Ipsocode\Cin7\Enums\TaskStatus;
 use Ipsocode\Cin7\Requests\ListRequest;
@@ -14,11 +13,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
  * `GET purchaseCreditNoteList`, the purchases with a credit note; the list envelope is keyed
  * `PurchaseList`, as in `purchaseList`.
  *
- * @extends ListRequest<list<PurchaseCreditNoteListData>>
+ * @extends ListRequest<PurchaseCreditNoteListData>
  */
 final class GetPurchaseCreditNoteList extends ListRequest
 {
     protected string $listKey = 'PurchaseList';
+
+    protected string $item = PurchaseCreditNoteListData::class;
 
     public function __construct(
         ?int $page = null,
@@ -49,16 +50,5 @@ final class GetPurchaseCreditNoteList extends ListRequest
             'CreditNoteStatus' => $this->creditNoteStatus,
             'Status' => $this->status,
         ];
-    }
-
-    /**
-     * @return list<PurchaseCreditNoteListData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): PurchaseCreditNoteListData => PurchaseCreditNoteListData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

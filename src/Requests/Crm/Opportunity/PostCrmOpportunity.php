@@ -28,9 +28,6 @@ final class PostCrmOpportunity extends WriteRequest
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): OpportunityData => OpportunityData::from($item)->setResponse($response),
-            array_values($response->json('opportunityList')),
-        );
+        return $this->listOf(OpportunityData::class, $response, $response->json('opportunityList'));
     }
 }

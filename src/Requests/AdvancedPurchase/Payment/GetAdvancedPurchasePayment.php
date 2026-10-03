@@ -52,9 +52,6 @@ final class GetAdvancedPurchasePayment extends Cin7Request
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): AdvancedPurchasePaymentData => AdvancedPurchasePaymentData::from($item)->setResponse($response),
-            array_values($response->json()),
-        );
+        return $this->listOf(AdvancedPurchasePaymentData::class, $response, $response->json());
     }
 }

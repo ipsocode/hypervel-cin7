@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Crm\TaskCategory;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Crm\TaskCategory\TaskCategoryData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET crm/taskcategory` — the list envelope is keyed `Categories`.
  *
- * @extends ListRequest<list<TaskCategoryData>>
+ * @extends ListRequest<TaskCategoryData>
  */
 final class GetCrmTaskCategory extends ListRequest
 {
     protected string $listKey = 'Categories';
+
+    protected string $item = TaskCategoryData::class;
 
     public function __construct(
         ?int $page = null,
@@ -40,16 +41,5 @@ final class GetCrmTaskCategory extends ListRequest
             'ID' => $this->id,
             'Name' => $this->name,
         ];
-    }
-
-    /**
-     * @return list<TaskCategoryData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): TaskCategoryData => TaskCategoryData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

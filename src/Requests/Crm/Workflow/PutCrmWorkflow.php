@@ -28,9 +28,6 @@ final class PutCrmWorkflow extends WriteRequest
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): WorkflowData => WorkflowData::from($item)->setResponse($response),
-            array_values($response->json('Workflows')),
-        );
+        return $this->listOf(WorkflowData::class, $response, $response->json('Workflows'));
     }
 }

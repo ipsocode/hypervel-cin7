@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Production\SuspendReason;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\SuspendReason\SuspendReasonData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET production/suspendReason`, the list envelope is keyed `SuspendReasons`.
  *
- * @extends ListRequest<list<SuspendReasonData>>
+ * @extends ListRequest<SuspendReasonData>
  */
 final class GetProductionSuspendReason extends ListRequest
 {
     protected string $listKey = 'SuspendReasons';
+
+    protected string $item = SuspendReasonData::class;
 
     public function __construct(
         ?int $page = null,
@@ -38,16 +39,5 @@ final class GetProductionSuspendReason extends ListRequest
         return [
             'WorkcenterID' => $this->workCenterId,
         ];
-    }
-
-    /**
-     * @return list<SuspendReasonData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): SuspendReasonData => SuspendReasonData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

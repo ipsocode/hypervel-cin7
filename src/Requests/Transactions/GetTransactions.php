@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Transactions;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Transactions\TransactionData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET transactions` — the list envelope is keyed `Transactions`.
  *
- * @extends ListRequest<list<TransactionData>>
+ * @extends ListRequest<TransactionData>
  */
 final class GetTransactions extends ListRequest
 {
     protected string $listKey = 'Transactions';
+
+    protected string $item = TransactionData::class;
 
     public function __construct(
         ?int $page = null,
@@ -43,16 +44,5 @@ final class GetTransactions extends ListRequest
             'ToDate' => $this->toDate,
             'Account' => $this->account,
         ];
-    }
-
-    /**
-     * @return list<TransactionData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): TransactionData => TransactionData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

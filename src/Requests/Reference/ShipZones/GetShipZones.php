@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Reference\ShipZones;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Reference\ShipZones\ShippingZoneData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET reference/shipZones` — the list envelope is keyed `ShipZones`.
  *
- * @extends ListRequest<list<ShippingZoneData>>
+ * @extends ListRequest<ShippingZoneData>
  */
 final class GetShipZones extends ListRequest
 {
     protected string $listKey = 'ShipZones';
+
+    protected string $item = ShippingZoneData::class;
 
     public function __construct(
         ?int $page = null,
@@ -40,16 +41,5 @@ final class GetShipZones extends ListRequest
             'ID' => $this->id,
             'Search' => $this->search,
         ];
-    }
-
-    /**
-     * @return list<ShippingZoneData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): ShippingZoneData => ShippingZoneData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

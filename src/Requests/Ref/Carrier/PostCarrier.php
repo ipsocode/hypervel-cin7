@@ -28,9 +28,6 @@ final class PostCarrier extends WriteRequest
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): CarrierData => CarrierData::from($item)->setResponse($response),
-            array_values($response->json('CarrierList')),
-        );
+        return $this->listOf(CarrierData::class, $response, $response->json('CarrierList'));
     }
 }

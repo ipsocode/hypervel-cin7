@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\StockTransferList;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\StockTransferList\StockTransferListData;
 use Ipsocode\Cin7\Enums\StockTransferStatus;
 use Ipsocode\Cin7\Requests\ListRequest;
@@ -12,11 +11,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET stockTransferList`, the list envelope is keyed `StockTransferList`.
  *
- * @extends ListRequest<list<StockTransferListData>>
+ * @extends ListRequest<StockTransferListData>
  */
 final class GetStockTransferList extends ListRequest
 {
     protected string $listKey = 'StockTransferList';
+
+    protected string $item = StockTransferListData::class;
 
     public function __construct(
         ?int $page = null,
@@ -41,16 +42,5 @@ final class GetStockTransferList extends ListRequest
             'Status' => $this->status,
             'Search' => $this->search,
         ];
-    }
-
-    /**
-     * @return list<StockTransferListData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): StockTransferListData => StockTransferListData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }
