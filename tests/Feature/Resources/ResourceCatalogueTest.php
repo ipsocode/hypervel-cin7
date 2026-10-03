@@ -10,15 +10,14 @@ use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Resources\ListResource;
 use Ipsocode\Cin7\Tests\Catalogue;
+use Ipsocode\Cin7\Tests\Resources;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
-use SplFileInfo;
 use Workbench\App\Support\Cin7Payloads;
 
 /**
@@ -81,7 +80,7 @@ class ResourceCatalogueTest extends TestCase
     {
         $keys = array_keys(self::resourceProvider());
 
-        foreach (self::resourceClasses() as $class) {
+        foreach (Resources::classes() as $class) {
             $segments = explode('\\', substr($class, strlen('Ipsocode\Cin7\Resources\\'), -strlen('Resource')));
             $path = implode(' ', array_map(lcfirst(...), $segments));
 
@@ -102,24 +101,17 @@ class ResourceCatalogueTest extends TestCase
     }
 
     /**
-     * Every class under `src/Resources/`.
-     *
-     * @return list<class-string<BaseResource>>
+     * A list-only endpoint's resource, `Resources\\SaleListResource` or `Resources\\Production\\OrderListResource`,
+     * sends and paginates through `ListResource`, whose helpers take only a `ListRequest`.
      */
-    private static function resourceClasses(): array
+    public function testEveryListResourceExtendsListResource(): void
     {
-        $root = __DIR__ . '/../../../src/Resources';
-        $classes = [];
+        $lists = array_filter(Resources::classes(), static fn (string $class): bool => str_ends_with($class, 'ListResource'));
 
-        /** @var SplFileInfo $file */
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root)) as $file) {
-            if ($file->getExtension() === 'php') {
-                $classes[] = 'Ipsocode\Cin7\Resources\\' . str_replace(['/', '.php'], ['\\', ''], substr($file->getPathname(), strlen($root) + 1));
-            }
+        $this->assertNotEmpty($lists);
+
+        foreach ($lists as $class) {
+            $this->assertTrue(is_subclass_of($class, ListResource::class), "{$class} must extend ListResource.");
         }
-
-        sort($classes);
-
-        return $classes;
     }
 }

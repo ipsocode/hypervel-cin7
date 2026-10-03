@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
-use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Enums\OrderStatus;
 use Ipsocode\Cin7\Enums\PackingStatus;
 use Ipsocode\Cin7\Enums\PickingStatus;
@@ -18,9 +16,9 @@ use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 
 /**
- * @extends BaseResource<Cin7Connector>
+ * `saleList`, the sales.
  */
-final class SaleListResource extends BaseResource
+final class SaleListResource extends ListResource
 {
     /**
      * One page of sales; without a page or limit, page 1 of 100.
@@ -66,7 +64,7 @@ final class SaleListResource extends BaseResource
         ?bool $readyForShipping = null,
         ?string $orderLocationId = null,
     ): Response {
-        return $this->connector->send(new GetSaleList(
+        return $this->sendList(new GetSaleList(
             $page,
             $limit,
             $search,
@@ -131,7 +129,7 @@ final class SaleListResource extends BaseResource
         ?bool $readyForShipping = null,
         ?string $orderLocationId = null,
     ): Cin7Paginator {
-        return $this->connector->paginate(new GetSaleList(
+        return $this->paginateList(new GetSaleList(
             null,
             $limit,
             $search,
