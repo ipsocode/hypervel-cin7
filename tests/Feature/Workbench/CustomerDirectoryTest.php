@@ -6,11 +6,11 @@ namespace Ipsocode\Cin7\Tests\Feature\Workbench;
 
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
-use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Services\CustomerDirectory;
 use Workbench\App\Support\Cin7Payloads;
@@ -43,10 +43,10 @@ class CustomerDirectoryTest extends TestCase
     public function testListingCustomersGoesOutAsAPaginatedGet(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([
+            Cin7Fake::list('CustomerList', [
                 Cin7Payloads::customer('a', 'ACME'),
                 Cin7Payloads::customer('b', 'Globex'),
-            ])),
+            ]),
         ]);
 
         $customers = $this->app->make(CustomerDirectory::class)->all();
@@ -66,8 +66,8 @@ class CustomerDirectoryTest extends TestCase
     public function testListingAllCustomersWalksEveryPage(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a', 'ACME')], page: 1, total: 150)),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('b', 'Globex')], page: 2, total: 150)),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a', 'ACME')], page: 1, total: 150),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('b', 'Globex')], page: 2, total: 150),
         ]);
 
         $customers = $this->app->make(CustomerDirectory::class)->all();
@@ -78,7 +78,7 @@ class CustomerDirectoryTest extends TestCase
 
     public function testCallerFiltersReachTheQueryString(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        $mock = Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $customers = $this->app->make(CustomerDirectory::class)->all(limit: 5, name: 'ACME');
 
@@ -92,7 +92,7 @@ class CustomerDirectoryTest extends TestCase
     public function testFindingOneCustomerSendsTheGuidAsAQueryParameter(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'ACME')])),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'ACME')]),
         ]);
 
         $customer = $this->app->make(CustomerDirectory::class)->find('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1');
@@ -104,7 +104,7 @@ class CustomerDirectoryTest extends TestCase
 
     public function testFindingAMissingCustomerReturnsNull(): void
     {
-        Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $this->assertNull($this->app->make(CustomerDirectory::class)->find('nope'));
     }
@@ -112,7 +112,7 @@ class CustomerDirectoryTest extends TestCase
     public function testCreatingACustomerPostsAJsonBody(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('new', 'ACME')])),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('new', 'ACME')]),
         ]);
 
         $created = $this->app->make(CustomerDirectory::class)->create(CustomerPostData::from(Arr::except(Cin7Payloads::customer(), 'ID')));
@@ -132,7 +132,7 @@ class CustomerDirectoryTest extends TestCase
     public function testUpdatingACustomerPutsTheGuidInTheBody(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf2', 'ACME Ltd')])),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf2', 'ACME Ltd')]),
         ]);
 
         $updated = $this->app->make(CustomerDirectory::class)->update(

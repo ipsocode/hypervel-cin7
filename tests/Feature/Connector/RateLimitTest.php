@@ -14,8 +14,8 @@ use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
-use Workbench\App\Support\Cin7Payloads;
 
 /**
  * The manager enforces limits only when no fake matched and records cooldowns
@@ -157,7 +157,7 @@ class RateLimitTest extends TestCase
     {
         $connector = new Cin7Connector('acct', 'key');
 
-        $this->assertSame(5, $connector->resolveRateLimitCooldownFor($this->responseWithStatus(503)));
+        $this->assertSame(5, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::throttled())));
     }
 
     /**
@@ -167,14 +167,14 @@ class RateLimitTest extends TestCase
     {
         $connector = new Cin7Connector('acct', 'key');
 
-        $this->assertSame(30, $connector->resolveRateLimitCooldownFor($this->responseWithStatus(429, ['Retry-After' => '30'])));
+        $this->assertSame(30, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached(30))));
     }
 
     public function testA429WithoutRetryAfterImposesAFiveSecondCooldown(): void
     {
         $connector = new Cin7Connector('acct', 'key');
 
-        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $connector->resolveRateLimitCooldownFor($this->responseWithStatus(429)));
+        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached())));
         $this->assertSame(5, Cin7Connector::THROTTLE_COOLDOWN);
     }
 
@@ -183,8 +183,8 @@ class RateLimitTest extends TestCase
         $connector = new Cin7Connector('acct', 'key');
 
         // The manager runs this hook for every wire response, 200s included.
-        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseWithStatus(200)));
-        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseWithStatus(500)));
+        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::list('CustomerList'))));
+        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::error('boom', 500))));
     }
 
     public function testTheContainerConnectorThrottlesOnTheConfiguredDefaults(): void
@@ -214,15 +214,12 @@ class RateLimitTest extends TestCase
         return 'cin7:api:' . $accountId . ':' . substr(hash('sha256', $applicationKey), 0, 16);
     }
 
-    /**
-     * @param array<string, string> $headers
-     */
-    private function responseWithStatus(int $status, array $headers = []): Response
+    private function responseTo(MockResponse $fake): Response
     {
         // One attempt only, or a 429 or 503 would retry past the single mocked response.
         $this->app->get('config')->set('cin7.retry.times', 1);
 
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::throttled(), $status, $headers)]);
+        $mock = Saloon::fake([$fake]);
         $connector = $this->connector();
 
         try {

@@ -184,6 +184,7 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -451,7 +452,9 @@ class DataCatalogueTest extends TestCase
      */
     public function testTheErrorModelRoundTrips(): void
     {
-        $this->assertRoundTrips(Cin7Payloads::error(), ErrorData::from(Cin7Payloads::error())->toArray());
+        $body = Cin7Fake::error('Request is invalid')->body()->all();
+
+        $this->assertRoundTrips($body, ErrorData::from($body)->toArray());
     }
 
     /**
