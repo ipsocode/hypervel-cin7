@@ -188,10 +188,15 @@ one decision each.
    `ci composer conventions` and `ci composer test:coverage`. The last must hold 100% line coverage:
    cover a line rather than ignore it.
 2. Re-read the diff against `names.py show`: every field, type, length, rule and operation.
-3. Refresh `TODO.md` with `python3 $S/todo.py`: it ticks the resource and its models from the code.
-4. Commit one resource, or one small group, per commit. The message says what it adds, and names the
+3. Run `python3 $S/required.py <name>` for the resource or group. It lists each `Yes` field whose class
+   neither requires it by type nor marks it `#[Required]`, `#[RequiredWithout]` or `#[RequiredIf]`.
+   One may stay on that list only as a verb's own body class whose example leaves it out, a value
+   Cin7 computes, or the ID of a nested item being added, with the class's docblock and
+   `docs/data.md` saying so; the script exits 1 for any other.
+4. Refresh `TODO.md` with `python3 $S/todo.py`: it ticks the resource and its models from the code.
+5. Commit one resource, or one small group, per commit. The message says what it adds, and names the
    issue as `#<n>` when there is one.
-5. Push your branch only after the checks pass.
+6. Push your branch only after the checks pass.
 
 ## 6. Decisions on the reference
 

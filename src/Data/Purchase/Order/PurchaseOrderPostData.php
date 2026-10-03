@@ -12,7 +12,8 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 /**
  * The body of `purchase/order` POST: the Available Fields for Purchase Order table with the
  * `TaskID`, `CombineAdditionalCharges` and `Memo` it requires, a `Status` of `DRAFT` or
- * `AUTHORISED`, and the totals, which POST does not require. The response is `PurchaseOrderData`.
+ * `AUTHORISED`, and the optional totals `TotalBeforeTax`, `Tax` and `Total`, which Cin7 computes
+ * from the lines. The response is `PurchaseOrderData`.
  *
  * @see docs/data.md
  */

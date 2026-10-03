@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Data\Sale\Fulfilment\Ship;
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Date;
 use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\Required;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
@@ -17,7 +18,8 @@ use Ipsocode\Cin7\Enums\ShipmentStatus;
 /**
  * Sale Fulfilment Ship Model, a fulfilment's `Ship`, and Sale Fulfilment Ship, the response of
  * every `sale/fulfilment/ship` action, which adds the fulfilment's `TaskID`. One name, so one
- * class: `TaskID` is optional, as only the second table has it. The bodies of POST and PUT are
+ * class: the table requires `TaskID` and a sale's embedded `Ship` has none, so it is nullable and
+ * `#[Required]`, which only a write body checks. The bodies of POST and PUT are
  * `SaleFulfilmentShipPostData` and `SaleFulfilmentShipPutData`.
  *
  * @see docs/data.md
@@ -31,6 +33,7 @@ final class SaleFulfilmentShipData extends Data implements WithResponse
      */
     public function __construct(
         public ShipmentStatus $Status,
+        #[Required]
         #[Uuid]
         public ?string $TaskID = null,
         #[Date]

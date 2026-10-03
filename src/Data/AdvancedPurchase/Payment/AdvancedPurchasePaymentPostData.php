@@ -23,12 +23,12 @@ final class AdvancedPurchasePaymentPostData extends AbstractPurchasePaymentData
         string $TaskID,
         string $DatePaid,
         float $CurrencyRate,
+        float $Amount,
+        string $Account,
         public string $Type,
-        public float $Amount,
-        public string $Account,
         #[Uuid]
         public ?string $DepositID = null,
     ) {
-        parent::__construct($TaskID, $DatePaid, $CurrencyRate);
+        parent::__construct($TaskID, $DatePaid, $CurrencyRate, $Amount, $Account);
     }
 }
