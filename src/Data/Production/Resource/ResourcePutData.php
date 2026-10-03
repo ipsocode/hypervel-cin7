@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Production\Resource;
 
-use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
@@ -18,17 +17,11 @@ use Ipsocode\Cin7\Enums\ResourceType;
  *
  * @see docs/data.md
  */
-final class ResourcePutData extends Data
+final class ResourcePutData extends AbstractResourceData
 {
-    /**
-     * @param null|list<ResourceCapacityData> $ResourceCapacities
-     * @param null|list<ResourceCostData> $ResourceCosts
-     * @param null|list<ResourceRemarkData> $ResourceRemarks
-     * @param null|list<ResourceAttachmentData> $ResourceAttachments
-     */
     public function __construct(
-        public ResourceType $ResourceType,
-        public int $CycleDuration,
+        ResourceType $ResourceType,
+        int $CycleDuration,
         #[RequiredWithout('Code')]
         #[Uuid]
         public ?string $ResourceID = null,
@@ -37,21 +30,7 @@ final class ResourcePutData extends Data
         public ?string $Code = null,
         #[Max(512)]
         public ?string $Name = null,
-        #[Max(2000)]
-        public ?string $Tags = null,
-        public ?bool $IsActive = null,
-        public ?bool $IsInfinite = null,
-        public ?bool $IsAllowAllCapacityUsage = null,
-        public ?bool $IsAvailableOnHolidays = null,
-        public ?bool $IsAvailableOnWeekends = null,
-        #[DataCollectionOf(ResourceCapacityData::class)]
-        public ?array $ResourceCapacities = null,
-        #[DataCollectionOf(ResourceCostData::class)]
-        public ?array $ResourceCosts = null,
-        #[DataCollectionOf(ResourceRemarkData::class)]
-        public ?array $ResourceRemarks = null,
-        #[DataCollectionOf(ResourceAttachmentData::class)]
-        public ?array $ResourceAttachments = null,
     ) {
+        parent::__construct($ResourceType, $CycleDuration);
     }
 }

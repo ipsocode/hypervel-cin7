@@ -11,6 +11,7 @@ use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasCustomFields;
 use Ipsocode\Cin7\Enums\CapacityCalculationType;
 use Ipsocode\Cin7\Enums\ProductionOrderListType;
 
@@ -23,6 +24,7 @@ use Ipsocode\Cin7\Enums\ProductionOrderListType;
 final class ProductionOrderListData extends Data implements WithResponse
 {
     use HasResponse;
+    use HasCustomFields;
 
     /**
      * @param null|list<ProductionOrderListSourceTaskData> $SourceTasks
@@ -64,16 +66,6 @@ final class ProductionOrderListData extends Data implements WithResponse
         public ?int $SourceTaskType = null,
         public ?bool $IsSourceTaskVoided = null,
         public ?float $TotalCount = null,
-        public ?string $CustomField1 = null,
-        public ?string $CustomField2 = null,
-        public ?string $CustomField3 = null,
-        public ?string $CustomField4 = null,
-        public ?string $CustomField5 = null,
-        public ?string $CustomField6 = null,
-        public ?string $CustomField7 = null,
-        public ?string $CustomField8 = null,
-        public ?string $CustomField9 = null,
-        public ?string $CustomField10 = null,
         #[DataCollectionOf(ProductionOrderListSourceTaskData::class)]
         public ?array $SourceTasks = null,
     ) {

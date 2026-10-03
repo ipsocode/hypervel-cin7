@@ -7,7 +7,6 @@ namespace Ipsocode\Cin7\Data\Disassembly;
 use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Enums\DisassemblyPostStatus;
 
 /**
@@ -18,7 +17,7 @@ use Ipsocode\Cin7\Enums\DisassemblyPostStatus;
  *
  * @see docs/data.md
  */
-final class DisassemblyPostData extends Data
+final class DisassemblyPostData extends AbstractDisassemblyData
 {
     public function __construct(
         public DisassemblyPostStatus $Status,
@@ -29,14 +28,11 @@ final class DisassemblyPostData extends Data
         public ?string $ProductID = null,
         #[RequiredWithout('ProductID')]
         public ?string $ProductCode = null,
-        public ?string $ProductName = null,
         #[RequiredWithout('Location')]
         #[Uuid]
         public ?string $LocationID = null,
         #[RequiredWithout('LocationID')]
         public ?string $Location = null,
-        #[DateTime]
-        public ?string $CompletionDate = null,
     ) {
     }
 }

@@ -10,6 +10,7 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasCustomFields;
 
 /**
  * ProductionRunOperation, an operation of a run, with its components, resources, costs and
@@ -22,6 +23,8 @@ use Ipsocode\Cin7\Attributes\DateTime;
  */
 final class ProductionRunOperationData extends Data
 {
+    use HasCustomFields;
+
     /**
      * @param null|list<ProductionRunOperationComponentData> $Components
      * @param null|list<ProductionRunOperationResourceData> $Resources
@@ -83,16 +86,6 @@ final class ProductionRunOperationData extends Data
         public ?string $ManualStartDate = null,
         #[Date]
         public ?string $ManualEndDate = null,
-        public ?string $CustomField1 = null,
-        public ?string $CustomField2 = null,
-        public ?string $CustomField3 = null,
-        public ?string $CustomField4 = null,
-        public ?string $CustomField5 = null,
-        public ?string $CustomField6 = null,
-        public ?string $CustomField7 = null,
-        public ?string $CustomField8 = null,
-        public ?string $CustomField9 = null,
-        public ?string $CustomField10 = null,
     ) {
     }
 }
