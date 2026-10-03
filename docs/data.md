@@ -74,7 +74,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   | `AbstractPurchaseStockData` | `PurchaseStockData`, `PurchaseStockPostData` | `Status`, `Lines` |
   | `AbstractPurchaseCreditNoteData` | `PurchaseCreditNoteData`, `PurchaseCreditNotePostData`, `AdvancedPurchasePartialCreditNoteData`, `AdvancedPurchasePartialCreditNotePostData`, `AdvancedPurchaseCreditNoteData` | `CreditNoteNumber`, `Status`, `Lines`, `Unstock`; and `CreditNoteDate` on every child but `AdvancedPurchaseCreditNoteData` (see [below](#where-the-references-tables-and-examples-disagree)) |
   | `AbstractPurchaseInvoiceData` | `PurchaseInvoiceData`, `PurchaseInvoicePostData`, `AdvancedPurchasePartialInvoiceData`, `AdvancedPurchasePartialInvoicePostData`, `AdvancedPurchaseInvoiceData` | `Status`, `Lines`; and `InvoiceDate` on every child but `AdvancedPurchaseInvoiceData`, and `InvoiceDueDate` on every child but it and `PurchaseInvoiceData` (see [below](#where-the-references-tables-and-examples-disagree)) |
-  | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData`, `AdvancedPurchasePaymentData`, `AdvancedPurchasePaymentPostData`, `AdvancedPurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate` |
+  | `AbstractPurchasePaymentData` | `PurchasePaymentData`, `PurchasePaymentPostData`, `PurchasePaymentPutData`, `AdvancedPurchasePaymentData`, `AdvancedPurchasePaymentPostData`, `AdvancedPurchasePaymentPutData` | `TaskID`, `DatePaid`, `CurrencyRate`, `Amount`, `Account` |
   | `AbstractPurchaseManualJournalData` | `PurchaseManualJournalData`, `PurchaseManualJournalPostData`, `AdvancedPurchasePartialManualJournalData`, `AdvancedPurchasePartialManualJournalPostData`, `AdvancedPurchaseManualJournalData` | `Status` |
   | `AbstractAdvancedPurchaseStockData` | `AdvancedPurchaseStockData`, `AdvancedPurchaseStockPostData`, `AdvancedPurchaseStockPutData` | `Status`, `Lines` |
   | `AbstractAdvancedPurchasePutAwayData` | `AdvancedPurchasePutAwayData`, `AdvancedPurchasePutAwayPostData` | `Status`, `Lines` |
@@ -1393,9 +1393,9 @@ because `ID`, `Type`, `DepositID`, `Amount` and `Account` are taken by different
 
 | Class | Folder | Required |
 |---|---|---|
-| `PurchasePaymentData` (response) | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
-| `PurchasePaymentPostData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
-| `PurchasePaymentPutData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `ID`, `Amount`, `Account` |
+| `PurchasePaymentData` (response) | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Amount`, `Account`, `Type` |
+| `PurchasePaymentPostData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Amount`, `Account`, `Type` |
+| `PurchasePaymentPutData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Amount`, `Account`, `ID` |
 
 `Type` is a string, and `DepositID`, which takes a payment from a supplier deposit and goes only
 with `Type` `Payment`, is on the response and the POST body. `DateCreated` is on every class and
@@ -1515,9 +1515,9 @@ Each class requires what its `purchase/payment` twin does:
 
 | Class | Folder | Required |
 |---|---|---|
-| `AdvancedPurchasePaymentData` (response) | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
-| `AdvancedPurchasePaymentPostData` | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
-| `AdvancedPurchasePaymentPutData` | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `ID`, `Amount`, `Account` |
+| `AdvancedPurchasePaymentData` (response) | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Amount`, `Account`, `Type` |
+| `AdvancedPurchasePaymentPostData` | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Amount`, `Account`, `Type` |
+| `AdvancedPurchasePaymentPutData` | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Amount`, `Account`, `ID` |
 
 The response adds the `PurchaseID` every example carries, as an optional GUID. A payment needs an
 authorised invoice, and a refund an authorised credit note. The reference's examples need no
