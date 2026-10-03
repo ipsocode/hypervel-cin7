@@ -20,9 +20,21 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
 use Ipsocode\Cin7\Data\Crm\Opportunity\OpportunityPostData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+use Ipsocode\Cin7\Data\Disassembly\DisassemblyPostData;
+use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderData;
+use Ipsocode\Cin7\Data\FinishedGoods\FinishedGoodsPostData;
+use Ipsocode\Cin7\Data\FinishedGoods\Order\FinishedGoodsOrderData;
+use Ipsocode\Cin7\Data\FinishedGoods\Pick\FinishedGoodsPickData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPostData;
 use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderPutData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunOperationCompletePutData;
+use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomPostData;
+use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomPostData;
+use Ipsocode\Cin7\Data\Production\Resource\ResourcePutData;
+use Ipsocode\Cin7\Data\Production\Resource\ResourcesPostData;
+use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCentersData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
 use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
@@ -62,9 +74,21 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\Crm\Opportunity\PostCrmOpportunity;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\Disassembly\Order\PostDisassemblyOrder;
+use Ipsocode\Cin7\Requests\Disassembly\PostDisassembly;
+use Ipsocode\Cin7\Requests\FinishedGoods\Order\PostFinishedGoodsOrder;
+use Ipsocode\Cin7\Requests\FinishedGoods\Pick\PostFinishedGoodsPick;
+use Ipsocode\Cin7\Requests\FinishedGoods\PostFinishedGoods;
 use Ipsocode\Cin7\Requests\InventoryWriteOff\PostInventoryWriteOff;
 use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
+use Ipsocode\Cin7\Requests\Production\Order\PutProductionOrder;
+use Ipsocode\Cin7\Requests\Production\Order\Run\Operation\Complete\PutProductionOrderRunOperationComplete;
+use Ipsocode\Cin7\Requests\Production\ProductionBom\PostProductFamilyProductionBom;
+use Ipsocode\Cin7\Requests\Production\ProductionBom\PostProductProductionBom;
+use Ipsocode\Cin7\Requests\Production\Resource\PostProductionResource;
+use Ipsocode\Cin7\Requests\Production\Resource\PutProductionResource;
+use Ipsocode\Cin7\Requests\Production\WorkCenters\PostProductionWorkCenters;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
 use Ipsocode\Cin7\Requests\Purchase\CreditNote\PostPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\Purchase\Invoice\PostPurchaseInvoice;
@@ -253,6 +277,10 @@ class BodyValidationTest extends TestCase
             'advanced purchase invoice POST' => [fn (): WriteRequest => new PostAdvancedPurchaseInvoice(AdvancedPurchasePartialInvoicePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/invoice', 'post.request')))],
             'advanced purchase put away POST' => [fn (): WriteRequest => new PostAdvancedPurchasePutAway(AdvancedPurchasePutAwayPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('advanced-purchase/put-away', 'post.request')))],
             'advanced purchase credit note POST' => [fn (): WriteRequest => new PostAdvancedPurchaseCreditNote(AdvancedPurchasePartialCreditNotePostData::from(['Status' => 'NOT AVAILABLE'] + Cin7Payloads::load('advanced-purchase/creditnote', 'post.request')))],
+            'disassembly order POST' => [fn (): WriteRequest => new PostDisassemblyOrder(DisassemblyOrderData::from(['Status' => 'DRAFT'] + Cin7Payloads::load('disassembly/order', 'post.request')))],
+            'finished goods POST' => [fn (): WriteRequest => new PostFinishedGoods(FinishedGoodsPostData::from(['Status' => 'VOIDED'] + Cin7Payloads::load('finishedGoods', 'post.request')))],
+            'finished goods order POST' => [fn (): WriteRequest => new PostFinishedGoodsOrder(FinishedGoodsOrderData::from(['Status' => 'COMPLETED'] + Cin7Payloads::load('finishedGoods/order', 'post.request')))],
+            'finished goods pick POST' => [fn (): WriteRequest => new PostFinishedGoodsPick(FinishedGoodsPickData::from(['Status' => 'DRAFT'] + Cin7Payloads::load('finishedGoods/pick', 'post.request')))],
         ];
     }
 
@@ -822,5 +850,275 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PostSalePayment(['TaskID' => 'task-1', 'DatePaid' => 'tomorrow']));
 
         $this->assertSame(['TaskID' => 'task-1', 'DatePaid' => 'tomorrow'], $this->mock->lastPendingRequest()?->body());
+    }
+
+    /**
+     * A disassembly needs a product and a location, each by ID or by name; a body with neither of
+     * a pair is not sent.
+     */
+    public function testADisassemblyNeedsItsProductAndItsLocation(): void
+    {
+        $body = ['Status' => 'DRAFT', 'WIPAccount' => '715', 'Quantity' => 1];
+
+        try {
+            $this->connector()->send(new PostDisassembly(DisassemblyPostData::from($body)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['ProductID', 'ProductCode', 'LocationID', 'Location'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostDisassembly(DisassemblyPostData::from([...$body, 'ProductCode' => 'Bread', 'Location' => 'Main Warehouse'])));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A disassembly order's component lines need a product by ID or code, and its service lines a
+     * product by ID or a name; a line with neither is not sent.
+     */
+    public function testADisassemblyOrderLineNeedsItsProduct(): void
+    {
+        $lines = ['OrderLines' => [['Quantity' => 1, 'Cost' => 5]], 'OrderServiceLines' => [['Account' => '416', 'Amount' => 600]]];
+
+        try {
+            $this->connector()->send(new PostDisassemblyOrder(DisassemblyOrderData::from(['Status' => 'COMPLETED', ...$lines])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['OrderLines.0.ProductID', 'OrderLines.0.ProductCode', 'OrderServiceLines.0.ProductID', 'OrderServiceLines.0.Name'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * A finished goods task needs a product and a location, each by ID or by name, and, once it
+     * is authorised, the date its work in progress began; a body without them is not sent.
+     */
+    public function testAFinishedGoodsTaskNeedsItsProductItsLocationAndItsWipDate(): void
+    {
+        $body = ['Status' => 'DRAFT', 'WIPAccount' => '715', 'Account' => '715', 'Quantity' => 1, 'CompletionDate' => '2018-01-03T00:00:00'];
+        $names = ['ProductCode' => 'Bread', 'Location' => 'Main Warehouse'];
+
+        try {
+            $this->connector()->send(new PostFinishedGoods(FinishedGoodsPostData::from($body)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['ProductID', 'ProductCode', 'LocationID', 'Location'], array_keys($exception->errors()));
+        }
+
+        try {
+            $this->connector()->send(new PostFinishedGoods(FinishedGoodsPostData::from([...$body, ...$names, 'Status' => 'AUTHORISED'])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertSame(['WIPDate'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostFinishedGoods(FinishedGoodsPostData::from([...$body, ...$names])));
+        $this->connector()->send(new PostFinishedGoods(FinishedGoodsPostData::from([...$body, ...$names, 'Status' => 'COMPLETED', 'WIPDate' => '2018-01-03T00:00:00'])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * The lines of an order and of a pick each need a product, by ID or by code; a line with
+     * neither is not sent.
+     */
+    public function testAFinishedGoodsLineNeedsItsProduct(): void
+    {
+        try {
+            $this->connector()->send(new PostFinishedGoodsOrder(FinishedGoodsOrderData::from(['Status' => 'DRAFT', 'OrderLines' => [['Quantity' => 1]]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['OrderLines.0.ProductID', 'OrderLines.0.ProductCode'], array_keys($exception->errors()));
+        }
+
+        try {
+            $this->connector()->send(new PostFinishedGoodsPick(FinishedGoodsPickData::from(['CompletionDate' => '2019-02-16T00:00:00', 'PickLines' => [['Quantity' => 1]]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['PickLines.0.ProductID', 'PickLines.0.ProductCode'], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * A production BOM component and a production order's components and resources need a product
+     * or a resource, by ID or by code; one with neither is not sent.
+     */
+    public function testAProductionLineNeedsItsProductOrItsResource(): void
+    {
+        $operation = ['Order' => 1, 'Name' => 'Mix', 'CycleTime' => 60, 'UnitsPerCycle' => 1, 'WorkCenterID' => '38cddb52-9a81-4c07-9791-362936efa552', 'OperationType' => 'Manufacturing', 'IsDropShip' => false];
+        $bom = ['OutputQuantity' => 1, 'BufferPercent' => 0, 'Version' => 1, 'Name' => 'Bread', 'IsDefault' => true, 'Operations' => [$operation + ['Components' => [['Quantity' => 1, 'Position' => 1]]]]];
+
+        try {
+            $this->connector()->send(new PostProductProductionBom(ProductProductionBomPostData::from(['ProductID' => '38cddb52-9a81-4c07-9791-362936efa552', 'ProductionBOMs' => [$bom]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['ProductionBOMs.0.Operations.0.Components.0.ProductID', 'ProductionBOMs.0.Operations.0.Components.0.ProductSKU'], array_keys($exception->errors()));
+        }
+
+        $order = ['ProductionOrderID' => '38cddb52-9a81-4c07-9791-362936efa552', 'LocationID' => '38cddb52-9a81-4c07-9791-362936efa552', 'ProductionOrderOperations' => [$operation + ['TotalCycleTime' => 60, 'Components' => [['Quantity' => 1, 'Position' => 1]], 'Resources' => [['Quantity' => 1, 'Position' => 1, 'CostCalculationType' => 'CostPerUnitTime']]]]];
+
+        try {
+            $this->connector()->send(new PutProductionOrder(ProductionOrderPutData::from($order)));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing([
+                'ProductionOrderOperations.0.Components.0.ProductID',
+                'ProductionOrderOperations.0.Components.0.ProductSKU',
+                'ProductionOrderOperations.0.Resources.0.ResourceID',
+                'ProductionOrderOperations.0.Resources.0.ResourceCode',
+            ], array_keys($exception->errors()));
+        }
+
+        $this->mock->assertNothingSent();
+    }
+
+    /**
+     * A resource is found by ID or by code to update, and a capacity names its location by ID or
+     * by name; a body with neither is not sent.
+     */
+    public function testAProductionResourceNeedsItsIdentifierAndItsCapacityLocation(): void
+    {
+        try {
+            $this->connector()->send(new PutProductionResource(ResourcePutData::from(['Name' => 'Oven', 'ResourceType' => 'Machine', 'CycleDuration' => 60])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['ResourceID', 'Code'], array_keys($exception->errors()));
+        }
+
+        $resource = ['Name' => 'Oven', 'ResourceType' => 'Machine', 'CycleDuration' => 60, 'ResourceCapacities' => [['ResourceQuantity' => 1]]];
+
+        try {
+            $this->connector()->send(new PostProductionResource(ResourcesPostData::from(['Resources' => [$resource]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Resources.0.ResourceCapacities.0.LocationID', 'Resources.0.ResourceCapacities.0.LocationName'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PutProductionResource(ResourcePutData::from(['Code' => 'OVEN', 'ResourceType' => 'Machine', 'CycleDuration' => 60])));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A production BOM operation's link, product and variation component each need one field of
+     * their pair; a body with neither is not sent.
+     */
+    public function testAProductionBomPartWithNeitherFieldOfItsPairIsNotSent(): void
+    {
+        $operation = ['Order' => 1, 'Name' => 'Mix', 'CycleTime' => 60, 'UnitsPerCycle' => 1, 'WorkCenterID' => '38cddb52-9a81-4c07-9791-362936efa552', 'OperationType' => 'Manufacturing', 'IsDropShip' => false];
+        $bom = static fn (array $link, array $product, array $variation): ProductProductionBomPostData => ProductProductionBomPostData::from(['ProductID' => '38cddb52-9a81-4c07-9791-362936efa552', 'ProductionBOMs' => [[
+            'OutputQuantity' => 1, 'BufferPercent' => 0, 'Version' => 1, 'Name' => 'Bread', 'IsDefault' => true,
+            'Operations' => [$operation + [
+                'OperationLinks' => [['RelationType' => 1] + $link],
+                'OutputProducts' => [['CostCalculationType' => 'None', 'OutputQuantity' => 1, 'Position' => 1] + $product],
+                'VariationComponents' => [['QuantitySettingsJSON' => '{}', 'MapVariationsJSON' => '{}', 'QuantityOptionName' => 'Size', 'Position' => 1] + $variation],
+            ]],
+        ]]]);
+
+        try {
+            $this->connector()->send(new PostProductProductionBom($bom([], [], [])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing([
+                'ProductionBOMs.0.Operations.0.OperationLinks.0.RelatedOperationID',
+                'ProductionBOMs.0.Operations.0.OperationLinks.0.RelatedOperationName',
+                'ProductionBOMs.0.Operations.0.OutputProducts.0.ProductID',
+                'ProductionBOMs.0.Operations.0.OutputProducts.0.ProductSKU',
+                'ProductionBOMs.0.Operations.0.VariationComponents.0.ProductFamilyID',
+                'ProductionBOMs.0.Operations.0.VariationComponents.0.ProductFamilySKU',
+            ], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostProductProductionBom($bom(['RelatedOperationName' => 'Bake'], ['ProductSKU' => 'Bread'], ['ProductFamilySKU' => 'Loaves'])));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A field the reference requires but its responses or examples leave out is nullable, for the
+     * responses, and `#[Required]`: a write body without it is not sent, and one with it is.
+     *
+     * @param Closure(bool): WriteRequest $request
+     * @param list<string> $fields
+     */
+    #[DataProvider('productionRequiredFieldProvider')]
+    public function testAProductionBodyWithoutAFieldItsTableRequiresIsNotSent(Closure $request, array $fields): void
+    {
+        try {
+            $this->connector()->send($request(false));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing($fields, array_keys($exception->errors()));
+        }
+
+        $this->connector()->send($request(true));
+
+        $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * @return array<string, array{Closure(bool): WriteRequest, list<string>}>
+     */
+    public static function productionRequiredFieldProvider(): array
+    {
+        $id = '38cddb52-9a81-4c07-9791-362936efa552';
+        $operation = ['Order' => 1, 'Name' => 'Mix', 'CycleTime' => 60, 'UnitsPerCycle' => 1, 'WorkCenterID' => $id, 'OperationType' => 'Manufacturing', 'IsDropShip' => false];
+
+        return [
+            'BOM attachment content' => [
+                fn (bool $set): WriteRequest => new PostProductProductionBom(ProductProductionBomPostData::from(['ProductID' => $id, 'ProductionBOMs' => [[
+                    'OutputQuantity' => 1, 'BufferPercent' => 0, 'Version' => 1, 'Name' => 'Bread', 'IsDefault' => true,
+                    'Operations' => [$operation + ['Attachments' => [['Position' => 1, 'ContentType' => 'text/csv', 'FileName' => 'mix.csv'] + ($set ? ['Content' => 'QQ=='] : [])]]],
+                ]]])),
+                ['ProductionBOMs.0.Operations.0.Attachments.0.Content'],
+            ],
+            'product family BOM version, name and default' => [
+                fn (bool $set): WriteRequest => new PostProductFamilyProductionBom(ProductFamilyProductionBomPostData::from(['ProductFamilyID' => $id, 'ProductionBOMs' => [
+                    ['OutputQuantity' => 1, 'BufferPercent' => 0] + ($set ? ['Version' => 1, 'Name' => 'Loaves', 'IsDefault' => true] : []),
+                ]])),
+                ['ProductionBOMs.0.Version', 'ProductionBOMs.0.Name', 'ProductionBOMs.0.IsDefault'],
+            ],
+            'production order operation link position' => [
+                fn (bool $set): WriteRequest => new PutProductionOrder(ProductionOrderPutData::from(['ProductionOrderID' => $id, 'LocationID' => $id, 'ProductionOrderOperations' => [
+                    $operation + ['TotalCycleTime' => 60, 'OperationLinks' => [['RelatedOperationID' => $id] + ($set ? ['Position' => 1] : [])]],
+                ]])),
+                ['ProductionOrderOperations.0.OperationLinks.0.Position'],
+            ],
+            'run output received' => [
+                fn (bool $set): WriteRequest => new PutProductionOrderRunOperationComplete(ProductionRunOperationCompletePutData::from(['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id, 'FinishedProducts' => [
+                    ['Quantity' => 1, 'WastageQuantity' => 0, 'ReceivedDate' => '2021-03-01T05:26:25'] + ($set ? ['Received' => true] : []),
+                ]])),
+                ['FinishedProducts.0.Received'],
+            ],
+            'resource attachment content' => [
+                fn (bool $set): WriteRequest => new PostProductionResource(ResourcesPostData::from(['Resources' => [
+                    ['Name' => 'Oven', 'ResourceType' => 'Machine', 'CycleDuration' => 60, 'ResourceAttachments' => [['FileName' => 'oven.pdf'] + ($set ? ['Content' => 'QQ=='] : [])]],
+                ]])),
+                ['Resources.0.ResourceAttachments.0.Content'],
+            ],
+        ];
+    }
+
+    /**
+     * A co-manufacturing work center needs its supplier and its procurement type, and a supplier is
+     * named by ID or by name.
+     */
+    public function testACoManWorkCenterNeedsItsSupplier(): void
+    {
+        $center = ['WorkCenterID' => '38cddb52-9a81-4c07-9791-362936efa552', 'Code' => 'WC', 'Name' => 'Work center', 'IsActive' => true, 'IsCoMan' => true, 'IsCoManPurchase' => false];
+
+        try {
+            $this->connector()->send(new PostProductionWorkCenters(WorkCentersData::from(['Workcenters' => [$center + ['WorkCenterSuppliers' => [['Unrelated' => 1]]]]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Workcenters.0.SupplierID', 'Workcenters.0.CoManProcurementType', 'Workcenters.0.WorkCenterSuppliers.0.SupplierID', 'Workcenters.0.WorkCenterSuppliers.0.SupplierName'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostProductionWorkCenters(WorkCentersData::from(['Workcenters' => [[...$center, 'SupplierID' => '38cddb52-9a81-4c07-9791-362936efa552', 'CoManProcurementType' => 'Transfer']]])));
+
+        $this->mock->assertSentCount(1);
     }
 }

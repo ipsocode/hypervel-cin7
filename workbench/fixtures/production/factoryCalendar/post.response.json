@@ -1,0 +1,82 @@
+{
+    "Year": 2021,
+    "WeekStart": "Monday",
+    "FactoryCalendarDays": [
+        {
+            "DayOfWeek": "Sunday",
+            "IsWeekend": true,
+            "StartTime": 0,
+            "EndTime": 0,
+            "BreakStartTime": null,
+            "BreakEndTime": null,
+            "Capacity": 0
+        },
+        {
+            "DayOfWeek": "Monday",
+            "IsWeekend": false,
+            "StartTime": 420,
+            "EndTime": 1020,
+            "BreakStartTime": null,
+            "BreakEndTime": null,
+            "Capacity": 36000
+        },
+        {
+            "DayOfWeek": "Tuesday",
+            "IsWeekend": false,
+            "StartTime": 420,
+            "EndTime": 420,
+            "BreakStartTime": null,
+            "BreakEndTime": null,
+            "Capacity": 0
+        },
+        {
+            "DayOfWeek": "Wednesday",
+            "IsWeekend": false,
+            "StartTime": 420,
+            "EndTime": 1020,
+            "BreakStartTime": null,
+            "BreakEndTime": null,
+            "Capacity": 36000
+        },
+        {
+            "DayOfWeek": "Thursday",
+            "IsWeekend": false,
+            "StartTime": 420,
+            "EndTime": 1020,
+            "BreakStartTime": null,
+            "BreakEndTime": null,
+            "Capacity": 36000
+        },
+        {
+            "DayOfWeek": "Friday",
+            "IsWeekend": true,
+            "StartTime": 420,
+            "EndTime": 1020,
+            "BreakStartTime": null,
+            "BreakEndTime": null,
+            "Capacity": 36000
+        },
+        {
+            "DayOfWeek": "Saturday",
+            "IsWeekend": true,
+            "StartTime": 0,
+            "EndTime": 0,
+            "BreakStartTime": null,
+            "BreakEndTime": null,
+            "Capacity": 0
+        }
+    ],
+    "FactoryCalendarSpecialDays": [
+        {
+            "Date": "2021-05-11T00:00:00",
+            "IsHoliday": false,
+            "IsWeekend": false,
+            "StartTime": 90,
+            "EndTime": 90,
+            "BreakStartTime": null,
+            "BreakEndTime": null,
+            "Comment": "",
+            "Capacity": 0
+        }
+    ]
+}

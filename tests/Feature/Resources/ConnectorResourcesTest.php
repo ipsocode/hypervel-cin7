@@ -16,6 +16,13 @@ use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CrmResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\CustomPricesResource;
+use Ipsocode\Cin7\Resources\Disassembly\OrderResource as DisassemblyOrderResource;
+use Ipsocode\Cin7\Resources\DisassemblyListResource;
+use Ipsocode\Cin7\Resources\DisassemblyResource;
+use Ipsocode\Cin7\Resources\FinishedGoods\OrderResource as FinishedGoodsOrderResource;
+use Ipsocode\Cin7\Resources\FinishedGoods\PickResource as FinishedGoodsPickResource;
+use Ipsocode\Cin7\Resources\FinishedGoodsListResource;
+use Ipsocode\Cin7\Resources\FinishedGoodsResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -28,6 +35,18 @@ use Ipsocode\Cin7\Resources\Product\AttachmentsResource as ProductAttachmentsRes
 use Ipsocode\Cin7\Resources\Product\MarkupPricesResource;
 use Ipsocode\Cin7\Resources\ProductFamily\AttachmentsResource as ProductFamilyAttachmentsResource;
 use Ipsocode\Cin7\Resources\ProductFamilyResource;
+use Ipsocode\Cin7\Resources\Production\FactoryCalendarResource as ProductionFactoryCalendarResource;
+use Ipsocode\Cin7\Resources\Production\Order\AttachmentResource as ProductionOrderAttachmentResource;
+use Ipsocode\Cin7\Resources\Production\Order\Run\OperationResource as ProductionOrderRunOperationResource;
+use Ipsocode\Cin7\Resources\Production\Order\RunResource as ProductionOrderRunResource;
+use Ipsocode\Cin7\Resources\Production\OrderListResource as ProductionOrderListResource;
+use Ipsocode\Cin7\Resources\Production\OrderResource as ProductionOrderResource;
+use Ipsocode\Cin7\Resources\Production\ProductionBomResource;
+use Ipsocode\Cin7\Resources\Production\ResourceListResource as ProductionResourceListResource;
+use Ipsocode\Cin7\Resources\Production\ResourceResource as ProductionResourceResource;
+use Ipsocode\Cin7\Resources\Production\SuspendReasonResource as ProductionSuspendReasonResource;
+use Ipsocode\Cin7\Resources\Production\WorkCentersResource as ProductionWorkCentersResource;
+use Ipsocode\Cin7\Resources\ProductionResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\ProductSuppliersResource;
 use Ipsocode\Cin7\Resources\Purchase\AttachmentResource as PurchaseAttachmentResource;
@@ -453,5 +472,61 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->ref()->account()->bank(), $connector->ref()->account()->bank());
         $this->assertNotSame($connector->ref()->fixedAssetType(), $connector->ref()->fixedAssetType());
         $this->assertNotSame($connector->ref()->paymentTerm(), $connector->ref()->paymentTerm());
+    }
+
+    public function testDisassemblyResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(DisassemblyResource::class, $connector->disassembly());
+        $this->assertNotSame($connector->disassembly(), $connector->disassembly());
+        $this->assertInstanceOf(DisassemblyListResource::class, $connector->disassemblyList());
+        $this->assertNotSame($connector->disassemblyList(), $connector->disassemblyList());
+        $this->assertInstanceOf(DisassemblyOrderResource::class, $connector->disassembly()->order());
+        $this->assertNotSame($connector->disassembly()->order(), $connector->disassembly()->order());
+    }
+
+    public function testFinishedGoodsResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(FinishedGoodsResource::class, $connector->finishedGoods());
+        $this->assertNotSame($connector->finishedGoods(), $connector->finishedGoods());
+        $this->assertInstanceOf(FinishedGoodsListResource::class, $connector->finishedGoodsList());
+        $this->assertNotSame($connector->finishedGoodsList(), $connector->finishedGoodsList());
+        $this->assertInstanceOf(FinishedGoodsOrderResource::class, $connector->finishedGoods()->order());
+        $this->assertNotSame($connector->finishedGoods()->order(), $connector->finishedGoods()->order());
+        $this->assertInstanceOf(FinishedGoodsPickResource::class, $connector->finishedGoods()->pick());
+        $this->assertNotSame($connector->finishedGoods()->pick(), $connector->finishedGoods()->pick());
+    }
+
+    public function testProductionResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(ProductionResource::class, $connector->production());
+        $this->assertNotSame($connector->production(), $connector->production());
+        $this->assertInstanceOf(ProductionFactoryCalendarResource::class, $connector->production()->factoryCalendar());
+        $this->assertNotSame($connector->production()->factoryCalendar(), $connector->production()->factoryCalendar());
+        $this->assertInstanceOf(ProductionBomResource::class, $connector->production()->productionBom());
+        $this->assertNotSame($connector->production()->productionBom(), $connector->production()->productionBom());
+        $this->assertInstanceOf(ProductionOrderResource::class, $connector->production()->order());
+        $this->assertNotSame($connector->production()->order(), $connector->production()->order());
+        $this->assertInstanceOf(ProductionOrderAttachmentResource::class, $connector->production()->order()->attachment());
+        $this->assertNotSame($connector->production()->order()->attachment(), $connector->production()->order()->attachment());
+        $this->assertInstanceOf(ProductionOrderRunResource::class, $connector->production()->order()->run());
+        $this->assertNotSame($connector->production()->order()->run(), $connector->production()->order()->run());
+        $this->assertInstanceOf(ProductionOrderRunOperationResource::class, $connector->production()->order()->run()->operation());
+        $this->assertNotSame($connector->production()->order()->run()->operation(), $connector->production()->order()->run()->operation());
+        $this->assertInstanceOf(ProductionOrderListResource::class, $connector->production()->orderList());
+        $this->assertNotSame($connector->production()->orderList(), $connector->production()->orderList());
+        $this->assertInstanceOf(ProductionResourceListResource::class, $connector->production()->resourceList());
+        $this->assertNotSame($connector->production()->resourceList(), $connector->production()->resourceList());
+        $this->assertInstanceOf(ProductionResourceResource::class, $connector->production()->resource());
+        $this->assertNotSame($connector->production()->resource(), $connector->production()->resource());
+        $this->assertInstanceOf(ProductionSuspendReasonResource::class, $connector->production()->suspendReason());
+        $this->assertNotSame($connector->production()->suspendReason(), $connector->production()->suspendReason());
+        $this->assertInstanceOf(ProductionWorkCentersResource::class, $connector->production()->workCenters());
+        $this->assertNotSame($connector->production()->workCenters(), $connector->production()->workCenters());
     }
 }

@@ -19,6 +19,10 @@ use Ipsocode\Cin7\Resources\BankTransferResource;
 use Ipsocode\Cin7\Resources\CrmResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\CustomPricesResource;
+use Ipsocode\Cin7\Resources\DisassemblyListResource;
+use Ipsocode\Cin7\Resources\DisassemblyResource;
+use Ipsocode\Cin7\Resources\FinishedGoodsListResource;
+use Ipsocode\Cin7\Resources\FinishedGoodsResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffListResource;
 use Ipsocode\Cin7\Resources\InventoryWriteOffResource;
 use Ipsocode\Cin7\Resources\JournalResource;
@@ -26,6 +30,7 @@ use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductFamilyResource;
+use Ipsocode\Cin7\Resources\ProductionResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\ProductSuppliersResource;
 use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
@@ -426,6 +431,38 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
+     * The `disassemblyList` resource.
+     */
+    public function disassemblyList(): DisassemblyListResource
+    {
+        return new DisassemblyListResource($this);
+    }
+
+    /**
+     * The `disassembly` resource.
+     */
+    public function disassembly(): DisassemblyResource
+    {
+        return new DisassemblyResource($this);
+    }
+
+    /**
+     * The `finishedGoodsList` resource.
+     */
+    public function finishedGoodsList(): FinishedGoodsListResource
+    {
+        return new FinishedGoodsListResource($this);
+    }
+
+    /**
+     * The `finishedGoods` resource.
+     */
+    public function finishedGoods(): FinishedGoodsResource
+    {
+        return new FinishedGoodsResource($this);
+    }
+
+    /**
      * The `crm/…` resources.
      */
     public function crm(): CrmResource
@@ -439,5 +476,13 @@ final class Cin7Connector extends Connector implements HasPagination
     public function webhooks(): WebhooksResource
     {
         return new WebhooksResource($this);
+    }
+
+    /**
+     * The `production/…` resources.
+     */
+    public function production(): ProductionResource
+    {
+        return new ProductionResource($this);
     }
 }

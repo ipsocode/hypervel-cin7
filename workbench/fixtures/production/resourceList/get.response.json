@@ -1,0 +1,17 @@
+{
+    "Resources": [
+        {
+            "ResourceID": "94f2bd01-fb4f-4c44-b679-0c700c1f1df9",
+            "IsInfinite": false,
+            "IsAllowAllCapacityUsage": false,
+            "IsAvailableOnHolidays": false,
+            "IsAvailableOnWeekends": false,
+            "IsActive": true,
+            "Code": "R-1",
+            "Name": "Chef",
+            "Tags": "",
+            "ResourceType": "Machine",
+            "CycleDuration": 2040
+        }
+    ]
+}

@@ -1,0 +1,95 @@
+{
+    "ProductFamilyID": "a1688709-6639-4324-aa53-a2120185a7bf",
+    "ProductionBOMs": [
+        {
+            "BOMID": "54fa1676-3eab-4fcb-91f2-f78978a04821",
+            "OutputQuantity": 15.0,
+            "BufferPercent": 0.0,
+            "InstructionUrl": "",
+            "IgnoreCumulativeLeadTime": false,
+            "ComponentProductionLeadTime": 0,
+            "Version": 2,
+            "Name": "Second BOM",
+            "IsDefault": true,
+            "CreatedDate": "2021-02-10T00:00:00",
+            "DeliveryToID": null,
+            "DeliveryToName": null,
+            "IssueMethod": 4,
+            "Operations": [
+                {
+                    "OperationID": "2056b07a-6aaa-46fd-9b49-53fe400b9edf",
+                    "Order": 1,
+                    "Name": "Operation CCCC",
+                    "CycleTime": 3600,
+                    "UnitsPerCycle": 1.0,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "WorkCenterName": "Default Workcenter",
+                    "WorkCenterCoManProcurementType": null,
+                    "OperationType": "Manufacturing",
+                    "IsDropShip": false,
+                    "Resources": [
+                        {
+                            "BOMResourceID": "aa342b67-726d-4681-be72-ccc39cb978e8",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 7.0,
+                            "Cost": 20.0,
+                            "CycleTime": 3600,
+                            "Position": 1,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Components": [],
+                    "Attachments": [],
+                    "Notes": [],
+                    "OperationLinks": [
+                        {
+                            "ID": "3ef2c697-41da-4863-a0c5-df77e1673423",
+                            "RelatedOperationID": null,
+                            "RelatedOperationName": null,
+                            "RelationType": 1
+                        }
+                    ],
+                    "InputProducts": [],
+                    "OutputProducts": [],
+                    "FinishedProducts": [
+                        {
+                            "ID": "50807e5a-f38b-45b9-9401-4b7cb744191a",
+                            "ProductID": null,
+                            "ProductFamilyID": "a1688709-6639-4324-aa53-a2120185a7bf",
+                            "CostCalculationType": "SalesValue",
+                            "PriceTier": 1,
+                            "Ratio": 0.0,
+                            "OutputQuantity": 15.0,
+                            "ProductName": "BOM Api Family 1",
+                            "ProductSKU": "BOM Api Family 1 SKU",
+                            "AverageCost": 0.0,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 4,
+                            "WastageCost": null,
+                            "DeliveryTo": null,
+                            "DeliveryToName": null
+                        }
+                    ],
+                    "VariationComponents": [
+                        {
+                            "BOMVariationComponentID": "366ef932-72b0-4664-86ac-fba18ed9a8af",
+                            "ProductFamilyID": "e7d3aec4-b91f-4ff9-af2d-ac9b8be35aed",
+                            "ProductFamilyName": "Screws",
+                            "ProductFamilySKU": "Screws-SKU",
+                            "QuantitySettingsJSON": "[{\"OptionKey\":\"Kind 1\",\"OptionValue\":29},{\"OptionKey\":\"Kind 2\",\"OptionValue\":39}]",
+                            "MapVariationsJSON": "[{\"ProductID\":\"10ece710-1dae-4368-bcee-62912b2682ab\",\"ProductName\":\"Screws Drive Cross \",\"ProductCode\":\"Screws-SKU - 002\",\"Option1SelectedValue\":\"\",\"Option2SelectedValue\":\"\",\"Option3SelectedValue\":\"\",\"IsOption1AllSelected\":false,\"IsOption2AllSelected\":false,\"IsOption3AllSelected\":false,\"QuantitySettingsJSON\":[{\"OptionKey\":\"Kind 1\",\"OptionValue\":null},{\"OptionKey\":\"Kind 2\",\"OptionValue\":35.0}],\"ValidationText\":\"\",\"ValidationState\":\"\"},{\"ProductID\":\"f9888002-5bb7-41bb-8f3d-fc9e611a10c0\",\"ProductName\":\"Screws Phillips Drive Flat\",\"ProductCode\":\"Screws-SKU - 001\",\"Option1SelectedValue\":\"\",\"Option2SelectedValue\":\"\",\"Option3SelectedValue\":\"\",\"IsOption1AllSelected\":false,\"IsOption2AllSelected\":false,\"IsOption3AllSelected\":false,\"QuantitySettingsJSON\":[{\"OptionKey\":\"Kind 1\",\"OptionValue\":22.0},{\"OptionKey\":\"Kind 2\",\"OptionValue\":null}],\"ValidationText\":\"\",\"ValidationState\":\"\"}]",
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 3,
+                            "SalePriceTier": null,
+                            "QuantityOptionName": "Kind"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

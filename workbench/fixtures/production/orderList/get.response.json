@@ -1,0 +1,55 @@
+{
+    "ProductionOrderListItems": [
+        {
+            "TaskID": "57d9aa25-2d92-4145-a9c2-25ce3038075d",
+            "ProductionOrderID": "57d9aa25-2d92-4145-a9c2-25ce3038075d",
+            "Type": "O",
+            "ProductID": "6e718a4a-b67a-4397-81e5-890b05807448",
+            "ProductSKU": "Baking Family 002",
+            "ProductName": "Baking Family Clone Bread",
+            "OrderNumber": "MO-00044",
+            "LocationID": "35c5646b-6a6d-4045-9512-04e1064a3e90",
+            "LocationName": "BFBin Shop Floor",
+            "Status": "DRAFT",
+            "OrderStatus": "DRAFT",
+            "Quantity": 3.0,
+            "StartDate": "2021-02-25T00:00:00",
+            "ReleaseDate": "2021-02-26T00:00:00",
+            "RequiredByDate": "2021-02-26T00:00:00",
+            "CompletionDate": null,
+            "TotalCount": 6.0,
+            "CapacityCalculationType": "FromStartForward",
+            "WIPAccountCode": "726",
+            "FinishedGoodsAccountCode": "715",
+            "Comments": "",
+            "SourceTaskID": null,
+            "SourceTaskNumber": "",
+            "SourceTaskType": null,
+            "IsSourceTaskVoided": false,
+            "CustomField1": "Low",
+            "CustomField2": "true",
+            "CustomField3": "test",
+            "CustomField4": "",
+            "CustomField5": "",
+            "CustomField6": "",
+            "CustomField7": "",
+            "CustomField8": "",
+            "CustomField9": "",
+            "CustomField10": "",
+            "SourceTasks": [
+                {
+                    "SourceTaskID": "1f98019f-3396-4370-bc2e-296f03fafdad",
+                    "SourceTaskNumber": "SO-00379",
+                    "SourceTaskType": 0,
+                    "IsSourceTaskVoided": false
+                },
+                {
+                    "SourceTaskID": "56b43ed5-304c-4ef7-b4ae-7752e8ae2bfb",
+                    "SourceTaskNumber": "SO-00378",
+                    "SourceTaskType": 0,
+                    "IsSourceTaskVoided": false
+                }
+            ]
+        }
+    ]
+}

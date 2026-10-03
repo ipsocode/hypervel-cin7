@@ -1,0 +1,11 @@
+{
+    "Status": "COMPLETED",
+    "ProductID": "524c20a3-a8ec-44f2-9685-311f1f7d1498",
+    "ProductCode": "Bread",
+    "ProductName": "Baked Bread",
+    "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+    "Location": "Main Warehouse",
+    "CompletionDate": "2017-12-21T00:00:00",
+    "WIPAccount": "715",
+    "Quantity": 1
+}
