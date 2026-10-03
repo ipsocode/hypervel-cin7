@@ -40,13 +40,14 @@ return [
         TaskCategoryPutData::class => [TaskCategoryPutData::class, Cin7Payloads::load('crm/taskcategory', 'put.request')],
     ],
     'missing' => [
+        'Task category without ID' => [TaskCategoryData::class, Arr::except(Cin7Payloads::load('crm/taskcategory', 'get.response')['Categories'][0], 'ID')],
         'TaskCategory POST without Name' => [TaskCategoryPostData::class, Arr::except(Cin7Payloads::load('crm/taskcategory', 'post.request'), 'Name')],
         'TaskCategory PUT without Name' => [TaskCategoryPutData::class, Arr::except(Cin7Payloads::load('crm/taskcategory', 'put.request'), 'Name')],
         'TaskCategory PUT without ID' => [TaskCategoryPutData::class, Arr::except(Cin7Payloads::load('crm/taskcategory', 'put.request'), 'ID')],
         'TaskCategory without Name' => [TaskCategoryData::class, Arr::except(Cin7Payloads::load('crm/taskcategory', 'get.response')['Categories'][0], 'Name')],
     ],
     'required' => [
-        TaskCategoryData::class => ['Name'],
+        TaskCategoryData::class => ['Name', 'ID'],
         TaskCategoryPostData::class => ['Name'],
         TaskCategoryPutData::class => ['Name', 'ID'],
     ],

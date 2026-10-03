@@ -115,6 +115,14 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   the parents above; the Money Task List, Customer Credits, Supplier Deposits, ME and Rounding
   Table tables require none. Where the reference requires different fields per verb, the body
   is a class per verb.
+- **A required field stays required.** A field its table marks `Yes` that a response leaves out or
+  sends `null`, or that a request example leaves out of a class the responses share, is
+  `?type $Field = null` marked `#[Required]` (or `#[RequiredWithout]`, `#[RequiredIf]`), which only
+  a write body checks. Only three cases stay plainly optional, each with its reason in the class's
+  docblock and below: a verb's own body class whose example leaves the field out (a partial PUT), a
+  value Cin7 computes (a POST's `Total`, `Tax` and `TotalBeforeTax`), and the `ID` of a nested item
+  being added. `docs/skills/cin7-models/scripts/required.py` lists every `Yes` field a class does
+  not keep required, and whether a docblock and this page explain it.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
   key for every field, `null` where the response had none or sent `null`.
@@ -296,7 +304,7 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `sale/fulfilment/pick` | POST: `SaleFulfilmentPickPostData`; PUT: `SaleFulfilmentPickPutData` (Sale Fulfilment Pick, with `Lines`: `SaleFulfilmentPickPackLineData`, plus `AutoPickMode`, which the reference documents only in prose) | GET, POST, PUT: `SaleFulfilmentPickData` |
 | `sale/fulfilment/pack` | POST: `SaleFulfilmentPackPostData`; PUT: `SaleFulfilmentPackData` (Sale Fulfilment Pack, with `Lines`: `SaleFulfilmentPickPackLineData`) | GET, POST, PUT: `SaleFulfilmentPackData` |
 | `sale/fulfilment/ship` | POST: `SaleFulfilmentShipPostData`; PUT: `SaleFulfilmentShipPutData`, which adds `AddTrackingNumbers` (Sale Fulfilment Ship, with `ShippingAddress`: `SaleShippingAddressData` and `Lines`: `SaleFulfilmentShipLinePostPutData`) | GET, POST, PUT: `SaleFulfilmentShipData` (with `Lines`: `SaleFulfilmentShipLineData`) |
-| `sale/invoice` | POST: `SaleInvoicePostData` (Sale Invoice POST Model); PUT: `SaleInvoicePutData` (its fields, needing only `SaleID` and `TaskID`) | GET, POST, PUT, DELETE: `SaleInvoicesData` (`{SaleID, Invoices}`, with `Invoices`: `SaleInvoicePartialData`, Sale Invoice Partial Model) |
+| `sale/invoice` | POST: `SaleInvoicePostData` (Sale Invoice POST Model); PUT: `SaleInvoicePutData` (its fields, needing `SaleID`, `TaskID` and `Status`) | GET, POST, PUT, DELETE: `SaleInvoicesData` (`{SaleID, Invoices}`, with `Invoices`: `SaleInvoicePartialData`, Sale Invoice Partial Model) |
 | `sale/creditnote` | POST: `SaleCreditNotePostData` (Sale Credit Note POST Model) | GET, POST, DELETE: `SaleCreditNotesData` (`{SaleID, CreditNotes}`, with `CreditNotes`: `SaleCreditNotePartialData`, Sale Credit Note Invoice Partial Model, whose `Payments` are `SaleCreditNotePaymentData`) |
 | `sale/manualJournal` | POST: `SaleManualJournalPostData` (Sale Manual Journal, with `Lines`: `SaleManualJournalLineData`) | GET, POST: `SaleManualJournalData` |
 | `sale/attachment` | POST: `SaleAttachmentPostData` (the reference's "Available fields for POST Methods") | GET, POST, DELETE: `SaleAttachmentsData` (`{SaleID, Lines}`, with `Lines`: `AttachmentLineData`) |
@@ -366,28 +374,32 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   example component has no `Compound`. `Compound` is `string|int` because the examples
   send `"0"` and `"1"`.
 - **Sale Order.** The reference documents the model twice: under "Other Models" and in
-  `sale/order`'s own table (which adds `SaleID` and `CombineAdditionalCharges`).
-  `SaleOrderData` carries the union. Its `Lines` are `SaleOrderLineData`, a superset of the
-  Sale Quote Line the first table names: it adds `BackorderQuantity` and `DropShip`, and the
-  examples also send `Backorder`.
-- **Purchase Order.** As with the sale order, the reference documents the model twice: the
-  Purchase Order Model a purchase embeds as its `Order` (with `Prepayments`, Sale Payment Line
-  Models), and `purchase/order`'s Available Fields for Purchase Order (which adds `TaskID` and
-  `CombineAdditionalCharges`). `PurchaseOrderData` carries the union, with those three optional,
-  as only one table has each. The POST body is `PurchaseOrderPostData`, as the quote's is: it
-  requires `TaskID` and `CombineAdditionalCharges`, limits `Status` to `DRAFT` and `AUTHORISED`,
-  leaves the totals optional ("Not required for POST"; the POST example sends none), and takes no
-  `Prepayments`, which the `purchase/order` table does not list. Both tables require `Memo`, but the
-  `purchase` POST, PUT and DELETE examples embed an order that is `NOT AVAILABLE` or `VOIDED` with
-  a `null` `Memo`: `PurchaseOrderData` leaves it optional and `PurchaseOrderPostData` requires it,
-  so each declares its own and `AbstractPurchaseOrderData` takes only `Status` and `Lines`, as the
-  sale lists each declare their `CombinedTrackingNumbers`.
+  `sale/order`'s own table (which adds `SaleID` and `CombineAdditionalCharges`). `SaleOrderData`
+  carries the union, with those two nullable and `#[Required]`, as the embedded order has neither.
+  Its `Lines` are `SaleOrderLineData`, a superset of the Sale Quote Line the first table names: it
+  adds `BackorderQuantity` and `DropShip`, and the examples also send `Backorder`.
+- **Purchase Order.** As with the sale order, the reference documents the model twice: the Purchase
+  Order Model a purchase embeds as its `Order` (with `Prepayments`, Sale Payment Line Models), and
+  `purchase/order`'s Available Fields for Purchase Order (which adds `TaskID` and
+  `CombineAdditionalCharges`). `PurchaseOrderData` carries the union, with `TaskID`,
+  `CombineAdditionalCharges` and `Memo` nullable and `#[Required]` (the embedded order has no
+  `TaskID` or `CombineAdditionalCharges`, and a `null` `Memo`), and the `Prepayments`, which only
+  one table has, optional. The POST body is `PurchaseOrderPostData`, as the quote's is: it requires
+  `TaskID` and `CombineAdditionalCharges`, limits `Status` to `DRAFT` and `AUTHORISED`, leaves the
+  totals `TotalBeforeTax`, `Tax` and `Total` optional (Cin7 computes them: "Not required for POST",
+  and the POST example sends none), and takes no `Prepayments`, which the `purchase/order` table
+  does not list. Both tables require `Memo`, but the `purchase` POST, PUT and DELETE examples embed
+  an order that is `NOT AVAILABLE` or `VOIDED` with a `null` `Memo`: `PurchaseOrderData` makes it
+  nullable and `#[Required]` and `PurchaseOrderPostData` requires it, so each declares its own and
+  `AbstractPurchaseOrderData` takes only `Status` and `Lines`, as the sale lists each declare their
+  `CombinedTrackingNumbers`.
 - **Purchase Stock Received.** The reference documents the model twice: the Purchase Stock Model a
   purchase embeds as its `StockReceived`, and `purchase/stock`'s Available Fields for Purchase Stock
   Received, which adds the purchase's `TaskID`. `PurchaseStockData` carries the union, with `TaskID`
-  optional, as only one table has it. The POST body is `PurchaseStockPostData`: it requires
-  `TaskID`, and limits `Status` to `DRAFT` and `AUTHORISED` ("For POST only"). `Lines` is required,
-  and `[]` passes, which is how a POST authorises the stock received.
+  nullable and `#[Required]`, as the embedded stock has none. The POST body is
+  `PurchaseStockPostData`: it requires `TaskID`, and limits `Status` to `DRAFT` and `AUTHORISED`
+  ("For POST only"). `Lines` is required, and `[]` passes, which is how a POST authorises the stock
+  received.
 - **Purchase stock line.** Its `ProductID` and `SKU` are a bare `Yes*`, with no condition, unlike
   the priced lines' (see below), so `PurchaseStockLineData` leaves both optional, as the supplier's
   `Status`. `Location` and `LocationID` are each required if the other is empty
@@ -536,10 +548,11 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   them. `SaleData`, `SalePostData` and `SalePutData` require `Location` and `CurrencyRate` always. A write
   body needs `Customer` or `CustomerID`: each carries `#[RequiredWithout]` naming the other,
   so a sale body with neither fails validation before it is sent.
-- **Required per verb.** The tables have one Required column for every verb. The
-  `sale/invoice` PUT notes allow leaving attributes out, so `SaleInvoicePutData` requires only
-  `SaleID` and `TaskID`; a payment PUT may not carry `Amount` or `Account` when it is a
-  credit, so `SalePaymentPutData` requires only `ID`.
+- **Required per verb.** The tables have one Required column for every verb. The `sale/invoice` PUT
+  notes allow leaving attributes out, so `SaleInvoicePutData` requires `SaleID`, `TaskID` and
+  `Status`, which its example sends, and leaves `InvoiceDate` and `InvoiceDueDate`, which it omits,
+  optional; a payment PUT may not carry `Amount` or `Account` when it is a credit, so
+  `SalePaymentPutData` requires only `ID`.
 - **Payment `CreditID` on POST.** The table makes `CreditID` PUT-only, but the POST example
   sends `"CreditID": null`; `SalePaymentPostData` has no `CreditID`.
 - **Auto-generated numbers.** The sale invoice and credit note POST tables have no
@@ -551,7 +564,9 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   Required column, and its notes say which verb takes a field: `ID` is for PUT, `Type` and
   `DepositID` are for POST, and a PUT of a payment taken from a deposit takes no `Amount` or
   `Account`. So `PurchasePaymentPostData` has no `ID`, and `PurchasePaymentPutData` requires `ID`,
-  has no `Type` or `DepositID`, and leaves `Amount` and `Account` optional. `TaskID`, `DatePaid`
+  has no `Type` or `DepositID`, and keeps `Amount` and `Account` required: the table requires them
+  and the PUT example sends them, although the note says a payment taken from a deposit cannot
+  change them (send its own values). `TaskID`, `DatePaid`
   and `CurrencyRate`, which the table requires for every verb, stay required on every class, where
   `SalePaymentPutData` requires only `ID` (the sale's `TaskID` is POST-only, and its `CurrencyRate`
   is ignored for a payment from a credit). `ID` is a bare `Yes*`, so `PurchasePaymentData` leaves
@@ -566,25 +581,27 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   body.
 - **Purchase manual journal.** As with the sale's, the Available field for Purchase Manual Journal
   table of `purchase/manualJournal` adds the purchase's `TaskID` to the Purchase Manual Journal
-  Model a purchase embeds, so `PurchaseManualJournalData` serves both, with `TaskID` optional.
-  `PurchaseManualJournalPostData` requires it and limits `Status` to `DRAFT` and `AUTHORISED`. A
-  voided purchase's example sends `VOIDED`, which the tables do not list; `Status` is the larger
-  `TaskStatus`, which has it. The line tables agree but for the purchase's read-only `IsSystem`, so
-  `SaleManualJournalLineData` and `PurchaseManualJournalLineData` share
-  `AbstractManualJournalLineData`; the journals key on `SaleID` and `TaskID` and carry different
-  line models, so they keep a parent per family. The POST example sends `IsSystem`, so
-  `PurchaseManualJournalLineData` models it and `PostPurchaseManualJournal` leaves it out of the
-  body. The reference marks the endpoint deprecated (simple purchases only).
+  Model a purchase embeds, so `PurchaseManualJournalData` serves both, with `TaskID` nullable and
+  `#[Required]`, as the embedded journal has none. `PurchaseManualJournalPostData` requires it and
+  limits `Status` to `DRAFT` and `AUTHORISED`. A voided purchase's example sends `VOIDED`, which the
+  tables do not list; `Status` is the larger `TaskStatus`, which has it. The line tables agree but
+  for the purchase's read-only `IsSystem`, so `SaleManualJournalLineData` and
+  `PurchaseManualJournalLineData` share `AbstractManualJournalLineData`; the journals key on
+  `SaleID` and `TaskID` and carry different line models, so they keep a parent per family. The POST
+  example sends `IsSystem`, so `PurchaseManualJournalLineData` models it and
+  `PostPurchaseManualJournal` leaves it out of the body. The reference marks the endpoint deprecated
+  (simple purchases only).
 - **Advanced purchase stock received.** The Available Fields for Purchase Stock Received table of
   `advanced-purchase/stock` is the body of its POST and PUT, `{PurchaseID, TaskID, Status, Lines}`,
   and adds `PurchaseID` to the Advanced Purchase Stock Model; the two share a name, so
-  `AdvancedPurchaseStockData` is both, with `PurchaseID` optional and `TaskID` required, as the
-  model requires it. Every action answers with `{PurchaseID, StockReceiving}`, which only the
-  examples show: it is `AdvancedPurchaseStocksData`, a keyed envelope named in the plural, with
-  `StockReceiving` optional. The table and the model limit `Status` to `DRAFT` and `AUTHORISED` on
-  a write (the model says POST, the table POST and PUT), so both body classes carry
-  `#[In(TaskStatus::Draft, TaskStatus::Authorised)]`; the model's `Length` of 50 for `Status` does
-  not apply to the `TaskStatus` enum.
+  `AdvancedPurchaseStockData` is both, with `TaskID` required, as the model requires it, and
+  `PurchaseID` nullable and `#[Required]`, since the `StockReceiving` items never carry it. Every
+  action answers with `{PurchaseID, StockReceiving}`, which only the examples show: it is
+  `AdvancedPurchaseStocksData`, a keyed envelope named in the plural, with `StockReceiving`
+  optional. The table and the model limit `Status` to `DRAFT` and `AUTHORISED` on a write (the model
+  says POST, the table POST and PUT), so both body classes carry `#[In(TaskStatus::Draft,
+  TaskStatus::Authorised)]`; the model's `Length` of 50 for `Status` does not apply to the
+  `TaskStatus` enum.
 - **Advanced purchase stock `TaskID` on PUT.** The table marks `TaskID` optional for every verb. A
   POST without it, or with the empty GUID, creates a new stock receiving task, so
   `AdvancedPurchaseStockPostData` leaves it optional; a PUT overwrites the task it names, so
@@ -632,16 +649,17 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Advanced purchase put away.** The Available Fields for Purchase Put Away table of
   `advanced-purchase/put-away` is the body of its POST, `{PurchaseID, TaskID, Status, Lines}`, and
   adds `PurchaseID` to the Advanced Purchase Put Away Model; the two share a name, so
-  `AdvancedPurchasePutAwayData` is both, with `PurchaseID` optional and `TaskID` required, as the
-  model requires it. GET and POST answer with `{PurchaseID, PutAway}`, which only the examples
-  show: it is `AdvancedPurchasePutAwaysData`, a keyed envelope named in the plural, with `PutAway`
-  optional. The POST body, `AdvancedPurchasePutAwayPostData`, requires `PurchaseID` and leaves
-  `TaskID` optional, since a POST without it, or with the empty GUID, creates a new task. The table
-  and the model limit `Status` to `DRAFT` and `AUTHORISED` on a POST, so the POST body carries
-  `#[In(TaskStatus::Draft, TaskStatus::Authorised)]`; the table's further rule, that only
-  `AUTHORISED` is taken once the invoice lines match the receiving, depends on the purchase and is
-  left to Cin7. The model's `Length` of 50 for `Status` does not apply to the `TaskStatus` enum.
-  The put away has no PUT or DELETE.
+  `AdvancedPurchasePutAwayData` is both, with `TaskID` required, as the model requires it, and
+  `PurchaseID` nullable and `#[Required]`, since the `PutAway` items never carry it. GET and POST
+  answer with `{PurchaseID, PutAway}`, which only the examples show: it is
+  `AdvancedPurchasePutAwaysData`, a keyed envelope named in the plural, with `PutAway` optional. The
+  POST body, `AdvancedPurchasePutAwayPostData`, requires `PurchaseID` and leaves `TaskID` optional,
+  since a POST without it, or with the empty GUID, creates a new task. The table and the model limit
+  `Status` to `DRAFT` and `AUTHORISED` on a POST, so the POST body carries `#[In(TaskStatus::Draft,
+  TaskStatus::Authorised)]`; the table's further rule, that only `AUTHORISED` is taken once the
+  invoice lines match the receiving, depends on the purchase and is left to Cin7. The model's
+  `Length` of 50 for `Status` does not apply to the `TaskStatus` enum. The put away has no PUT or
+  DELETE.
 - **Advanced purchase put away lines.** The Advanced Purchase Put Away Line Model marks
   `ProductID` and `SKU` `Yes*` with no condition, so `AdvancedPurchasePutAwayLineData` leaves both
   optional. It marks `Location` and `LocationID` `Yes*` too, each "required if" the other is empty,
@@ -659,19 +677,20 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   lines and without it on the advanced stock line. Each task class types its own `Lines`, and the
   put away task classes share no parent with the stock received ones.
 - **Advanced purchase payments.** `advanced-purchase/payment` documents the Available Fields for
-  Purchase Payments table of `purchase/payment` again, field for field, so its classes split by
-  verb the same way and share `AbstractPurchasePaymentData` with the simple purchase's, in
-  `src/Data/` since its children span both families: `AdvancedPurchasePaymentPostData` has no
-  `ID`, and `AdvancedPurchasePaymentPutData` requires `ID`, has no `Type` or `DepositID`, and leaves
-  `Amount` and `Account` optional. `Type` stays a string, as the examples send `Payment` and
-  `Refund`. As on `purchase/payment`, the PUT example sends the POST-only `Type` and both write
-  examples the `DateCreated` Cin7 stamps, so `PostAdvancedPurchasePayment` leaves out `ID` and
-  `DateCreated`, `PutAdvancedPurchasePayment` leaves out `Type`, `DepositID` and `DateCreated`, and
-  the catalogue round-trips the PUT example through `AdvancedPurchasePaymentPutData` without its
-  `Type`. Every response example adds the advanced purchase's `PurchaseID`, which the table does
-  not list; `AdvancedPurchasePaymentData` models it as an optional GUID. The GET's `PurchaseID`,
-  `OrderNumber`, `InvoiceNumber` and `CreditNoteNumber` are all optional. The DELETE is documented
-  on `/purchase/payment`, so the resource's `delete()` sends `DeletePurchasePayment`.
+  Purchase Payments table of `purchase/payment` again, field for field, so its classes split by verb
+  the same way and share `AbstractPurchasePaymentData` with the simple purchase's, in `src/Data/`
+  since its children span both families: `AdvancedPurchasePaymentPostData` has no `ID`, and
+  `AdvancedPurchasePaymentPutData` requires `ID`, has no `Type` or `DepositID`, and keeps `Amount`
+  and `Account` required, as on `purchase/payment`. `Type` stays a string, as the examples send
+  `Payment` and `Refund`. As on `purchase/payment`, the PUT example sends the POST-only `Type` and
+  both write examples the `DateCreated` Cin7 stamps, so `PostAdvancedPurchasePayment` leaves out
+  `ID` and `DateCreated`, `PutAdvancedPurchasePayment` leaves out `Type`, `DepositID` and
+  `DateCreated`, and the catalogue round-trips the PUT example through
+  `AdvancedPurchasePaymentPutData` without its `Type`. Every response example adds the advanced
+  purchase's `PurchaseID`, which the table does not list; `AdvancedPurchasePaymentData` models it as
+  an optional GUID. The GET's `PurchaseID`, `OrderNumber`, `InvoiceNumber` and `CreditNoteNumber`
+  are all optional. The DELETE is documented on `/purchase/payment`, so the resource's `delete()`
+  sends `DeletePurchasePayment`.
 - **Purchase Invoice.** The reference documents the model twice: the Purchase Invoice Model a
   purchase embeds as its `Invoice`, with `Payments` (Sale Payment Line Model) and `Paid`, and the
   Available Fields for Purchase Invoice table of `purchase/invoice`, which adds `TaskID`,
@@ -782,21 +801,22 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   Model's fields with `PurchaseID` and `TaskID`, so it extends `AbstractSalePaymentLineData`. The
   models require `InvoiceDate`, `InvoiceDueDate` and `CreditNoteDate`, but the POST, PUT and DELETE
   examples embed an invoice and a credit note that are `NOT AVAILABLE` with the three dates `null`,
-  so those are optional on these two classes, and `AbstractPurchaseInvoiceData` and
-  `AbstractPurchaseCreditNoteData` no longer take `InvoiceDate` and `CreditNoteDate`: each child
-  declares them, and the other children still require them, after their own required fields. The
-  examples also send keys the embedding models do not list: an `InvoicingAndReceivingNumber` (an
-  `int`) on every stock received, put away, invoice and manual journal, which no model lists; a
-  `CreditNoteInvoiceNumber` on every credit note, which only the Advanced purchase credit note
-  partial model lists (and requires); the stock batch's `CardID` on the stock received lines, which
-  the put away line model lists but the stock line model lacks; and, on the stock received and put
-  away lines, the product fields of the page's Additional fields table ("All Objects that contain
-  field 'ProductID', also contain additional fields"). The classes model them, optional:
-  `AdvancedPurchaseStockData`, `AdvancedPurchasePutAwayData`, `AdvancedPurchaseInvoiceData` and
-  `AdvancedPurchaseManualJournalData` take `InvoicingAndReceivingNumber`,
-  `AdvancedPurchaseCreditNoteData` takes `CreditNoteInvoiceNumber`, with the partial model's length
-  (`#[Max(50)]`), and `AdvancedPurchaseStockLineData` and `AdvancedPurchasePutAwayLineData` take
-  `CardID` and the product fields from `AbstractPurchaseStockLineData`.
+  so those are nullable and `#[Required]` on these two classes, which only a write body checks, and
+  `AbstractPurchaseInvoiceData` and `AbstractPurchaseCreditNoteData` no longer take `InvoiceDate`
+  and `CreditNoteDate`: each child declares them, and the other children still require them, after
+  their own required fields. The examples also send keys the embedding models do not list: an
+  `InvoicingAndReceivingNumber` (an `int`) on every stock received, put away, invoice and manual
+  journal, which no model lists; a `CreditNoteInvoiceNumber` on every credit note, which only the
+  Advanced purchase credit note partial model lists (and requires); the stock batch's `CardID` on
+  the stock received lines, which the put away line model lists but the stock line model lacks; and,
+  on the stock received and put away lines, the product fields of the page's Additional fields table
+  ("All Objects that contain field 'ProductID', also contain additional fields"). The classes model
+  them, optional: `AdvancedPurchaseStockData`, `AdvancedPurchasePutAwayData`,
+  `AdvancedPurchaseInvoiceData` and `AdvancedPurchaseManualJournalData` take
+  `InvoicingAndReceivingNumber`, `AdvancedPurchaseCreditNoteData` takes `CreditNoteInvoiceNumber`,
+  with the partial model's length (`#[Max(50)]`), and `AdvancedPurchaseStockLineData` and
+  `AdvancedPurchasePutAwayLineData` take `CardID` and the product fields from
+  `AbstractPurchaseStockLineData`.
 - **Fulfilment pick and pack.** The Sale Fulfilment Pick and Pack tables, `sale/fulfilment/pick`
   and `/pack`, add the fulfilment's `TaskID` to the Pick Pack Model a fulfilment embeds;
   `SaleFulfilmentPickData` and `SaleFulfilmentPackData` model them and require it, and
@@ -806,20 +826,22 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   (`AUTOPICK`) picks the task and authorises it. The table requires `Status`, so the pick bodies
   require it unless `AutoPickMode` is given (`#[RequiredWithout('AutoPickMode')]`), and model
   `AutoPickMode` as a string.
-- **Fulfilment ship.** The Sale Fulfilment Ship Model a fulfilment embeds and the Sale
-  Fulfilment Ship table of `sale/fulfilment/ship` share a name, so `SaleFulfilmentShipData` is
-  both, with the table's `TaskID` optional. A body's line names its box `Box`, as the line table
-  says, where a response's says `Boxes`, so body lines are `SaleFulfilmentShipLinePostPutData`;
-  it models the read-only `TrackingURL` the examples send, which the requests leave out.
-  `AddTrackingNumbers`, in the PUT notes only, is on `SaleFulfilmentShipPutData`.
+- **Fulfilment ship.** The Sale Fulfilment Ship Model a fulfilment embeds and the Sale Fulfilment
+  Ship table of `sale/fulfilment/ship` share a name, so `SaleFulfilmentShipData` is both, with the
+  table's `TaskID` nullable and `#[Required]`, as the embedded `Ship` has none. A body's line names
+  its box `Box`, as the line table says, where a response's says `Boxes`, so body lines are
+  `SaleFulfilmentShipLinePostPutData`; it models the read-only `TrackingURL` the examples send,
+  which the requests leave out. `AddTrackingNumbers`, in the PUT notes only, is on
+  `SaleFulfilmentShipPutData`.
 - **`IncludeProductInfo`.** It adds "all used products in additional array" to a fulfilment,
   pick or pack response; no example shows the array, so it is not modelled, and `json()` still
   has it.
 - **Sale Credit Note List.** Its table is the Sale List's, field for field, so `SaleListData` and
   `SaleCreditNoteListData` share `AbstractSaleListData`. The credit note list's example sends
-  `QuoteStatus` as `""`, outside the quote statuses, and `CombinedTrackingNumbers` as `null`, so
-  its `QuoteStatus` is a string and its `CombinedTrackingNumbers` optional; `RestockStatus`
-  appears only in its example. Both tables type `Customer` as `Date`; it is the customer's name.
+  `QuoteStatus` as `""`, outside the quote statuses, and `CombinedTrackingNumbers` as `null`, so its
+  `QuoteStatus` is a string and its `CombinedTrackingNumbers` nullable and `#[Required]`;
+  `RestockStatus` appears only in its example. Both tables type `Customer` as `Date`; it is the
+  customer's name.
 - **Purchase List and Purchase Credit Note List.** The two tables are one, field for field, so
   `PurchaseListData` and `PurchaseCreditNoteListData` share `AbstractPurchaseListData`, which holds
   every field. Only the values listed for `Type` differ: the credit note list adds
@@ -848,9 +870,10 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Sale quote and manual journal.** As with the order, the Sale Quote and Sale Manual Journal
   tables of `sale/quote` and `sale/manualJournal` add `SaleID` (and the quote
   `CombineAdditionalCharges`) to the models a sale embeds, so `SaleQuoteData` and
-  `SaleManualJournalData` serve both, with those optional. Their POST bodies require them, and
-  limit `Status` to `DRAFT` and `AUTHORISED`; the quote's POST requires no totals ("Not required
-  for POST"), and its example sends none.
+  `SaleManualJournalData` serve both, with those nullable and `#[Required]`, as the embedded models
+  have none. Their POST bodies require them, and limit `Status` to `DRAFT` and `AUTHORISED`;
+  `SaleQuotePostData` leaves the totals `TotalBeforeTax`, `Tax` and `Total` optional (Cin7 computes
+  them: "Not required for POST"), and its example sends none.
 - **Sale attachment delete.** The reference marks the `ID` of `DELETE sale/attachment` optional;
   a delete names what it deletes, so `DeleteSaleAttachment` requires it. The POST example's base64
   `Content` is a 62 KB image; the fixture keeps its first 32 characters.
@@ -901,10 +924,11 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Bank Accounts `InitialBalance`.** The table types it `String`, but the example sends `0`;
   `BankAccountData` accepts both (`string|float`).
 - **Fixed Asset Type `Rate` and `EffectiveLife`.** The table marks both required, but says each is
-  "unable to set" when the other is, and the examples send one of them as `null`. Both are
-  optional. `AssetAccountCode` is typed `Decimal`, but the examples send `"710"` and the other
-  account code is a `String`, so it is a string. `DepreciationExpenseAccountCode` and its read-only
-  `DepreciationExpenseAccountName` appear only in the examples, and are modelled.
+  "unable to set" when the other is, and the examples send one of them as `null`. Each is nullable
+  and `#[RequiredWithout]` the other, so a write body sets at least one. `AssetAccountCode` is typed
+  `Decimal`, but the examples send `"710"` and the other account code is a `String`, so it is a
+  string. `DepreciationExpenseAccountCode` and its read-only `DepreciationExpenseAccountName` appear
+  only in the examples, and are modelled.
 - **Fixed Asset Type and Payment Term value lists.** `DepreciationMethod`, `AveragingMethod` and
   the payment term's `Method` are the enums `DepreciationMethod`, `AveragingMethod` and
   `PaymentTermMethod`.
@@ -1151,7 +1175,7 @@ the response only:
 
 | Class | Folder | Required |
 |---|---|---|
-| `FixedAssetTypeData` (response) | `src/Data/Ref/FixedAssetType/` | `Name`, `DepreciationMethod`, `AveragingMethod`, `AssetAccountCode`, `AccumulatedDepreciationAccountCode` |
+| `FixedAssetTypeData` (response) | `src/Data/Ref/FixedAssetType/` | `Name`, `DepreciationMethod`, `AveragingMethod`, `AssetAccountCode`, `AccumulatedDepreciationAccountCode`; `Rate` or `EffectiveLife` (`#[RequiredWithout]`) |
 | `FixedAssetTypePostData` | `src/Data/Ref/FixedAssetType/` | the same |
 | `FixedAssetTypePutData` | `src/Data/Ref/FixedAssetType/` | the same, and `FixedAssetTypeID` |
 | `PaymentTermData` (response) | `src/Data/Ref/PaymentTerm/` | `Name` |
@@ -1167,7 +1191,7 @@ need different fields, and the required fields of each table without a default:
 |---|---|---|
 | `SaleInvoicePartialData` (response) | `src/Data/Sale/Invoice/` | `TaskID`, `CombineAdditionalCharges`, `Status`, `InvoiceDate`, `InvoiceDueDate` |
 | `SaleInvoicePostData` | `src/Data/Sale/Invoice/` | `SaleID`, `TaskID`, `CombineAdditionalCharges`, `Status`, `InvoiceDate`, `InvoiceDueDate` |
-| `SaleInvoicePutData` | `src/Data/Sale/Invoice/` | `SaleID`, `TaskID` |
+| `SaleInvoicePutData` | `src/Data/Sale/Invoice/` | `SaleID`, `TaskID`, `Status` |
 | `SaleCreditNotePartialData` (response) | `src/Data/Sale/CreditNote/` | `TaskID`, `CombineAdditionalCharges`, `Status`, `CreditNoteDate` |
 | `SaleCreditNotePostData` | `src/Data/Sale/CreditNote/` | `SaleID`, `TaskID`, `CombineAdditionalCharges`, `CreditNoteInvoiceNumber`, `Status`, `CreditNoteDate` |
 | `SalePaymentLinePartialData` (response) | `src/Data/Sale/Payment/` | `ID`, `TaskID`, `Type`, `Amount`, `DatePaid`, `Account`, `CurrencyRate` |
@@ -1217,10 +1241,12 @@ every verb. Each class requires:
 | `ShipZonesEnabledData` | `src/Data/Reference/ShipZonesEnabled/` | `IsEnabled` |
 
 - **What the examples drop.** The table requires `DefaultShippingCost`, but the POST example sends
-  none, and the PUT example sends only `ZoneID`, `Name` and `Conditions`: so POST makes
-  `DefaultShippingCost` optional, and PUT every field but `ZoneID` and `Name`.
-- **`ID` and `ZoneConditionID`** are required in the table, but the examples send none for an area or
-  a condition they add, so they are optional.
+  none, and the PUT example sends only `ZoneID`, `Name` and `Conditions`: so `ShippingZonePostData`,
+  a body of its own, makes `DefaultShippingCost` optional, and `ShippingZonePutData`, a partial
+  update, makes `IsRestZone`, `PricesInclTax`, `Negative` and `DefaultShippingCost` optional.
+- **`ID` and `ZoneConditionID`** are required in the table, but the examples send none for an area
+  or a condition they add: the `ID` of a nested item being added, so `ShipZoneAppliesToData` leaves
+  its `ID` and `ShipZoneConditionData` its `ZoneConditionID` optional.
 - **`ShortDesc`** is a Bool in the table and a string in every example ("Andorra"): a string.
 - **`ShipZoneConditionsModel`.** The table's link names it so; the model is `ShipZoneConditionModel`,
   which `ShipZoneConditionData` follows.
@@ -1237,9 +1263,10 @@ bare rule. Each class requires:
 | `ProductDiscountRulePutData` | `src/Data/Reference/Discount/` | `Name`, `ID` |
 | `DiscountLineData` | `src/Data/Reference/Discount/` | nothing; `OrderExceeds` when `DiscountType` is `FreeShipping` (`#[RequiredIf]`) |
 
-- **The PUT example** sends only the `ID`, `Name` and `DiscountLines`, so `IsActive` and `Type`, which
-  the table requires, are optional there. `ID` on a line is required in the table, but the POST
-  example sends none for a line it adds.
+- **The PUT example** sends only the `ID`, `Name` and `DiscountLines`, so `IsActive` and `Type`,
+  which the table requires, are optional there: `ProductDiscountRulePutData` is a partial update.
+  `ID` on a line is required in the table, but the POST example sends none for a line it adds: the
+  `ID` of a nested item being added, so `DiscountLineData` leaves it optional.
 - **`Type`** is a `DiscountRuleType` and a line's `DiscountType` a `DiscountLineType`, from the values
   the table lists.
 - **Examples.** The examples need no correction.
@@ -1251,12 +1278,15 @@ bare rule. Each class requires:
 | `ProductDealPostData` | `src/Data/Reference/Deals/` | `Name` |
 | `ProductDealPutData` | `src/Data/Reference/Deals/` | `Name`, `ID` |
 | `ProductDealDiscountData` | `src/Data/Reference/Deals/` | `DiscountType` (a `DiscountRuleType`), `IsOrderLevel` |
-| `ProductDealCustomerData`, `ProductDealTagData` and the four discount filters | `src/Data/Reference/Deals/` | nothing |
+| `ProductDealCustomerData`, `ProductDealTagData` | `src/Data/Reference/Deals/` | nothing |
+| `ProductDealDiscountBrandData`, `ProductDealDiscountCategoryData`, `ProductDealDiscountTagData` and `ProductDealDiscountProductData` | `src/Data/Reference/Deals/` | nothing; `Type`, and a product's `IsFamily`, on a write body (`#[Required]`) |
 
 - **What the examples drop.** The table requires `IsActive`, `AllowCoupons` and
-  `SingleCouponCodeUsage`, but the POST and PUT examples send none, so a body makes them optional.
-  The discount's brand, category, tag and product entries require a `Type` (and a product its
-  `IsFamily`), which no example sends, so those stay optional.
+  `SingleCouponCodeUsage`, but the POST and PUT examples send none, so the two bodies,
+  `ProductDealPostData` and `ProductDealPutData`, each a class of its own, leave `IsActive`,
+  `AllowCoupons` and `SingleCouponCodeUsage` optional. The discount's brand, category, tag and
+  product entries require a `Type` (and a product its `IsFamily`), which no example sends: they are
+  nullable, for the responses, and `#[Required]`, which only a write body checks.
 - **`CategoryID`** is sent by the examples for a discount's category, and is in no table.
 - **`BuyMore`** is listed twice in the Product Deal Discount table; it is one field.
 - **Examples.** The examples need no correction.
@@ -1292,7 +1322,7 @@ purchase and the advanced purchase embed too.
 
 | Class | Folder | Required |
 |---|---|---|
-| `PurchaseOrderData` (response) | `src/Data/Purchase/Order/` | `Status`, `Lines`, `TotalBeforeTax`, `Tax`, `Total` |
+| `PurchaseOrderData` (response) | `src/Data/Purchase/Order/` | `Status`, `Lines`, `TotalBeforeTax`, `Tax`, `Total`; `TaskID`, `CombineAdditionalCharges` and `Memo` on a write body (`#[Required]`) |
 | `PurchaseOrderPostData` | `src/Data/Purchase/Order/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `TaskID`, `CombineAdditionalCharges`, `Memo` |
 | `PurchaseOrderLineData` | `src/Data/Purchase/Order/` | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Total` |
 | `PurchaseAdditionalChargeData` | `src/Data/Other/` | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Total` |
@@ -1309,7 +1339,7 @@ Purchase Stock Line Model, which a purchase's `StockReceived` embeds too.
 
 | Class | Folder | Required |
 |---|---|---|
-| `PurchaseStockData` (response) | `src/Data/Purchase/Stock/` | `Status`, `Lines` |
+| `PurchaseStockData` (response) | `src/Data/Purchase/Stock/` | `Status`, `Lines`; `TaskID` on a write body (`#[Required]`) |
 | `PurchaseStockPostData` | `src/Data/Purchase/Stock/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `TaskID` |
 | `PurchaseStockLineData` | `src/Data/Purchase/Stock/` | `Date`, `Quantity`; and on a write body `Location` or `LocationID` (`#[RequiredWithout]`) |
 
@@ -1326,7 +1356,7 @@ deprecated: it supports only simple purchases. Each class requires:
 
 | Class | Folder | Required |
 |---|---|---|
-| `PurchaseInvoiceData` (response, and a purchase's `Invoice`) | `src/Data/Purchase/Invoice/` | `Status`, `Lines`, `InvoiceDate` |
+| `PurchaseInvoiceData` (response, and a purchase's `Invoice`) | `src/Data/Purchase/Invoice/` | `Status`, `Lines`, `InvoiceDate`; `TaskID`, `CombineAdditionalCharges` and `InvoiceDueDate` on a write body (`#[Required]`) |
 | `PurchaseInvoicePostData` | `src/Data/Purchase/Invoice/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `TaskID`, `CombineAdditionalCharges`, `InvoiceDate`, `InvoiceDueDate` |
 | `PurchaseInvoiceLineData` | `src/Data/Purchase/Invoice/` | `ProductID`, `SKU`, `Name`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Account`, `Total` |
 | `PurchaseInvoiceAdditionalChargeData` | `src/Data/Purchase/Invoice/` | `Description`, `Quantity`, `Price`, `Tax`, `TaxRule`, `Account` |
@@ -1347,7 +1377,7 @@ deprecated: it supports only simple purchases. Each class requires:
 
 | Class | Folder | Required |
 |---|---|---|
-| `PurchaseCreditNoteData` (response) | `src/Data/Purchase/CreditNote/` | `CreditNoteNumber`, `Status`, `Lines`, `Unstock`, `CreditNoteDate` |
+| `PurchaseCreditNoteData` (response) | `src/Data/Purchase/CreditNote/` | `CreditNoteNumber`, `Status`, `Lines`, `Unstock`, `CreditNoteDate`; `TaskID` and `CombineAdditionalCharges` on a write body (`#[Required]`) |
 | `PurchaseCreditNotePostData` | `src/Data/Purchase/CreditNote/` | `CreditNoteNumber`, `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `Unstock`, `TaskID`, `CombineAdditionalCharges`, `CreditNoteDate` |
 | `PurchaseUnStockLineData` | `src/Data/Other/` | `CardID`, `Quantity` |
 
@@ -1365,7 +1395,7 @@ because `ID`, `Type`, `DepositID`, `Amount` and `Account` are taken by different
 |---|---|---|
 | `PurchasePaymentData` (response) | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
 | `PurchasePaymentPostData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
-| `PurchasePaymentPutData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `ID` |
+| `PurchasePaymentPutData` | `src/Data/Purchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `ID`, `Amount`, `Account` |
 
 `Type` is a string, and `DepositID`, which takes a payment from a supplier deposit and goes only
 with `Type` `Payment`, is on the response and the POST body. `DateCreated` is on every class and
@@ -1377,7 +1407,7 @@ POST class because only POST requires `TaskID` and limits `Status` (see
 
 | Class | Folder | Required |
 |---|---|---|
-| `PurchaseManualJournalData` (response, and a purchase's `ManualJournals`) | `src/Data/Purchase/ManualJournal/` | `Status` |
+| `PurchaseManualJournalData` (response, and a purchase's `ManualJournals`) | `src/Data/Purchase/ManualJournal/` | `Status`; `TaskID` on a write body (`#[Required]`) |
 | `PurchaseManualJournalPostData` | `src/Data/Purchase/ManualJournal/` | `Status` (`DRAFT` or `AUTHORISED`), `TaskID` |
 | `PurchaseManualJournalLineData` | `src/Data/Purchase/ManualJournal/` | `Amount`, `Date`, `Debit`, `Credit` |
 
@@ -1396,8 +1426,8 @@ advanced and service purchases. Each class requires:
 | `AdvancedPurchaseData` (response) | `src/Data/AdvancedPurchase/` | `Location`, `Approach` |
 | `AdvancedPurchasePostData` | `src/Data/AdvancedPurchase/` | `Location`, `Approach`; and `Supplier` or `SupplierID` (`#[RequiredWithout]`) |
 | `AdvancedPurchasePutData` | `src/Data/AdvancedPurchase/` | `Location`, `ID`; and `Supplier` or `SupplierID` (`#[RequiredWithout]`) |
-| `AdvancedPurchaseInvoiceData` | `src/Data/AdvancedPurchase/Invoice/` | `Status`, `Lines`, `TaskID` |
-| `AdvancedPurchaseCreditNoteData` | `src/Data/AdvancedPurchase/CreditNote/` | `CreditNoteNumber`, `Status`, `Lines`, `Unstock`, `TaskID` |
+| `AdvancedPurchaseInvoiceData` | `src/Data/AdvancedPurchase/Invoice/` | `Status`, `Lines`, `TaskID`; `InvoiceDate` and `InvoiceDueDate` on a write body (`#[Required]`) |
+| `AdvancedPurchaseCreditNoteData` | `src/Data/AdvancedPurchase/CreditNote/` | `CreditNoteNumber`, `Status`, `Lines`, `Unstock`, `TaskID`; `CreditNoteDate` on a write body (`#[Required]`) |
 | `AdvancedPurchaseManualJournalData` | `src/Data/AdvancedPurchase/ManualJournal/` | `Status`, `TaskID` |
 | `PurchasePaymentLineData` | `src/Data/Purchase/Payment/` | none |
 
@@ -1421,7 +1451,7 @@ Advanced Purchase Stock Model, with a class per verb because `PurchaseID`, `Task
 | Class | Folder | Required |
 |---|---|---|
 | `AdvancedPurchaseStocksData` (response) | `src/Data/AdvancedPurchase/Stock/` | `PurchaseID` |
-| `AdvancedPurchaseStockData` | `src/Data/AdvancedPurchase/Stock/` | `Status`, `Lines`, `TaskID` |
+| `AdvancedPurchaseStockData` | `src/Data/AdvancedPurchase/Stock/` | `Status`, `Lines`, `TaskID`; `PurchaseID` on a write body (`#[Required]`) |
 | `AdvancedPurchaseStockPostData` | `src/Data/AdvancedPurchase/Stock/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID` |
 | `AdvancedPurchaseStockPutData` | `src/Data/AdvancedPurchase/Stock/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID`, `TaskID` |
 | `AdvancedPurchaseStockLineData` | `src/Data/AdvancedPurchase/Stock/` | `Date`, `Quantity` |
@@ -1438,7 +1468,7 @@ Advanced Purchase Put Away Model, with a response class and a POST class because
 | Class | Folder | Required |
 |---|---|---|
 | `AdvancedPurchasePutAwaysData` (response) | `src/Data/AdvancedPurchase/PutAway/` | `PurchaseID` |
-| `AdvancedPurchasePutAwayData` | `src/Data/AdvancedPurchase/PutAway/` | `Status`, `Lines`, `TaskID` |
+| `AdvancedPurchasePutAwayData` | `src/Data/AdvancedPurchase/PutAway/` | `Status`, `Lines`, `TaskID`; `PurchaseID` on a write body (`#[Required]`) |
 | `AdvancedPurchasePutAwayPostData` | `src/Data/AdvancedPurchase/PutAway/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID` |
 | `AdvancedPurchasePutAwayLineData` | `src/Data/AdvancedPurchase/PutAway/` | `Date`, `Quantity`; and `Location` or `LocationID` on a write body (`#[RequiredWithout]`) |
 
@@ -1487,7 +1517,7 @@ Each class requires what its `purchase/payment` twin does:
 |---|---|---|
 | `AdvancedPurchasePaymentData` (response) | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
 | `AdvancedPurchasePaymentPostData` | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Type`, `Amount`, `Account` |
-| `AdvancedPurchasePaymentPutData` | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `ID` |
+| `AdvancedPurchasePaymentPutData` | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `ID`, `Amount`, `Account` |
 
 The response adds the `PurchaseID` every example carries, as an optional GUID. A payment needs an
 authorised invoice, and a refund an authorised credit note. The reference's examples need no
@@ -1565,14 +1595,15 @@ requires:
 | `StockTransferPostData` | `src/Data/StockTransfer/` | the same; and `From` or `FromLocation`, `To` or `ToLocation` (`#[RequiredWithout]`), `InTransitAccount` and `DepartureDate` when `Status` is `IN TRANSIT` (`#[RequiredIf]`) |
 | `StockTransferPutData` | `src/Data/StockTransfer/` | the same, and `TaskID` |
 | `StockTransferLineData` | `src/Data/StockTransfer/` | `TransferQuantity`; and `ProductID` or `SKU` |
-| `StockTransferOrderData` | `src/Data/StockTransfer/Order/` | `Status` |
+| `StockTransferOrderData` | `src/Data/StockTransfer/Order/` | `Status`, `Lines`; `TaskID` on a write body (`#[Required]`) |
 | `StockTransferOrderPostData` | `src/Data/StockTransfer/Order/` | `TaskID`, `Status`, `Lines` |
 | `StockTransferOrderLineData` | `src/Data/StockTransfer/Order/` | `TransferQuantity`; and `ProductID` or `SKU` |
 | `StockTransferListData` | `src/Data/StockTransferList/` | nothing |
 
 - **One order class.** The reference names both the `stockTransfer/order` table and the Stock
-  Transfer Order Model `StockTransferOrderData`, and they are the same two fields and lines: one class
-  serves both, with `TaskID` and `LastModifiedOn` optional, since the nested `Order` carries neither.
+  Transfer Order Model `StockTransferOrderData`, and they are the same two fields and lines: one
+  class serves both, with `Lines` required, as every example sends them, `TaskID` nullable and
+  `#[Required]` and `LastModifiedOn` optional, since the nested `Order` carries neither.
 - **`ManualJournals`.** All six transfer examples send `"ManualJournals": []`, in no table and with
   no model. It stays a list of whatever the reference puts in it.
 - **PUT request example.** `names.py example` does not find it (the blueprint's `PUT` request is
@@ -1678,12 +1709,12 @@ classes are in `src/Data/Crm/<Resource>/`, and each requires:
 | `WorkflowData`, `WorkflowPostData` | `Name`, `EntityType` (a `TaskEntityType`), `DueDaysType` (a `WorkflowDueDaysType`) |
 | `WorkflowStepData` | `Name`, `SkipHoliday` (a `WorkflowSkipHoliday`) |
 
-Each PUT class also requires `ID`.
+Each PUT class also requires `ID`, and so do the response classes `OpportunityData`, `TaskData`, `TaskCategoryData` and `WorkflowData`, as every response example sends it. `LeadData`'s `ID` is nullable and `#[Required]`, as the lead POST and PUT response examples leave it out.
 
 - **PUT examples without an `ID`.** The lead and opportunity PUT examples send no `ID`, but the table
   requires it on a PUT, so the class does and the fixtures are given one.
 - **Lead responses without an `ID`.** The lead POST and PUT response examples carry no `ID` either;
-  `LeadData` takes it as optional, as every response class does.
+  `LeadData` takes it as nullable and `#[Required]`, which only a write body checks.
 - **`PaymentTerm`.** The table says int; the examples send the name, `"COD"`, so it is a string.
 - **`ProductSku`.** The line's table writes `ProductSKU` and the examples `ProductSku`; the class has the
   examples' key.
@@ -1691,8 +1722,10 @@ Each PUT class also requires `ID`.
   `IN PROGRESS`, so it stays a string. `TaskStatus` lists no values and is one too.
 - **`Contacts` and `Addresses`.** A lead's are the customer's `CustomerContactData` and
   `CustomerAddressData`, as the decision says.
-- **Workflow steps.** `ID` is in responses only, so a step takes it as optional. `StartTime` and `EndTime`
-  are strings (`hh:mm:ss`), not dates.
+- **Workflow steps.** `ID` is in responses only, so a step, whose `ID` is that of a nested item
+  being added, takes it as optional: `WorkflowStepData` leaves its `ID` optional, and
+  `OpportunityAdditionalChargeData` does the same. `StartTime` and `EndTime` are strings
+  (`hh:mm:ss`), not dates.
 - **Task category and workflow GET.** Their section's URI says `/crm/task`, copied from the Task
   section; the requests follow the heading, `crm/taskcategory` and `crm/workflow`. Neither has a GET
   response example in the blueprint's parser, so the fixtures are read from the blueprint by hand.

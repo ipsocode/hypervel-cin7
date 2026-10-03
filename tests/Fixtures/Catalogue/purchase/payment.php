@@ -60,11 +60,11 @@ return [
         ],
         PutPurchasePayment::class . ' with data' => [
             PutPurchasePayment::class,
-            [fn (): PurchasePaymentPutData => PurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0])],
+            [fn (): PurchasePaymentPutData => PurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0])],
             Method::PUT,
             '/ExternalApi/v2/purchase/payment',
             [],
-            ['ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0],
+            ['ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0],
         ],
     ],
     'resources' => [
@@ -101,12 +101,12 @@ return [
             ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5],
         ],
         'purchase payment put with data' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->purchase()->payment()->put(PurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0, 'Reference' => 'PAY-1'])),
+            fn (Cin7Connector $cin7): mixed => $cin7->purchase()->payment()->put(PurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0, 'Reference' => 'PAY-1'])),
             PutPurchasePayment::class,
             Method::PUT,
             '/ExternalApi/v2/purchase/payment',
             [],
-            ['ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Reference' => 'PAY-1', 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0],
+            ['ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'Reference' => 'PAY-1', 'TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0],
         ],
         'purchase payment delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->payment()->delete('d3d96860-648f-462a-9e19-eb61e03da136', deleteAllocation: false),
@@ -130,12 +130,14 @@ return [
     'missing' => [
         'purchase payment POST without Account' => [PurchasePaymentPostData::class, Arr::except(Cin7Payloads::load('purchase/payment', 'post.request'), 'Account')],
         'purchase payment PUT without ID' => [PurchasePaymentPutData::class, Arr::except(Cin7Payloads::load('purchase/payment', 'put.request'), 'ID')],
+        'purchase payment PUT without Amount' => [PurchasePaymentPutData::class, Arr::except(Cin7Payloads::load('purchase/payment', 'put.request'), 'Amount')],
+        'purchase payment PUT without Account' => [PurchasePaymentPutData::class, Arr::except(Cin7Payloads::load('purchase/payment', 'put.request'), 'Account')],
         'purchase payment without TaskID' => [PurchasePaymentData::class, Arr::except(Cin7Payloads::load('purchase/payment', 'get.response')[0], 'TaskID')],
     ],
     'required' => [
         PurchasePaymentData::class => ['TaskID', 'DatePaid', 'CurrencyRate', 'Type', 'Amount', 'Account'],
         PurchasePaymentPostData::class => ['TaskID', 'DatePaid', 'CurrencyRate', 'Type', 'Amount', 'Account'],
-        PurchasePaymentPutData::class => ['TaskID', 'DatePaid', 'CurrencyRate', 'ID'],
+        PurchasePaymentPutData::class => ['TaskID', 'DatePaid', 'CurrencyRate', 'ID', 'Amount', 'Account'],
     ],
     'omitted' => [
         PostPurchasePayment::class => [

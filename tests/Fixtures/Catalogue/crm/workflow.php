@@ -41,6 +41,7 @@ return [
         WorkflowPutData::class => [WorkflowPutData::class, Cin7Payloads::load('crm/workflow', 'put.request')],
     ],
     'missing' => [
+        'Workflow without ID' => [WorkflowData::class, Arr::except(Cin7Payloads::load('crm/workflow', 'get.response')['Workflows'][0], 'ID')],
         'Workflow POST without Name' => [WorkflowPostData::class, Arr::except(Cin7Payloads::load('crm/workflow', 'post.request'), 'Name')],
         'Workflow POST without EntityType' => [WorkflowPostData::class, Arr::except(Cin7Payloads::load('crm/workflow', 'post.request'), 'EntityType')],
         'Workflow POST without DueDaysType' => [WorkflowPostData::class, Arr::except(Cin7Payloads::load('crm/workflow', 'post.request'), 'DueDaysType')],
@@ -51,7 +52,7 @@ return [
         'Workflow without Name' => [WorkflowData::class, Arr::except(Cin7Payloads::load('crm/workflow', 'get.response')['Workflows'][0], 'Name')],
     ],
     'required' => [
-        WorkflowData::class => ['Name', 'EntityType', 'DueDaysType'],
+        WorkflowData::class => ['Name', 'EntityType', 'DueDaysType', 'ID'],
         WorkflowPostData::class => ['Name', 'EntityType', 'DueDaysType'],
         WorkflowPutData::class => ['Name', 'EntityType', 'DueDaysType', 'ID'],
         WorkflowStepData::class => ['Name', 'SkipHoliday'],
