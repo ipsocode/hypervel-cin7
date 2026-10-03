@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\Brand;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Brand\BrandData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET ref/brand` — the list envelope is keyed `BrandList`.
  *
- * @extends ListRequest<list<BrandData>>
+ * @extends ListRequest<BrandData>
  */
 final class GetBrand extends ListRequest
 {
     protected string $listKey = 'BrandList';
+
+    protected string $item = BrandData::class;
 
     public function __construct(
         ?int $page = null,
@@ -38,16 +39,5 @@ final class GetBrand extends ListRequest
         return [
             'Name' => $this->name,
         ];
-    }
-
-    /**
-     * @return list<BrandData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): BrandData => BrandData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

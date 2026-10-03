@@ -85,7 +85,7 @@ Cin7 wraps a list in an envelope:
   in `List`.
 
 Each `ListRequest` names that key in `$listKey`, and the paginator reads a
-page's items from it through the request's `mapPaginatedResponseItems()`. A
+page's items from it through the request's `mapPaginatedResponseItems()`, which `dto()` reads too. A
 response without the key yields no items.
 
 No request in this package needs it, but a paginatable request that does not

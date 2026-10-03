@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Crm\Workflow;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Crm\Workflow\WorkflowData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET crm/workflow` — the list envelope is keyed `Workflows`.
  *
- * @extends ListRequest<list<WorkflowData>>
+ * @extends ListRequest<WorkflowData>
  */
 final class GetCrmWorkflow extends ListRequest
 {
     protected string $listKey = 'Workflows';
+
+    protected string $item = WorkflowData::class;
 
     public function __construct(
         ?int $page = null,
@@ -40,16 +41,5 @@ final class GetCrmWorkflow extends ListRequest
             'ID' => $this->id,
             'Name' => $this->name,
         ];
-    }
-
-    /**
-     * @return list<WorkflowData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): WorkflowData => WorkflowData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

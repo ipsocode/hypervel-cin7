@@ -8,9 +8,12 @@ use BackedEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
+use Hypervel\Data\Data;
+use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Exceptions\Request\FatalRequestException;
 use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Saloon\Http\Request;
+use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 
 /**
@@ -60,6 +63,23 @@ abstract class Cin7Request extends Request
                 default => $value,
             },
             array_filter($values, static fn (mixed $value): bool => $value !== null),
+        );
+    }
+
+    /**
+     * The items of a list response as data objects of this class, each holding the response.
+     *
+     * @template TItem of Data&WithResponse
+     *
+     * @param class-string<TItem> $class
+     * @param array<array-key, mixed> $items
+     * @return list<TItem>
+     */
+    protected function listOf(string $class, Response $response, array $items): array
+    {
+        return array_map(
+            static fn (array $item): Data&WithResponse => $class::from($item)->setResponse($response),
+            array_values($items),
         );
     }
 }

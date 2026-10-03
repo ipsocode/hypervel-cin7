@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Supplier;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Supplier\SupplierData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET supplier` — the list envelope is keyed `SupplierList`.
  *
- * @extends ListRequest<list<SupplierData>>
+ * @extends ListRequest<SupplierData>
  */
 final class GetSupplier extends ListRequest
 {
     protected string $listKey = 'SupplierList';
+
+    protected string $item = SupplierData::class;
 
     public function __construct(
         ?int $page = null,
@@ -45,16 +46,5 @@ final class GetSupplier extends ListRequest
             'ModifiedSince' => $this->modifiedSince,
             'IncludeDeprecated' => $this->includeDeprecated,
         ];
-    }
-
-    /**
-     * @return list<SupplierData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): SupplierData => SupplierData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

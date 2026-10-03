@@ -28,9 +28,6 @@ final class PutCrmLead extends WriteRequest
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): LeadData => LeadData::from($item)->setResponse($response),
-            array_values($response->json('LeadList')),
-        );
+        return $this->listOf(LeadData::class, $response, $response->json('LeadList'));
     }
 }

@@ -38,8 +38,10 @@ def optional(t):
     return f'{t}|null' if '|' in t else f'?{t}'
 
 
-def imports(params, base, dto_fq, extra=()):
-    out = {f'Ipsocode\\Cin7\\Data\\{dto_fq}', f'Ipsocode\\Cin7\\Requests\\{base}', 'Hypervel\\Saloon\\Http\\Response', *extra}
+def imports(params, base, dto_fq, extra=(), response=True):
+    out = {f'Ipsocode\\Cin7\\Data\\{dto_fq}', f'Ipsocode\\Cin7\\Requests\\{base}', *extra}
+    if response:
+        out.add('Hypervel\\Saloon\\Http\\Response')
     for p in params:
         if p[1] == 'date':
             out.add('DateTimeInterface')
@@ -137,17 +139,19 @@ def listing(e):
     dto = e['dto'].rsplit('\\', 1)[1]
     ctor = '\n'.join(f"        protected readonly {optional(php_type(p[1]))} ${bp.arg_name(p[0])} = null," for p in params)
     filters = '\n'.join(f"            '{p[0]}' => $this->{bp.arg_name(p[0])}," for p in params)
-    uses = imports(params, 'ListRequest', e['dto'])
+    uses = imports(params, 'ListRequest', e['dto'], response=False)
     return f'''{uses}
 
 /**
 {doc(e['doc'])}
  *
- * @extends ListRequest<list<{dto}>>
+ * @extends ListRequest<{dto}>
  */
 final class {e['class']} extends ListRequest
 {{
     protected string $listKey = '{e['list_key']}';
+
+    protected string $item = {dto}::class;
 
     public function __construct(
         ?int $page = null,
@@ -170,17 +174,6 @@ final class {e['class']} extends ListRequest
         return [
 {filters}
         ];
-    }}
-
-    /**
-     * @return list<{dto}>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {{
-        return array_map(
-            static fn (array $item): {dto} => {dto}::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }}
 }}
 '''

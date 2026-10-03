@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests;
 
+use Hypervel\Data\Data;
+use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\MapPaginatedResponseItems;
@@ -15,8 +17,8 @@ use Ipsocode\Cin7\PageDefaults;
  *
  * @see docs/requests.md
  *
- * @template TDto
- * @extends Cin7Request<TDto>
+ * @template TItem of Data&WithResponse
+ * @extends Cin7Request<list<TItem>>
  */
 abstract class ListRequest extends Cin7Request implements MapPaginatedResponseItems, Paginatable
 {
@@ -26,6 +28,13 @@ abstract class ListRequest extends Cin7Request implements MapPaginatedResponseIt
      * The envelope key the list items sit under, e.g. `CustomerList`.
      */
     protected string $listKey;
+
+    /**
+     * The data class of one list item.
+     *
+     * @var class-string<TItem>
+     */
+    protected string $item;
 
     /**
      * Without a page or limit the request asks for page 1 of 100; the paginator sets both for
@@ -53,6 +62,14 @@ abstract class ListRequest extends Cin7Request implements MapPaginatedResponseIt
         return PageDefaults::apply($this->queryValues(
             $this->filters() + ['page' => $this->page, 'limit' => $this->limit],
         ));
+    }
+
+    /**
+     * @return list<TItem>
+     */
+    public function createDtoFromResponse(Response $response): array
+    {
+        return $this->listOf($this->item, $response, $this->mapPaginatedResponseItems($response));
     }
 
     /**
