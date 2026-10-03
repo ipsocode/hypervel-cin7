@@ -8,6 +8,7 @@ use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentPutData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAuthorisePostData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderComponentData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderOperationAttachmentData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderOperationData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderOperationNoteData;
@@ -105,7 +106,11 @@ return [
         'ProductionOrderOperationData without TotalCycleTime' => [ProductionOrderOperationData::class, Arr::except(Cin7Payloads::load('production/order', 'get.response')['ProductionOrders'][0]['Operations'][0], 'TotalCycleTime')],
         'ProductionOrderPostData without ProductID' => [ProductionOrderPostData::class, Arr::except(Cin7Payloads::load('production/order', 'post.request'), 'ProductID')],
         'ProductionOrderPostData without LocationID' => [ProductionOrderPostData::class, Arr::except(Cin7Payloads::load('production/order', 'post.request'), 'LocationID')],
+        'ProductionOrderData without ProductionOrderID' => [ProductionOrderData::class, Arr::except(Cin7Payloads::load('production/order', 'get.response')['ProductionOrders'][0], 'ProductionOrderID')],
+        'ProductionOrderData without ProductID' => [ProductionOrderData::class, Arr::except(Cin7Payloads::load('production/order', 'get.response')['ProductionOrders'][0], 'ProductID')],
+        'ProductionOrderData without LocationID' => [ProductionOrderData::class, Arr::except(Cin7Payloads::load('production/order', 'get.response')['ProductionOrders'][0], 'LocationID')],
         'ProductionOrderPutData without ProductionOrderID' => [ProductionOrderPutData::class, Arr::except(Cin7Payloads::load('production/order', 'put.request'), 'ProductionOrderID')],
+        'ProductionOrderPutData without LocationID' => [ProductionOrderPutData::class, Arr::except(Cin7Payloads::load('production/order', 'put.request'), 'LocationID')],
         'ProductionOrderAuthorisePostData without productionOrderID' => [ProductionOrderAuthorisePostData::class, Arr::except(Cin7Payloads::load('production/order/authorise', 'post.request'), 'productionOrderID')],
         'ProductionOrderReleasePostData without productionOrderID' => [ProductionOrderReleasePostData::class, Arr::except(Cin7Payloads::load('production/order/release', 'post.request'), 'productionOrderID')],
         'ProductionOrderUndoPostData without productionOrderID' => [ProductionOrderUndoPostData::class, Arr::except(Cin7Payloads::load('production/order/undo', 'post.request'), 'productionOrderID')],
@@ -119,7 +124,8 @@ return [
         ProductionOrderResourceData::class => ['Position', 'Quantity', 'CostCalculationType'],
         ProductionOrderOperationData::class => ['Order', 'Name', 'CycleTime', 'UnitsPerCycle', 'TotalCycleTime'],
         ProductionOrderPostData::class => ['ProductID', 'LocationID'],
-        ProductionOrderPutData::class => ['ProductionOrderID'],
+        ProductionOrderData::class => ['ProductionOrderID', 'ProductID', 'LocationID'],
+        ProductionOrderPutData::class => ['ProductionOrderID', 'LocationID'],
         ProductionOrderAuthorisePostData::class => ['productionOrderID'],
         ProductionOrderReleasePostData::class => ['productionOrderID'],
         ProductionOrderUndoPostData::class => ['productionOrderID'],

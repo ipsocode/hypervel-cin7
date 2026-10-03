@@ -13,7 +13,8 @@ use Ipsocode\Cin7\Enums\CapacityCalculationType;
 
 /**
  * The body of `production/order` PUT: the writable fields of the ProductionOrder table, which
- * requires the `ProductionOrderID`. The POST body is `ProductionOrderPostData`.
+ * requires the `ProductionOrderID` and `LocationID`. The table requires the `ProductID` too, but
+ * the PUT example sends none, so it is optional here. The POST body is `ProductionOrderPostData`.
  *
  * @see docs/data.md
  */
@@ -26,9 +27,9 @@ final class ProductionOrderPutData extends Data
         #[Uuid]
         public string $ProductionOrderID,
         #[Uuid]
-        public ?string $ProductID = null,
+        public string $LocationID,
         #[Uuid]
-        public ?string $LocationID = null,
+        public ?string $ProductID = null,
         public ?string $ProductSKU = null,
         public ?string $LocationName = null,
         public string|int|null $SourceName = null,

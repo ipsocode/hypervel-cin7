@@ -137,9 +137,9 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetFinishedGoodsPick` | **`taskId`** |
 | `GetProductionFactoryCalendar` | **`year`** |
 | `GetProductProductionBom` | **`productId`**, `returnAttachmentsContent` |
-| `DeleteProductProductionBom` | **`productId`**, **`bomid`** |
+| `DeleteProductProductionBom` | **`productId`**, **`bomId`** |
 | `GetProductFamilyProductionBom` | **`productFamilyId`**, `returnAttachmentsContent` |
-| `DeleteProductFamilyProductionBom` | **`productFamilyId`**, **`bomid`** |
+| `DeleteProductFamilyProductionBom` | **`productFamilyId`**, **`bomId`** |
 | `GetProductionOrder` | **`productionOrderId`**, `returnAttachmentsContent` |
 | `PostProductionOrder` | `recalculateDates` |
 | `PutProductionOrder` | `allowRecalculateDates`, `allowRecalculateCyclesAndQuantities` |
@@ -154,7 +154,7 @@ The arguments of each request; a required one is in bold, and an enum's type fol
 | `GetProductionResourceList` | `page`, `limit`, `name`, `onlyActive` |
 | `GetProductionResource` | **`resourceId`**, `includeAttachments` |
 | `DeleteProductionResource` | **`resourceId`** |
-| `GetProductionSuspendReason` | `page`, `limit`, `workcenterId` |
+| `GetProductionSuspendReason` | `page`, `limit`, `workCenterId` |
 | `GetProductionWorkCenters` | `page`, `limit`, `name` |
 | `DeleteProductionWorkCenters` | **`workCenterId`** |
 | `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |

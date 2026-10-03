@@ -56,9 +56,9 @@ final class ProductionBomResource extends BaseResource
     /**
      * Deletes a production BOM of a product; the response is not documented.
      */
-    public function deleteProduct(string $productId, string $bomid): Response
+    public function deleteProduct(string $productId, string $bomId): Response
     {
-        return $this->connector->send(new DeleteProductProductionBom($productId, $bomid));
+        return $this->connector->send(new DeleteProductProductionBom($productId, $bomId));
     }
 
     /**
@@ -90,8 +90,8 @@ final class ProductionBomResource extends BaseResource
     /**
      * Deletes a production BOM of a product family; the response is not documented.
      */
-    public function deleteProductFamily(string $productFamilyId, string $bomid): Response
+    public function deleteProductFamily(string $productFamilyId, string $bomId): Response
     {
-        return $this->connector->send(new DeleteProductFamilyProductionBom($productFamilyId, $bomid));
+        return $this->connector->send(new DeleteProductFamilyProductionBom($productFamilyId, $bomId));
     }
 }

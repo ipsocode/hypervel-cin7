@@ -19,7 +19,7 @@ final class DeleteProductProductionBom extends Cin7Request
 
     public function __construct(
         protected readonly string $productId,
-        protected readonly string $bomid,
+        protected readonly string $bomId,
     ) {
         parent::__construct();
     }
@@ -36,7 +36,7 @@ final class DeleteProductProductionBom extends Cin7Request
     {
         return $this->queryValues([
             'ProductID' => $this->productId,
-            'BOMID' => $this->bomid,
+            'BOMID' => $this->bomId,
         ]);
     }
 }

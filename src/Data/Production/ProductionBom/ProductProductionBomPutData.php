@@ -11,8 +11,8 @@ use Hypervel\Data\Data;
 
 /**
  * The body of `production/productionBOM` PUT for a product: one BOM, which requires its `BOMID`,
- * with the `ProductID` it belongs to. The PUT example sends no `BufferPercent`, `Name` or
- * `IsDefault`, so they are optional here.
+ * `OutputQuantity` and `Version`, with the `ProductID` it belongs to. The PUT example sends no
+ * `BufferPercent`, `Name` or `IsDefault`, so they are optional here.
  *
  * @see docs/data.md
  */
@@ -24,14 +24,14 @@ final class ProductProductionBomPutData extends Data
     public function __construct(
         #[Uuid]
         public string $BOMID,
+        public float $OutputQuantity,
+        public int $Version,
         #[Uuid]
         public ?string $ProductID = null,
-        public ?float $OutputQuantity = null,
         public ?float $BufferPercent = null,
         public ?string $InstructionUrl = null,
         public ?bool $IgnoreCumulativeLeadTime = null,
         public ?int $ComponentProductionLeadTime = null,
-        public ?int $Version = null,
         #[Max(256)]
         public ?string $Name = null,
         public ?bool $IsDefault = null,

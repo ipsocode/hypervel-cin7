@@ -13,7 +13,8 @@ use Ipsocode\Cin7\Enums\CapacityCalculationType;
 
 /**
  * ProductionOrder, a production order, the response of `production/order`, with its operations and
- * source tasks. `OrderStatus` and `Status` are strings: the examples send `AUTHORISED`, `ACTIVE`
+ * source tasks. It requires the `ProductionOrderID`, `ProductID` and `LocationID` its table does,
+ * which every response sends. `OrderStatus` and `Status` are strings: the examples send `AUTHORISED`, `ACTIVE`
  * and others outside the listed values. The documented keys `ProductionOrderOperations`,
  * `ProductionRuns` and `ProductionOrderDeliveryTo` are `Operations`, and `Deliveries` in the
  * examples; both are modelled, and the runs and deliveries are lists of whatever the reference
@@ -33,14 +34,14 @@ final class ProductionOrderData extends Data
      */
     public function __construct(
         #[Uuid]
-        public ?string $ProductionOrderID = null,
+        public string $ProductionOrderID,
         #[Uuid]
-        public ?string $ProductID = null,
+        public string $ProductID,
+        #[Uuid]
+        public string $LocationID,
         public ?string $ProductSKU = null,
         public ?string $ProductName = null,
         public ?string $OrderNumber = null,
-        #[Uuid]
-        public ?string $LocationID = null,
         public ?string $LocationName = null,
         public ?string $CostingMethod = null,
         public ?string $WarehouseName = null,
