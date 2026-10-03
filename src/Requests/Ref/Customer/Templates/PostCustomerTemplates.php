@@ -28,9 +28,6 @@ final class PostCustomerTemplates extends WriteRequest
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): CustomerDefaultTemplateData => CustomerDefaultTemplateData::from($item)->setResponse($response),
-            array_values($response->json('CustomerTemplates')),
-        );
+        return $this->listOf(CustomerDefaultTemplateData::class, $response, $response->json('CustomerTemplates'));
     }
 }

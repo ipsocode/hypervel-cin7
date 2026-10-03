@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\SaleList;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Enums\OrderStatus;
 use Ipsocode\Cin7\Enums\PackingStatus;
@@ -18,11 +17,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET saleList` — the list envelope is keyed `SaleList`.
  *
- * @extends ListRequest<list<SaleListData>>
+ * @extends ListRequest<SaleListData>
  */
 final class GetSaleList extends ListRequest
 {
     protected string $listKey = 'SaleList';
+
+    protected string $item = SaleListData::class;
 
     public function __construct(
         ?int $page = null,
@@ -75,16 +76,5 @@ final class GetSaleList extends ListRequest
             'ReadyForShipping' => $this->readyForShipping,
             'OrderLocationID' => $this->orderLocationId,
         ];
-    }
-
-    /**
-     * @return list<SaleListData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): SaleListData => SaleListData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

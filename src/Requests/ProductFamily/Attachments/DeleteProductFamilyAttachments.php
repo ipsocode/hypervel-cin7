@@ -46,9 +46,6 @@ final class DeleteProductFamilyAttachments extends Cin7Request
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): AttachmentLineData => AttachmentLineData::from($item)->setResponse($response),
-            array_values($response->json()),
-        );
+        return $this->listOf(AttachmentLineData::class, $response, $response->json());
     }
 }

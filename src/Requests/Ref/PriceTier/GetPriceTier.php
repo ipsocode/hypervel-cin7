@@ -29,9 +29,6 @@ final class GetPriceTier extends Cin7Request
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): PriceTierData => PriceTierData::from($item)->setResponse($response),
-            array_values($response->json('PriceTiers') ?? []),
-        );
+        return $this->listOf(PriceTierData::class, $response, $response->json('PriceTiers') ?? []);
     }
 }

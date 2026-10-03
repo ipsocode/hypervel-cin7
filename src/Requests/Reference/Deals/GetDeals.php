@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Reference\Deals;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Reference\Deals\ProductDealData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET reference/deals` — the list envelope is keyed `Deals`.
  *
- * @extends ListRequest<list<ProductDealData>>
+ * @extends ListRequest<ProductDealData>
  */
 final class GetDeals extends ListRequest
 {
     protected string $listKey = 'Deals';
+
+    protected string $item = ProductDealData::class;
 
     public function __construct(
         ?int $page = null,
@@ -40,16 +41,5 @@ final class GetDeals extends ListRequest
             'ID' => $this->id,
             'Search' => $this->search,
         ];
-    }
-
-    /**
-     * @return list<ProductDealData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): ProductDealData => ProductDealData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

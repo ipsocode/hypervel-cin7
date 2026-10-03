@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\Customer\Templates;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Customer\Templates\CustomerDefaultTemplateData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET ref/customer/templates` — the list envelope is keyed `CustomerTemplates` and carries no `Total`.
  *
- * @extends ListRequest<list<CustomerDefaultTemplateData>>
+ * @extends ListRequest<CustomerDefaultTemplateData>
  */
 final class GetCustomerTemplates extends ListRequest
 {
     protected string $listKey = 'CustomerTemplates';
+
+    protected string $item = CustomerDefaultTemplateData::class;
 
     public function __construct(
         ?int $page = null,
@@ -38,16 +39,5 @@ final class GetCustomerTemplates extends ListRequest
         return [
             'CustomerId' => $this->customerId,
         ];
-    }
-
-    /**
-     * @return list<CustomerDefaultTemplateData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): CustomerDefaultTemplateData => CustomerDefaultTemplateData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

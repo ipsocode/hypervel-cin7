@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\PaymentTerm;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\PaymentTerm\PaymentTermData;
 use Ipsocode\Cin7\Enums\PaymentTermMethod;
 use Ipsocode\Cin7\Requests\ListRequest;
@@ -12,11 +11,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET ref/paymentterm` — the list envelope is keyed `PaymentTermList`.
  *
- * @extends ListRequest<list<PaymentTermData>>
+ * @extends ListRequest<PaymentTermData>
  */
 final class GetPaymentTerm extends ListRequest
 {
     protected string $listKey = 'PaymentTermList';
+
+    protected string $item = PaymentTermData::class;
 
     public function __construct(
         ?int $page = null,
@@ -47,16 +48,5 @@ final class GetPaymentTerm extends ListRequest
             'IsActive' => $this->isActive,
             'IsDefault' => $this->isDefault,
         ];
-    }
-
-    /**
-     * @return list<PaymentTermData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): PaymentTermData => PaymentTermData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

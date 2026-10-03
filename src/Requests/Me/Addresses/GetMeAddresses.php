@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Me\Addresses;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Me\Addresses\MeAddressData;
 use Ipsocode\Cin7\Enums\AddressType;
 use Ipsocode\Cin7\Requests\ListRequest;
@@ -12,11 +11,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET me/addresses` — the list envelope is keyed `MeAddressesList`.
  *
- * @extends ListRequest<list<MeAddressData>>
+ * @extends ListRequest<MeAddressData>
  */
 final class GetMeAddresses extends ListRequest
 {
     protected string $listKey = 'MeAddressesList';
+
+    protected string $item = MeAddressData::class;
 
     public function __construct(
         ?int $page = null,
@@ -49,16 +50,5 @@ final class GetMeAddresses extends ListRequest
             'StateProvince' => $this->stateProvince,
             'CitySuburb' => $this->citySuburb,
         ];
-    }
-
-    /**
-     * @return list<MeAddressData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): MeAddressData => MeAddressData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

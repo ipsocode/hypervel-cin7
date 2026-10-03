@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\FinishedGoodsList;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\FinishedGoodsList\FinishedGoodsListData;
 use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
 use Ipsocode\Cin7\Requests\ListRequest;
@@ -12,11 +11,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET finishedGoodsList`, the list envelope is keyed `FinishedGoods`.
  *
- * @extends ListRequest<list<FinishedGoodsListData>>
+ * @extends ListRequest<FinishedGoodsListData>
  */
 final class GetFinishedGoodsList extends ListRequest
 {
     protected string $listKey = 'FinishedGoods';
+
+    protected string $item = FinishedGoodsListData::class;
 
     public function __construct(
         ?int $page = null,
@@ -43,16 +44,5 @@ final class GetFinishedGoodsList extends ListRequest
             'Search' => $this->search,
             'SaleID' => $this->saleId,
         ];
-    }
-
-    /**
-     * @return list<FinishedGoodsListData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): FinishedGoodsListData => FinishedGoodsListData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

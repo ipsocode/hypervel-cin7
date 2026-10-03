@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\FixedAssetType;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypeData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET ref/fixedassettype` — the list envelope is keyed `FixedAssetTypeList`.
  *
- * @extends ListRequest<list<FixedAssetTypeData>>
+ * @extends ListRequest<FixedAssetTypeData>
  */
 final class GetFixedAssetType extends ListRequest
 {
     protected string $listKey = 'FixedAssetTypeList';
+
+    protected string $item = FixedAssetTypeData::class;
 
     public function __construct(
         ?int $page = null,
@@ -40,16 +41,5 @@ final class GetFixedAssetType extends ListRequest
             'FixedAssetTypeID' => $this->fixedAssetTypeId,
             'Name' => $this->name,
         ];
-    }
-
-    /**
-     * @return list<FixedAssetTypeData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): FixedAssetTypeData => FixedAssetTypeData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }
