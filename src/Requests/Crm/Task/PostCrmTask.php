@@ -28,9 +28,6 @@ final class PostCrmTask extends WriteRequest
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): TaskData => TaskData::from($item)->setResponse($response),
-            array_values($response->json('Tasks')),
-        );
+        return $this->listOf(TaskData::class, $response, $response->json('Tasks'));
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Journal;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Journal\JournalData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Requests\ListRequest;
@@ -12,11 +11,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET journal` — the list envelope is keyed `Journals`.
  *
- * @extends ListRequest<list<JournalData>>
+ * @extends ListRequest<JournalData>
  */
 final class GetJournal extends ListRequest
 {
     protected string $listKey = 'Journals';
+
+    protected string $item = JournalData::class;
 
     public function __construct(
         ?int $page = null,
@@ -43,16 +44,5 @@ final class GetJournal extends ListRequest
             'Status' => $this->status,
             'Search' => $this->search,
         ];
-    }
-
-    /**
-     * @return list<JournalData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): JournalData => JournalData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

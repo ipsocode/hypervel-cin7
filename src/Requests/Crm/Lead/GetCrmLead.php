@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Crm\Lead;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Crm\Lead\LeadData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET crm/lead` — the list envelope is keyed `LeadList`.
  *
- * @extends ListRequest<list<LeadData>>
+ * @extends ListRequest<LeadData>
  */
 final class GetCrmLead extends ListRequest
 {
     protected string $listKey = 'LeadList';
+
+    protected string $item = LeadData::class;
 
     public function __construct(
         ?int $page = null,
@@ -43,16 +44,5 @@ final class GetCrmLead extends ListRequest
             'Name' => $this->name,
             'ModifiedSince' => $this->modifiedSince,
         ];
-    }
-
-    /**
-     * @return list<LeadData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): LeadData => LeadData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

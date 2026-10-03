@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\ProductAvailability;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\ProductAvailability\ProductAvailabilityData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
@@ -12,11 +11,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
  * `GET ref/productavailability` — the list envelope is keyed `ProductAvailabilityList`. The
  * reference spells the SKU filter `Sku`.
  *
- * @extends ListRequest<list<ProductAvailabilityData>>
+ * @extends ListRequest<ProductAvailabilityData>
  */
 final class GetProductAvailability extends ListRequest
 {
     protected string $listKey = 'ProductAvailabilityList';
+
+    protected string $item = ProductAvailabilityData::class;
 
     public function __construct(
         ?int $page = null,
@@ -49,16 +50,5 @@ final class GetProductAvailability extends ListRequest
             'Batch' => $this->batch,
             'Category' => $this->category,
         ];
-    }
-
-    /**
-     * @return list<ProductAvailabilityData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): ProductAvailabilityData => ProductAvailabilityData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\Account;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Account\AccountData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET ref/account` — the list envelope is keyed `AccountsList`.
  *
- * @extends ListRequest<list<AccountData>>
+ * @extends ListRequest<AccountData>
  */
 final class GetAccount extends ListRequest
 {
     protected string $listKey = 'AccountsList';
+
+    protected string $item = AccountData::class;
 
     public function __construct(
         ?int $page = null,
@@ -44,16 +45,5 @@ final class GetAccount extends ListRequest
             'Type' => $this->type,
             'Status' => $this->status,
         ];
-    }
-
-    /**
-     * @return list<AccountData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): AccountData => AccountData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

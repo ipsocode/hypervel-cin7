@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\ProductFamily;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\ProductFamily\ProductFamilyData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
@@ -13,11 +12,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
  * `GET productFamily` — the list envelope is keyed `ProductFamilies`. The reference spells the SKU
  * filter `Sku`.
  *
- * @extends ListRequest<list<ProductFamilyData>>
+ * @extends ListRequest<ProductFamilyData>
  */
 final class GetProductFamily extends ListRequest
 {
     protected string $listKey = 'ProductFamilies';
+
+    protected string $item = ProductFamilyData::class;
 
     public function __construct(
         ?int $page = null,
@@ -46,16 +47,5 @@ final class GetProductFamily extends ListRequest
             'Sku' => $this->sku,
             'ModifiedSince' => $this->modifiedSince,
         ];
-    }
-
-    /**
-     * @return list<ProductFamilyData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): ProductFamilyData => ProductFamilyData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\OrderList;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\OrderList\ProductionOrderListData;
 use Ipsocode\Cin7\Enums\ProductionOrderListStatus;
 use Ipsocode\Cin7\Requests\ListRequest;
@@ -13,11 +12,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET production/orderList`, the list envelope is keyed `ProductionOrderListItems`.
  *
- * @extends ListRequest<list<ProductionOrderListData>>
+ * @extends ListRequest<ProductionOrderListData>
  */
 final class GetProductionOrderList extends ListRequest
 {
     protected string $listKey = 'ProductionOrderListItems';
+
+    protected string $item = ProductionOrderListData::class;
 
     public function __construct(
         ?int $page = null,
@@ -54,16 +55,5 @@ final class GetProductionOrderList extends ListRequest
             'CompletionDateTo' => $this->completionDateTo,
             'SourceTaskID' => $this->sourceTaskId,
         ];
-    }
-
-    /**
-     * @return list<ProductionOrderListData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): ProductionOrderListData => ProductionOrderListData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

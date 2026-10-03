@@ -29,9 +29,6 @@ final class GetWebhooks extends Cin7Request
      */
     public function createDtoFromResponse(Response $response): array
     {
-        return array_map(
-            static fn (array $item): WebhookData => WebhookData::from($item)->setResponse($response),
-            array_values($response->json('Webhooks')),
-        );
+        return $this->listOf(WebhookData::class, $response, $response->json('Webhooks'));
     }
 }

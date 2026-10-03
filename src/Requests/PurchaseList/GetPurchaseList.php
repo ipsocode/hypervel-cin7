@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\PurchaseList;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\PurchaseList\PurchaseListData;
 use Ipsocode\Cin7\Enums\InvoiceStatus;
 use Ipsocode\Cin7\Enums\TaskStatus;
@@ -14,11 +13,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET purchaseList`, the purchases; the list envelope is keyed `PurchaseList`.
  *
- * @extends ListRequest<list<PurchaseListData>>
+ * @extends ListRequest<PurchaseListData>
  */
 final class GetPurchaseList extends ListRequest
 {
     protected string $listKey = 'PurchaseList';
+
+    protected string $item = PurchaseListData::class;
 
     public function __construct(
         ?int $page = null,
@@ -61,16 +62,5 @@ final class GetPurchaseList extends ListRequest
             'Status' => $this->status,
             'DropShipTaskID' => $this->dropShipTaskId,
         ];
-    }
-
-    /**
-     * @return list<PurchaseListData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): PurchaseListData => PurchaseListData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

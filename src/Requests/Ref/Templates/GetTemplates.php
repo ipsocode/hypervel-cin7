@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\Templates;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Templates\TemplateData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET ref/templates` — the list envelope is keyed `Templates` and carries no `Total`.
  *
- * @extends ListRequest<list<TemplateData>>
+ * @extends ListRequest<TemplateData>
  */
 final class GetTemplates extends ListRequest
 {
     protected string $listKey = 'Templates';
+
+    protected string $item = TemplateData::class;
 
     public function __construct(
         ?int $page = null,
@@ -40,16 +41,5 @@ final class GetTemplates extends ListRequest
             'Type' => $this->type,
             'Name' => $this->name,
         ];
-    }
-
-    /**
-     * @return list<TemplateData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): TemplateData => TemplateData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

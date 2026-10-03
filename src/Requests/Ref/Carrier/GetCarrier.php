@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\Carrier;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Carrier\CarrierData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET ref/carrier` — the list envelope is keyed `CarrierList`.
  *
- * @extends ListRequest<list<CarrierData>>
+ * @extends ListRequest<CarrierData>
  */
 final class GetCarrier extends ListRequest
 {
     protected string $listKey = 'CarrierList';
+
+    protected string $item = CarrierData::class;
 
     public function __construct(
         ?int $page = null,
@@ -40,16 +41,5 @@ final class GetCarrier extends ListRequest
             'CarrierID' => $this->carrierId,
             'Description' => $this->description,
         ];
-    }
-
-    /**
-     * @return list<CarrierData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): CarrierData => CarrierData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

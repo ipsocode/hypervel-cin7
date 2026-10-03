@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Crm\Task;
 
 use DateTimeInterface;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Crm\Task\TaskData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET crm/task` — the list envelope is keyed `Tasks`.
  *
- * @extends ListRequest<list<TaskData>>
+ * @extends ListRequest<TaskData>
  */
 final class GetCrmTask extends ListRequest
 {
     protected string $listKey = 'Tasks';
+
+    protected string $item = TaskData::class;
 
     public function __construct(
         ?int $page = null,
@@ -57,16 +58,5 @@ final class GetCrmTask extends ListRequest
             'AssignedTo' => $this->assignedTo,
             'Category' => $this->category,
         ];
-    }
-
-    /**
-     * @return list<TaskData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): TaskData => TaskData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

@@ -16,8 +16,10 @@ extends `Cin7Request` itself.
 | [`WriteRequest`](../src/Requests/WriteRequest.php) | POST or PUT | `(array\|Data $body = [])` | `<verb> <path>`, an array body as JSON verbatim, a data object as described in [data](data.md#write-bodies) |
 
 A subclass declares its verb as a property default and its path through `resolveEndpoint()`. A
-`ListRequest` also declares the envelope key its items sit under (`protected string $listKey`)
-and returns its filters by wire key from `filters()`. A read or delete of one record returns its
+`ListRequest` also declares the envelope key its items sit under (`protected string $listKey`),
+the data class of one item (`protected string $item`, which `ListRequest` builds `dto()` from) and
+returns its filters by wire key from `filters()`. A request that lists on a verb or a path that is
+not a `ListRequest` builds its `list<X>` with `Cin7Request::listOf()`. A read or delete of one record returns its
 parameters by wire key from `defaultQuery()`, through `queryValues()`. Only `ListRequest`
 implements `Paginatable`.
 
@@ -764,7 +766,23 @@ final class GetSaleOrder extends Cin7Request
 
 A list request takes `?int $page = null, ?int $limit = null` first and passes them to
 `parent::__construct($page, $limit)`, then returns its filters by wire key from `filters()`;
-`ListRequest` maps them and adds the page defaults.
+`ListRequest` maps them and adds the page defaults. It names its item class in `$item` and extends
+`ListRequest<XData>`; `ListRequest` builds the `list<XData>` `dto()` returns, so the request
+declares no `createDtoFromResponse()`:
+
+```php
+final class GetStockTakeList extends ListRequest
+{
+    protected string $listKey = 'StockAdjustmentList';
+
+    protected string $item = StockTakeListData::class;
+}
+```
+
+A request that returns a list from a keyed read or a write (`GetWebhooks`, `PostCarrier`) extends
+`Cin7Request` or `WriteRequest` and calls
+`$this->listOf(WebhookData::class, $response, $response->json('Webhooks'))` from its own
+`createDtoFromResponse()`.
 
 `Cin7Request`'s constructor reads `cin7.retry.*`, so a subclass that adds
 constructor parameters must call `parent::__construct()`. PHP initializes

@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\Ref\Category;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Category\ProductCategoryData;
 use Ipsocode\Cin7\Requests\ListRequest;
 
 /**
  * `GET ref/category` — the list envelope is keyed `CategoryList`.
  *
- * @extends ListRequest<list<ProductCategoryData>>
+ * @extends ListRequest<ProductCategoryData>
  */
 final class GetCategory extends ListRequest
 {
     protected string $listKey = 'CategoryList';
+
+    protected string $item = ProductCategoryData::class;
 
     public function __construct(
         ?int $page = null,
@@ -38,16 +39,5 @@ final class GetCategory extends ListRequest
         return [
             'Name' => $this->name,
         ];
-    }
-
-    /**
-     * @return list<ProductCategoryData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): ProductCategoryData => ProductCategoryData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }

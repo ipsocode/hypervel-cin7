@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Requests\MoneyTaskList;
 
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Enums\MoneyTaskType;
@@ -13,11 +12,13 @@ use Ipsocode\Cin7\Requests\ListRequest;
 /**
  * `GET moneyTaskList` — the list envelope is keyed `MoneyTasks`.
  *
- * @extends ListRequest<list<MoneyTaskListData>>
+ * @extends ListRequest<MoneyTaskListData>
  */
 final class GetMoneyTaskList extends ListRequest
 {
     protected string $listKey = 'MoneyTasks';
+
+    protected string $item = MoneyTaskListData::class;
 
     public function __construct(
         ?int $page = null,
@@ -44,16 +45,5 @@ final class GetMoneyTaskList extends ListRequest
             'Search' => $this->search,
             'TaskType' => $this->taskType,
         ];
-    }
-
-    /**
-     * @return list<MoneyTaskListData>
-     */
-    public function createDtoFromResponse(Response $response): array
-    {
-        return array_map(
-            static fn (array $item): MoneyTaskListData => MoneyTaskListData::from($item)->setResponse($response),
-            array_values($this->mapPaginatedResponseItems($response)),
-        );
     }
 }
