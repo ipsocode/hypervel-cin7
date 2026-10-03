@@ -9,7 +9,6 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
-use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderLineData;
 use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderServiceLineData;
 use Ipsocode\Cin7\Data\Other\ErrorData;
@@ -23,7 +22,7 @@ use Ipsocode\Cin7\Enums\DisassemblyStatus;
  *
  * @see docs/data.md
  */
-final class DisassemblyData extends Data implements WithResponse
+final class DisassemblyData extends AbstractDisassemblyData implements WithResponse
 {
     use HasResponse;
 
@@ -42,12 +41,9 @@ final class DisassemblyData extends Data implements WithResponse
         #[Uuid]
         public ?string $ProductID = null,
         public ?string $ProductCode = null,
-        public ?string $ProductName = null,
         #[Uuid]
         public ?string $LocationID = null,
         public ?string $Location = null,
-        #[DateTime]
-        public ?string $CompletionDate = null,
         public ?string $WIPAccount = null,
         public ?float $Quantity = null,
         public ?string $AssemblyInstructionURL = null,

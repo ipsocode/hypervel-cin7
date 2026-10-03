@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\InventoryWriteOff;
 
-use Hypervel\Data\Attributes\Validation\Max;
-use Hypervel\Data\Attributes\Validation\RequiredWithout;
-use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Data\AbstractStockLineData;
 
 /**
  * Inventory Write-Off Line Model, a line of an inventory write-off's `Lines`: the `Quantity` of a
@@ -18,28 +15,14 @@ use Ipsocode\Cin7\Attributes\DateTime;
  *
  * @see docs/data.md
  */
-final class InventoryWriteOffLineData extends Data
+final class InventoryWriteOffLineData extends AbstractStockLineData
 {
     public function __construct(
-        public float $Quantity,
-        #[RequiredWithout('ProductCode')]
-        #[Uuid]
-        public ?string $ProductID = null,
-        #[RequiredWithout('ProductID')]
-        #[Max(256)]
-        public ?string $ProductCode = null,
-        #[Max(256)]
-        public ?string $Name = null,
-        #[Uuid]
-        public ?string $BinID = null,
-        #[Max(256)]
-        public ?string $Bin = null,
-        public ?string $BatchSN = null,
-        #[DateTime]
-        public ?string $ExpiryDate = null,
+        float $Quantity,
         public ?string $ExpenseAccount = null,
         public ?float $Cost = null,
         public ?float $TotalCost = null,
     ) {
+        parent::__construct($Quantity);
     }
 }

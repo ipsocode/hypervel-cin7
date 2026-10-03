@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Data\FinishedGoods;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasCustomFields;
 
 /**
  * The fields of the Finished Goods table that every `finishedGoods` class shares, optional in
@@ -18,6 +19,8 @@ use Ipsocode\Cin7\Attributes\DateTime;
  */
 abstract class AbstractFinishedGoodsData extends Data
 {
+    use HasCustomFields;
+
     #[Uuid]
     public ?string $ProductID = null;
 
@@ -44,24 +47,4 @@ abstract class AbstractFinishedGoodsData extends Data
     public ?string $ExpiryDate = null;
 
     public ?string $Notes = null;
-
-    public ?string $CustomField1 = null;
-
-    public ?string $CustomField2 = null;
-
-    public ?string $CustomField3 = null;
-
-    public ?string $CustomField4 = null;
-
-    public ?string $CustomField5 = null;
-
-    public ?string $CustomField6 = null;
-
-    public ?string $CustomField7 = null;
-
-    public ?string $CustomField8 = null;
-
-    public ?string $CustomField9 = null;
-
-    public ?string $CustomField10 = null;
 }
