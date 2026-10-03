@@ -72,9 +72,11 @@ final class Synchroniser
 
     private function pullList(Module $module, bool $full, Carbon $start): PullResult
     {
-        $empty = ! $this->rows($module)->exists();
+        // The module's last sync, which a pull that fails must leave where it was.
+        $previous = $this->rows($module)->max('synced_at');
+        $empty = $previous === null;
         $full = $full || $empty || ! $module->incremental();
-        $request = $module->listRequest($full ? null : $this->since($module, $start), $start);
+        $request = $module->listRequest($full ? null : $this->since((string) $previous, $start), $start);
         $paginator = $this->cin7->paginate($request)->perPageLimit(SyncConfig::limit());
         $read = $written = $unchanged = 0;
 
@@ -95,9 +97,15 @@ final class Synchroniser
                 }
             }
         } catch (Throwable $exception) {
-            // A first fill that failed is undone, so the next pull is a full one again.
+            // A first fill that failed is undone, so the next pull is a full one again. Otherwise
+            // the rows it reached keep what it wrote but get their last sync back, so the module's
+            // newest synced_at does not move and the next pull reaches back as far as this one.
             if ($empty) {
                 $this->rows($module)->delete();
+            } else {
+                $this->rows($module)->toBase()
+                    ->where('synced_at', $start->format(self::DATE))
+                    ->update(['synced_at' => $previous]);
             }
 
             return new PullResult($module, $full, $read, $written, $unchanged, error: $exception);
@@ -150,10 +158,10 @@ final class Synchroniser
      * Since when an incremental pull asks: `sync.lookback` minutes back, or the module's last
      * sync if that is older, so a gap in the schedule is read again.
      */
-    private function since(Module $module, Carbon $start): Carbon
+    private function since(string $lastSync, Carbon $start): Carbon
     {
         $lookback = $start->copy()->subMinutes(SyncConfig::lookback());
-        $newest = Carbon::parse((string) $this->rows($module)->max('synced_at'));
+        $newest = Carbon::parse($lastSync);
 
         return $newest->lt($lookback) ? $newest : $lookback;
     }

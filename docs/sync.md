@@ -97,8 +97,10 @@ other records point to comes before the records that point to it.
    only its `synced_at` moved; a full pull refreshes its payload too, without moving
    `updated_at`.
 5. A full pull that completes and read something then deletes the module's rows it did not
-   see. A pull that fails deletes nothing, and keeps what it wrote; one that began on an empty
-   module is undone, so the next pull is a full one again.
+   see. A pull that fails deletes nothing and keeps what it wrote, but gives the rows it reached
+   their last sync back, so the module's newest `synced_at` does not move and the next pull
+   reaches back as far as the failed one did. One that began on an empty module is undone, so
+   the next pull is a full one again.
 
 No cursor is stored. Reading the look-back window again costs a few pages, and a record whose
 modified time has not moved is not rewritten, so a pull that was missed or failed is covered by

@@ -189,6 +189,37 @@ class ListPullTest extends SyncTestCase
         $this->assertSame('Renamed', $rows['c-1']->payload['Name']);
     }
 
+    /**
+     * A failed pull gives the rows it reached their last sync back, so after an outage longer
+     * than the look-back the next pull still reaches back to the last pull before it.
+     */
+    public function testAFailedPullDoesNotMoveTheLastSync(): void
+    {
+        $this->app->get('config')->set('cin7.sync.limit', 1);
+
+        $mock = Saloon::fake([
+            Cin7Fake::list('CustomerList', [$this->customer('c-1')], total: 2),
+            Cin7Fake::list('CustomerList', [$this->customer('c-2')], page: 2, total: 2),
+            Cin7Fake::list('CustomerList', [$this->customer('c-1', '2026-10-05T09:00:00Z', 'Renamed')], total: 2),
+            Cin7Fake::error('Something went wrong'),
+            Cin7Fake::list('CustomerList'),
+        ]);
+
+        $this->synchroniser()->pull(Module::Customer);
+        $this->travel(3)->days();
+        $failed = $this->synchroniser()->pull(Module::Customer);
+        $this->travel(1)->hours();
+        $this->synchroniser()->pull(Module::Customer);
+
+        $this->assertTrue($failed->failed());
+        $this->assertSame('2026-10-03T12:00:00.000', $this->queries($mock)[2]['ModifiedSince']);
+        $this->assertSame('2026-10-03T12:00:00.000', $this->queries($mock)[4]['ModifiedSince']);
+
+        $row = $this->stored(Module::Customer)['c-1'];
+        $this->assertSame('Renamed', $row->payload['Name']);
+        $this->assertSame('2026-10-03 12:00:00', $row->synced_at->toDateTimeString());
+    }
+
     public function testAFailedFirstFillLeavesTheModuleEmpty(): void
     {
         $this->app->get('config')->set('cin7.sync.limit', 1);
