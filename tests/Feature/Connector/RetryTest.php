@@ -7,9 +7,9 @@ namespace Ipsocode\Cin7\Tests\Feature\Connector;
 use Hypervel\Saloon\Exceptions\Request\ClientException;
 use Hypervel\Saloon\Exceptions\Request\ServerException;
 use Hypervel\Saloon\Facades\Saloon;
-use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -35,7 +35,7 @@ class RetryTest extends TestCase
 
     public function testA503IsRetriedUpToTheConfiguredAttemptCount(): void
     {
-        $mock = Saloon::fake(array_fill(0, 4, MockResponse::make(Cin7Payloads::throttled(), 503)));
+        $mock = Saloon::fake(array_fill(0, 4, Cin7Fake::throttled()));
 
         try {
             $this->connector()->send(new GetCustomer);
@@ -56,8 +56,8 @@ class RetryTest extends TestCase
     public function testA503ThatClearsReturnsTheEventualSuccess(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::throttled(), 503),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer()])),
+            Cin7Fake::throttled(),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer()]),
         ]);
 
         $response = $this->connector()->send(new GetCustomer);
@@ -74,8 +74,8 @@ class RetryTest extends TestCase
     public function testA429IsRetriedLikeA503(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::limitReached(), 429),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer()])),
+            Cin7Fake::limitReached(),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer()]),
         ]);
 
         $response = $this->connector()->send(new GetCustomer);
@@ -88,7 +88,7 @@ class RetryTest extends TestCase
     public function testAClientErrorIsNotRetried(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::error('Request is invalid'), 400),
+            Cin7Fake::error('Request is invalid'),
         ]);
 
         try {
@@ -108,7 +108,7 @@ class RetryTest extends TestCase
     public function testARejectedCredentialIsNotRetried(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::error('Incorrect credentials!'), 403),
+            Cin7Fake::credentialsRejected(),
         ]);
 
         $this->expectException(ClientException::class);
@@ -124,7 +124,7 @@ class RetryTest extends TestCase
     public function testA500IsNotRetried(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::error('boom'), 500),
+            Cin7Fake::error('boom', 500),
         ]);
 
         $this->expectException(ServerException::class);
@@ -139,7 +139,7 @@ class RetryTest extends TestCase
 
     public function testASuccessIsNotSleptOn(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        $mock = Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $this->connector()->send(new GetCustomer);
 
@@ -152,7 +152,7 @@ class RetryTest extends TestCase
         $this->app->get('config')->set('cin7.retry.times', 2);
         $this->app->get('config')->set('cin7.retry.delay_ms', 250);
 
-        $mock = Saloon::fake(array_fill(0, 2, MockResponse::make(Cin7Payloads::throttled(), 503)));
+        $mock = Saloon::fake(array_fill(0, 2, Cin7Fake::throttled()));
 
         // The retry policy is read at construction, so config must be set first.
         $request = new GetCustomer;
@@ -171,7 +171,7 @@ class RetryTest extends TestCase
     {
         $this->app->get('config')->set('cin7.retry.times', 0);
 
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::throttled(), 503)]);
+        $mock = Saloon::fake([Cin7Fake::throttled()]);
 
         $request = new GetCustomer;
 
@@ -193,7 +193,7 @@ class RetryTest extends TestCase
         $this->app->get('config')->set('cin7.retry.times', 2);
         $this->app->get('config')->set('cin7.retry.delay_ms', -1);
 
-        $mock = Saloon::fake(array_fill(0, 2, MockResponse::make(Cin7Payloads::throttled(), 503)));
+        $mock = Saloon::fake(array_fill(0, 2, Cin7Fake::throttled()));
 
         $request = new GetCustomer;
 
@@ -212,7 +212,7 @@ class RetryTest extends TestCase
         $this->app->get('config')->set('cin7.retry.times', null);
         $this->app->get('config')->set('cin7.retry.delay_ms', null);
 
-        $mock = Saloon::fake(array_fill(0, 4, MockResponse::make(Cin7Payloads::throttled(), 503)));
+        $mock = Saloon::fake(array_fill(0, 4, Cin7Fake::throttled()));
 
         $request = new GetCustomer;
 

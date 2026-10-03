@@ -12,6 +12,7 @@ use Ipsocode\Cin7\Data\Other\ErrorData;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Sale\Payment\DeleteSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\GetSalePayment;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -25,7 +26,7 @@ class ErrorModelTest extends TestCase
 {
     public function testAnErrorModelInA200Throws(): void
     {
-        Saloon::fake([MockResponse::make(Cin7Payloads::error('Customer not found', 404))]);
+        Saloon::fake([Cin7Fake::error('Customer not found', 404, status: 200)]);
 
         try {
             $this->connector()->send(new GetCustomer);
@@ -45,7 +46,7 @@ class ErrorModelTest extends TestCase
      */
     public function testAListOfErrorsInA200Throws(): void
     {
-        Saloon::fake([MockResponse::make([Cin7Payloads::error()])]);
+        Saloon::fake([MockResponse::make([['ErrorCode' => 400, 'Exception' => 'Request is invalid']])]);
 
         $this->expectException(RequestException::class);
 
@@ -54,7 +55,7 @@ class ErrorModelTest extends TestCase
 
     public function testAnErrorModelWithAClientErrorStatusKeepsItsExceptionType(): void
     {
-        Saloon::fake([MockResponse::make(Cin7Payloads::error(), 400)]);
+        Saloon::fake([Cin7Fake::error('Request is invalid')]);
 
         $this->expectException(ClientException::class);
 

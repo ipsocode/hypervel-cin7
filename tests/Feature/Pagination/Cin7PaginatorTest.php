@@ -16,12 +16,13 @@ use Ipsocode\Cin7\PageDefaults;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
 /**
  * `Cin7Paginator` against Cin7's `{Total, Page, <Thing>List}` envelope, as
- * `Cin7Payloads::customerList()` models it.
+ * `Cin7Fake::list()` models it.
  *
  * @see docs/pagination.md
  */
@@ -29,7 +30,7 @@ class Cin7PaginatorTest extends TestCase
 {
     public function testTheConnectorPaginatesWithACin7Paginator(): void
     {
-        Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $paginator = $this->connector()->paginate(new GetCustomer);
 
@@ -39,10 +40,10 @@ class Cin7PaginatorTest extends TestCase
     public function testASinglePageStopsAfterOneSend(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([
+            Cin7Fake::list('CustomerList', [
                 Cin7Payloads::customer('a', 'ACME'),
                 Cin7Payloads::customer('b', 'Globex'),
-            ])),
+            ]),
         ]);
 
         $items = iterator_to_array(
@@ -57,9 +58,9 @@ class Cin7PaginatorTest extends TestCase
     public function testItWalksEveryPageInSequenceUntilTheTotalIsExhausted(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a', 'ACME')], page: 1, total: 3)),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('b', 'Globex')], page: 2, total: 3)),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('c', 'Initech')], page: 3, total: 3)),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a', 'ACME')], page: 1, total: 3),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('b', 'Globex')], page: 2, total: 3),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('c', 'Initech')], page: 3, total: 3),
         ]);
 
         $paginator = $this->connector()->paginate(new GetCustomer)->perPageLimit(1);
@@ -74,8 +75,8 @@ class Cin7PaginatorTest extends TestCase
     public function testItWalksTwoPagesOfAProductsEnvelope(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::products([['ID' => 'a', 'Name' => 'Widget']], page: 1, total: 2)),
-            MockResponse::make(Cin7Payloads::products([['ID' => 'b', 'Name' => 'Gadget']], page: 2, total: 2)),
+            Cin7Fake::list('Products', [['ID' => 'a', 'Name' => 'Widget']], page: 1, total: 2),
+            Cin7Fake::list('Products', [['ID' => 'b', 'Name' => 'Gadget']], page: 2, total: 2),
         ]);
 
         $paginator = $this->connector()->product()->paginate()->perPageLimit(1);
@@ -90,8 +91,8 @@ class Cin7PaginatorTest extends TestCase
     public function testEachPageRequestCarriesTheLowercasePageAndLimitParameters(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a')], page: 1, total: 2)),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('b')], page: 2, total: 2)),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a')], page: 1, total: 2),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('b')], page: 2, total: 2),
         ]);
 
         iterator_to_array(
@@ -111,7 +112,7 @@ class Cin7PaginatorTest extends TestCase
 
     public function testWithNoExplicitLimitThePageDefaultsAreLeftAlone(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        $mock = Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $this->connector()->paginate(new GetCustomer)->current();
 
@@ -125,8 +126,8 @@ class Cin7PaginatorTest extends TestCase
     public function testThePaginatorsPageOverridesTheRequestsAndItsLimitIsKept(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a', 'ACME')], page: 1, total: 7)),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('b', 'Globex')], page: 2, total: 7)),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a', 'ACME')], page: 1, total: 7),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('b', 'Globex')], page: 2, total: 7),
         ]);
 
         $items = iterator_to_array(
@@ -143,7 +144,7 @@ class Cin7PaginatorTest extends TestCase
 
     public function testTheLargestPageSizeIsSent(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        $mock = Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $this->connector()->paginate(new GetCustomer)->perPageLimit(PageDefaults::LIMIT_MAX)->current();
 
@@ -156,7 +157,7 @@ class Cin7PaginatorTest extends TestCase
      */
     public function testAPerPageLimitAboveTheMaximumThrowsBeforeAnythingIsSent(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        $mock = Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         try {
             $this->connector()->paginate(new GetCustomer)->perPageLimit(PageDefaults::LIMIT_MAX + 1)->current();
@@ -170,7 +171,7 @@ class Cin7PaginatorTest extends TestCase
 
     public function testAStartPageBelowOneThrows(): void
     {
-        Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $this->expectException(InvalidArgumentException::class);
 
@@ -179,7 +180,7 @@ class Cin7PaginatorTest extends TestCase
 
     public function testAFilterLimitAboveTheMaximumThrowsBeforeAnythingIsSent(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        $mock = Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         try {
             $this->connector()->customer()->get(limit: 5000);
@@ -228,8 +229,8 @@ class Cin7PaginatorTest extends TestCase
     public function testTotalPagesRespectsACallerSuppliedLimitEvenWithoutPerPageLimit(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a', 'ACME')], page: 1, total: 7)),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('b', 'Globex')], page: 2, total: 7)),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a', 'ACME')], page: 1, total: 7),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer('b', 'Globex')], page: 2, total: 7),
         ]);
 
         $items = iterator_to_array(
@@ -244,8 +245,8 @@ class Cin7PaginatorTest extends TestCase
     public function testAnEnvelopeWithNoTotalStopsOnAShortPage(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'a'], ['ID' => 'b']], page: 1)),
-            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'c']], page: 2)),
+            Cin7Fake::listWithoutTotal('CustomerCredits', [['ID' => 'a'], ['ID' => 'b']], page: 1),
+            Cin7Fake::listWithoutTotal('CustomerCredits', [['ID' => 'c']], page: 2),
         ]);
 
         $paginator = $this->connector()->ref()->customer()->credits()->paginate()->perPageLimit(2);
@@ -259,8 +260,8 @@ class Cin7PaginatorTest extends TestCase
     public function testAnEnvelopeWithNoTotalStopsOnAnEmptyPage(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerCredits([['ID' => 'a']], page: 1)),
-            MockResponse::make(Cin7Payloads::customerCredits([], page: 2)),
+            Cin7Fake::listWithoutTotal('CustomerCredits', [['ID' => 'a']], page: 1),
+            Cin7Fake::listWithoutTotal('CustomerCredits', [], page: 2),
         ]);
 
         $paginator = $this->connector()->ref()->customer()->credits()->paginate()->perPageLimit(1);
@@ -274,8 +275,8 @@ class Cin7PaginatorTest extends TestCase
     public function testIteratingPagesYieldsResponsesWhoseDtoIsTyped(): void
     {
         Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerCredits([['CreditID' => 'a'], ['CreditID' => 'b']], page: 1)),
-            MockResponse::make(Cin7Payloads::customerCredits([['CreditID' => 'c']], page: 2)),
+            Cin7Fake::listWithoutTotal('CustomerCredits', [['CreditID' => 'a'], ['CreditID' => 'b']], page: 1),
+            Cin7Fake::listWithoutTotal('CustomerCredits', [['CreditID' => 'c']], page: 2),
         ]);
 
         $pages = [];
@@ -293,11 +294,12 @@ class Cin7PaginatorTest extends TestCase
             GetCustomer::class => function (PendingRequest $pendingRequest): MockResponse {
                 $page = (int) $pendingRequest->queryParameters()['page'];
 
-                return MockResponse::make(Cin7Payloads::customerList(
+                return Cin7Fake::list(
+                    'CustomerList',
                     [Cin7Payloads::customer((string) $page, 'Customer ' . $page)],
                     page: $page,
                     total: 3,
-                ));
+                );
             },
         ]);
 
@@ -321,7 +323,7 @@ class Cin7PaginatorTest extends TestCase
      */
     public function testTheSuffixFallbackIsUsedWhenTheRequestDoesNotMapItsOwnItems(): void
     {
-        Saloon::fake([MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer('a', 'ACME')]))]);
+        Saloon::fake([Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a', 'ACME')])]);
 
         $request = new class extends Cin7Request implements Paginatable {
             protected Method $method = Method::GET;

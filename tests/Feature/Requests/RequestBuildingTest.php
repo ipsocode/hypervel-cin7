@@ -28,6 +28,7 @@ use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -52,7 +53,7 @@ class RequestBuildingTest extends TestCase
         parent::setUp();
 
         // One response per send in the longest test; only the request is asserted on.
-        $this->mock = Saloon::fake(array_fill(0, 7, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 7, Cin7Fake::list('CustomerList')));
     }
 
     public function testEveryRequestCarriesTheAuthAndContentTypeHeaders(): void
@@ -244,7 +245,7 @@ class RequestBuildingTest extends TestCase
 
     public function testTheDecodedBodyIsReturnedAsAnArray(): void
     {
-        $body = Cin7Payloads::customerList([Cin7Payloads::customer('a')]);
+        $body = Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a')])->body()->all();
 
         Saloon::clearFake();
         Saloon::fake([MockResponse::make($body)]);

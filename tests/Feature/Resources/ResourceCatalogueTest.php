@@ -8,9 +8,9 @@ use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Faking\MockClient;
-use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Resources\ListResource;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\Resources;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -18,7 +18,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
-use Workbench\App\Support\Cin7Payloads;
 
 /**
  * One row per resource method, from the per-path files under `tests/Fixtures/Catalogue/`,
@@ -34,7 +33,7 @@ class ResourceCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->mock = Saloon::fake(array_fill(0, 20, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 20, Cin7Fake::list('CustomerList')));
     }
 
     /**
