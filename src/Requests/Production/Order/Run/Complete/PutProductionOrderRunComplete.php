@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `PUT production/order/run/complete`, body is a `ProductionRunCompletePostData`; the response is
+ * `PUT production/order/run/complete`, body is a `ProductionRunCompletePutData`; the response is
  * the production order's runs.
  *
  * @extends WriteRequest<ProductionRunsData>

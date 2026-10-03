@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Hypervel\Saloon\Enums\Method;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunCompletePostData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunCompletePutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
 use Ipsocode\Cin7\Requests\Production\Order\Run\Complete\PutProductionOrderRunComplete;
 use Workbench\App\Support\Cin7Payloads;
@@ -38,6 +38,6 @@ return [
         PutProductionOrderRunComplete::class => [PutProductionOrderRunComplete::class, [[]], Cin7Payloads::load('production/order/run/complete', 'put.response'), ProductionRunsData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunCompletePostData production/order/run/complete' => [ProductionRunCompletePostData::class, Cin7Payloads::load('production/order/run/complete', 'put.request')],
+        'ProductionRunCompletePutData production/order/run/complete' => [ProductionRunCompletePutData::class, Cin7Payloads::load('production/order/run/complete', 'put.request')],
     ],
 ];
