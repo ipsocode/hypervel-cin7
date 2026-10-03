@@ -93,6 +93,11 @@ one decision each.
 
 - Property names are the wire keys. A required field (`Yes`) has no default. An optional field is
   `?type $Field = null`, and null means the field is left out of the body.
+- A required field that a response leaves out or sends as `null` stays required: type it
+  `?type $Field = null` and mark it `#[Required]`, which only a write body checks, as `AddressData`
+  does. So does one a request example leaves out of a class the responses share. Only a verb's own
+  body class, such as a PUT that updates in part, may leave out what its example omits, and its
+  docblock says so.
 - A GUID is `#[Uuid] string`. A string field carries the table's length as `#[Max(n)]`. A date-time
   carries `#[DateTime]` (`Ipsocode\Cin7\Attributes\DateTime`), and a date `#[Date]`.
 - Translate the Required column as `names.py show` reads it:
@@ -165,7 +170,8 @@ one decision each.
     classes;
   - the accessors in `ConnectorResourcesTest`;
   - in `BodyValidationTest`, a case for every new `#[In]` (`postOnlyStatusProvider`),
-    `#[RequiredWithout]` (`eitherFieldProvider`) and `#[RequiredIf]` rule.
+    `#[RequiredWithout]` (`eitherFieldProvider`), `#[RequiredIf]` and `#[Required]`
+    (`productionRequiredFieldProvider`) rule.
 
 ### Docs
 

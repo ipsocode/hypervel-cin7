@@ -1713,24 +1713,41 @@ requires:
 ## Production
 
 The `production/…` paths are in `src/Data/Production/<path>/`: `FactoryCalendar/`, `ProductionBom/`,
-`Order/` (with `Run/`), `OrderList/`, `Resource/`, `SuspendReason/` and `WorkCenters/`. Its tables
-make most classes required in part only, so a class requires what its table marks `Yes` and the
-examples confirm; the rules that follow hold for all of them.
+`Order/` (with `Run/`), `OrderList/`, `Resource/`, `SuspendReason/` and `WorkCenters/`. The rules
+that follow hold for all of them.
 
 - **Required.** `Yes` is required, and `Yes*` or "when updating" is optional, with its condition in
   the class's docblock: the nested lines (operations, components, resources, attachments, notes) are
   shared by the response, POST and PUT, and a line cannot tell which verb it is sent on. Where the
-  reference says "required if X is empty" the class carries `#[RequiredWithout]`
-  (`ProductionBomComponentData`, `ProductionOrderComponentData`, `ProductionOrderResourceData`,
-  `ResourceCapacityData`, `ResourcePutData`, `WorkCenterSupplierData`), and `#[RequiredIf]` where it
-  names a value (`WorkCenterData::$SupplierID` when `IsCoMan` is true).
+  reference says "required if X is empty" or "when X is not set" the class carries
+  `#[RequiredWithout]` (`ProductionBomComponentData`, `ProductionBomOperationLinkData`,
+  `ProductionBomOperationProductData`, `ProductionBomVariationComponentData`,
+  `ProductionOrderComponentData`, `ProductionOrderResourceData`, `ResourceCapacityData`,
+  `ResourcePutData`, `WorkCenterSupplierData`), and `#[RequiredIf]` where it names a value
+  (`WorkCenterData::$SupplierID` and `$CoManProcurementType` when `IsCoMan` is true).
+- **Required fields a response or an example leaves out.** A `Yes` field that every response sends
+  is required by type. Where a response or a reference example leaves one out, the class types it
+  nullable, so the response still reads, and marks it `#[Required]`, which only a write body
+  checks, as `AddressData` does:
+  - a BOM attachment's `Content`, which a response leaves `null` unless `ReturnAttachmentsContent`
+    asks for it, and a resource attachment's, which the examples send but the other attachments'
+    responses leave `null`;
+  - a production order operation link's `Position`, which no example sends;
+  - a run output's `Received`, which every response sends but the operation-complete request
+    example leaves out of three of its four finished products;
+  - the family BOM's `Version`, `Name` and `IsDefault`, which every response sends but the family
+    POST example does not.
+
+  A body built from those examples as they are therefore fails validation on `send()`.
 - **A class per verb where the top-level table differs.** `FactoryCalendarPostData` requires
   `WeekStart` and `FactoryCalendarDays` as well as `Year`; `ProductionOrderPostData` requires
-  `ProductID` and `LocationID`, `ProductionOrderPutData` the `ProductionOrderID`; `ResourcePostData`
-  a `Name`, `ResourceType` and `CycleDuration`, `ResourcePutData` the `ResourceID` or `Code`. Each
-  production BOM verb has its own body (`ProductProductionBomPostData`, `…PutData` and the family's),
-  because the PUT example sends a BOM without the `Name`, `IsDefault` and `BufferPercent` its table
-  requires.
+  `ProductID` and `LocationID`, `ProductionOrderPutData` the `ProductionOrderID` and `LocationID`
+  (its `ProductID` is optional: the PUT example sends none); `ResourcePostData` a `Name`,
+  `ResourceType` and `CycleDuration`, `ResourcePutData` the `ResourceType`, `CycleDuration` and the
+  `ResourceID` or `Code`. Each production BOM verb has its own body (`ProductProductionBomPostData`,
+  `…PutData` and the family's), because the PUT examples send a BOM without the `Name`, `IsDefault`
+  and `BufferPercent` its table requires, and the family's without its `Version`: the PUT bodies
+  require the `BOMID` and `OutputQuantity`, and the product's its `Version` too.
 - **The envelopes.** Most responses are keyed envelopes the reference documents no table for:
   `ProductionOrdersData` (`ProductionOrders`, with the `Warning` a release adds),
   `ProductProductionBomsData` and `ProductFamilyProductionBomsData` (`ProductionBOMs`),
@@ -1751,8 +1768,8 @@ examples confirm; the rules that follow hold for all of them.
   modelled, optional, on the class that sends it.
 - **The family BOM.** `production/productionBOM` is documented twice, and the family's BOM takes the
   product BOM's fields with its own operation, `ProductFamilyProductionBomOperationData`, so it has
-  its own BOM class, `ProductFamilyProductionBomData`, which also does not require `Version`, `Name`
-  and `IsDefault`: its POST example sends none.
+  its own BOM class, `ProductFamilyProductionBomData`, whose `Version`, `Name` and `IsDefault` are
+  `#[Required]` rather than required by type: its POST example sends none.
 - **Codes the tables call strings.** `IssueMethod`, `IssueMethodComponent`, `IssueMethodParameter`,
   `SourceName` and a BOM's `OperationType` are described as strings ("Manual = 1, Backflush = 2")
   and sent as numbers by the examples; they accept either (`string|int`). The `Status` and
@@ -1769,8 +1786,7 @@ examples confirm; the rules that follow hold for all of them.
   order actions are as the reference writes them. The table for `ProductionRunOutputData` is titled
   "Production Run Pending Output", copied from the table above it. `WorkCenterLocationData.Type`
   is `Consumption` or `Output`.
-- **`Received`** is "Yes" on a run output, but the operation-complete example's finished products omit
-  it, so it is optional. `RunCostID` and `ProductID` are required on a run resource cost.
+- **`RunCostID` and `ProductID`** are required on a run resource cost.
 - **Examples that needed fixing.** `names.py example` fixed the trailing or missing commas of the
   order attachment PUT request, the order list, run POST and GET responses, the run PUT response,
   the manual journal request and response, the operation complete request, the resource list and

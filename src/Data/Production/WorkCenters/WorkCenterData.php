@@ -14,10 +14,10 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Enums\CoManProcurementType;
 
 /**
- * WorkCenter, a production work center. `SupplierID` is required for a co-manufacturing work
- * center, `CoManProcurementType` for a co-man one (`Transfer`, `Buysell` or `Purchase`) and
- * `WorkCenterSuppliers` for a purchasing one that is not co-man, which `#[RequiredIf]` checks for
- * the first and the documented notes leave to the caller for the others.
+ * WorkCenter, a production work center. `SupplierID` and `CoManProcurementType` (`Transfer`,
+ * `Buysell` or `Purchase`) are required for a co-manufacturing work center, which `#[RequiredIf]`
+ * checks, and `WorkCenterSuppliers` for a purchasing one that is not co-man, which the documented
+ * notes leave to the caller.
  *
  * @see docs/data.md
  */
@@ -43,6 +43,7 @@ final class WorkCenterData extends Data implements WithResponse
         #[Uuid]
         public ?string $SupplierID = null,
         public ?string $SupplierName = null,
+        #[RequiredIf('IsCoMan', true)]
         public ?CoManProcurementType $CoManProcurementType = null,
         #[DataCollectionOf(WorkCenterLocationData::class)]
         public ?array $WorkCenterLocations = null,

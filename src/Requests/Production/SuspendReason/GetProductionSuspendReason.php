@@ -20,7 +20,7 @@ final class GetProductionSuspendReason extends ListRequest
     public function __construct(
         ?int $page = null,
         ?int $limit = null,
-        protected readonly ?string $workcenterId = null,
+        protected readonly ?string $workCenterId = null,
     ) {
         parent::__construct($page, $limit);
     }
@@ -36,7 +36,7 @@ final class GetProductionSuspendReason extends ListRequest
     protected function filters(): array
     {
         return [
-            'WorkcenterID' => $this->workcenterId,
+            'WorkcenterID' => $this->workCenterId,
         ];
     }
 

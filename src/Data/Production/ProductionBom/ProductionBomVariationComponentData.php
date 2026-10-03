@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Production\ProductionBom;
 
 use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
@@ -25,8 +26,10 @@ final class ProductionBomVariationComponentData extends Data
         public int $Position,
         #[Uuid]
         public ?string $BOMVariationComponentID = null,
+        #[RequiredWithout('ProductFamilySKU')]
         #[Uuid]
         public ?string $ProductFamilyID = null,
+        #[RequiredWithout('ProductFamilyID')]
         public ?string $ProductFamilySKU = null,
         public ?string $ProductFamilyName = null,
         public ?string $CostingMethod = null,

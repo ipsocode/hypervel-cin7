@@ -12,8 +12,9 @@ use Hypervel\Data\Data;
 use Ipsocode\Cin7\Enums\ResourceType;
 
 /**
- * The body of `production/resource` PUT: the Resource table, which requires the `ResourceID`, or
- * the `Code` when there is no ID. The POST body is `ResourcePostData`.
+ * The body of `production/resource` PUT: the Resource table, which requires the `ResourceType`, the
+ * `CycleDuration` and the `ResourceID`, or the `Code` when there is no ID. The POST body is
+ * `ResourcePostData`.
  *
  * @see docs/data.md
  */
@@ -26,6 +27,8 @@ final class ResourcePutData extends Data
      * @param null|list<ResourceAttachmentData> $ResourceAttachments
      */
     public function __construct(
+        public ResourceType $ResourceType,
+        public int $CycleDuration,
         #[RequiredWithout('Code')]
         #[Uuid]
         public ?string $ResourceID = null,
@@ -34,8 +37,6 @@ final class ResourcePutData extends Data
         public ?string $Code = null,
         #[Max(512)]
         public ?string $Name = null,
-        public ?ResourceType $ResourceType = null,
-        public ?int $CycleDuration = null,
         #[Max(2000)]
         public ?string $Tags = null,
         public ?bool $IsActive = null,

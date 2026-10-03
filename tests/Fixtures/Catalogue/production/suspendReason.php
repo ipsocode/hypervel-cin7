@@ -17,7 +17,7 @@ return [
     'requests' => [
         GetProductionSuspendReason::class => [
             GetProductionSuspendReason::class,
-            ['workcenterId' => 'x'],
+            ['workCenterId' => 'x'],
             Method::GET,
             '/ExternalApi/v2/production/suspendReason',
             ['WorkcenterID' => 'x', 'page' => 1, 'limit' => 100],
@@ -34,7 +34,7 @@ return [
     ],
     'resources' => [
         'production suspendReason get' => [
-            fn (Cin7Connector $cin7): mixed => $cin7->production()->suspendReason()->get(workcenterId: 'x'),
+            fn (Cin7Connector $cin7): mixed => $cin7->production()->suspendReason()->get(workCenterId: 'x'),
             GetProductionSuspendReason::class,
             Method::GET,
             '/ExternalApi/v2/production/suspendReason',

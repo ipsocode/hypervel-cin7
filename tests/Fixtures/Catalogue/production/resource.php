@@ -115,6 +115,10 @@ return [
         'ResourcePostData without Name' => [ResourcePostData::class, Arr::except(Cin7Payloads::load('production/resource', 'post.request')['Resources'][0], 'Name')],
         'ResourcePostData without ResourceType' => [ResourcePostData::class, Arr::except(Cin7Payloads::load('production/resource', 'post.request')['Resources'][0], 'ResourceType')],
         'ResourcePostData without CycleDuration' => [ResourcePostData::class, Arr::except(Cin7Payloads::load('production/resource', 'post.request')['Resources'][0], 'CycleDuration')],
+        'ResourceData without ResourceType' => [ResourceData::class, Arr::except(Cin7Payloads::load('production/resource', 'get.response'), 'ResourceType')],
+        'ResourceData without CycleDuration' => [ResourceData::class, Arr::except(Cin7Payloads::load('production/resource', 'get.response'), 'CycleDuration')],
+        'ResourcePutData without ResourceType' => [ResourcePutData::class, Arr::except(Cin7Payloads::load('production/resource', 'put.request'), 'ResourceType')],
+        'ResourcePutData without CycleDuration' => [ResourcePutData::class, Arr::except(Cin7Payloads::load('production/resource', 'put.request'), 'CycleDuration')],
         'ResourcesPostData without Resources' => [ResourcesPostData::class, Arr::except(Cin7Payloads::load('production/resource', 'post.request'), 'Resources')],
     ],
     'required' => [
@@ -123,7 +127,9 @@ return [
         ResourceCostData::class => ['ProductID', 'AccountCode', 'PriceTier'],
         ResourceRemarkData::class => ['Remark'],
         ResourceAttachmentData::class => ['FileName'],
+        ResourceData::class => ['ResourceType', 'CycleDuration'],
         ResourcePostData::class => ['Name', 'ResourceType', 'CycleDuration'],
+        ResourcePutData::class => ['ResourceType', 'CycleDuration'],
         ResourcesPostData::class => ['Resources'],
     ],
 ];
