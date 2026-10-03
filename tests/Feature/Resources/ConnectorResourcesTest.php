@@ -13,6 +13,7 @@ use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource as AdvancedPurchaseSt
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
+use Ipsocode\Cin7\Resources\CrmResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\CustomPricesResource;
 use Ipsocode\Cin7\Resources\Disassembly\OrderResource as DisassemblyOrderResource;
@@ -90,6 +91,7 @@ use Ipsocode\Cin7\Resources\StockTransferListResource;
 use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
+use Ipsocode\Cin7\Resources\WebhooksResource;
 use Ipsocode\Cin7\Tests\TestCase;
 
 /**
@@ -363,6 +365,28 @@ class ConnectorResourcesTest extends TestCase
         $this->assertNotSame($connector->inventoryWriteOff(), $connector->inventoryWriteOff());
         $this->assertInstanceOf(InventoryWriteOffListResource::class, $connector->inventoryWriteOffList());
         $this->assertNotSame($connector->inventoryWriteOffList(), $connector->inventoryWriteOffList());
+    }
+
+    public function testCrmResourcesReturnFreshResources(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(CrmResource::class, $connector->crm());
+        $this->assertNotSame($connector->crm(), $connector->crm());
+        $this->assertNotSame($connector->crm()->lead(), $connector->crm()->lead());
+        $this->assertNotSame($connector->crm()->opportunity(), $connector->crm()->opportunity());
+        $this->assertNotSame($connector->crm()->task(), $connector->crm()->task());
+        $this->assertNotSame($connector->crm()->taskCategory(), $connector->crm()->taskCategory());
+        $this->assertNotSame($connector->crm()->workflow(), $connector->crm()->workflow());
+        $this->assertNotSame($connector->crm()->workflowStart(), $connector->crm()->workflowStart());
+    }
+
+    public function testWebhooksResourceReturnsAFreshResource(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertInstanceOf(WebhooksResource::class, $connector->webhooks());
+        $this->assertNotSame($connector->webhooks(), $connector->webhooks());
     }
 
     public function testMeReturnsAFreshMeResource(): void

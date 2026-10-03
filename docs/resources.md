@@ -91,6 +91,14 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 | `$cin7->finishedGoods()->order()` | `FinishedGoods\OrderResource` | `get(string $taskId)`, `post(array\|FinishedGoodsOrderData $body)` |
 | `$cin7->finishedGoods()->pick()` | `FinishedGoods\PickResource` | `get(string $taskId)`, `post(array\|FinishedGoodsPickData $body)` |
 | `$cin7->transactions()` | `TransactionsResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator` |
+| `$cin7->crm()` | `CrmResource` | `lead()`, `opportunity()`, `task()`, `taskCategory()`, `workflow()`, `workflowStart()`; a pure grouping, as V2 has no action on `/crm` |
+| `$cin7->crm()->lead()` | `Crm\LeadResource` | `get($page, $limit, $id, $name, $modifiedSince)`, `paginate($limit, …): Cin7Paginator`, `post(array\|LeadPostData $body)`, `put(array\|LeadPutData $body)` |
+| `$cin7->crm()->opportunity()` | `Crm\OpportunityResource` | `get($page, $limit, $id, $modifiedSince)`, `paginate($limit, …): Cin7Paginator`, `post(array\|OpportunityPostData $body)`, `put(array\|OpportunityPutData $body)` |
+| `$cin7->crm()->task()` | `Crm\TaskResource` | `get($page, $limit, $id, $name, $startDateFrom, …, $assignedTo, $category)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaskPostData $body)`, `put(array\|TaskPutData $body)` |
+| `$cin7->crm()->taskCategory()` | `Crm\TaskCategoryResource` | `get($page, $limit, $id, $name)`, `paginate($limit, …): Cin7Paginator`, `post(array\|TaskCategoryPostData $body)`, `put(array\|TaskCategoryPutData $body)` |
+| `$cin7->crm()->workflow()` | `Crm\WorkflowResource` | `get($page, $limit, $id, $name)`, `paginate($limit, …): Cin7Paginator`, `post(array\|WorkflowPostData $body)`, `put(array\|WorkflowPutData $body)` |
+| `$cin7->crm()->workflowStart()` | `Crm\WorkflowStartResource` | `post($startDate, $entityType, $entityId, $id, $name)` |
+| `$cin7->webhooks()` | `WebhooksResource` | `get()`, `post(array\|WebhookPostData $body)`, `put(array\|WebhookPutData $body)`, `delete(string $id)` |
 | `$cin7->product()->attachments()` | `Product\AttachmentsResource` | `get(string $productId)`, `post(array\|ProductAttachmentPostData $body)`, `delete(string $id)` |
 | `$cin7->product()->markupPrices()` | `Product\MarkupPricesResource` | `get(string $productId)`, `put(array\|MarkupPricesData $body)` |
 | `$cin7->productFamily()` | `ProductFamilyResource` | `get($page, $limit, …)`, `paginate($limit, …): Cin7Paginator`, `post(array\|ProductFamilyPostData $body)`, `put(array\|ProductFamilyPutData $body)`; `attachments()` |
@@ -1371,4 +1379,36 @@ $task = $this->cin7->finishedGoods()->post(FinishedGoodsPostData::from([
     'Quantity' => 1,
     'CompletionDate' => '2018-01-03T00:00:00',
 ]))->dto(); // FinishedGoodsData
+
+## CRM
+
+`$cin7->crm()` groups the CRM resources: leads, opportunities, tasks, task categories, workflows, and
+starting a workflow. The first five list (`get()`, `paginate()`) and take a body to `post()` and
+`put()`, as a data object or an array, and every one answers a list, so `dto()` is a
+`list<LeadData>` (and `OpportunityData`, `TaskData`, `TaskCategoryData`, `WorkflowData`) even after a
+POST or PUT. None has a DELETE.
+
+`$cin7->crm()->workflowStart()->post($startDate, $entityType, $entityId, name: 'My workflow')` starts
+a workflow on a record: `$entityType` is a `TaskEntityType` (or its string), and the workflow is named
+by `$id` or `$name`. Everything goes in the query, and the answer is `{Success}`.
+
+```php
+$tasks = $this->cin7->crm()->task()->get(category: 'Follow-up', startDateFrom: '2022-05-01T00:00:00')->dto();
+```
+
+## Webhooks
+
+`$cin7->webhooks()` is `webhooks`, the callbacks Cin7 sends when an event happens. `get()` lists every
+webhook, with no paging, and `post()` and `put()` take a `WebhookPostData` or `WebhookPutData` as well
+as an array; all three answer a `Webhooks` list, so `dto()` is a `list<WebhookData>`. `delete($id)`
+sends `?ID=…`. Only the registration is modelled: the payloads Cin7 sends to a callback are not.
+
+```php
+$webhook = $this->cin7->webhooks()->post(WebhookPostData::from([
+    'Type' => WebhookType::SaleOrderAuthorised,
+    'IsActive' => true,
+    'ExternalURL' => 'https://example.test/hook',
+    'ExternalAuthorizationType' => WebhookAuthorizationType::BearerAuth,
+    'ExternalBearerToken' => $token,
+]))->dto()[0]; // WebhookData
 ```

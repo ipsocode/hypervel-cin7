@@ -16,6 +16,7 @@ use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
 use Ipsocode\Cin7\Resources\BankTransferResource;
+use Ipsocode\Cin7\Resources\CrmResource;
 use Ipsocode\Cin7\Resources\CustomerResource;
 use Ipsocode\Cin7\Resources\CustomPricesResource;
 use Ipsocode\Cin7\Resources\DisassemblyListResource;
@@ -47,6 +48,7 @@ use Ipsocode\Cin7\Resources\StockTransferListResource;
 use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
+use Ipsocode\Cin7\Resources\WebhooksResource;
 use UnitEnum;
 
 /**
@@ -457,5 +459,21 @@ final class Cin7Connector extends Connector implements HasPagination
     public function finishedGoods(): FinishedGoodsResource
     {
         return new FinishedGoodsResource($this);
+    }
+
+    /**
+     * The `crm/…` resources.
+     */
+    public function crm(): CrmResource
+    {
+        return new CrmResource($this);
+    }
+
+    /**
+     * The `webhooks` resource.
+     */
+    public function webhooks(): WebhooksResource
+    {
+        return new WebhooksResource($this);
     }
 }

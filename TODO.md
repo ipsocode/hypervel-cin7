@@ -23,11 +23,6 @@ Purchase, supplier and me, the maintainer's choice, with every shared model they
 
 Every group not ranked yet: move a group up or down as issues are planned.
 
-### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
-
-- [ ] `webhooks` · `webhooks` · GET POST PUT DELETE
-  - [ ] Webhooks: `WebhookData`
-
 ### `reference/other-models/**` Shared models for the groups above
 
 Each is built with the first resource here that uses it; a ticked one is built, and moves to
@@ -175,23 +170,6 @@ CRM, disassembly, finished goods and production, the maintainer's choice.
   - [ ] WorkCenter: `WorkCenterData`
   - [ ] WorkCenterLocation: `WorkCenterLocationData`
   - [ ] WorkCenterSupplier: `WorkCenterSupplierData`
-
-### `reference/crm/**` CRM (6 resources, 16 operations)
-
-- [ ] `lead` · `crm/lead` · GET POST PUT
-  - [ ] Lead: `LeadData`
-- [ ] `opportunity` · `crm/opportunity` · GET POST PUT
-  - [ ] Opportunity: `OpportunityData`
-  - [ ] Opportunity Line: `OpportunityLineData`
-  - [ ] Opportunity Opportunity Additional Charge: `OpportunityAdditionalChargeData`
-- [ ] `task` · `crm/task` · GET POST PUT
-  - [ ] Task: `TaskData`
-- [ ] `task-category` · `crm/taskcategory` · GET POST PUT
-  - [ ] Task Category: `TaskCategoryData`
-- [ ] `workflow` · `crm/workflow` · GET POST PUT
-  - [ ] Workflow: `WorkflowData`
-  - [ ] WorkflowStep: `WorkflowStepData`
-- [ ] `start-a-workflow` · `crm/workflowstart` · POST
 
 ## Done
 
@@ -490,3 +468,25 @@ Every resource in these groups is in.
 
 - [x] `unit-of-measure` · `ref/unit` · GET POST PUT DELETE
   - [x] Unit of Measure: `UnitOfMeasureData`
+
+### `reference/webhooks/**` Webhooks (1 resource, 4 operations)
+
+- [x] `webhooks` · `webhooks` · GET POST PUT DELETE
+  - [x] Webhooks: `WebhookData`
+
+### `reference/crm/**` CRM (6 resources, 16 operations)
+
+- [x] `lead` · `crm/lead` · GET POST PUT
+  - [x] Lead: `LeadData`
+- [x] `opportunity` · `crm/opportunity` · GET POST PUT
+  - [x] Opportunity: `OpportunityData`
+  - [x] Opportunity Line: `OpportunityLineData`
+  - [x] Opportunity Opportunity Additional Charge: `OpportunityAdditionalChargeData`
+- [x] `task` · `crm/task` · GET POST PUT
+  - [x] Task: `TaskData`
+- [x] `task-category` · `crm/taskcategory` · GET POST PUT
+  - [x] Task Category: `TaskCategoryData`
+- [x] `workflow` · `crm/workflow` · GET POST PUT
+  - [x] Workflow: `WorkflowData`
+  - [x] WorkflowStep: `WorkflowStepData`
+- [x] `start-a-workflow` · `crm/workflowstart` · POST

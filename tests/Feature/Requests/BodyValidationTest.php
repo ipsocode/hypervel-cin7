@@ -18,6 +18,7 @@ use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialMan
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
+use Ipsocode\Cin7\Data\Crm\Opportunity\OpportunityPostData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Disassembly\DisassemblyPostData;
 use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderData;
@@ -55,6 +56,7 @@ use Ipsocode\Cin7\Data\Sale\SalePostData;
 use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentPostData;
 use Ipsocode\Cin7\Data\StockTake\StockTakePostData;
 use Ipsocode\Cin7\Data\StockTransfer\StockTransferPostData;
+use Ipsocode\Cin7\Data\Webhooks\WebhookPostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
@@ -63,6 +65,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAdvancedPurchase;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
+use Ipsocode\Cin7\Requests\Crm\Opportunity\PostCrmOpportunity;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Disassembly\Order\PostDisassemblyOrder;
 use Ipsocode\Cin7\Requests\Disassembly\PostDisassembly;
@@ -100,6 +103,7 @@ use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
 use Ipsocode\Cin7\Requests\StockAdjustment\PostStockAdjustment;
 use Ipsocode\Cin7\Requests\StockTake\PostStockTake;
 use Ipsocode\Cin7\Requests\StockTransfer\PostStockTransfer;
+use Ipsocode\Cin7\Requests\Webhooks\PostWebhooks;
 use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -764,6 +768,64 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PutProductMarkupPrices(MarkupPricesData::from(['ProductID' => '7c8795c2-1a6b-4318-ba72-291f61444906', 'MarkupPrices' => [['TierNumber' => 3, 'MarkupType' => 'D']]])));
 
         $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * An opportunity line needs its product, by `ProductID` or `ProductSku`; a body with a line that
+     * has neither is not sent, and one of each is enough.
+     */
+    public function testAnOpportunityLineNeedsItsProduct(): void
+    {
+        $body = [
+            'CustomerName' => 'ABC Furniture',
+            'BillingAddressLine1' => 'Cosmonauts Alley',
+            'Currency' => 'USD',
+            'TaxRule' => 'GST on Income',
+            'Terms' => '30 days',
+            'PriceTier' => 'Tier 1',
+            'OpportunityLocation' => 'Main Warehouse',
+            'CustomerCurrency' => 'AED',
+            'TermMethod' => 1,
+            'SalesRepresentative' => 'DEFAULT business contact',
+            'ShipToOther' => false,
+        ];
+        $line = ['Quantity' => 1, 'Price' => 2, 'Tax' => 0, 'Total' => 2];
+
+        try {
+            $this->connector()->send(new PostCrmOpportunity(OpportunityPostData::from($body + ['Lines' => [$line]])));
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Lines.0.ProductID', 'Lines.0.ProductSku'], array_keys($exception->errors()));
+        }
+
+        $this->connector()->send(new PostCrmOpportunity(OpportunityPostData::from($body + ['Lines' => [$line + ['ProductSku' => '101-Gloves-016']]])));
+        $this->connector()->send(new PostCrmOpportunity(OpportunityPostData::from($body + ['Lines' => [$line + ['ProductID' => '87d7bc76-11d4-43e1-b022-488dae83868b']]])));
+
+        $this->mock->assertSentCount(2);
+    }
+
+    /**
+     * A webhook's credentials follow its authorisation type: `basicauth` needs a user name and a
+     * password, `bearerauth` a token, and `noauth` none; a body without them is not sent.
+     */
+    public function testAWebhookNeedsTheCredentialsOfItsAuthorisationType(): void
+    {
+        $body = ['Type' => 'Sale/Created', 'IsActive' => true, 'ExternalURL' => 'https://example.test/hook'];
+
+        foreach ([['basicauth', ['ExternalUserName', 'ExternalPassword']], ['bearerauth', ['ExternalBearerToken']]] as [$type, $fields]) {
+            try {
+                $this->connector()->send(new PostWebhooks(WebhookPostData::from($body + ['ExternalAuthorizationType' => $type])));
+                $this->fail('The body should have failed validation.');
+            } catch (ValidationException $exception) {
+                $this->assertEqualsCanonicalizing($fields, array_keys($exception->errors()));
+            }
+        }
+
+        $this->connector()->send(new PostWebhooks(WebhookPostData::from($body + ['ExternalAuthorizationType' => 'noauth'])));
+        $this->connector()->send(new PostWebhooks(WebhookPostData::from($body + ['ExternalAuthorizationType' => 'basicauth', 'ExternalUserName' => 'u', 'ExternalPassword' => 'p'])));
+        $this->connector()->send(new PostWebhooks(WebhookPostData::from($body + ['ExternalAuthorizationType' => 'bearerauth', 'ExternalBearerToken' => 't'])));
+
+        $this->mock->assertSentCount(3);
     }
 
     /**
