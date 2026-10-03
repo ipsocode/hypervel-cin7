@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Workbench\App\Support;
 
 /**
- * Cin7-shaped response bodies for the Workbench application and the test suite.
+ * Cin7-shaped response bodies for the Workbench application and the test suite: the V2
+ * reference's examples, read from `workbench/fixtures/`, and a customer record.
  *
- * Lists keep Cin7's `Total`, `Page` and `<Thing>List` envelope, so a test asserts on
- * the keys the real API sends.
+ * The list envelopes and the Error Model are `Ipsocode\Cin7\Testing\Cin7Fake`'s, which ships.
  *
  * @see docs/testing.md
  */
@@ -28,22 +28,6 @@ final class Cin7Payloads
     }
 
     /**
-     * One page of customers. `$total` defaults to this page's item count, so a
-     * multi-page fixture passes it.
-     *
-     * @param list<array<string, mixed>> $customers
-     * @return array<string, mixed>
-     */
-    public static function customerList(array $customers = [], int $page = 1, ?int $total = null): array
-    {
-        return [
-            'Total' => $total ?? count($customers),
-            'Page' => $page,
-            'CustomerList' => $customers,
-        ];
-    }
-
-    /**
      * One customer record, as it appears inside `CustomerList`.
      *
      * @return array<string, mixed>
@@ -59,37 +43,6 @@ final class Cin7Payloads
             'AccountReceivable' => '610',
             'RevenueAccount' => '200',
             'TaxRule' => 'Tax Exempt',
-        ];
-    }
-
-    /**
-     * One page of products. Unlike the other lists, the V2 envelope is keyed `Products`
-     * (`{Total, Page, Products}`), not `ProductList`.
-     *
-     * @param list<array<string, mixed>> $products
-     * @return array<string, mixed>
-     */
-    public static function products(array $products = [], int $page = 1, ?int $total = null): array
-    {
-        return [
-            'Total' => $total ?? count($products),
-            'Page' => $page,
-            'Products' => $products,
-        ];
-    }
-
-    /**
-     * One page of a customer's credits. Unlike the other lists, the V2 envelope has no
-     * `Total` (`{Page, CustomerCredits}`).
-     *
-     * @param list<array<string, mixed>> $credits
-     * @return array<string, mixed>
-     */
-    public static function customerCredits(array $credits = [], int $page = 1): array
-    {
-        return [
-            'Page' => $page,
-            'CustomerCredits' => $credits,
         ];
     }
 
@@ -332,36 +285,5 @@ final class Cin7Payloads
     public static function moneyTask(): array
     {
         return self::load('moneyTask', 'get.response');
-    }
-
-    /**
-     * An Error Model body for the 503 Cin7 returns when throttling; it carries no `Retry-After`
-     * header.
-     *
-     * @return array<string, mixed>
-     */
-    public static function throttled(): array
-    {
-        return self::error('Service Unavailable', 503);
-    }
-
-    /**
-     * An Error Model body for the 429 Cin7 documents for its 60 calls per minute limit.
-     *
-     * @return array<string, mixed>
-     */
-    public static function limitReached(): array
-    {
-        return self::error('You reached 60 calls per minute API limit', 429);
-    }
-
-    /**
-     * Error Model, `{ErrorCode, Exception}`, the body Cin7 returns for a failed call.
-     *
-     * @return array<string, mixed>
-     */
-    public static function error(string $message = 'Request is invalid', int $code = 400): array
-    {
-        return ['ErrorCode' => $code, 'Exception' => $message];
     }
 }

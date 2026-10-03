@@ -122,7 +122,8 @@ worker's lifetime is safe.
   and timeouts, rate limiting and the choice of limiter store, and the throttling
   cooldown.
 - [docs/testing.md](docs/testing.md) — faking Cin7 in the tests of an
-  application that uses the package, and how the package's own suite is built.
+  application that uses the package, with the shipped `Cin7Fake` builders for
+  list envelopes and the Error Model, and how the package's own suite is built.
 
 ## What this package deliberately does not do
 

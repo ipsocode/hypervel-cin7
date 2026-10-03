@@ -10,14 +10,15 @@ commands that run the suite and the CI checks are in
 
 ## Testing an application that uses the package
 
-Fake Cin7 through Saloon's global mock client, as the package's own suite does:
+Fake Cin7 through Saloon's global mock client, with the responses `Ipsocode\Cin7\Testing\Cin7Fake`
+builds, as the package's own suite does:
 
 ```php
 use Hypervel\Saloon\Facades\Saloon;
-use Hypervel\Saloon\Http\Faking\MockResponse;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 
 $mock = Saloon::fake([
-    MockResponse::make(['Total' => 1, 'Page' => 1, 'CustomerList' => [['ID' => '…', 'Name' => 'ACME']]]),
+    Cin7Fake::list('CustomerList', [['ID' => '…', 'Name' => 'ACME']]),
 ]);
 
 // ... exercise the code that calls Cin7 ...
@@ -32,9 +33,13 @@ assert on its `headers()`, `queryParameters()` and `body()`.
   `{Total, Page, <Thing>List}` envelope described in
   [pagination](pagination.md#the-list-envelope), and a failure as the Error
   Model, `{ErrorCode, Exception}`; a fake with any other shape tests code
-  against a body Cin7 never sends. A faked Error Model throws even with a 200,
-  as the real one does (see [errors](requests.md#errors)).
-- **Fixtures for the typed bodies.** The V2 reference's examples are JSON files under
+  against a body Cin7 never sends. `Cin7Fake` builds both, so a test does not
+  spell the keys out. A faked Error Model throws even with a 200, as the real
+  one does (see [errors](requests.md#errors)).
+- **No reference examples ship.** The builders give a body its envelope and
+  status; the record inside is the test's own. The V2 reference's full examples
+  are the package's test data, not part of what an install carries.
+- **Fixtures for the typed bodies.** In the package's own suite, those examples are JSON files under
   `workbench/fixtures/`, one folder per API path: `Cin7Payloads::load('ref/tax',
   'get.response')` reads `workbench/fixtures/ref/tax/get.response.json`, and named helpers
   such as `Cin7Payloads::taxList()` wrap the older ones. `DataCatalogueTest` asserts each
@@ -47,7 +52,9 @@ assert on its `headers()`, `queryParameters()` and `body()`.
 - **No limiter store needed.** A faked send never touches the rate limiter:
   Saloon enforces limits only when no fake matched, and records the throttling
   cooldown only for responses that came off the wire.
-- **Faking a 429 or 503.** The request retries it, 4 attempts 5 seconds apart
+- **Faking a 429 or 503.** `Cin7Fake::limitReached()` is the 429 and
+  `Cin7Fake::throttled()` the 503, which comes with no `Retry-After`;
+  `limitReached(30)` adds one. The request retries it, 4 attempts 5 seconds apart
   by default (see [retry policy](requests.md#retry-policy)). Call
   `Hypervel\Support\Sleep::fake()` so the waits take no time, and fake one
   response per attempt; or set `cin7.retry.times` to `1` before constructing
@@ -57,6 +64,18 @@ assert on its `headers()`, `queryParameters()` and `body()`.
   a `ValidationException` before the mock sees the request. Use a real-shaped
   GUID, or an array body, which is sent as given.
 
+The builders, all returning a `MockResponse`:
+
+| Builder | Builds |
+|---|---|
+| `Cin7Fake::list($listKey, $items, $page = 1, $total = null)` | `{Total, Page, <listKey>}`; `Total` defaults to the item count, so a multi-page fake passes it |
+| `Cin7Fake::listWithoutTotal($listKey, $items, $page = 1)` | `{Page, <listKey>}`, the envelope of `ref/customer/credits` and `ref/supplier/deposits` (see [pagination](pagination.md#an-envelope-with-no-total)) |
+| `Cin7Fake::record($body)` | the body as given, with a 200 |
+| `Cin7Fake::error($message, $code = 400, $status = null)` | the Error Model; the status is the code unless `$status` names another, so `status: 200` is the Error Model Cin7 sometimes sends with a 200 |
+| `Cin7Fake::throttled()` | the 503, with no `Retry-After` |
+| `Cin7Fake::limitReached($retryAfter = null)` | the 429, with a `Retry-After` when given |
+| `Cin7Fake::credentialsRejected()` | the `403 Incorrect credentials!` |
+
 A fake can also be keyed by request class, with a closure that builds the
 response from the `PendingRequest`:
 
@@ -65,11 +84,12 @@ use Hypervel\Saloon\Http\PendingRequest;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 
 Saloon::fake([
-    GetCustomer::class => fn (PendingRequest $request): MockResponse => MockResponse::make([
-        'Total' => 3,
-        'Page' => (int) $request->queryParameters()['page'],
-        'CustomerList' => [/* … */],
-    ]),
+    GetCustomer::class => fn (PendingRequest $request): MockResponse => Cin7Fake::list(
+        'CustomerList',
+        [/* … */],
+        page: (int) $request->queryParameters()['page'],
+        total: 3,
+    ),
 ]);
 ```
 
@@ -82,7 +102,7 @@ The split is enforced rather than conventional.
 | Suite | Covers | Boots the application |
 |---|---|---|
 | `tests/Unit` | `PageDefaults` | No |
-| `tests/Feature` | the container binding, the config merge, request and resource construction, every faked send, the Workbench application | Yes |
+| `tests/Feature` | the container binding, the config merge, request and resource construction, every faked send, the shipped `Cin7Fake`, the Workbench application | Yes |
 
 Every Unit test method carries `#[UnitTest]`
 (`Hypervel\Foundation\Testing\Attributes\UnitTest`), so the framework never
@@ -204,7 +224,7 @@ the seam a consuming application has:
 | Piece | Purpose |
 |---|---|
 | [`CustomerDirectory`](../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's singleton resolves as a dependency of an application's own service, not only through `$app->make()`. |
-| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies. `load($path, $name)` reads the V2 reference's examples from `workbench/fixtures/<api path>/<verb>.<request\|response>.json`, and named helpers wrap them: `sale()` (the Sale example, keyed by `ID`), `saleList()`, `saleInvoices()`, `saleInvoicePost()`, `salePayments()` and the rest. Builders make bodies a test shapes itself: `customerList()` (the `Total`/`Page`/`CustomerList` envelope), `customer()`, `products()`, `customerCredits()`, and the Error Model bodies `error()`, `throttled()` (the 503, which comes with no `Retry-After`) and `limitReached()` (the 429). A test asserting on `CustomerList` asserts on a key Cin7 actually sends. |
+| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies. `load($path, $name)` reads the V2 reference's examples from `workbench/fixtures/<api path>/<verb>.<request\|response>.json`, and named helpers wrap them: `sale()` (the Sale example, keyed by `ID`), `saleList()`, `saleInvoices()`, `saleInvoicePost()`, `salePayments()` and the rest, plus `customer()`, one record for a list's items. The list envelopes and the Error Model are not here: they are `Cin7Fake`'s, which ships (above), so the suite fakes with what an application does and the coverage gate covers it. |
 | [`cin7:customers`](../workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for calling the live API by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
 
 `cin7:customers` lists customers through `CustomerDirectory::all()`, which

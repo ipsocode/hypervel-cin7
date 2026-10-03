@@ -83,9 +83,10 @@ Testbench skeleton does not.
 `workbench/` is the throwaway host application the suite runs against. It owns
 no models or migrations — this package defines no tables — but it does own
 the seam a consuming application has: `CustomerDirectory` takes the connector
-by constructor injection, `Cin7Payloads` holds the Cin7 response envelopes the
-suite asserts against, and `cin7:customers` is there to poke at the live API by
-hand:
+by constructor injection, `Cin7Payloads` holds the V2 reference's examples the
+suite asserts against (the list envelopes and the Error Model are the shipped
+`src/Testing/Cin7Fake.php`), and `cin7:customers` is there to poke at the live
+API by hand:
 
 ```sh
 vendor/bin/testbench cin7:customers --limit=5
