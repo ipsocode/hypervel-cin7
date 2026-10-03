@@ -121,8 +121,7 @@ $raw = $saved->getResponse()->json();                 // the untouched body
   a write body checks. Only three cases stay plainly optional, each with its reason in the class's
   docblock and below: a verb's own body class whose example leaves the field out (a partial PUT), a
   value Cin7 computes (a POST's `Total`, `Tax` and `TotalBeforeTax`), and the `ID` of a nested item
-  being added. `docs/skills/cin7-models/scripts/required.py` lists every `Yes` field a class does
-  not keep required, and whether a docblock and this page explain it.
+  being added.
 - **Every other field is `?type = null`.** A field the caller did not set is `null`, and
   `null` means skipped: a write leaves it out of the body. A response's `toArray()` has a
   key for every field, `null` where the response had none or sent `null`.
@@ -1606,8 +1605,8 @@ requires:
   `#[Required]` and `LastModifiedOn` optional, since the nested `Order` carries neither.
 - **`ManualJournals`.** All six transfer examples send `"ManualJournals": []`, in no table and with
   no model. It stays a list of whatever the reference puts in it.
-- **PUT request example.** `names.py example` does not find it (the blueprint's `PUT` request is
-  formatted differently); the fixture is the example copied as it stands.
+- **PUT request example.** The blueprint formats the `PUT` request differently from the other
+  examples; the fixture is the example copied as it stands.
 - **`DepartureDate` and `InTransitAccount`** are "Yes*" for `IN TRANSIT` only, so they are
   `#[RequiredIf('Status', …)]`; `BatchSN` and `ExpiryDate` depend on the product's costing method and
   stay optional.
@@ -1833,7 +1832,7 @@ that follow hold for all of them.
   "Production Run Pending Output", copied from the table above it. `WorkCenterLocationData.Type`
   is `Consumption` or `Output`.
 - **`RunCostID` and `ProductID`** are required on a run resource cost.
-- **Examples that needed fixing.** `names.py example` fixed the trailing or missing commas of the
+- **Examples that needed fixing.** The trailing or missing commas were fixed mechanically in the
   order attachment PUT request, the order list, run POST and GET responses, the run PUT response,
   the manual journal request and response, the operation complete request, the resource list and
   resource GET and POST fixtures, and the suspend reason GET. Three had to be fixed by hand: the run

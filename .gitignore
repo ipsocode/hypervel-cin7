@@ -9,6 +9,3 @@ composer.lock
 
 # Claude Code's local state; the automated review's skill and brief live in .github/claude/.
 /.claude
-
-# Python's bytecode cache, which the cin7-models skill's scripts write beside themselves.
-__pycache__/
