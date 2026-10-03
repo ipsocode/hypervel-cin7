@@ -11,8 +11,8 @@ use Ipsocode\Cin7\Enums\TaskEntityType;
 use Ipsocode\Cin7\Enums\WorkflowDueDaysType;
 
 /**
- * Workflow, one entry of a response of its endpoint: the table with its `ID`. The bodies of POST
- * and PUT are `WorkflowPostData` and `WorkflowPutData`.
+ * Workflow, one entry of a response of its endpoint: the table with its `ID`, which every response
+ * sends. The bodies of POST and PUT are `WorkflowPostData` and `WorkflowPutData`.
  *
  * @see docs/data.md
  */
@@ -25,7 +25,7 @@ final class WorkflowData extends AbstractWorkflowData implements WithResponse
         TaskEntityType $EntityType,
         WorkflowDueDaysType $DueDaysType,
         #[Uuid]
-        public ?string $ID = null,
+        public string $ID,
     ) {
         parent::__construct($Name, $EntityType, $DueDaysType);
     }

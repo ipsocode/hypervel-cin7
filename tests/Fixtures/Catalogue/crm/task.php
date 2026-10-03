@@ -40,6 +40,7 @@ return [
         TaskPutData::class => [TaskPutData::class, Cin7Payloads::load('crm/task', 'put.request')],
     ],
     'missing' => [
+        'Task without ID' => [TaskData::class, Arr::except(Cin7Payloads::load('crm/task', 'get.response')['Tasks'][0], 'ID')],
         'Task POST without Name' => [TaskPostData::class, Arr::except(Cin7Payloads::load('crm/task', 'post.request'), 'Name')],
         'Task POST without StartDate' => [TaskPostData::class, Arr::except(Cin7Payloads::load('crm/task', 'post.request'), 'StartDate')],
         'Task POST without EndDate' => [TaskPostData::class, Arr::except(Cin7Payloads::load('crm/task', 'post.request'), 'EndDate')],
@@ -56,7 +57,7 @@ return [
         'Task without Name' => [TaskData::class, Arr::except(Cin7Payloads::load('crm/task', 'get.response')['Tasks'][0], 'Name')],
     ],
     'required' => [
-        TaskData::class => ['Name', 'StartDate', 'EndDate', 'EntityType', 'EntityID', 'TaskStatus'],
+        TaskData::class => ['Name', 'StartDate', 'EndDate', 'EntityType', 'EntityID', 'TaskStatus', 'ID'],
         TaskPostData::class => ['Name', 'StartDate', 'EndDate', 'EntityType', 'EntityID', 'TaskStatus'],
         TaskPutData::class => ['Name', 'StartDate', 'EndDate', 'EntityType', 'EntityID', 'TaskStatus', 'ID'],
     ],

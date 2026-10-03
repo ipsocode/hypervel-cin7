@@ -42,6 +42,7 @@ return [
         OpportunityPutData::class => [OpportunityPutData::class, Cin7Payloads::load('crm/opportunity', 'put.request')],
     ],
     'missing' => [
+        'Opportunity without ID' => [OpportunityData::class, Arr::except(Cin7Payloads::load('crm/opportunity', 'get.response')['opportunityList'][0], 'ID')],
         'Opportunity POST without CustomerName' => [OpportunityPostData::class, Arr::except(Cin7Payloads::load('crm/opportunity', 'post.request'), 'CustomerName')],
         'Opportunity POST without BillingAddressLine1' => [OpportunityPostData::class, Arr::except(Cin7Payloads::load('crm/opportunity', 'post.request'), 'BillingAddressLine1')],
         'Opportunity POST without Currency' => [OpportunityPostData::class, Arr::except(Cin7Payloads::load('crm/opportunity', 'post.request'), 'Currency')],
@@ -68,7 +69,7 @@ return [
         'Opportunity without CustomerName' => [OpportunityData::class, Arr::except(Cin7Payloads::load('crm/opportunity', 'get.response')['opportunityList'][0], 'CustomerName')],
     ],
     'required' => [
-        OpportunityData::class => ['CustomerName', 'BillingAddressLine1', 'Currency', 'TaxRule', 'Terms', 'PriceTier', 'OpportunityLocation', 'CustomerCurrency', 'TermMethod', 'SalesRepresentative', 'ShipToOther'],
+        OpportunityData::class => ['CustomerName', 'BillingAddressLine1', 'Currency', 'TaxRule', 'Terms', 'PriceTier', 'OpportunityLocation', 'CustomerCurrency', 'TermMethod', 'SalesRepresentative', 'ShipToOther', 'ID'],
         OpportunityPostData::class => ['CustomerName', 'BillingAddressLine1', 'Currency', 'TaxRule', 'Terms', 'PriceTier', 'OpportunityLocation', 'CustomerCurrency', 'TermMethod', 'SalesRepresentative', 'ShipToOther'],
         OpportunityPutData::class => ['CustomerName', 'BillingAddressLine1', 'Currency', 'TaxRule', 'Terms', 'PriceTier', 'OpportunityLocation', 'CustomerCurrency', 'TermMethod', 'SalesRepresentative', 'ShipToOther', 'ID'],
         OpportunityLineData::class => ['Quantity', 'Price', 'Tax', 'Total'],

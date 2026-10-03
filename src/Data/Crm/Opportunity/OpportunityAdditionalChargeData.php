@@ -9,7 +9,9 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
- * Opportunity Additional Charge, one entry of an opportunity's `AdditionalCharges`: a service, by description, with its quantity, amount, tax and total.
+ * Opportunity Additional Charge, one entry of an opportunity's `AdditionalCharges`: a service, by
+ * description, with its quantity, amount, tax and total. The table requires the `ID`, but a charge
+ * being added to an opportunity has none yet, so it stays optional.
  *
  * @see docs/data.md
  */

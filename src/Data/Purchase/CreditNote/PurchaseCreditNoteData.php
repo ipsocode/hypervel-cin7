@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Purchase\CreditNote;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Required;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
@@ -18,8 +19,9 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 /**
  * Purchase Credit Note Model and the Available Fields for Purchase Credit Note table, the response
  * of `purchase/creditnote`. One name, so one class carrying the union: the table's `TaskID` and
- * `CombineAdditionalCharges` and the model's `Refunds` are optional, as only one of the two has
- * them. The POST body is `PurchaseCreditNotePostData`.
+ * `CombineAdditionalCharges` are nullable and `#[Required]`, as the table requires them and the
+ * `purchase` examples embed the credit note without them; the model's `Refunds` is optional, as
+ * only the model has it. The POST body is `PurchaseCreditNotePostData`.
  *
  * It follows the tables, whose `Unstock` is a list of lines. The `purchase` examples embed the
  * credit note with `Unstock` as an object, `{Status, Lines}`, which this class does not read: a
@@ -43,8 +45,10 @@ final class PurchaseCreditNoteData extends AbstractPurchaseCreditNoteData implem
         array $Unstock,
         #[DateTime]
         public string $CreditNoteDate,
+        #[Required]
         #[Uuid]
         public ?string $TaskID = null,
+        #[Required]
         public ?bool $CombineAdditionalCharges = null,
         #[DataCollectionOf(SalePaymentLineData::class)]
         public ?array $Refunds = null,

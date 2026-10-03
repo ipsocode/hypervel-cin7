@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Requests;
 
 use Closure;
+use Hypervel\Data\Data;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use Hypervel\Saloon\Http\Faking\MockResponse;
@@ -12,12 +13,17 @@ use Hypervel\Support\Arr;
 use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePutData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchaseCreditNoteData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchasePartialCreditNotePostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchaseInvoiceData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
+use Ipsocode\Cin7\Data\Crm\Lead\LeadData;
 use Ipsocode\Cin7\Data\Crm\Opportunity\OpportunityPostData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Disassembly\DisassemblyPostData;
@@ -36,32 +42,47 @@ use Ipsocode\Cin7\Data\Production\Resource\ResourcePutData;
 use Ipsocode\Cin7\Data\Production\Resource\ResourcesPostData;
 use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCentersData;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
+use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNoteData;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
+use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceData;
 use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
+use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalData;
 use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
+use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
 use Ipsocode\Cin7\Data\Purchase\PurchasePostData;
 use Ipsocode\Cin7\Data\Purchase\PurchasePutData;
+use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
 use Ipsocode\Cin7\Data\Ref\Account\AccountPostData;
 use Ipsocode\Cin7\Data\Ref\Account\AccountPutData;
+use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypePostData;
+use Ipsocode\Cin7\Data\Reference\Deals\ProductDealDiscountBrandData;
+use Ipsocode\Cin7\Data\Reference\Deals\ProductDealDiscountCategoryData;
+use Ipsocode\Cin7\Data\Reference\Deals\ProductDealDiscountProductData;
+use Ipsocode\Cin7\Data\Reference\Deals\ProductDealDiscountTagData;
 use Ipsocode\Cin7\Data\Reference\Discount\ProductDiscountRulePutData;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackPostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickPostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickPutData;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipPostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipPutData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
 use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalPostData;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
+use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Data\Sale\SalePostData;
+use Ipsocode\Cin7\Data\SaleCreditNoteList\SaleCreditNoteListData;
 use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentPostData;
 use Ipsocode\Cin7\Data\StockTake\StockTakePostData;
+use Ipsocode\Cin7\Data\StockTransfer\Order\StockTransferOrderData;
 use Ipsocode\Cin7\Data\StockTransfer\StockTransferPostData;
 use Ipsocode\Cin7\Data\Webhooks\WebhookPostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
@@ -259,7 +280,7 @@ class BodyValidationTest extends TestCase
             'invoice POST' => [fn (): WriteRequest => new PostSaleInvoice(SaleInvoicePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::saleInvoicePost()))],
             'invoice PUT' => [fn (): WriteRequest => new PutSaleInvoice(SaleInvoicePutData::from(['Status' => 'PAID'] + Cin7Payloads::saleInvoicePut()))],
             'credit note POST' => [fn (): WriteRequest => new PostSaleCreditNote(SaleCreditNotePostData::from(['Status' => 'VOIDED'] + Cin7Payloads::saleCreditNotePost()))],
-            'order POST' => [fn (): WriteRequest => new PostSaleOrder(SaleOrderData::from(['Status' => 'CLOSED'] + Cin7Payloads::saleOrder()))],
+            'order POST' => [fn (): WriteRequest => new PostSaleOrder(SaleOrderData::from(['Status' => 'CLOSED', 'CombineAdditionalCharges' => false] + Cin7Payloads::saleOrder()))],
             'pick POST' => [fn (): WriteRequest => new PostSaleFulfilmentPick(SaleFulfilmentPickPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'VOIDED']))],
             'pack POST' => [fn (): WriteRequest => new PostSaleFulfilmentPack(SaleFulfilmentPackPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'NOT AVAILABLE']))],
             'ship POST' => [fn (): WriteRequest => new PostSaleFulfilmentShip(SaleFulfilmentShipPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'VOIDED']))],
@@ -1120,5 +1141,86 @@ class BodyValidationTest extends TestCase
         $this->connector()->send(new PostProductionWorkCenters(WorkCentersData::from(['Workcenters' => [[...$center, 'SupplierID' => '38cddb52-9a81-4c07-9791-362936efa552', 'CoManProcurementType' => 'Transfer']]])));
 
         $this->mock->assertSentCount(1);
+    }
+
+    /**
+     * A field the reference requires but its responses or examples leave out is nullable, for the
+     * responses, and `#[Required]`: a model without it, or with it `null`, fails validation, and one
+     * with it passes.
+     *
+     * @param class-string<Data> $class
+     * @param array<string, mixed> $payload
+     * @param list<string> $fields
+     */
+    #[DataProvider('requiredFieldProvider')]
+    public function testAModelWithoutAFieldItsTableRequiresFailsValidation(string $class, array $payload, array $fields): void
+    {
+        $class::validate($payload);
+
+        foreach ($fields as $field) {
+            foreach ([Arr::except($payload, $field), [$field => null] + $payload] as $broken) {
+                try {
+                    $class::validate($broken);
+                    $this->fail("{$class} should have failed validation without {$field}.");
+                } catch (ValidationException $exception) {
+                    $this->assertSame([$field], array_keys($exception->errors()));
+                }
+            }
+        }
+    }
+
+    /**
+     * @return array<string, array{class-string<Data>, array<string, mixed>, list<string>}>
+     */
+    public static function requiredFieldProvider(): array
+    {
+        $item = static fn (string $path, string $list, int $index = 0): array => Cin7Payloads::load($path, 'get.response')[$list][$index];
+        $purchase = Cin7Payloads::load('advanced-purchase', 'get.response');
+        $putAway = Cin7Payloads::load('advanced-purchase/put-away', 'get.response');
+        $stock = Cin7Payloads::load('advanced-purchase/stock', 'get.response');
+        $quote = Cin7Payloads::load('sale/quote', 'get.response');
+
+        return [
+            'advanced purchase put away PurchaseID' => [AdvancedPurchasePutAwayData::class, $putAway['PutAway'][0] + ['PurchaseID' => $putAway['PurchaseID']], ['PurchaseID']],
+            'advanced purchase stock PurchaseID' => [AdvancedPurchaseStockData::class, $stock['StockReceiving'][0] + ['PurchaseID' => $stock['PurchaseID']], ['PurchaseID']],
+            'advanced purchase credit note date' => [AdvancedPurchaseCreditNoteData::class, $purchase['CreditNote'][0], ['CreditNoteDate']],
+            'advanced purchase invoice dates' => [AdvancedPurchaseInvoiceData::class, $purchase['Invoice'][0], ['InvoiceDate', 'InvoiceDueDate']],
+            'purchase credit note' => [PurchaseCreditNoteData::class, Cin7Payloads::load('purchase/creditnote', 'get.response'), ['TaskID', 'CombineAdditionalCharges']],
+            'purchase invoice' => [PurchaseInvoiceData::class, Cin7Payloads::load('purchase/invoice', 'get.response'), ['TaskID', 'CombineAdditionalCharges', 'InvoiceDueDate']],
+            'purchase manual journal TaskID' => [PurchaseManualJournalData::class, Cin7Payloads::load('purchase/manualJournal', 'get.response'), ['TaskID']],
+            'purchase order' => [PurchaseOrderData::class, ['Memo' => 'Rush'] + Cin7Payloads::load('purchase/order', 'get.response'), ['TaskID', 'CombineAdditionalCharges', 'Memo']],
+            'purchase stock TaskID' => [PurchaseStockData::class, Cin7Payloads::load('purchase/stock', 'get.response'), ['TaskID']],
+            'sale credit note list tracking numbers' => [SaleCreditNoteListData::class, ['QuoteStatus' => 'DRAFT', 'CombinedTrackingNumbers' => 'TRK-1'] + $item('saleCreditNoteList', 'SaleList'), ['CombinedTrackingNumbers']],
+            'sale fulfilment ship TaskID' => [SaleFulfilmentShipData::class, Cin7Payloads::load('sale/fulfilment/ship', 'get.response'), ['TaskID']],
+            'sale manual journal SaleID' => [SaleManualJournalData::class, Cin7Payloads::load('sale/manualJournal', 'get.response'), ['SaleID']],
+            'sale order' => [SaleOrderData::class, ['Memo' => 'Rush', 'CombineAdditionalCharges' => false] + Cin7Payloads::load('sale/order', 'get.response'), ['SaleID', 'CombineAdditionalCharges']],
+            'sale quote' => [SaleQuoteData::class, ['Memo' => 'Rush', 'Lines' => array_map(static fn (array $line): array => ['Comment' => 'Fresh'] + $line, $quote['Lines'])] + $quote, ['SaleID', 'CombineAdditionalCharges']],
+            'stock transfer order TaskID' => [StockTransferOrderData::class, Cin7Payloads::load('stockTransfer/order', 'get.response'), ['TaskID']],
+            'lead ID' => [LeadData::class, $item('crm/lead', 'LeadList'), ['ID']],
+            'deal discount brand Type' => [ProductDealDiscountBrandData::class, ['BrandName' => 'Acme', 'Type' => 'Brand'], ['Type']],
+            'deal discount category Type' => [ProductDealDiscountCategoryData::class, ['CategoryName' => 'Tools', 'Type' => 'Category'], ['Type']],
+            'deal discount tag Type' => [ProductDealDiscountTagData::class, ['TagName' => 'Sale', 'Type' => 'Tag'], ['Type']],
+            'deal discount product IsFamily and Type' => [ProductDealDiscountProductData::class, ['ProductSKU' => 'Bread', 'IsFamily' => false, 'Type' => 'Product'], ['IsFamily', 'Type']],
+        ];
+    }
+
+    /**
+     * A fixed asset type sets a `Rate` or an `EffectiveLife`: a body with neither is not valid, and
+     * one with either passes.
+     */
+    public function testAFixedAssetTypeNeedsARateOrAnEffectiveLife(): void
+    {
+        $body = Arr::except(Cin7Payloads::load('ref/fixedassettype', 'post.request'), ['Rate', 'EffectiveLife']);
+
+        try {
+            FixedAssetTypePostData::validate($body);
+            $this->fail('The body should have failed validation.');
+        } catch (ValidationException $exception) {
+            $this->assertEqualsCanonicalizing(['Rate', 'EffectiveLife'], array_keys($exception->errors()));
+        }
+
+        FixedAssetTypePostData::validate($body + ['Rate' => 10]);
+        FixedAssetTypePostData::validate($body + ['EffectiveLife' => 2]);
+        $this->addToAssertionCount(1);
     }
 }

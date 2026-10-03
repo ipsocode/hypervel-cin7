@@ -82,10 +82,11 @@ return [
         'stock transfer order POST without Status' => [StockTransferOrderPostData::class, Arr::except(Cin7Payloads::load('stockTransfer/order', 'post.request'), 'Status')],
         'stock transfer order POST without TaskID' => [StockTransferOrderPostData::class, Arr::except(Cin7Payloads::load('stockTransfer/order', 'post.request'), 'TaskID')],
         'stock transfer order without Status' => [StockTransferOrderData::class, Arr::except(Cin7Payloads::load('stockTransfer/order', 'get.response'), 'Status')],
+        'stock transfer order without Lines' => [StockTransferOrderData::class, Arr::except(Cin7Payloads::load('stockTransfer/order', 'get.response'), 'Lines')],
         'stock transfer order line without TransferQuantity' => [StockTransferOrderLineData::class, Arr::except(Cin7Payloads::load('stockTransfer/order', 'post.request')['Lines'][0], 'TransferQuantity')],
     ],
     'required' => [
-        StockTransferOrderData::class => ['Status'],
+        StockTransferOrderData::class => ['Status', 'Lines'],
         StockTransferOrderPostData::class => ['TaskID', 'Status', 'Lines'],
         StockTransferOrderLineData::class => ['TransferQuantity'],
     ],

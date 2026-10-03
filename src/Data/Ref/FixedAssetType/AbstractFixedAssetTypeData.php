@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Ref\FixedAssetType;
 
 use Hypervel\Data\Attributes\Validation\Max;
+use Hypervel\Data\Attributes\Validation\RequiredWithout;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Enums\AveragingMethod;
 use Ipsocode\Cin7\Enums\DepreciationMethod;
@@ -16,15 +17,17 @@ use Ipsocode\Cin7\Enums\DepreciationMethod;
  * Every fixed asset type needs its `Name`, `DepreciationMethod`, `AveragingMethod`,
  * `AssetAccountCode` and `AccumulatedDepreciationAccountCode`, so each child passes them to this
  * constructor. The table requires `Rate` and `EffectiveLife` too, but only one of them can be set,
- * and the examples send the other as `null`, so both are optional. `DepreciationExpenseAccountCode`
- * appears only in the examples.
+ * and the examples send the other as `null`, so each is nullable and `#[RequiredWithout]` the
+ * other: a write body sets one. `DepreciationExpenseAccountCode` appears only in the examples.
  *
  * @see docs/data.md
  */
 abstract class AbstractFixedAssetTypeData extends Data
 {
+    #[RequiredWithout('EffectiveLife')]
     public ?float $Rate = null;
 
+    #[RequiredWithout('Rate')]
     public ?float $EffectiveLife = null;
 
     public ?string $DepreciationExpenseAccountCode = null;
