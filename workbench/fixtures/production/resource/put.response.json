@@ -1,0 +1,16 @@
+{
+    "IsInfinite": false,
+    "IsAllowAllCapacityUsage": false,
+    "IsAvailableOnHolidays": false,
+    "IsAvailableOnWeekends": false,
+    "IsActive": true,
+    "Code": "R-1",
+    "Name": "Chef",
+    "Tags": "",
+    "ResourceType": "Machine",
+    "CycleDuration": 2040,
+    "ResourceCapacities": [],
+    "ResourceCosts": [],
+    "ResourceRemarks": [],
+    "ResourceAttachments": []
+}

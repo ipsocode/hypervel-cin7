@@ -1,0 +1,118 @@
+{
+    "Warnings": [],
+    "ProductionOrderID": "0230bf59-59b3-4a3e-9fc8-aedcbb6b2815",
+    "OrderNumber": "MO-00486",
+    "Runs": [
+        {
+            "RunID": "a093ae70-c620-2318-c470-db45feb1ebf9",
+            "Number": 1,
+            "Status": "IN PROGRESS",
+            "Quantity": 10.0,
+            "WIPAccount": "1600",
+            "StartDate": "2021-03-08T00:00:00",
+            "EndDate": null,
+            "DueDate": null,
+            "ReceivedDate": "2021-04-01T00:00:00",
+            "IssueMethodParameter": 1,
+            "Operations": [
+                {
+                    "OperationID": "e7659fbb-f5e4-0fd8-3b55-9a53bbf842ea",
+                    "Status": "IN PROGRESS",
+                    "Order": 0,
+                    "Name": "Mixing",
+                    "PlannedTime": 18000,
+                    "ActualTime": null,
+                    "UnitsPerCycle": 1.0,
+                    "WorkCenterID": "d8c64083-e8cf-4705-bb6c-abd2d5a2183a",
+                    "WorkCenterName": "Mixing Area",
+                    "OperationType": "Manufacturing",
+                    "WorkCenterCode": "WC2",
+                    "StartDate": "2021-03-08T00:00:00",
+                    "EndDate": null,
+                    "DueDate": null,
+                    "IsDropShip": false,
+                    "IsBackflush": false,
+                    "Components": [
+                        {
+                            "RunComponentID": "e5557655-5c89-46f3-a5a9-8139c2b82226",
+                            "ProductID": "c01846b3-a33b-47a6-baba-bfd4f85df9c6",
+                            "ProductName": "Eggs",
+                            "ProductCode": "Eggs1",
+                            "Quantity": 20.0,
+                            "ExpectedQuantity": 20.0,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "BatchSN": "",
+                            "ExpiryDate": null,
+                            "UnitCost": 1.2,
+                            "LocationID": "92974be9-c7e0-4866-bf0f-24a244012c61",
+                            "LocationName": "LA Shop Floor",
+                            "ProductCost": 1.2,
+                            "Available": 250.5,
+                            "CostingMethod": null,
+                            "Unit": "Item",
+                            "ReservedQuantity": 0.0,
+                            "IsReserved": false,
+                            "IsBackflush": false
+                        }
+                    ],
+                    "Resources": [
+                        {
+                            "ResourceID": "d52fbd3f-79bf-4203-86c2-34fea06c0f5c",
+                            "ResourceName": "Mixer",
+                            "ResourceCode": "R-4",
+                            "UnitCost": 6.0,
+                            "Quantity": 1.0,
+                            "Cost": 6.0,
+                            "CycleTime": 3600,
+                            "Available": 0
+                        }
+                    ],
+                    "ResourceCosts": [
+                        {
+                            "RunCostID": "e87d7197-cc4b-407a-9085-06f6c6eba0e6",
+                            "ProductID": "4f49b177-0865-48f5-89b8-f6660f56332a",
+                            "ProductName": "Electricity",
+                            "AccountName": "Purchase Discount",
+                            "ExpenseAccount": "5100",
+                            "Comments": null,
+                            "Cost": 17.5
+                        },
+                        {
+                            "RunCostID": "4970c1d1-0e0a-49f3-8a9f-84e50729e24d",
+                            "ProductID": "4f49b177-0865-48f5-89b8-f6660f56332a",
+                            "ProductName": "Electricity",
+                            "AccountName": "Subcontractors",
+                            "ExpenseAccount": "5300",
+                            "Comments": null,
+                            "Cost": 12.5
+                        }
+                    ],
+                    "FinishedProducts": [],
+                    "OutputProducts": [],
+                    "InputProducts": [],
+                    "CoManTasks": [],
+                    "CoManTaskLines": [],
+                    "Attachments": [
+                        {
+                            "AttachmentID": "a3a3b8de-efec-4a5a-8046-542d221865d5",
+                            "FileName": "qwe2.txt",
+                            "Date": "2021-03-05T04:35:14.647Z",
+                            "ContentType": "text/plain",
+                            "Content": "ZGYga2pkbGZna2ogZGZna2pkIGxma3ZkbGZramJkZmpiIGRrYmxm",
+                            "Position": 1
+                        }
+                    ],
+                    "Notes": [],
+                    "SuspendReason": null,
+                    "CoManStatus": null,
+                    "ManualStartDate": "2022-07-07",
+                    "ManualEndDate": null
+                }
+            ],
+            "Output": [],
+            "PendingOutput": [],
+            "ManualJournals": []
+        }
+    ]
+}

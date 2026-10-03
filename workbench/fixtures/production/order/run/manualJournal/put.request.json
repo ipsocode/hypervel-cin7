@@ -1,0 +1,21 @@
+{
+    "RunID": "2f4b8820-3676-4795-b867-4ba28ad84df7",
+    "ManualJournals": [
+        {
+            "Reference": "ref 1",
+            "Amount": 34.0,
+            "Date": "2021-02-22T00:00:00",
+            "Debit": "1320",
+            "Credit": "1530",
+            "OperationID": "feef1b7d-58c8-4c81-9ba0-4f24a4dbeba6"
+        },
+        {
+            "JournalID": "feef1b7d-58c8-4c81-9ba0-4f24a4dbeba5",
+            "Reference": "ref 2",
+            "Amount": 12.0,
+            "Date": "2021-02-22T00:00:00",
+            "Debit": "1320",
+            "Credit": "1530"
+        }
+    ]
+}

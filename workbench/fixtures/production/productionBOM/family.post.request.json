@@ -1,0 +1,94 @@
+{
+    "ProductFamilyID": "a1688709-6639-4324-aa53-a2120185a7bf",
+    "ProductionBOMs": [
+        {
+            "OutputQuantity": 1,
+            "BufferPercent": 0,
+            "InstructionUrl": "",
+            "IssueMethod": 1,
+            "IgnoreCumulativeLeadTime": false,
+            "ComponentProductionLeadTime": 0,
+            "Operations": [
+                {
+                    "Order": 1,
+                    "Name": "Operation F22",
+                    "CycleTime": 3600,
+                    "CycleTimeString": "1h",
+                    "UnitsPerCycle": 1,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "OperationType": 1,
+                    "IsDropShip": false,
+                    "Resources": [
+                        {
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 1,
+                            "CycleTime": 3600,
+                            "Cost": 20,
+                            "Position": 1,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Components": [
+                        {
+                            "ProductID": "86875aba-9143-435e-b5f7-b036b1873dcf",
+                            "ProductName": "Eggs",
+                            "ProductSKU": "Eggs",
+                            "Quantity": 2,
+                            "WastageQty": 0,
+                            "WastagePercent": 0,
+                            "Cost": 0.3864,
+                            "CostingMethod": "FIFO",
+                            "Position": 2,
+                            "Unit": "Item",
+                            "SalePriceTier": null
+                        }
+                    ],
+                    "VariationComponents": [
+                        {
+                            "ProductFamilySKU": "Screws-SKU",
+                            "QuantitySettingsJSON": "[{'OptionKey':'Kind 1','OptionValue':22},{'OptionKey':'Kind 2','OptionValue':33}]",
+                            "QuantityOptionName": "Kind",
+                            "MapVariationsJSON": "[{'ProductID':'10ece710-1dae-4368-bcee-62912b2682ab','ProductName':'Screws Drive Cross ','ProductCode':'Screws-SKU - 002','Option1SelectedValue':'','Option2SelectedValue':'','Option3SelectedValue':'','IsOption1AllSelected':false,'IsOption2AllSelected':false,'IsOption3AllSelected':false,'QuantitySettingsJSON':[{'OptionKey':'Kind 1','OptionValue':null},{'OptionKey':'Kind 2','OptionValue':35.0}],'ValidationText':'','ValidationState':''},{'ProductID':'f9888002-5bb7-41bb-8f3d-fc9e611a10c0','ProductName':'Screws Phillips Drive Flat','ProductCode':'Screws-SKU - 001','Option1SelectedValue':'','Option2SelectedValue':'','Option3SelectedValue':'','IsOption1AllSelected':false,'IsOption2AllSelected':false,'IsOption3AllSelected':false,'QuantitySettingsJSON':[{'OptionKey':'Kind 1','OptionValue':22.0},{'OptionKey':'Kind 2','OptionValue':null}],'ValidationText':'','ValidationState':''}]",
+                            "Cost": 0.3864,
+                            "CostingMethod": "FIFO",
+                            "Position": 3,
+                            "Unit": "Item",
+                            "SalePriceTier": null
+                        }
+                    ],
+                    "Attachments": [],
+                    "Notes": [],
+                    "OperationLinks": [
+                        {
+                            "RelatedOperationID": null,
+                            "RelatedOperationName": null,
+                            "RelationType": 1
+                        }
+                    ],
+                    "InputProducts": [],
+                    "OutputProducts": [],
+                    "FinishedProducts": [
+                        {
+                            "ProductFamilyID": "a1688709-6639-4324-aa53-a2120185a7bf",
+                            "CostCalculationType": "SalesValue",
+                            "PriceTier": 1,
+                            "Ratio": 0.0,
+                            "OutputQuantity": 1.0,
+                            "ProductName": "BOM Api Family 1",
+                            "ProductSKU": "BOM Api Family 1 SKU",
+                            "AverageCost": 0.0,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 4,
+                            "WastageCost": 1,
+                            "DeliveryTo": null,
+                            "DeliveryToName": null
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

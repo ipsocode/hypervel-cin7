@@ -1,0 +1,27 @@
+{
+    "Workcenters": [
+        {
+            "WorkCenterID": "",
+            "Code": "API Test",
+            "Name": "Workcenter test for API",
+            "IsActive": true,
+            "IsCoMan": true,
+            "IsCoManPurchase": false,
+            "SupplierID": "f9d6abe7-39b5-4fc1-a7aa-b61d2dc933e9",
+            "SupplierName": "Tom the Supplier",
+            "WorkCenterLocations": [
+                {
+                    "ID": "",
+                    "WorkCenterID": "a24d2609-563d-4053-913b-29bc94019556",
+                    "LocationID": "d1a2cfd2-93b8-4c2f-aeec-a392f905466f",
+                    "LocationName": "Bubba",
+                    "ParentLocationID": null,
+                    "ParentLocationName": null,
+                    "Type": "Consumption"
+                }
+            ],
+            "CoManProcurementType": "Transfer",
+            "WorkCenterSuppliers": []
+        }
+    ]
+}

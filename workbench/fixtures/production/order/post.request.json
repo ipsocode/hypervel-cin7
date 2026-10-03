@@ -1,0 +1,13 @@
+{
+    "ProductID": "c07693d0-f2ea-4aeb-ab0b-e1e1378003ef",
+    "ProductSKU": "",
+    "LocationID": "e579b996-eba9-45a2-8b09-5b3280b7c0af",
+    "LocationName": "",
+    "FinishedGoodsAccountCode": "620",
+    "WIPAccountCode": "715",
+    "Quantity": 1,
+    "CapacityCalculationType": "FromStartForward",
+    "StartDate": "2021-02-12T00:00:00",
+    "BOMVersion": 1,
+    "IsIgnoreLeadTime": false
+}

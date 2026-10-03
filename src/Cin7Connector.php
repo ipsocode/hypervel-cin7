@@ -30,6 +30,7 @@ use Ipsocode\Cin7\Resources\MeResource;
 use Ipsocode\Cin7\Resources\MoneyTaskListResource;
 use Ipsocode\Cin7\Resources\MoneyTaskResource;
 use Ipsocode\Cin7\Resources\ProductFamilyResource;
+use Ipsocode\Cin7\Resources\ProductionResource;
 use Ipsocode\Cin7\Resources\ProductResource;
 use Ipsocode\Cin7\Resources\ProductSuppliersResource;
 use Ipsocode\Cin7\Resources\PurchaseCreditNoteListResource;
@@ -475,5 +476,13 @@ final class Cin7Connector extends Connector implements HasPagination
     public function webhooks(): WebhooksResource
     {
         return new WebhooksResource($this);
+    }
+
+    /**
+     * The `production/…` resources.
+     */
+    public function production(): ProductionResource
+    {
+        return new ProductionResource($this);
     }
 }

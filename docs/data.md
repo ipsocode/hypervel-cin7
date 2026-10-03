@@ -245,6 +245,30 @@ $this->cin7->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID
 | `finishedGoods` | POST: `FinishedGoodsPostData`; PUT: `FinishedGoodsPutData`, which requires only `ID` (Finished Goods POST/PUT fields) | GET, POST, PUT, DELETE: `FinishedGoodsData` (Finished Goods, with `OrderLines`: `FinishedGoodsOrderLineData`, `PickLines`: `FinishedGoodsPickLineData`, `Transactions`: `TransactionStockLineData` and `Errors`: `ErrorData`) |
 | `finishedGoods/order` | POST: `FinishedGoodsOrderData` (Finished Goods Order) | GET, POST: `FinishedGoodsOrderData` |
 | `finishedGoods/pick` | POST: `FinishedGoodsPickData` (Finished Goods Pick) | GET, POST: `FinishedGoodsPickData` |
+| `production/productionBOM` (product) | POST: `ProductProductionBomPostData`; PUT: `ProductProductionBomPutData` | GET, POST, PUT: `ProductProductionBomsData`; DELETE: not documented, left to `json()` |
+| `production/productionBOM` (product family) | POST: `ProductFamilyProductionBomPostData`; PUT: `ProductFamilyProductionBomPutData` | GET, POST, PUT: `ProductFamilyProductionBomsData`; DELETE: not documented, left to `json()` |
+| `production/factoryCalendar` | POST: `FactoryCalendarPostData`; PUT: `FactoryCalendarPutData` | GET, POST, PUT: `FactoryCalendarData` |
+| `production/order` | POST: `ProductionOrderPostData`; PUT: `ProductionOrderPutData` | GET, POST, PUT: `ProductionOrdersData` |
+| `production/order/authorise` | POST: `ProductionOrderAuthorisePostData` | POST: `ProductionOrdersData` |
+| `production/order/release` | POST: `ProductionOrderReleasePostData` | POST: `ProductionOrdersData` |
+| `production/order/undo` | POST: `ProductionOrderUndoPostData` | POST: `ProductionOrderMessageData` |
+| `production/order/void` | POST: `ProductionOrderVoidPostData` | POST: `ProductionOrderMessageData` |
+| `production/order/attachment` | POST: `ProductionOrderAttachmentData`; PUT: `ProductionOrderAttachmentPutData` | POST, PUT: `ProductionOrderAttachmentData`; DELETE: not documented, left to `json()`; GET: `ProductionOrderAttachmentsData` |
+| `production/order/referenceData` | none | GET: `ProductionOrderReferenceData` |
+| `production/orderList` | none | GET: `list<ProductionOrderListData>`, read from `ProductionOrderListItems` |
+| `production/order/run` | POST: `ProductionRunPostData`; PUT: `ProductionRunData` | POST, GET: `ProductionRunsData`; PUT: `ProductionRunData` |
+| `production/order/run/complete` | PUT: `ProductionRunCompletePostData` | PUT: `ProductionRunsData` |
+| `production/order/run/undo` | PUT: `ProductionRunUndoData` | PUT: `ProductionRunUndoData` |
+| `production/order/run/void` | PUT: `ProductionRunUndoData` | PUT: `ProductionRunUndoData` |
+| `production/order/run/manualJournal` | PUT: `ProductionRunManualJournalsPutData` | PUT: `ProductionRunsData` |
+| `production/order/run/operation/start` | PUT: `ProductionRunOperationStartPutData` | PUT: `ProductionRunsData` |
+| `production/order/run/operation/suspend` | PUT: `ProductionRunOperationSuspendPutData` | PUT: `ProductionRunsData` |
+| `production/order/run/operation/resume` | PUT: `ProductionRunOperationResumePutData` | PUT: `ProductionRunsData` |
+| `production/order/run/operation/complete` | PUT: `ProductionRunOperationCompletePutData` | PUT: `ProductionRunsData` |
+| `production/resourceList` | none | GET: `list<ResourceData>`, read from `Resources` |
+| `production/resource` | POST: `ResourcesPostData`; PUT: `ResourcePutData` | GET, PUT, DELETE: `ResourceData`; POST: `ResourcesData` |
+| `production/suspendReason` | PUT: `SuspendReasonData` | GET: `list<SuspendReasonData>`, read from `SuspendReasons`; PUT: `SuspendReasonData` |
+| `production/workcenters` | POST: `WorkCentersData`; PUT: `WorkCentersData` | GET: `list<WorkCenterData>`, read from `Workcenters`; POST, PUT: `WorkCentersData`; DELETE: not documented, left to `json()` |
 | `transactions` | none | GET: `list<TransactionData>` (Transactions) |
 | `productFamily` | POST: `ProductFamilyPostData`; PUT: `ProductFamilyPutData`, which also requires `ID` (Product Family, with `Products`: `ProductFamilyProductLineData`, Product Family Product Line Model, and `Attachments`: `AttachmentLineData`) | GET: `list<ProductFamilyData>`; POST, PUT: `ProductFamilyData`, the saved family (`ProductFamilies.0`) |
 | `productFamily/attachments` | POST: `ProductFamilyAttachmentPostData` | GET, POST, DELETE: `list<AttachmentLineData>`, a bare array |
@@ -1685,3 +1709,71 @@ requires:
 - **`Name`.** Read-only, but the PUT example sends it, so the bodies take it as optional.
 - **Payload examples.** The group's examples describe incoming events, not this endpoint: out of
   scope, as the issue decided.
+
+## Production
+
+The `production/…` paths are in `src/Data/Production/<path>/`: `FactoryCalendar/`, `ProductionBom/`,
+`Order/` (with `Run/`), `OrderList/`, `Resource/`, `SuspendReason/` and `WorkCenters/`. Its tables
+make most classes required in part only, so a class requires what its table marks `Yes` and the
+examples confirm; the rules that follow hold for all of them.
+
+- **Required.** `Yes` is required, and `Yes*` or "when updating" is optional, with its condition in
+  the class's docblock: the nested lines (operations, components, resources, attachments, notes) are
+  shared by the response, POST and PUT, and a line cannot tell which verb it is sent on. Where the
+  reference says "required if X is empty" the class carries `#[RequiredWithout]`
+  (`ProductionBomComponentData`, `ProductionOrderComponentData`, `ProductionOrderResourceData`,
+  `ResourceCapacityData`, `ResourcePutData`, `WorkCenterSupplierData`), and `#[RequiredIf]` where it
+  names a value (`WorkCenterData::$SupplierID` when `IsCoMan` is true).
+- **A class per verb where the top-level table differs.** `FactoryCalendarPostData` requires
+  `WeekStart` and `FactoryCalendarDays` as well as `Year`; `ProductionOrderPostData` requires
+  `ProductID` and `LocationID`, `ProductionOrderPutData` the `ProductionOrderID`; `ResourcePostData`
+  a `Name`, `ResourceType` and `CycleDuration`, `ResourcePutData` the `ResourceID` or `Code`. Each
+  production BOM verb has its own body (`ProductProductionBomPostData`, `…PutData` and the family's),
+  because the PUT example sends a BOM without the `Name`, `IsDefault` and `BufferPercent` its table
+  requires.
+- **The envelopes.** Most responses are keyed envelopes the reference documents no table for:
+  `ProductionOrdersData` (`ProductionOrders`, with the `Warning` a release adds),
+  `ProductProductionBomsData` and `ProductFamilyProductionBomsData` (`ProductionBOMs`),
+  `ProductionRunsData` (`Runs`, `Warnings`), `ResourcesData`, `WorkCentersData` (`Workcenters`, with a
+  PUT's `WarningMessage`), `ProductionOrderMessageData` (the `Message` of an undo or void),
+  `ProductionOrderAttachmentData` and `ProductionOrderAttachmentsData`, `ProductionOrderReferenceData`
+  and `ProductionRunUndoData`. They are modelled from their examples, and `dto()` is the envelope.
+  The reference documents no model for the reference data's accounts, locations, paths, work centers
+  and suspend reasons, a production order's runs and deliveries, an order's resource attachments, a
+  run's warnings or a suspend reason's work center IDs, so each is a `list<mixed>`.
+- **Example keys outside the tables.** The examples send `Operations` and `Deliveries` where the
+  ProductionOrder table says `ProductionOrderOperations` and `ProductionOrderDeliveryTo`; both are
+  modelled. They also send a production order's `StartUpdate`, a BOM's `ProductID`, `CreatedDate`,
+  `CreatedBy` and `DeliveryTo`, an operation's `CycleTimeString`, `IsTracing`, `TotalCost` and (empty)
+  `VariationComponents`, a production order component's `IsAlternative`, a run resource's and
+  component's `Available`, an order list item's `TotalCount`, a work center location's
+  `WorkCenterID` and `ParentLocationName`, and a BOM operation product's `ProductFamilyID`. Each is
+  modelled, optional, on the class that sends it.
+- **The family BOM.** `production/productionBOM` is documented twice, and the family's BOM takes the
+  product BOM's fields with its own operation, `ProductFamilyProductionBomOperationData`, so it has
+  its own BOM class, `ProductFamilyProductionBomData`, which also does not require `Version`, `Name`
+  and `IsDefault`: its POST example sends none.
+- **Codes the tables call strings.** `IssueMethod`, `IssueMethodComponent`, `IssueMethodParameter`,
+  `SourceName` and a BOM's `OperationType` are described as strings ("Manual = 1, Backflush = 2")
+  and sent as numbers by the examples; they accept either (`string|int`). The `Status` and
+  `OrderStatus` of an order and the `Status` of a run and of a run operation stay strings: the
+  examples send `AUTHORISED`, `ACTIVE`, `OPERATIONS COMPLETED` and `SUSPENDED`, outside the listed
+  values. `ProductCost` of a run component is typed String in the table and is a number in the
+  examples.
+- **Enums.** `DayOfWeek` (the week start and the days), `ResourceType`, `ResourceCostCalculationType`,
+  `CapacityCalculationType`, `WorkCenterLocationType`, `CoManProcurementType`,
+  `ProductionRunCoManTaskType`, and for the order list's query `ProductionOrderListStatus`, and the
+  list item's `Type`, `ProductionOrderListType` (`O` is an order, `R` a run).
+- **Typos in the tables.** `ResourceCode` of a run resource is typed Guid, copied from the field above
+  it: it is a code. `WarningMessage` and the lower-case keys `productionOrderID` and `releaseDate` of the
+  order actions are as the reference writes them. The table for `ProductionRunOutputData` is titled
+  "Production Run Pending Output", copied from the table above it. `WorkCenterLocationData.Type`
+  is `Consumption` or `Output`.
+- **`Received`** is "Yes" on a run output, but the operation-complete example's finished products omit
+  it, so it is optional. `RunCostID` and `ProductID` are required on a run resource cost.
+- **Examples that needed fixing.** `names.py example` fixed the trailing or missing commas of the
+  order attachment PUT request, the order list, run POST and GET responses, the run PUT response,
+  the manual journal request and response, the operation complete request, the resource list and
+  resource GET and POST fixtures, and the suspend reason GET. Three had to be fixed by hand: the run
+  PUT request (a stray quote after `RunID`), the suspend reason PUT request (a comma after its
+  object) and the work center GET response (a missing `]`).
