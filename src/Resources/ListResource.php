@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
+use Hypervel\Data\Data;
+use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
@@ -21,7 +23,9 @@ use Ipsocode\Cin7\Requests\ListRequest;
 abstract class ListResource extends BaseResource
 {
     /**
-     * @param ListRequest<mixed> $request
+     * @template TItem of Data&WithResponse
+     *
+     * @param ListRequest<TItem> $request
      */
     protected function sendList(ListRequest $request): Response
     {
@@ -29,7 +33,9 @@ abstract class ListResource extends BaseResource
     }
 
     /**
-     * @param ListRequest<mixed> $request
+     * @template TItem of Data&WithResponse
+     *
+     * @param ListRequest<TItem> $request
      */
     protected function paginateList(ListRequest $request): Cin7Paginator
     {
