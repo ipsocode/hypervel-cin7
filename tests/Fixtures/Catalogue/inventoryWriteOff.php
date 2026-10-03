@@ -62,7 +62,7 @@ return [
             Method::POST,
             '/ExternalApi/v2/inventoryWriteOff',
             [],
-            ['Location' => 'Main Warehouse', 'Notes' => 'Test', 'Lines' => [['Quantity' => 2.0, 'ProductCode' => 'Bread']], 'Status' => 'DRAFT', 'Account' => '404'],
+            ['Location' => 'Main Warehouse', 'Notes' => 'Test', 'Lines' => [['ProductCode' => 'Bread', 'Quantity' => 2.0]], 'Status' => 'DRAFT', 'Account' => '404'],
         ],
         PutInventoryWriteOff::class . ' with data' => [
             PutInventoryWriteOff::class,

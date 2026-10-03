@@ -54,7 +54,7 @@ return [
             Method::POST,
             '/ExternalApi/v2/productFamily',
             [],
-            ['Products' => [['ID' => $productId, 'Option1' => '3']], 'PriceTier1' => 1.5, ...$fields],
+            ['Products' => [['ID' => $productId, 'Option1' => '3']], ...$fields, 'PriceTier1' => 1.5],
         ],
         PutProductFamily::class . ' with data' => [
             PutProductFamily::class,

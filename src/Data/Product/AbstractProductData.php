@@ -9,10 +9,10 @@ use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\RequiredIf;
 use Hypervel\Data\Data;
 use Ipsocode\Cin7\Concerns\HasAdditionalAttributes;
+use Ipsocode\Cin7\Data\AbstractCatalogueItemData;
 use Ipsocode\Cin7\Data\Other\AttachmentLineData;
 use Ipsocode\Cin7\Data\Other\ProductPriceData;
 use Ipsocode\Cin7\Enums\CostingMethod;
-use Ipsocode\Cin7\Enums\DropShipMode;
 use Ipsocode\Cin7\Enums\ProductStatus;
 
 /**
@@ -27,17 +27,16 @@ use Ipsocode\Cin7\Enums\ProductStatus;
  * the names can be renamed in the account's settings, so they cannot be properties, and no class
  * models the map; `PriceTierData` is the tier list at `ref/priceTier`. `AdditionalAttribute1` to
  * `AdditionalAttribute10` are ten wire keys.
+ * The fields it shares with a product family are in `AbstractCatalogueItemData`.
  *
  * @see docs/data.md
  */
-abstract class AbstractProductData extends Data
+abstract class AbstractProductData extends AbstractCatalogueItemData
 {
     use HasAdditionalAttributes;
 
     #[Max(50)]
     public ?string $Brand = null;
-
-    public ?DropShipMode $DropShipMode = null;
 
     #[Max(50)]
     public ?string $DefaultLocation = null;
@@ -69,72 +68,19 @@ abstract class AbstractProductData extends Data
     #[Max(256)]
     public ?string $Barcode = null;
 
-    public ?float $MinimumBeforeReorder = null;
-
-    public ?float $ReorderQuantity = null;
-
-    public ?float $PriceTier1 = null;
-
-    public ?float $PriceTier2 = null;
-
-    public ?float $PriceTier3 = null;
-
-    public ?float $PriceTier4 = null;
-
-    public ?float $PriceTier5 = null;
-
-    public ?float $PriceTier6 = null;
-
-    public ?float $PriceTier7 = null;
-
-    public ?float $PriceTier8 = null;
-
-    public ?float $PriceTier9 = null;
-
-    public ?float $PriceTier10 = null;
-
     /**
      * @var null|array<string, float>
      */
     public ?array $PriceTiers = null;
 
-    #[Max(500)]
-    public ?string $ShortDescription = null;
-
-    public ?string $Description = null;
-
     #[Max(4000)]
     public ?string $InternalNote = null;
-
-    #[Max(50)]
-    public ?string $AttributeSet = null;
-
-    #[Max(128)]
-    public ?string $DiscountRule = null;
-
-    #[Max(256)]
-    public ?string $Tags = null;
 
     #[Max(256)]
     public ?string $StockLocator = null;
 
     #[Max(50)]
-    public ?string $COGSAccount = null;
-
-    #[Max(50)]
-    public ?string $RevenueAccount = null;
-
-    #[Max(50)]
     public ?string $ExpenseAccount = null;
-
-    #[Max(50)]
-    public ?string $InventoryAccount = null;
-
-    #[Max(50)]
-    public ?string $PurchaseTaxRule = null;
-
-    #[Max(50)]
-    public ?string $SaleTaxRule = null;
 
     public ?bool $Sellable = null;
 
@@ -156,11 +102,6 @@ abstract class AbstractProductData extends Data
     #[RequiredIf('BillOfMaterial', true)]
     #[Max(256)]
     public ?string $AssemblyCostEstimationMethod = null;
-
-    #[Max(200)]
-    public ?string $HSCode = null;
-
-    public ?string $CountryOfOrigin = null;
 
     public ?string $CountryOfOriginCode = null;
 

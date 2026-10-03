@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Data\Production\Order\Run;
 
-use Hypervel\Data\Attributes\Validation\Max;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasProductionProductFields;
 
 /**
  * ProductionRunOperationComponent, a component of a run operation: a product by `ProductID`, which
@@ -20,22 +19,15 @@ use Ipsocode\Cin7\Attributes\DateTime;
  */
 final class ProductionRunOperationComponentData extends Data
 {
+    use HasProductionProductFields;
+
     public function __construct(
         #[Uuid]
         public ?string $RunComponentID = null,
-        #[Uuid]
-        public ?string $ProductID = null,
-        #[Max(50)]
-        public ?string $ProductCode = null,
-        public ?string $ProductName = null,
         public ?float $Quantity = null,
         public ?float $ExpectedQuantity = null,
         public ?float $WastageQty = null,
         public ?float $WastagePercent = null,
-        #[Max(50)]
-        public ?string $BatchSN = null,
-        #[DateTime]
-        public ?string $ExpiryDate = null,
         public ?float $UnitCost = null,
         #[Uuid]
         public ?string $LocationID = null,
@@ -43,7 +35,6 @@ final class ProductionRunOperationComponentData extends Data
         public ?float $ProductCost = null,
         public ?float $Available = null,
         public ?string $CostingMethod = null,
-        public ?string $Unit = null,
         public ?float $ReservedQuantity = null,
         public ?bool $IsReserved = null,
         public ?bool $IsBackflush = null,

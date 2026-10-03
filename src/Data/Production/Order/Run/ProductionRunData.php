@@ -11,6 +11,7 @@ use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasCustomFields;
 
 /**
  * ProductionRun, a run of a production order: its operations, planned and finished products,
@@ -22,6 +23,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
 final class ProductionRunData extends Data implements WithResponse
 {
     use HasResponse;
+    use HasCustomFields;
 
     /**
      * @param null|list<ProductionRunOperationData> $Operations
@@ -61,16 +63,6 @@ final class ProductionRunData extends Data implements WithResponse
         #[DataCollectionOf(ProductionRunTraceabilityData::class)]
         public ?array $Traceability = null,
         public string|int|null $IssueMethodParameter = null,
-        public ?string $CustomField1 = null,
-        public ?string $CustomField2 = null,
-        public ?string $CustomField3 = null,
-        public ?string $CustomField4 = null,
-        public ?string $CustomField5 = null,
-        public ?string $CustomField6 = null,
-        public ?string $CustomField7 = null,
-        public ?string $CustomField8 = null,
-        public ?string $CustomField9 = null,
-        public ?string $CustomField10 = null,
     ) {
     }
 }

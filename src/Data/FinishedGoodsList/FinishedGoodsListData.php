@@ -9,6 +9,7 @@ use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Traits\Responses\HasResponse;
 use Ipsocode\Cin7\Attributes\DateTime;
+use Ipsocode\Cin7\Concerns\HasCustomFields;
 use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
 
 /**
@@ -19,6 +20,7 @@ use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
 final class FinishedGoodsListData extends Data implements WithResponse
 {
     use HasResponse;
+    use HasCustomFields;
 
     public function __construct(
         #[Uuid]
@@ -40,16 +42,6 @@ final class FinishedGoodsListData extends Data implements WithResponse
         public ?FinishedGoodsStatus $Status = null,
         public ?float $UnitCost = null,
         public ?string $Notes = null,
-        public ?string $CustomField1 = null,
-        public ?string $CustomField2 = null,
-        public ?string $CustomField3 = null,
-        public ?string $CustomField4 = null,
-        public ?string $CustomField5 = null,
-        public ?string $CustomField6 = null,
-        public ?string $CustomField7 = null,
-        public ?string $CustomField8 = null,
-        public ?string $CustomField9 = null,
-        public ?string $CustomField10 = null,
     ) {
     }
 }
