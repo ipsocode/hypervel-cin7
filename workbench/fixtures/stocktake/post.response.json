@@ -1,0 +1,68 @@
+{
+    "TaskID": "328c0f87-d87f-4f87-b503-251e820f4b3c",
+    "EffectiveDate": "2018-04-27T00:00:00",
+    "StocktakeNumber": "ST-00024",
+    "Status": "IN PROGRESS",
+    "Account": "403",
+    "LocationID": "9558f49c-ba8c-484a-8a14-5e83048cce90",
+    "Location": "Main Warehouse",
+    "Tags": [
+        "bread",
+        "AutoCost",
+        "beaded"
+    ],
+    "PickZones": [],
+    "StockLocators": [],
+    "Categories": [
+        {
+            "ID": "ae180bfb-802f-4d5a-9a04-af3aebfc3d4a",
+            "Name": "Other"
+        }
+    ],
+    "Brands": [],
+    "Bins": [],
+    "Reference": null,
+    "NonZeroStockOnHandProducts": [
+        {
+            "ProductID": "3bfdf57a-bbc7-4f09-ba28-9768a09e0a60",
+            "SKU": "Bread",
+            "ProductName": "Baked Bread",
+            "QuantityOnHand": 500,
+            "Available": 496,
+            "Adjustment": 0,
+            "LocationID": "9558f49c-ba8c-484a-8a14-5e83048cce90",
+            "Location": "Main Warehouse",
+            "BatchSN": null,
+            "ExpiryDate": null,
+            "Comments": null,
+            "ProductLength": 0,
+            "ProductWidth": 0,
+            "ProductHeight": 0,
+            "ProductWeight": 0,
+            "WeightUnits": "g",
+            "DimensionsUnits": "mi",
+            "ProductCustomField1": "",
+            "ProductCustomField2": "",
+            "ProductCustomField3": "",
+            "ProductCustomField4": "",
+            "ProductCustomField5": "",
+            "ProductCustomField6": "",
+            "ProductCustomField7": "",
+            "ProductCustomField8": "",
+            "ProductCustomField9": "",
+            "ProductCustomField10": "",
+            "Image": {
+                "ID": "797441c2-9915-4880-8eeb-4653edc4d8d4",
+                "ContentType": "image/jpeg",
+                "FileName": "https%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f0838%2f5987%2fproducts%2fzc-04_10mm_col_1-2.jpeg",
+                "DownloadUrl": "https://inventory.dearsystems.com/Attachment/Download?ID=797441c2-9915-4880-8eeb-4653edc4d8d4&ContentType=image/jpeg&FileName=https%3a%2f%2fcdn.shopify.com%2fs%2ffiles%2f1%2f0838%2f5987%2fproducts%2fzc-04_10mm_col_1-2.jpeg&isPublic=True"
+            },
+            "Barcode": "333",
+            "StockLocator": "",
+            "Unit": "Item",
+            "CostingMethod": "FIFO"
+        }
+    ],
+    "ZeroStockOnHandProducts": [],
+    "Transactions": []
+}

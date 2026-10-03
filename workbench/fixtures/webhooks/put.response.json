@@ -1,0 +1,29 @@
+{
+    "Webhooks": [
+        {
+            "ID": "1cf8cb83-bf39-494b-87f9-1252b684d6d5",
+            "Type": "Sale/OrderAuthorised",
+            "Name": "Sale order has been authorised",
+            "IsActive": true,
+            "ExternalURL": "https://hookb.in/Zn8950P7",
+            "ExternalAuthorizationType": "basicauth",
+            "ExternalUserName": "Hello",
+            "ExternalPassword": "123",
+            "ExternalBearerToken": null,
+            "ExternalHeaders": [
+                {
+                    "Key": "Key",
+                    "Value": "123"
+                },
+                {
+                    "Key": "6",
+                    "Value": "0"
+                },
+                {
+                    "Key": "New Key",
+                    "Value": "New Value"
+                }
+            ]
+        }
+    ]
+}

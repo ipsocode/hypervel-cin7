@@ -1,55 +1,541 @@
 # Requests
 
-Every call to Cin7 is one of five generic request classes in
-`Ipsocode\Cin7\Requests`, each built from an [`Endpoint`](endpoints.md) case and
-sent through the `Cin7Connector` singleton. The request decides the verb, where
-the GUID and parameters go, and whether the page defaults are added; the
-endpoint supplies the path and the GUID keys. All five extend
-[`Cin7Request`](../src/Requests/Cin7Request.php), which rejects verbs the
-endpoint does not accept and sets the bounded 503 retry policy.
+Every call to Cin7 is a request class in `Ipsocode\Cin7\Requests`, one per API
+action, grouped under a [resource](resources.md) such as `CustomerResource`.
+Every request extends [`Cin7Request`](../src/Requests/Cin7Request.php), which sets the bounded
+retry policy for Cin7's throttling responses (429 and 503) and maps query values to the strings
+Cin7 expects. Lists and write bodies have a base of their own; a read or delete of one record
+extends `Cin7Request` itself.
 
-## The five requests
+## The bases
 
-| Request | Constructor | Request line |
-|---|---|---|
-| `ListRecords` | `(Endpoint $endpoint, array $parameters = [])` | `GET <path>?<parameters>&page=1&limit=100` |
-| `FindRecord` | `(Endpoint $endpoint, string $guid, array $parameters = [])` | `GET <path>?<parameters>&<guidKey>=<guid>&page=1&limit=100` |
-| `CreateRecord` | `(Endpoint $endpoint, array $data = [])` | `POST <path>`, body `$data` as JSON |
-| `UpdateRecord` | `(Endpoint $endpoint, string $guid, array $data = [])` | `PUT <path>`, body `$data` plus `<guidKey>: <guid>` as JSON |
-| `DeleteRecord` | `(Endpoint $endpoint, string $guid, array $parameters = [])` | `DELETE <path>?<parameters>&ID=<guid>&page=1&limit=100` |
+| Base | Verb | Constructor | Request line |
+|---|---|---|---|
+| [`ListRequest`](../src/Requests/ListRequest.php) | GET | `(?int $page = null, ?int $limit = null)`, then the list's filters | `GET <path>?<filters>&page=1&limit=100` |
+| [`Cin7Request`](../src/Requests/Cin7Request.php) | GET or DELETE of one record | the identifier, then the other parameters | `<verb> <path>?<identifier key>=<id>&<parameters>` |
+| [`WriteRequest`](../src/Requests/WriteRequest.php) | POST or PUT | `(array\|Data $body = [])` | `<verb> <path>`, an array body as JSON verbatim, a data object as described in [data](data.md#write-bodies) |
+
+A subclass declares its verb as a property default and its path through `resolveEndpoint()`. A
+`ListRequest` also declares the envelope key its items sit under (`protected string $listKey`),
+the data class of one item (`protected string $item`, which `ListRequest` builds `dto()` from) and
+returns its filters by wire key from `filters()`. A request that lists on a verb or a path that is
+not a `ListRequest` builds its `list<X>` with `Cin7Request::listOf()`. A read or delete of one record returns its
+parameters by wire key from `defaultQuery()`, through `queryValues()`. Only `ListRequest`
+implements `Paginatable`.
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\CreateRecord;
-use Ipsocode\Cin7\Requests\DeleteRecord;
-use Ipsocode\Cin7\Requests\FindRecord;
-use Ipsocode\Cin7\Requests\ListRecords;
-use Ipsocode\Cin7\Requests\UpdateRecord;
 
 public function __construct(private readonly Cin7Connector $cin7) {}
 
 // GET customer?page=1&limit=100
-$all = $this->cin7->send(new ListRecords(Endpoint::Customer))->json();
-
-// GET sale/invoice?SaleID=…&page=1&limit=100
-$one = $this->cin7->send(new FindRecord(Endpoint::SaleInvoice, $guid))->json();
+$all = $this->cin7->customer()->get()->json();
 
 // POST customer with body {"Name":"ACME"}
-$new = $this->cin7->send(new CreateRecord(Endpoint::Customer, ['Name' => 'ACME']))->json();
+$new = $this->cin7->customer()->post(['Name' => 'ACME'])->json();
 
-// PUT customer with body {"Name":"ACME Ltd","ID":"…"}
-$this->cin7->send(new UpdateRecord(Endpoint::Customer, $guid, ['Name' => 'ACME Ltd']));
-
-// DELETE sale/invoice?ID=…&page=1&limit=100
-$this->cin7->send(new DeleteRecord(Endpoint::SaleInvoice, $guid));
+// PUT customer with body {"ID":"…","Name":"ACME Ltd"}
+$this->cin7->customer()->put(['ID' => $guid, 'Name' => 'ACME Ltd']);
 ```
 
-`json()` returns Cin7's response decoded to an associative array. Every request
-exposes the endpoint it targets through `endpoint()`, so code holding a
-request (a pool, a retry wrapper, a log line) can name it without parsing the
-URL. `ListRecords` is the only request that implements `Paginatable`; walking
-every page is covered in [pagination](pagination.md).
+`json()` returns Cin7's response decoded to an associative array; `dto()` returns a typed
+data object where the request has one ([data](data.md)), and a `WriteRequest` takes a data
+object as its body as well as an array. Requests are
+never constructed directly by application code; go through the
+[resource](resources.md) accessor instead. Walking every page of a
+`ListRequest` is covered in [pagination](pagination.md).
+
+## Query parameters
+
+Every query parameter the reference documents is a typed constructor argument, and the resource
+method that sends the request takes the same arguments in the same order:
+
+- **Names.** An argument is its wire key in camelCase: `CombineAdditionalCharges` is
+  `combineAdditionalCharges`, `OrderLocationID` is `orderLocationId` and `IncludeBOM` is
+  `includeBom`.
+- **Types.** A GUID or text is a `string`, a Boolean a `bool`, a date a
+  `DateTimeInterface|string`, and a documented value list its enum (see [data](data.md#conventions)).
+- **Required first.** A required parameter, the identifier of a read or delete, comes first and
+  has no default. The optional ones default to `null`, and a `null` one is not sent, so Cin7
+  applies its own default: a `DELETE` without `void` is sent without `Void`, which the reference
+  defaults to `false`.
+- **Order.** Parameters are sent in the order the reference lists them, identifier first, and a
+  list's filters come before `page` and `limit`.
+
+```php
+use Ipsocode\Cin7\Enums\SaleStatus;
+
+// GET sale?ID=…&IncludeTransactions=true
+$sale = $this->cin7->sale()->get($saleId, includeTransactions: true)->dto();
+
+// GET saleList?Status=ORDERED&ReadyForShipping=true&page=1&limit=100
+$orders = $this->cin7->saleList()->get(status: SaleStatus::Ordered, readyForShipping: true)->dto();
+
+// DELETE sale?ID=…&Void=true
+$this->cin7->sale()->delete($saleId, void: true);
+```
+
+The arguments of each request; a required one is in bold, and an enum's type follows its name:
+
+| Request | Arguments |
+|---|---|
+| `GetCustomer` | `page`, `limit`, `id`, `name`, `modifiedSince`, `includeDeprecated`, `includeProductPrices`, `contactFilter` |
+| `GetSupplier` | `page`, `limit`, `id`, `name`, `modifiedSince`, `includeDeprecated` |
+| `GetProduct` | `page`, `limit`, `id`, `name`, `sku`, `modifiedSince`, `includeDeprecated`, `includeBom`, `includeSuppliers`, `includeMovements`, `includeAttachments`, `includeReorderLevels`, `includeCustomPrices` |
+| `GetTax` | `page`, `limit`, `id`, `name`, `isActive`, `isTaxForSale`, `isTaxForPurchase`, `account` |
+| `GetCustomerCredits` | `page`, `limit`, `customerId`, `showUsedCredits` |
+| `GetSupplierDeposits` | `page`, `limit`, `supplierId`, `showUsedDeposits` |
+| `GetAccount` | `page`, `limit`, `code`, `name`, `type`, `status` |
+| `DeleteAccount` | **`code`** |
+| `GetAccountBank` | `page`, `limit`, `id`, `name`, `bank` |
+| `GetAttributeSet` | `page`, `limit`, `id`, `name` |
+| `DeleteAttributeSet` | **`id`** |
+| `GetProductFamily` | `page`, `limit`, `id`, `name`, `sku`, `modifiedSince` |
+| `GetProductFamilyAttachments` | **`familyId`** |
+| `DeleteProductFamilyAttachments` | **`id`** |
+| `GetProductAvailability` | `page`, `limit`, `id`, `name`, `sku`, `location`, `batch`, `category` |
+| `GetProductAttachments` | **`productId`** |
+| `DeleteProductAttachments` | **`id`** |
+| `GetPriceTier` | none |
+| `GetProductMarkupPrices` | **`productId`** |
+| `GetBrand`, `GetCategory`, `GetUnit` | `page`, `limit`, `name` |
+| `DeleteBrand`, `DeleteCategory`, `DeleteUnit` | **`id`** |
+| `GetFixedAssetType` | `page`, `limit`, `fixedAssetTypeId`, `name` |
+| `GetPaymentTerm` | `page`, `limit`, `id`, `name`, `termMethod` (`PaymentTermMethod`; `method` on the resource, since a request already has a `$method`), `isActive`, `isDefault` |
+| `DeletePaymentTerm` | **`id`** |
+| `GetMeAddresses` | `page`, `limit`, `id`, `type` (`AddressType`), `defaultForType`, `country`, `stateProvince`, `citySuburb` |
+| `GetMeContacts` | `page`, `limit`, `id`, `name`, `type` (`ContactType`), `defaultForType`, `phone`, `fax`, `email` |
+| `DeleteMeAddresses`, `DeleteMeContacts` | **`id`** |
+| `GetProductSuppliers` | **`productId`** |
+| `DeleteCustomPrices` | **`productId`**, **`customerId`** |
+| `DeleteProductSuppliers` | **`productId`**, **`supplierId`** |
+| `GetShipZones` | `page`, `limit`, `id`, `search` |
+| `DeleteShipZones` | **`shipZoneId`** (sent as `ShipZoneID`) |
+| `GetDiscount` | `page`, `limit`, `id`, `search` |
+| `GetDeals` | `page`, `limit`, `id`, `search` |
+| `GetBankTransfer` | **`taskId`** |
+| `DeleteBankTransfer` | **`id`**, `void` |
+| `GetStockAdjustmentList` | `page`, `limit`, `status` (`CompletionStatus`) |
+| `GetStockAdjustment` | **`taskId`** |
+| `DeleteStockAdjustment` | **`id`**, `void` |
+| `GetStockTakeList` | `page`, `limit`, `status` (`StockTakeStatus`) |
+| `GetStockTake` | **`taskId`** |
+| `DeleteStockTake` | **`id`**, `void` |
+| `GetStockTransferList` | `page`, `limit`, `status` (`StockTransferStatus`), `search` |
+| `GetStockTransfer` | **`taskId`** |
+| `DeleteStockTransfer` | **`id`**, `void` |
+| `GetStockTransferOrder` | **`taskId`** |
+| `GetInventoryWriteOffList` | `page`, `limit`, `status` (`CompletionStatus`), `search` |
+| `GetInventoryWriteOff` | **`taskId`** |
+| `DeleteInventoryWriteOff` | **`id`**, `void` |
+| `GetDisassemblyList` | `page`, `limit`, `status` (`DisassemblyStatus`), `search` |
+| `GetDisassembly` | **`taskId`** |
+| `DeleteDisassembly` | **`id`**, `void` |
+| `GetDisassemblyOrder` | **`taskId`** |
+| `GetFinishedGoodsList` | `page`, `limit`, `status` (`FinishedGoodsStatus`), `search`, `saleId` |
+| `GetFinishedGoods` | **`taskId`** |
+| `DeleteFinishedGoods` | **`id`**, `void` |
+| `GetFinishedGoodsOrder` | **`taskId`** |
+| `GetFinishedGoodsPick` | **`taskId`** |
+| `GetProductionFactoryCalendar` | **`year`** |
+| `GetProductProductionBom` | **`productId`**, `returnAttachmentsContent` |
+| `DeleteProductProductionBom` | **`productId`**, **`bomId`** |
+| `GetProductFamilyProductionBom` | **`productFamilyId`**, `returnAttachmentsContent` |
+| `DeleteProductFamilyProductionBom` | **`productFamilyId`**, **`bomId`** |
+| `GetProductionOrder` | **`productionOrderId`**, `returnAttachmentsContent` |
+| `PostProductionOrder` | `recalculateDates` |
+| `PutProductionOrder` | `allowRecalculateDates`, `allowRecalculateCyclesAndQuantities` |
+| `PostProductionOrderAttachment` | **`productionOrderId`** |
+| `DeleteProductionOrderAttachment` | **`productionOrderAttachmentId`** |
+| `GetProductionOrderAttachment` | **`productionOrderId`**, `returnAttachmentsContent` |
+| `GetProductionOrderReferenceData` |  |
+| `GetProductionOrderList` | `page`, `limit`, `status` (`ProductionOrderListStatus`), `search`, `locationId`, `requiredByDateFrom`, `requiredByDateTo`, `completionDateFrom`, `completionDateTo`, `sourceTaskId` |
+| `GetProductionOrderRun` | **`productionOrderId`**, `includeAttachmentContent` |
+| `PutProductionOrderRun` | **`productionOrderId`**, **`increaseOrderQuantity`** |
+| `PutProductionOrderRunManualJournal` | **`productionOrderId`** |
+| `GetProductionResourceList` | `page`, `limit`, `name`, `onlyActive` |
+| `GetProductionResource` | **`resourceId`**, `includeAttachments` |
+| `DeleteProductionResource` | **`resourceId`** |
+| `GetProductionSuspendReason` | `page`, `limit`, `workCenterId` |
+| `GetProductionWorkCenters` | `page`, `limit`, `name` |
+| `DeleteProductionWorkCenters` | **`workCenterId`** |
+| `GetJournal` | `page`, `limit`, `taskId`, `status` (`CompletionStatus`), `search` |
+| `DeleteJournal` | **`id`**, `void` |
+| `GetTransactions` | `page`, `limit`, `fromDate`, `toDate`, `account` |
+| `GetMoneyTaskList` | `page`, `limit`, `status` (`CompletionStatus`), `search`, `taskType` (`MoneyTaskType`) |
+| `GetMoneyTask` | **`taskId`** |
+| `DeleteMoneyTask` | **`id`**, `void` |
+| `GetSaleList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `shipBy`, `quoteStatus` (`TaskStatus`), `orderStatus` (`OrderStatus`), `combinedPickStatus` (`PickingStatus`), `combinedPackStatus` (`PackingStatus`), `combinedShippingStatus` (`ShippingStatus`), `combinedInvoiceStatus`, `creditNoteStatus` (`TaskStatus`), `externalId`, `status` (`SaleStatus`), `readyForShipping`, `orderLocationId` |
+| `GetSale` | **`id`**, `combineAdditionalCharges`, `hideInventoryMovements`, `includeTransactions`, `countryFormat` (`CountryFormat`) |
+| `DeleteSale` | **`id`**, `void` |
+| `GetSaleOrder` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo` |
+| `GetSaleFulfilment` | **`saleId`**, `includeProductInfo` |
+| `DeleteSaleFulfilment` | **`taskId`**, `void` |
+| `GetSaleFulfilmentPick`, `GetSaleFulfilmentPack` | **`taskId`**, `includeProductInfo` |
+| `GetSaleFulfilmentShip` | **`taskId`** |
+| `GetSaleInvoice` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo` |
+| `DeleteSaleInvoice` | **`taskId`**, `void` |
+| `GetSaleCreditNote` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo`, `includePaymentInfo` |
+| `DeleteSaleCreditNote` | **`taskId`**, `void` |
+| `GetSalePayment` | **`saleId`** |
+| `DeleteSalePayment` | **`id`** |
+| `GetSaleQuote` | **`saleId`**, `combineAdditionalCharges`, `includeProductInfo` |
+| `GetSaleManualJournal`, `GetSaleAttachment` | **`saleId`** |
+| `DeleteSaleAttachment` | **`id`** |
+| `GetSaleCreditNoteList` | `page`, `limit`, `search`, `createdSince`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` (`SaleStatus`) |
+| `GetPurchaseList` | `page`, `limit`, `search`, `requiredBy`, `updatedSince`, `updatedUntil`, `orderStatus` (`TaskStatus`), `restockReceivedStatus` (`TaskStatus`), `invoiceStatus` (`InvoiceStatus`), `creditNoteStatus` (`TaskStatus`), `unstockStatus` (`TaskStatus`), `status`, `dropShipTaskId` |
+| `GetPurchaseCreditNoteList` | `page`, `limit`, `search`, `updatedSince`, `updatedUntil`, `creditNoteStatus` (`TaskStatus`), `status` |
+| `GetPurchase` | **`id`**, `combineAdditionalCharges` |
+| `DeletePurchase` | **`id`**, `void` |
+| `GetPurchaseOrder` | **`taskId`**, `combineAdditionalCharges` |
+| `GetPurchaseStock` | **`taskId`** |
+| `GetPurchaseInvoice` | **`taskId`**, `combineAdditionalCharges` |
+| `GetPurchaseCreditNote` | **`taskId`**, `combineAdditionalCharges` |
+| `GetPurchasePayment` | **`taskId`** |
+| `DeletePurchasePayment` | **`id`**, `deleteAllocation` |
+| `GetPurchaseManualJournal` | **`taskId`** |
+| `GetPurchaseAttachment` | **`taskId`** |
+| `DeletePurchaseAttachment` | **`id`** |
+| `GetAdvancedPurchase` | **`id`**, `combineAdditionalCharges` |
+| `DeleteAdvancedPurchase` | **`id`**, `void` |
+| `GetAdvancedPurchaseStock` | **`purchaseId`** |
+| `DeleteAdvancedPurchaseStock` | **`taskId`**, `void` |
+| `GetAdvancedPurchasePutAway` | **`purchaseId`** |
+| `GetAdvancedPurchaseInvoice` | **`purchaseId`**, `combineAdditionalCharges` |
+| `DeleteAdvancedPurchaseInvoice` | **`taskId`**, `void` |
+| `GetAdvancedPurchaseCreditNote` | **`purchaseId`**, `combineAdditionalCharges` |
+| `DeleteAdvancedPurchaseCreditNote` | **`taskId`** |
+| `GetAdvancedPurchasePayment` | `purchaseId`, `orderNumber`, `invoiceNumber`, `creditNoteNumber` |
+| `GetAdvancedPurchaseManualJournal` | **`purchaseId`** |
+
+The sale's `CombinedInvoiceStatus`, and so `GetSaleList`'s `combinedInvoiceStatus`, stays a
+string: the Sale tables' list for it does not match the values their examples return (see
+[data](data.md#where-the-references-tables-and-examples-disagree)). The purchase models, whose
+tables list the values their examples send, type theirs as `InvoicingStatus`.
+
+The purchase lists' `status` is a string as well, since the credit note list's example returns a
+purchase status the reference's list does not have (see
+[data](data.md#where-the-references-tables-and-examples-disagree)). Both lists' URI templates leave
+out `UpdatedUntil` and write `Status{Status}` without its `=`; the requests send every parameter the
+operations document, under its key.
+
+The `product` actions follow the same shape: `GetProduct` (a `ListRequest`
+keyed `Products`), `PostProduct` and `PutProduct` (`WriteRequest`s; the PUT body
+must carry `ID`, and `PutProduct` throws an `InvalidArgumentException` without one, while
+`PostProduct` leaves `ID` out of its body because Cin7 ignores it on POST), all on `product`; their
+data object bodies are `ProductPostData` and `ProductPutData`. The `customer` and `product` list
+requests' `dto()` is a
+`list<CustomerData>` or `list<ProductData>`, and their POST and PUT `dto()` is the saved
+record (`CustomerList.0`, `Products.0`).
+
+The `supplier` actions, under `src/Requests/Supplier/`, are the customer's in shape:
+`GetSupplier` (a `ListRequest` keyed `SupplierList`), and `PostSupplier` and `PutSupplier`
+(`WriteRequest`s, whose data object bodies are `SupplierPostData` and `SupplierPutData`; the PUT
+body carries `ID`). `GetSupplier`'s `dto()` is a `list<SupplierData>`, and the POST and PUT
+`dto()` is the saved supplier (`SupplierList.0`).
+
+The `me` actions live under `src/Requests/Me/`: `GetMe`, a `Cin7Request` that takes no
+parameters, on `me`, whose `dto()` is a `MeData`; and one folder per sub-path, where each path
+has the same four classes:
+
+| Folder | Classes | `dto()` |
+|---|---|---|
+| `Addresses/` | `GetMeAddresses` (a `ListRequest` keyed `MeAddressesList`), `PostMeAddresses`, `PutMeAddresses` (the PUT body carries `AddressID`), `DeleteMeAddresses` (`ID`) | `list<MeAddressData>` for the GET, `MeAddressData` for POST and PUT (`MeAddressesList.0`); none for the DELETE, whose `{Success}` is left to `json()` |
+| `Contacts/` | `GetMeContacts` (a `ListRequest` keyed `MeContactsList`), `PostMeContacts`, `PutMeContacts` (the PUT body carries `ContactID`), `DeleteMeContacts` (`ID`) | `list<MeContactData>` for the GET, `MeContactData` for POST and PUT (`MeContactsList.0`); none for the DELETE |
+
+Their data object bodies are `MeAddressPostData` and `MeAddressPutData`, and `MeContactPostData`
+and `MeContactPutData`.
+
+The `ref` actions live under `src/Requests/Ref/`: `GetTax` (a `ListRequest` keyed
+`TaxRuleList`), `PostTax` and `PutTax` (`WriteRequest`s, whose data object bodies are
+`TaxPostData` and `TaxPutData`; the PUT body carries `ID`), all
+on `ref/tax`; `GetCustomerCredits` (a `ListRequest` keyed `CustomerCredits`) on
+`ref/customer/credits`; `GetSupplierDeposits` (a `ListRequest` keyed `SupplierDeposits`) on
+`ref/supplier/deposits`; and `GetAccount` (a `ListRequest` keyed `AccountsList`), `PostAccount`
+and `PutAccount` (`WriteRequest`s, whose data object bodies are `AccountPostData` and
+`AccountPutData`; the PUT body's `Code` names the account) and `DeleteAccount` (keyed `Code`), all
+on `ref/account`, under `Account/`. `GetAccount`'s `dto()` is a `list<AccountData>`, the POST
+and PUT `dto()` the saved account (`AccountsList.0`), and `DeleteAccount`'s `{Success}` is left
+to `json()`. `GetAccountBank` (a `ListRequest` keyed `BankAccountsList`), on
+`ref/account/bank` under `Account/Bank/`, answers a `list<BankAccountData>`.
+
+`ref/attributeset` (under `AttributeSet/`) has `GetAttributeSet` (a `ListRequest` keyed
+`AttributeSetList`), `PostAttributeSet` and `PutAttributeSet` (the PUT body carries `ID`) and
+`DeleteAttributeSet` (keyed `ID`); a POST or PUT answers one `AttributeSetData`, as the whole body.
+
+`productFamily` (under `ProductFamily/`) has `GetProductFamily` (a `ListRequest` keyed
+`ProductFamilies`) and `PostProductFamily` and `PutProductFamily` (`WriteRequest`s whose bodies are
+`ProductFamilyPostData` and `ProductFamilyPutData`, the PUT carrying `ID`); each leaves the ignored
+`Products.*.SKU` and `Products.*.Name` out of the body. Their `dto()` is a `list<ProductFamilyData>`
+and the saved family (`ProductFamilies.0`). `productFamily/attachments` (under
+`ProductFamily/Attachments/`) is the product's attachments with a `FamilyID`.
+
+`product/attachments` (under `Product/Attachments/`) has `GetProductAttachments` (keyed
+`ProductID`), `PostProductAttachments` (a `WriteRequest` whose body is a
+`ProductAttachmentPostData`) and `DeleteProductAttachments` (keyed `ID`); each answers a
+`list<AttachmentLineData>`. `GetProductAvailability` (a `ListRequest` keyed
+`ProductAvailabilityList`) is on `ref/productavailability`, under `ProductAvailability/`.
+
+`GetPriceTier` (`ref/priceTier`, under `PriceTier/`) takes no parameters and is not paged: its
+`dto()` is a `list<PriceTierData>`. `GetProductMarkupPrices` (keyed `ProductID`) and
+`PutProductMarkupPrices` (a `WriteRequest` whose body is a `MarkupPricesData`) are on
+`product/markupprices`, under `Product/MarkupPrices/`; both answer a `MarkupPricesData`.
+
+`ref/brand`, `ref/category` and `ref/unit` (under `Brand/`, `Category/` and `Unit/`) each have a
+`Get…` (a `ListRequest` keyed `BrandList`, `CategoryList` and `UnitList`), a `Post…` and a `Put…`
+(the PUT body carries `ID`) and a `Delete…` (keyed `ID`). A GET's `dto()` is a list of `BrandData`,
+`ProductCategoryData` or `UnitOfMeasureData`, and the POST and PUT answer one of them, as the
+whole body.
+
+`ref/location` (under `Location/`) has `GetLocation` (a `ListRequest` keyed `LocationList`, filtered by
+`id`, `deprecated` and `name`), `PostLocation` and `PutLocation` (bodies `LocationPostData` and
+`LocationPutData`, which carries `ID`) and `DeleteLocation` (keyed `ID`); a POST or PUT answers the
+saved `LocationData` as a bare object. `ref/carrier` (under `Carrier/`) is the same with `Description`
+and `CarrierID`, except that its POST and PUT answer a `CarrierList`, so their `dto()` is a
+`list<CarrierData>`. `GetTemplates` (under `Templates/`, keyed `Templates`, filtered by `type` and
+`name`) lists the document templates. `ref/customer/templates` (under `Customer/Templates/`) sets the
+templates a customer uses by default: `GetCustomerTemplates` (keyed `CustomerTemplates`, filtered by
+`customerId`), `PostCustomerTemplates` (body `CustomerDefaultTemplatesPostData`) and
+`DeleteCustomerTemplates` (keyed `TemplateId` and `CustomerId`); all three answer the customers'
+templates, so `dto()` is a `list<CustomerDefaultTemplateData>`.
+`ref/fixedassettype` (under `FixedAssetType/`) has `GetFixedAssetType` (a `ListRequest` keyed
+`FixedAssetTypeList`), `PostFixedAssetType` and `PutFixedAssetType` (the PUT body carries
+`FixedAssetTypeID`); `ref/paymentterm` (under `PaymentTerm/`) has `GetPaymentTerm` (keyed
+`PaymentTermList`), `PostPaymentTerm`, `PutPaymentTerm` (the PUT body carries `ID`) and
+`DeletePaymentTerm` (`ID`). Their GET `dto()` is a list of `FixedAssetTypeData` or
+`PaymentTermData`, and POST and PUT answer the saved record (`<list key>.0`).
+
+The `bankTransfer` actions live under `src/Requests/BankTransfer/`, and follow the Money Task's:
+`GetBankTransfer` (keyed `TaskID`), `DeleteBankTransfer` (keyed `ID`, with `Void`), and
+`PostBankTransfer` and `PutBankTransfer` (`WriteRequest`s, whose data object bodies are
+`BankTransferPostData` and `BankTransferPutData`; the PUT body carries `TaskID`). Every one's
+`dto()` is a `BankTransferData`.
+
+The `custom-prices` actions live under `src/Requests/CustomPrices/`: `PostCustomPrices` and
+`PutCustomPrices` (`WriteRequest`s with the same body, `CustomPricesData`) and `DeleteCustomPrices`
+(keyed `ProductID` and `CustomerID`). The `product-suppliers` actions live under
+`src/Requests/ProductSuppliers/`: `GetProductSuppliers` (keyed `ProductID`, whose `dto()` is a
+`ProductSuppliersData`), `PostProductSuppliers` and `PutProductSuppliers` (the same body) and
+`DeleteProductSuppliers` (keyed `ProductID` and `SupplierID`). The reference answers a POST or PUT of
+custom prices `{Errors}`, and the others `{Success}`, so those have no `dto()`: read `json()`.
+The `reference/…` actions live under `src/Requests/Reference/`. `GetShipZones` (a `ListRequest` keyed
+`ShipZones`) lists the shipping zones, and `PostShipZones` and `PutShipZones` (bodies
+`ShippingZonePostData` and `ShippingZonePutData`) answer the saved zone, read from `ShipZones.0`;
+`DeleteShipZones` sends `ShipZoneID` (the reference documents the key with a trailing space).
+`GetDiscount` (keyed `DiscountRules`), `PostDiscount` (body `ProductDiscountRulesPostData`, a list of
+rules) and `PutDiscount` (body `ProductDiscountRulePutData`, one bare rule) are the discount rules. `GetDeals`, `PostDeals` and `PutDeals` (bodies `ProductDealPostData` and
+`ProductDealPutData`, bare deals) are the product deals, and answer the saved deal from `Deals.0`.
+`GetShipZonesEnabled` and `PutShipZonesEnabled` (body `ShipZonesEnabledData`) read and set
+`IsEnabled`.
+
+The `stockadjustment` actions live under `src/Requests/StockAdjustment/`: `GetStockAdjustment` (keyed
+`TaskID`), `DeleteStockAdjustment` (keyed `ID`, with `Void`), and `PostStockAdjustment` and
+`PutStockAdjustment` (`WriteRequest`s, whose data object bodies are `StockAdjustmentPostData` and
+`StockAdjustmentPutData`; the PUT body carries `TaskID`). Every one's `dto()` is a
+`StockAdjustmentData`. `GetStockAdjustmentList` (`src/Requests/StockAdjustmentList/`, a `ListRequest`
+for `stockadjustmentList`, keyed `StockAdjustmentList`) lists them, filtered by `status`.
+The `stocktake` actions live under `src/Requests/StockTake/`, the same four as `stockadjustment`:
+`GetStockTake` (keyed `TaskID`), `DeleteStockTake` (keyed `ID`, with `Void`), and `PostStockTake` and
+`PutStockTake` (`WriteRequest`s, whose bodies are `StockTakePostData` and `StockTakePutData`). Every
+one's `dto()` is a `StockTakeData`. `GetStockTakeList` (`src/Requests/StockTakeList/`) lists them,
+filtered by `status`, and reads the list from `StockAdjustmentList`, the key its example uses.
+The `stockTransfer` actions live under `src/Requests/StockTransfer/`, the same four again:
+`GetStockTransfer`, `DeleteStockTransfer`, `PostStockTransfer` and `PutStockTransfer`, whose bodies
+are `StockTransferPostData` and `StockTransferPutData`; every one's `dto()` is a
+`StockTransferData`. Its order is `src/Requests/StockTransfer/Order/`: `GetStockTransferOrder`
+(keyed `TaskID`) and `PostStockTransferOrder` (body `StockTransferOrderPostData`), whose `dto()` is a
+`StockTransferOrderData`. `GetStockTransferList` (`src/Requests/StockTransferList/`) lists transfers,
+filtered by `status` and `search`.
+The `inventoryWriteOff` actions live under `src/Requests/InventoryWriteOff/`, the same four again:
+`GetInventoryWriteOff` (V2 marks `TaskID` optional, but the write-offs are listed at
+`inventoryWriteOffList`, so it is required here), `DeleteInventoryWriteOff`, `PostInventoryWriteOff`
+and `PutInventoryWriteOff`, whose bodies are `InventoryWriteOffPostData` and
+`InventoryWriteOffPutData`; every one's `dto()` is an `InventoryWriteOffData`.
+`GetInventoryWriteOffList` (`src/Requests/InventoryWriteOffList/`) lists them under
+`InventoryWriteOffs`, filtered by `status` and `search`.
+The `disassembly` actions live under `src/Requests/Disassembly/`: `GetDisassembly` (keyed `TaskID`),
+`DeleteDisassembly` (keyed `ID`, with `Void`) and `PostDisassembly`, whose body is
+`DisassemblyPostData`; every one's `dto()` is a `DisassemblyData`. Its order is
+`src/Requests/Disassembly/Order/`: `GetDisassemblyOrder` (keyed `TaskID`) and `PostDisassemblyOrder`
+(body `DisassemblyOrderData`), whose `dto()` is a `DisassemblyOrderData`. `GetDisassemblyList`
+(`src/Requests/DisassemblyList/`) lists disassemblies under `Disassemblies`, filtered by `status` and
+`search`.
+The `finishedGoods` actions live under `src/Requests/FinishedGoods/`: `GetFinishedGoods` (keyed
+`TaskID`), `DeleteFinishedGoods` (keyed `ID`, with `Void`), and `PostFinishedGoods` and
+`PutFinishedGoods`, whose bodies are `FinishedGoodsPostData` and `FinishedGoodsPutData`; every
+one's `dto()` is a `FinishedGoodsData`. Its order and pick are `src/Requests/FinishedGoods/Order/` and
+`src/Requests/FinishedGoods/Pick/`: `GetFinishedGoodsOrder` and `GetFinishedGoodsPick` (keyed
+`TaskID`), and `PostFinishedGoodsOrder` and `PostFinishedGoodsPick` (bodies `FinishedGoodsOrderData` and
+`FinishedGoodsPickData`), whose `dto()` is the same class. `GetFinishedGoodsList`
+(`src/Requests/FinishedGoodsList/`) lists tasks under `FinishedGoods`, filtered by `status`,
+`search` and `saleId`.
+The `production/…` actions live under `src/Requests/Production/`, a folder per path segment, so
+`production/order/run/operation/start` is `Order/Run/Operation/Start/`. `production/productionBOM` is
+documented twice, so its requests are named after the titles: `GetProductProductionBom`,
+`PostProductProductionBom`, `PutProductProductionBom` and `DeleteProductProductionBom`, and the same
+four for `ProductFamily`, all in `ProductionBom/`; a GET is keyed `ProductID` or `ProductFamilyID`, and
+a DELETE by it and the `BOMID`. `GetProductionOrder` (keyed `ProductionOrderID`) answers a
+`ProductionOrdersData`, and so do `PostProductionOrder`, `PutProductionOrder`,
+`PostProductionOrderAuthorise` and `PostProductionOrderRelease`; `…Undo` and `…Void` answer a
+`ProductionOrderMessageData`, and the bodies of the four actions are `ProductionOrderAuthorisePostData`,
+`…ReleasePostData`, `…UndoPostData` and `…VoidPostData`. The attachments are `Order/Attachment/`:
+`GetProductionOrderAttachment`, `PostProductionOrderAttachment` (with the `ProductionOrderID` in the
+query), `PutProductionOrderAttachment` and `DeleteProductionOrderAttachment`, and
+`GetProductionOrderReferenceData` is `Order/ReferenceData/`. The runs are `Order/Run/`:
+`PostProductionOrderRun`, `GetProductionOrderRun`, `PutProductionOrderRun` and the actions
+`PutProductionOrderRunComplete`, `…Undo`, `…Void`, `…ManualJournal` and the four `…Operation…`
+(`Start`, `Suspend`, `Resume`, `Complete`), whose `dto()` is a `ProductionRunsData`, except the PUT's
+(a `ProductionRunData`) and the undo's and void's (a `ProductionRunUndoData`). The lists
+(`GetProductionOrderList`, keyed `ProductionOrderListItems`, `GetProductionResourceList`, keyed
+`Resources`, `GetProductionSuspendReason`, keyed `SuspendReasons`, and `GetProductionWorkCenters`, keyed
+`Workcenters`) are `ListRequest`s. `GetProductionFactoryCalendar`, `GetProductionResource`, their
+POST, PUT and DELETE and the work centers' and suspend reasons' writes are as the other paths. A
+DELETE the reference documents no response for (a BOM, an order attachment, a work center) sends no
+`dto()`.
+
+Five writes take query parameters beside their body, which the other POSTs and PUTs do not:
+`PostProductionOrder` (`recalculateDates`), `PutProductionOrder` (`allowRecalculateDates`,
+`allowRecalculateCyclesAndQuantities`), `PostProductionOrderAttachment` (**`productionOrderId`**),
+`PutProductionOrderRun` (**`productionOrderId`**, **`increaseOrderQuantity`**) and
+`PutProductionOrderRunManualJournal` (**`productionOrderId`**). Their constructor takes the body
+first, then the parameters.
+
+The `crm/…` actions live under `src/Requests/Crm/`, one folder each: `Lead/`, `Opportunity/`, `Task/`,
+`TaskCategory/` and `Workflow/` each have a `GetCrm…` (a `ListRequest`, keyed `LeadList`,
+`opportunityList`, `Tasks`, `Categories` and `Workflows`), a `PostCrm…` and a `PutCrm…` (bodies
+`LeadPostData` and `LeadPutData`, and so on; the PUT body carries `ID`). There is no DELETE, and every
+action answers a list, so `dto()` is a `list<LeadData>` and so on. `GetCrmLead` and
+`GetCrmOpportunity` filter by `modifiedSince`, and `GetCrmTask` by the start, end and completion
+dates (`startDateFrom`, `startDateTo` and so on), `assignedTo` and `category`.
+`PostCrmWorkflowStart` (`WorkflowStart/`) sends everything in the query and nothing in the body:
+`StartDate`, `EnityType` (the reference's spelling, kept), `EntityID`, and the workflow by `ID` or
+`Name`. It answers `{Success}`, left to `json()`.
+
+The `webhooks` actions live under `src/Requests/Webhooks/`: `GetWebhooks` (a plain `Cin7Request`, as the
+reference takes no page or limit), `PostWebhooks` and `PutWebhooks` (bodies `WebhookPostData` and
+`WebhookPutData`, which carries `ID`) and `DeleteWebhooks` (keyed `ID`). A GET, POST or PUT answers a
+`Webhooks` list, so `dto()` is a `list<WebhookData>`; a DELETE answers an empty one, left to `json()`.
+The `journal` actions live under `src/Requests/Journal/`: `GetJournal` (a `ListRequest` keyed
+`Journals`), `PostJournal` and `PutJournal` (`WriteRequest`s, whose data object bodies are
+`JournalPostData` and `JournalPutData`; the PUT body carries `TaskID`) and `DeleteJournal` (keyed
+`ID`, with `Void`). Every one's `dto()` is a `JournalData`, the first entry of `Journals`, and
+`GetJournal`'s a `list<JournalData>`. `GetTransactions` (a `ListRequest` keyed `Transactions`) is
+on `transactions`, under `src/Requests/Transactions/`; its `dto()` is a `list<TransactionData>`.
+
+The `moneyOperation` actions live under `src/Requests/MoneyTask/`, named after the Money Task
+model they serve: `GetMoneyTask`
+(keyed `TaskID`), `DeleteMoneyTask` (keyed `ID`, with `Void`), and `PostMoneyTask` and
+`PutMoneyTask` (`WriteRequest`s, whose data object bodies are `MoneyTaskPostData` and
+`MoneyTaskPutData`; the PUT body carries `TaskID`), all on `moneyOperation`. Every one's `dto()` is
+a `MoneyTaskData`.
+
+`GetMoneyTaskList` (a `ListRequest` keyed `MoneyTasks`) is on `moneyTaskList`, under
+`src/Requests/MoneyTaskList/`; its `dto()` is a `list<MoneyTaskListData>`.
+
+The `sale` actions live under `src/Requests/Sale/`: `GetSale` and `DeleteSale` (keyed `ID`; the
+DELETE takes `Void`) and `PostSale` and `PutSale`
+(`WriteRequest`s; the PUT body carries `ID`, and `PutSale` leaves the POST-only `SaleType` out of it), all on `sale`. `sale` has no list action:
+`GetSaleList` (a `ListRequest` keyed `SaleList`) is on `saleList`, under `src/Requests/SaleList/`,
+and `GetSaleCreditNoteList` (keyed `SaleList` too) on `saleCreditNoteList`, under
+`src/Requests/SaleCreditNoteList/`. Every `sale` request's `dto()` is a `SaleData`;
+`GetSaleList`'s is a `list<SaleListData>` and `GetSaleCreditNoteList`'s a
+`list<SaleCreditNoteListData>`.
+
+The `sale/…` documents live under `src/Requests/Sale/`, one folder per path, 32 classes in all:
+
+| Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
+|---|---|---|
+| `Quote/` | `GetSaleQuote` (`SaleID`), `PostSaleQuote` | `SaleQuoteData` |
+| `Order/` | `GetSaleOrder` (`SaleID`), `PostSaleOrder` | `SaleOrderData` |
+| `Fulfilment/` | `GetSaleFulfilment` (`SaleID`), `PostSaleFulfilment`, `DeleteSaleFulfilment` (`TaskID`) | `SaleFulfilmentsData` |
+| `Fulfilment/Pick/` | `GetSaleFulfilmentPick` (`TaskID`), `PostSaleFulfilmentPick`, `PutSaleFulfilmentPick` | `SaleFulfilmentPickData` |
+| `Fulfilment/Pack/` | `GetSaleFulfilmentPack` (`TaskID`), `PostSaleFulfilmentPack`, `PutSaleFulfilmentPack` | `SaleFulfilmentPackData` |
+| `Fulfilment/Ship/` | `GetSaleFulfilmentShip` (`TaskID`), `PostSaleFulfilmentShip`, `PutSaleFulfilmentShip` | `SaleFulfilmentShipData` |
+| `Invoice/` | `GetSaleInvoice` (`SaleID`), `PostSaleInvoice`, `PutSaleInvoice`, `DeleteSaleInvoice` (`TaskID`) | `SaleInvoicesData` |
+| `CreditNote/` | `GetSaleCreditNote` (`SaleID`), `PostSaleCreditNote`, `DeleteSaleCreditNote` (`TaskID`) | `SaleCreditNotesData` |
+| `Payment/` | `GetSalePayment` (`SaleID`), `PostSalePayment`, `PutSalePayment`, `DeleteSalePayment` (`ID`) | `list<SalePaymentLinePartialData>` for the GET, `SalePaymentLinePartialData` for POST and PUT; none for the DELETE |
+| `ManualJournal/` | `GetSaleManualJournal` (`SaleID`), `PostSaleManualJournal` | `SaleManualJournalData` |
+| `Attachment/` | `GetSaleAttachment` (`SaleID`), `PostSaleAttachment`, `DeleteSaleAttachment` (`ID`) | `SaleAttachmentsData` |
+
+The write bodies are per verb where the reference's fields differ: `SaleInvoicePostData` and
+`SaleInvoicePutData` for `sale/invoice`, `SaleCreditNotePostData` for `sale/creditnote`,
+`SalePaymentPostData` and `SalePaymentPutData` for `sale/payment`, and a POST and a PUT class for
+the fulfilment's pick, pack and ship. Each makes the fields the reference requires for that verb
+mandatory; see [data](data.md).
+
+The `purchase` actions live under `src/Requests/Purchase/`: `GetPurchase` and `DeletePurchase`
+(keyed `ID`; the DELETE takes `Void`) and `PostPurchase` and `PutPurchase` (`WriteRequest`s, whose
+data object bodies are `PurchasePostData` and `PurchasePutData`; the PUT body carries `ID`), all on
+`purchase`. Every `purchase` request's `dto()` is a `PurchaseData`. `purchase` has no list action.
+
+`GetPurchaseList` (a `ListRequest` keyed `PurchaseList`) is on `purchaseList`, under
+`src/Requests/PurchaseList/`, and `GetPurchaseCreditNoteList` (keyed `PurchaseList` too, as its
+example is) on `purchaseCreditNoteList`, under `src/Requests/PurchaseCreditNoteList/`.
+`GetPurchaseList`'s `dto()` is a `list<PurchaseListData>` and `GetPurchaseCreditNoteList`'s a
+`list<PurchaseCreditNoteListData>`.
+
+The `purchase/…` documents live under `src/Requests/Purchase/`, one folder per path:
+
+| Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
+|---|---|---|
+| `Order/` | `GetPurchaseOrder` (`TaskID`, with `CombineAdditionalCharges`), `PostPurchaseOrder` | `PurchaseOrderData` |
+| `Stock/` | `GetPurchaseStock` (`TaskID`), `PostPurchaseStock` | `PurchaseStockData` |
+| `Invoice/` | `GetPurchaseInvoice` (`TaskID`, with `CombineAdditionalCharges`), `PostPurchaseInvoice` | `PurchaseInvoiceData` |
+| `CreditNote/` | `GetPurchaseCreditNote` (`TaskID`, with `CombineAdditionalCharges`), `PostPurchaseCreditNote` | `PurchaseCreditNoteData` |
+| `Payment/` | `GetPurchasePayment` (`TaskID`), `PostPurchasePayment`, `PutPurchasePayment`, `DeletePurchasePayment` (`ID`, with `DeleteAllocation`) | `list<PurchasePaymentData>` for the GET, a bare array, `PurchasePaymentData` for POST and PUT; none for the DELETE, whose `{Success}` is left to `json()` |
+| `ManualJournal/` | `GetPurchaseManualJournal` (`TaskID`), `PostPurchaseManualJournal` | `PurchaseManualJournalData` |
+| `Attachment/` | `GetPurchaseAttachment` (`TaskID`), `PostPurchaseAttachment`, `DeletePurchaseAttachment` (`ID`) | `PurchaseAttachmentsData` |
+
+The order's and the stock received's POST bodies are `PurchaseOrderPostData` and
+`PurchaseStockPostData`, and the payment's write bodies are `PurchasePaymentPostData` and
+`PurchasePaymentPutData`, the PUT one carrying the payment's `ID`.
+
+The invoice's and the credit note's POST bodies are `PurchaseInvoicePostData` and
+`PurchaseCreditNotePostData`, each carrying the purchase's `TaskID`.
+
+The manual journal's POST body is `PurchaseManualJournalPostData`, which requires `TaskID`.
+
+The attachment's POST body is `PurchaseAttachmentPostData`, which names the purchase as
+`PurchaseID`, though the response keys it `TaskID`.
+
+The `advanced-purchase` actions live under `src/Requests/AdvancedPurchase/`: `GetAdvancedPurchase`
+and `DeleteAdvancedPurchase` (keyed `ID`; the DELETE takes `Void`) and `PostAdvancedPurchase` and
+`PutAdvancedPurchase` (`WriteRequest`s, whose data object bodies are `AdvancedPurchasePostData` and
+`AdvancedPurchasePutData`; the PUT body carries `ID`, and `PutAdvancedPurchase` leaves the POST-only
+`PurchaseType` out of it), all on `advanced-purchase`. Every `advanced-purchase` request's `dto()`
+is an `AdvancedPurchaseData`. `advanced-purchase` has no list action; `purchaseList` lists simple
+and advanced purchases alike.
+
+The `advanced-purchase/…` documents live under `src/Requests/AdvancedPurchase/`, one folder per
+path:
+
+| Folder | Classes (identifier key, or `WriteRequest`) | `dto()` |
+|---|---|---|
+| `Stock/` | `GetAdvancedPurchaseStock` (`PurchaseID`), `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock`, `DeleteAdvancedPurchaseStock` (`TaskID`, with `Void`) | `AdvancedPurchaseStocksData`, the `{PurchaseID, StockReceiving}` envelope |
+| `PutAway/` | `GetAdvancedPurchasePutAway` (`PurchaseID`), `PostAdvancedPurchasePutAway` | `AdvancedPurchasePutAwaysData`, the `{PurchaseID, PutAway}` envelope |
+| `Invoice/` | `GetAdvancedPurchaseInvoice` (`PurchaseID`, with `CombineAdditionalCharges`), `PostAdvancedPurchaseInvoice`, `DeleteAdvancedPurchaseInvoice` (`TaskID`, with `Void`) | `AdvancedPurchaseInvoicesData`, the `{PurchaseID, Invoices}` envelope |
+| `CreditNote/` | `GetAdvancedPurchaseCreditNote` (`PurchaseID`, with `CombineAdditionalCharges`), `PostAdvancedPurchaseCreditNote`, `DeleteAdvancedPurchaseCreditNote` (`TaskID`, with no `Void`: it only voids) | `AdvancedPurchaseCreditNotesData`, the `{PurchaseID, CreditNotes}` envelope |
+| `Payment/` | `GetAdvancedPurchasePayment` (`PurchaseID`, `OrderNumber`, `InvoiceNumber` or `CreditNoteNumber`), `PostAdvancedPurchasePayment`, `PutAdvancedPurchasePayment`; the DELETE is `Purchase/Payment/`'s `DeletePurchasePayment` | `list<AdvancedPurchasePaymentData>` for the GET, a bare array, `AdvancedPurchasePaymentData` for POST and PUT |
+| `ManualJournal/` | `GetAdvancedPurchaseManualJournal` (`PurchaseID`), `PostAdvancedPurchaseManualJournal` | `AdvancedPurchaseManualJournalsData`, the `{PurchaseID, ManualJournals}` envelope |
+
+The stock received's write bodies are `AdvancedPurchaseStockPostData` and
+`AdvancedPurchaseStockPutData`, the PUT one carrying the task's `TaskID` as well as the
+`PurchaseID`.
+The put away's write body is `AdvancedPurchasePutAwayPostData`; it has no PUT.
+
+The advanced purchase invoice's POST body is `AdvancedPurchasePartialInvoicePostData`, which
+carries the purchase's `PurchaseID` beside the invoice task's `TaskID`.
+
+The advanced purchase credit note's POST body is `AdvancedPurchasePartialCreditNotePostData`, one
+credit note carrying the purchase's `PurchaseID` as well as the credit note's `TaskID`.
+
+The payment's write bodies are `AdvancedPurchasePaymentPostData` and
+`AdvancedPurchasePaymentPutData`, the PUT one carrying the payment's `ID`; the reference documents
+its DELETE on `/purchase/payment`, so it has no DELETE class of its own and the resource sends
+`DeletePurchasePayment`.
+
+The manual journals' POST body is `AdvancedPurchasePartialManualJournalPostData`, which carries
+the purchase's `PurchaseID` and the journal's `TaskID`.
 
 ## Wire protocol
 
@@ -57,69 +543,91 @@ These are the requests Cin7 receives.
 
 - **Base URL.** `https://inventory.dearsystems.com/ExternalApi/v2/`, with the
   endpoint path appended relative to it, e.g.
-  `https://inventory.dearsystems.com/ExternalApi/v2/sale/invoice`.
+  `https://inventory.dearsystems.com/ExternalApi/v2/customer`.
 - **Headers.** Every request carries `Content-Type: application/json`,
   `api-auth-accountid` and `api-auth-applicationkey`, the last two from
   [configuration](configuration.md).
 - **Parameters.** GET and DELETE carry their parameters in the query string.
-  POST and PUT carry theirs as a raw JSON body and send no query string.
-- **Page defaults.** `page=1` and `limit=100`, lowercase, are added to the
-  query string of every list, find and delete when the caller has not set
-  them. They are never added to a create or update body. A DELETE carries
-  `page` and `limit` like a read.
-- **GUID placement.**
+  POST and PUT carry theirs as a raw JSON body and send no query string, except
+  `PostCrmWorkflowStart`, which sends everything in the query string and no body, and the five
+  production writes that take query parameters beside their body (see the `production/…`
+  paragraph above).
+- **Page defaults.** `page=1` and `limit=100` are added to the
+  query string of every `ListRequest` when the caller has not set them. They
+  are never added to a read or delete of one record, or a `WriteRequest`. A page below 1 or a
+  limit outside 1 to 1000 throws before anything is sent; see
+  [page defaults](#page-defaults).
+- **Unset parameters.** A `null` argument is left out of the query string, through
+  `Cin7Request::queryValues()`.
+- **Boolean query values.** A `true`/`false` argument goes out as the
+  string `'true'`/`'false'`, not PHP's `1`/empty string, through the same method.
+- **Enum query values.** An enum argument goes out as its value: `SaleStatus::Ordered` as
+  `ORDERED`.
+- **Date query values.** A `DateTimeInterface` argument goes out in
+  the reference's date format, ISO 8601 converted to UTC with milliseconds
+  (`yyyy-MM-ddTHH:mm:ss.fff`, e.g. `2012-11-14T13:28:33.363`), through the same
+  method. A date string is sent as given.
+- **Identifier placement.** A read or delete of one record sends its identifier first in the
+  query string, under the key the reference documents for it (`ID`, `SaleID`, `PurchaseID` or
+  `TaskID`). A `WriteRequest` sends no identifier of its own; the caller merges it into the body,
+  as in [PUT identifiers](resources.md#put-identifiers).
+- **Empty write.** `new PostCustomer()` with no body still sends a JSON body,
+  the encoding of an empty array (`[]`), not a bodyless POST. `PostCrmWorkflowStart` is a
+  `Cin7Request`, not a `WriteRequest`, and sends no body at all.
 
-  | Request | Where the GUID goes | Key |
-  |---|---|---|
-  | `FindRecord` | Query string | `guidKey()`: `ID`, `SaleID` or `CustomerID` by endpoint |
-  | `UpdateRecord` | JSON body | `guidKey()`, the same key a find uses |
-  | `DeleteRecord` | Query string | `deleteGuidKey()`: `ID` on every endpoint modelled |
+## Fields left out of write bodies
 
-  Every endpoint modelled here deletes under `ID`, including the `sale/*`
-  ones that find by `SaleID`. The keys per endpoint are in
-  [endpoints](endpoints.md).
-- **Verb gate.** A verb the endpoint does not accept is rejected while the
-  request is constructed, before any HTTP call. See [Errors](#errors).
-- **Empty create.** `new CreateRecord($endpoint)` with no data still sends a
-  JSON body, the encoding of an empty array (`[]`), not a bodyless POST.
+Cin7's reference marks some fields read-only, response-only, or available for one method only. A
+`WriteRequest` subclass lists those in `$omit`, and they never reach the body, whether the caller
+passed an array or a data object. A path is dot-separated and `*` stands for every list item. A
+data object's body is also stripped of nulls and validated after the omission; see
+[write bodies](data.md#write-bodies).
 
-Query parameters go out in this order: the caller's own keys, then the GUID key
-(find and delete), then `page` and `limit`. If the caller's parameters already
-hold the GUID key, the GUID replaces that value where it stands, as in
-[GUID precedence](#guid-precedence). For example
-`new DeleteRecord(Endpoint::Sale, $guid, ['Force' => 'true'])` sends
-`DELETE sale?Force=true&ID=…&page=1&limit=100`.
-
-## GUID precedence
-
-The request assigns the GUID after copying the caller's parameters or data, so
-it wins over a caller-supplied value under the same key:
-
-```php
-// GET customer?ID=guid-3&page=1&limit=100
-new FindRecord(Endpoint::Customer, 'guid-3', ['ID' => 'ignored']);
-
-// PUT customer with body {"ID":"guid-8"}
-new UpdateRecord(Endpoint::Customer, 'guid-8', ['ID' => 'ignored']);
-```
+| Request | Left out |
+| --- | --- |
+| `PostCustomer`, `PutCustomer` | `LastModifiedOn`, `ChildCustomers`, `ProductPrices.*.ProductName` |
+| `PostSupplier`, `PutSupplier` | `LastModifiedOn` (see [data](data.md#where-the-references-tables-and-examples-disagree)) |
+| `PostProduct` | `ID`, `AverageCost`, `LastModifiedOn`, `BOMType`, `Suppliers.*.Currency`, `BillOfMaterialsProducts.*.Name`, `CustomPrices.*.ProductName` |
+| `PutProduct` | the same, with `Type` (read-only for PUT) in place of `ID`; `PutProduct` also needs an `ID` |
+| `PostTax`, `PutTax` | `TaxPercent` |
+| `PutSale` | `SaleType` (POST only) |
+| `PostSaleOrder` | `Lines.*.BackorderQuantity` |
+| `PostSalePayment` | `ID`, `CreditID` (PUT only) |
+| `PutSalePayment` | `TaskID`, `Type` (POST only) |
+| `PostPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
+| `PostPurchaseCreditNote` | `Unstock.*.ProductID`, `Unstock.*.SKU`, `Unstock.*.Name`, `Unstock.*.Location`, `Unstock.*.BatchSN`, `Unstock.*.ExpiryDate` (read-only) |
+| `PostPurchasePayment` | `ID` (PUT only), `DateCreated` |
+| `PutPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
+| `PostPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
+| `PutAdvancedPurchase` | `PurchaseType` (POST only) |
+| `PostAdvancedPurchaseStock`, `PutAdvancedPurchaseStock` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
+| `PostAdvancedPurchasePutAway` | `Lines.*.Name`, `Lines.*.Received` (read-only) |
+| `PostAdvancedPurchaseCreditNote` | `Unstock.*.ProductID`, `Unstock.*.SKU`, `Unstock.*.Name`, `Unstock.*.Location`, `Unstock.*.BatchSN`, `Unstock.*.ExpiryDate` (read-only) |
+| `PostAdvancedPurchasePayment` | `ID` (PUT only), `DateCreated` |
+| `PutAdvancedPurchasePayment` | `Type`, `DepositID` (POST only), `DateCreated` |
+| `PostAdvancedPurchaseManualJournal` | `Lines.*.IsSystem` (read-only) |
 
 ## Page defaults
 
-Cin7 expects `page` and `limit` on every read, so the package always sends them.
-[`PageDefaults::apply()`](../src/PageDefaults.php) adds the defaults to list,
-find and delete parameters:
+Cin7 expects `page` and `limit` on every list read, so `ListRequest` always
+sends them. [`PageDefaults::apply()`](../src/PageDefaults.php):
 
-- It sets `page` to `PageDefaults::PAGE` (`1`) and `limit` to
+- Sets `page` to `PageDefaults::PAGE` (`1`) and `limit` to
   `PageDefaults::LIMIT` (`100`) only when the caller has not. Caller values
   win.
-- The spelling is lowercase. Cin7 also accepts `Page` and `Limit`, but those
-  keys do not count as set: `['Page' => 5, 'Limit' => 20]` is sent as
-  `Page=5&Limit=20&page=1&limit=100`. Use the lowercase keys to page by hand.
-- A `null` value is treated as absent, so the default is used.
-- The defaults are appended after the caller's keys, which keep their order.
-- `PAGE` and `LIMIT` are public constants, so code paging by hand can read them
-  instead of hard-coding `1` and `100`.
-- The caller's array is not modified.
+- Sends lowercase keys, the spelling the paginator reads the sent limit from.
+- Treats a `null` value as absent, so the default is used.
+- Enforces Cin7's bounds: `page` must be a whole number of at least 1, and
+  `limit` one from 1 to `PageDefaults::LIMIT_MAX` (1000), the largest page Cin7
+  serves. Anything else throws an `InvalidArgumentException` from `send()`
+  before the request goes out. The bound matters beyond Cin7 rejecting the
+  call: the paginator counts pages by the limit it sent, so a limit Cin7 cut
+  short would end the walk early. `Cin7Paginator` applies the same checks to
+  `perPageLimit()` and `startPage()`.
+- Appends the defaults after the list's filters, which keep their order.
+- Exposes `PAGE` and `LIMIT` as public constants, so code paging by hand can
+  read them instead of hard-coding `1` and `100`.
+- Never mutates the caller's array.
 
 ## Errors
 
@@ -128,29 +636,35 @@ throws once any retries are spent:
 
 | Exception | When | Extends | Carries |
 |---|---|---|---|
-| `Hypervel\Saloon\Exceptions\Request\ClientException` | 4xx, e.g. `403 Incorrect credentials!` for a bad account ID or key | `Hypervel\Saloon\Exceptions\Request\RequestException` | The full `Response`: `response()`, `status()`, `body()`, `pendingRequest()` |
+| `Hypervel\Saloon\Exceptions\Request\ClientException` | 4xx, e.g. `403 Incorrect credentials!` for a bad account ID or key, including a 429 that outlasted the retries | `Hypervel\Saloon\Exceptions\Request\RequestException` | The full `Response`: `response()`, `status()`, `body()`, `pendingRequest()` |
 | `Hypervel\Saloon\Exceptions\Request\ServerException` | 5xx, including a 503 that outlasted the retries | `Hypervel\Saloon\Exceptions\Request\RequestException` | The full `Response`, as above |
+| `Hypervel\Saloon\Exceptions\Request\RequestException` | A 2xx whose body is Cin7's Error Model (below) | `Hypervel\Http\Client\RequestException` | The full `Response`, as above |
 | `Hypervel\Saloon\Exceptions\Request\FatalRequestException` | Transport failure: DNS, refused connection, timeout | `Hypervel\Saloon\Exceptions\SaloonException` | No response; `pendingRequest()` and the original exception as `getPrevious()` |
-| [`Ipsocode\Cin7\Exceptions\MethodNotAllowedException`](../src/Exceptions/MethodNotAllowedException.php) | Constructing a request whose verb the endpoint does not accept | `Hypervel\Saloon\Exceptions\SaloonException` | The message only |
 
 Saloon's `RequestException` extends `Hypervel\Http\Client\RequestException`,
-not `SaloonException`, so a single `catch (SaloonException)` covers the
-transport failure and the verb gate but not 4xx or 5xx responses.
+not `SaloonException`, so a single `catch (SaloonException)` covers only the
+transport failure, not a 4xx or 5xx response.
 
-`MethodNotAllowedException` is thrown from the request constructor, so nothing
-is sent. Its message names the verb and the endpoint value the caller passed:
+Cin7 reports a failure with its Error Model, `{"ErrorCode": 400, "Exception": "…"}`, or a
+list starting with one, and sometimes with a 200. The connector fails any response whose body
+carries `ErrorCode`, so it throws like a 4xx or 5xx: a 4xx or 5xx keeps its `ClientException` or
+`ServerException`, and a 2xx throws a plain `RequestException` whose `status()` is the 2xx. Read
+the error with `Ipsocode\Cin7\Data\Other\ErrorData`:
 
-```text
-Method [DELETE] is not allowed on the [customer] endpoint.
+```php
+use Hypervel\Saloon\Exceptions\Request\RequestException;
+use Ipsocode\Cin7\Data\Other\ErrorData;
+
+try {
+    $this->cin7->sale()->payment()->get($saleId);
+} catch (RequestException $exception) {
+    $error = ErrorData::from($exception->response()->json()); // ->ErrorCode, ->Exception
+}
 ```
 
-It is an `Exception`, unlike the `ValueError` (an `Error`) that
-`Endpoint::fromAccessor()` throws for an unknown endpoint name: an unknown name
-is a programming mistake, while an unsupported verb is a request the caller can
-make differently.
-
-Cin7 also reports some failures as an `ErrorCode` inside a 200 body. The package
-returns that body decoded like any other and leaves the decision to the caller.
+A data object body that breaks its class's rules throws a `Hypervel\Validation\ValidationException`
+from `send()` before anything goes out; see [write bodies](data.md#write-bodies). A page or limit
+out of bounds throws an `InvalidArgumentException` the same way.
 
 A request body that cannot be encoded as JSON throws from `send()` before
 anything goes out: Saloon throws a `BodyException` when `json_encode()` fails,
@@ -159,17 +673,19 @@ scalars and `null`.
 
 ## Retry policy
 
-A 503 is how Cin7 signals throttling, and it is the only response retried:
+Cin7 throttles with a 429, the status its reference documents for the limit of 60
+calls a minute, or a 503. Those are the only responses retried:
 
-- **503 only.** Any other 4xx or 5xx, 500 included, throws on the first
-  attempt. A `FatalRequestException` (DNS, refused connection, timeout) is not
+- **429 and 503 only.** Any other 4xx or 5xx, 500 included, throws on the first
+  attempt, as does an Error Model in a 200. A `FatalRequestException` (DNS, refused connection, timeout) is not
   retried either. A bad credential comes back as `403 Incorrect credentials!`
   on every call, so retrying it would only turn a configuration mistake into a
   delay of about 15 s (three 5 s waits) per call.
 - **Bounded.** `cin7.retry.times` is the total number of attempts, not the
   number of extra ones, and `cin7.retry.delay_ms` is the wait between them. The
   defaults, `4` and `5000`, mean at most four attempts with three 5 s waits.
-  When the attempts run out, the last 503 throws as a `ServerException`.
+  When the attempts run out, the last 429 throws as a `ClientException` and the
+  last 503 as a `ServerException`.
 - **Clamped.** `times` is raised to at least `1` and `delay_ms` to at least `0`.
   Saloon's `RetryPolicy` throws an `InvalidArgumentException` for zero attempts
   or a negative delay, so without the clamp a bad environment value would fail
@@ -184,38 +700,92 @@ A 503 is how Cin7 signals throttling, and it is the only response retried:
   ```php
   config(['cin7.retry.times' => 2, 'cin7.retry.delay_ms' => 250]);
 
-  $request = new ListRecords(Endpoint::Customer); // reads the values above
+  $request = new Ipsocode\Cin7\Requests\Customer\GetCustomer(); // reads the values above
   ```
 
-The wait goes through `Hypervel\Support\Sleep`, which suspends only the calling
-coroutine. A 503 off the wire also puts the account into the connector's
-5-second rate limit cooldown; see [connector](connector.md).
+The wait goes through `Hypervel\Support\Sleep`, which suspends only the
+calling coroutine. A 429 or 503 off the wire also puts the API application into
+the connector's cooldown, for a 429's `Retry-After` or 5 seconds, and the next
+attempt waits it out; see [connector](connector.md#the-throttling-cooldown).
 
 ## Writing a request class
 
-The five requests are `final`. A new kind of request extends `Cin7Request`,
-declares its verb as a property default and calls the parent constructor:
+A new request extends the base matching its shape, declares its verb as a
+property default, and implements `resolveEndpoint()`:
 
 ```php
 use Hypervel\Saloon\Enums\Method;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\Cin7Request;
+use Ipsocode\Cin7\Requests\WriteRequest;
 
-final class MyRequest extends Cin7Request
+final class PutProduct extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
-    public function __construct(Endpoint $endpoint, protected readonly string $guid)
+    public function resolveEndpoint(): string
     {
-        parent::__construct($endpoint);
+        return 'product';
     }
-
-    // defaultQuery() or defaultBody() as the request needs.
 }
 ```
 
-The verb gate in `Cin7Request::__construct()` reads `$this->method()`. PHP
-initializes property defaults before any constructor body runs, so the gate
-sees the declared verb. A subclass must never assign `$this->method` in its own
-constructor: assigned after `parent::__construct()`, the new verb skips the
-gate.
+A read or delete of one record extends `Cin7Request` itself. Its constructor takes the
+identifier, then each documented parameter as a typed argument, and `defaultQuery()` sends them
+by wire key through `queryValues()`:
+
+```php
+use Hypervel\Saloon\Enums\Method;
+use Ipsocode\Cin7\Requests\Cin7Request;
+
+final class GetSaleOrder extends Cin7Request
+{
+    protected Method $method = Method::GET;
+
+    public function __construct(
+        protected readonly string $saleId,
+        protected readonly ?bool $combineAdditionalCharges = null,
+        protected readonly ?bool $includeProductInfo = null,
+    ) {
+        parent::__construct();
+    }
+
+    public function resolveEndpoint(): string
+    {
+        return 'sale/order';
+    }
+
+    protected function defaultQuery(): array
+    {
+        return $this->queryValues([
+            'SaleID' => $this->saleId,
+            'CombineAdditionalCharges' => $this->combineAdditionalCharges,
+            'IncludeProductInfo' => $this->includeProductInfo,
+        ]);
+    }
+}
+```
+
+A list request takes `?int $page = null, ?int $limit = null` first and passes them to
+`parent::__construct($page, $limit)`, then returns its filters by wire key from `filters()`;
+`ListRequest` maps them and adds the page defaults. It names its item class in `$item` and extends
+`ListRequest<XData>`; `ListRequest` builds the `list<XData>` `dto()` returns, so the request
+declares no `createDtoFromResponse()`:
+
+```php
+final class GetStockTakeList extends ListRequest
+{
+    protected string $listKey = 'StockAdjustmentList';
+
+    protected string $item = StockTakeListData::class;
+}
+```
+
+A request that returns a list from a keyed read or a write (`GetWebhooks`, `PostCarrier`) extends
+`Cin7Request` or `WriteRequest` and calls
+`$this->listOf(WebhookData::class, $response, $response->json('Webhooks'))` from its own
+`createDtoFromResponse()`.
+
+`Cin7Request`'s constructor reads `cin7.retry.*`, so a subclass that adds
+constructor parameters must call `parent::__construct()`. PHP initializes
+property defaults before any constructor body runs, so `$this->method()`
+is always the declared verb; a subclass must never assign `$this->method` in
+its own constructor.

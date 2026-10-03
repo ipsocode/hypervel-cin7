@@ -1,0 +1,17 @@
+{
+    "WarningMessage": "Consumption/Output Bins setup is changed in the following Work Centers: API Test. This change will only affect operations where components and resources are not consumed yet.",
+    "Workcenters": [
+        {
+            "WorkCenterID": "e180613b-1a63-41c3-a1f3-1316319e60a7",
+            "Code": "API Test",
+            "Name": "Workcenter test for API",
+            "IsActive": true,
+            "IsCoMan": false,
+            "IsCoManPurchase": false,
+            "SupplierID": "f9d6abe7-39b5-4fc1-a7aa-b61d2dc933e9",
+            "SupplierName": "Tom the Supplier",
+            "WorkCenterLocations": [],
+            "CoManProcurementType": null
+        }
+    ]
+}

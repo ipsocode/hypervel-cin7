@@ -1,0 +1,69 @@
+{
+    "PurchaseID": "5a7fb526-527a-4229-b331-90b6f5535aab",
+    "StockReceiving": [
+        {
+            "TaskID": "3320ef94-a7e8-4d81-9588-2a3e14cfca6f",
+            "Status": "AUTHORISED",
+            "Lines": [
+                {
+                    "Date": "2018-04-23T00:00:00",
+                    "Quantity": 6,
+                    "ProductID": "11510572-0f9e-4d7c-a203-7e0563c3388f",
+                    "SKU": "Bread",
+                    "Name": "Baked Bread",
+                    "LocationID": null,
+                    "Location": null,
+                    "Received": true,
+                    "BatchSN": "632154845354",
+                    "SupplierSKU": "2121632",
+                    "ExpiryDate": "2018-05-23T00:00:00"
+                },
+                {
+                    "Date": "2018-04-23T00:00:00",
+                    "Quantity": 11,
+                    "ProductID": "34d4edc5-d366-4251-82b2-d75e27fe5e9d",
+                    "SKU": "GB3-White",
+                    "Name": "Golf balls white 3-pack",
+                    "LocationID": null,
+                    "Location": null,
+                    "Received": true,
+                    "BatchSN": "",
+                    "SupplierSKU": "5484153",
+                    "ExpiryDate": null
+                }
+            ]
+        },
+        {
+            "TaskID": "807c3266-157b-4c0d-8131-a3b8e06c0d97",
+            "Status": "AUTHORISED",
+            "Lines": [
+                {
+                    "Date": "2018-04-20T00:00:00",
+                    "Quantity": 4,
+                    "ProductID": "11510572-0f9e-4d7c-a203-7e0563c3388f",
+                    "SKU": "Bread",
+                    "Name": "Baked Bread",
+                    "LocationID": null,
+                    "Location": null,
+                    "Received": true,
+                    "BatchSN": "6318846844",
+                    "SupplierSKU": "2121632",
+                    "ExpiryDate": "2018-05-31T00:00:00"
+                },
+                {
+                    "Date": "2018-04-20T00:00:00",
+                    "Quantity": 9,
+                    "ProductID": "34d4edc5-d366-4251-82b2-d75e27fe5e9d",
+                    "SKU": "GB3-White",
+                    "Name": "Golf balls white 3-pack",
+                    "LocationID": null,
+                    "Location": null,
+                    "Received": true,
+                    "BatchSN": "",
+                    "SupplierSKU": "5484153",
+                    "ExpiryDate": null
+                }
+            ]
+        }
+    ]
+}

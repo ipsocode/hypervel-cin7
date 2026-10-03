@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Workbench;
 
 use Hypervel\Saloon\Facades\Saloon;
-use Hypervel\Saloon\Http\Faking\MockResponse;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -19,7 +19,7 @@ class ListCustomersCommandTest extends TestCase
 {
     public function testTheWorkbenchCommandIsDiscovered(): void
     {
-        Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $this->artisan('cin7:customers')->assertExitCode(0);
     }
@@ -27,10 +27,10 @@ class ListCustomersCommandTest extends TestCase
     public function testItPrintsTheCustomersItWasGiven(): void
     {
         Saloon::fake([
-            MockResponse::make(Cin7Payloads::customerList([
+            Cin7Fake::list('CustomerList', [
                 Cin7Payloads::customer('guid-1', 'ACME'),
                 Cin7Payloads::customer('guid-2', 'Globex'),
-            ])),
+            ]),
         ]);
 
         $this->artisan('cin7:customers')
@@ -41,7 +41,7 @@ class ListCustomersCommandTest extends TestCase
 
     public function testItSaysSoWhenCin7ReturnsNothing(): void
     {
-        Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $this->artisan('cin7:customers')
             ->expectsOutput('No customers returned.')
@@ -50,12 +50,12 @@ class ListCustomersCommandTest extends TestCase
 
     public function testTheLimitAndNameOptionsReachTheQueryString(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        $mock = Saloon::fake([Cin7Fake::list('CustomerList')]);
 
         $this->artisan('cin7:customers --limit=5 --name=ACME')->assertExitCode(0);
 
         $this->assertSame(
-            ['limit' => 5, 'Name' => 'ACME', 'page' => 1],
+            ['Name' => 'ACME', 'limit' => 5, 'page' => 1],
             $mock->lastPendingRequest()->queryParameters(),
         );
     }
@@ -69,7 +69,7 @@ class ListCustomersCommandTest extends TestCase
         // A 403 is not retried; one attempt keeps this off the packaged default.
         $this->app->get('config')->set('cin7.retry.times', 1);
 
-        Saloon::fake([MockResponse::make(Cin7Payloads::error('Incorrect credentials!'), 403)]);
+        Saloon::fake([Cin7Fake::credentialsRejected()]);
 
         $this->artisan('cin7:customers')
             ->expectsOutputToContain('Cin7 responded 403')

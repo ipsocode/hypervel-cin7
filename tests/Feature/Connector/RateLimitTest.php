@@ -11,10 +11,11 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\ListRecords;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\Customer\PutCustomer;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
-use Workbench\App\Support\Cin7Payloads;
 
 /**
  * The manager enforces limits only when no fake matched and records cooldowns
@@ -30,7 +31,7 @@ class RateLimitTest extends TestCase
         $this->assertTrue($connector->shouldWaitForRateLimits());
     }
 
-    public function testItPublishesOneSharedPolicyKeyedByTheAccount(): void
+    public function testItPublishesOneSharedPolicyKeyedByTheApplication(): void
     {
         $connector = new Cin7Connector('acct', 'key', 60, 60);
 
@@ -43,19 +44,19 @@ class RateLimitTest extends TestCase
         $this->assertInstanceOf(Limit::class, $policy);
         $this->assertSame(60, $policy->maxAttempts);
         $this->assertSame(60, $policy->decaySeconds);
-        $this->assertSame('cin7:api:acct', $policy->key);
+        $this->assertSame(self::limiterKey('acct'), $policy->key);
     }
 
-    public function testEveryEndpointSharesTheSameLimiterKey(): void
+    public function testEveryRequestSharesTheSameLimiterKey(): void
     {
         $connector = new Cin7Connector('acct', 'key', 60, 60);
 
-        foreach (Endpoint::cases() as $endpoint) {
+        foreach ([new GetCustomer, new PostCustomer, new PutCustomer] as $request) {
             $policies = $connector->resolveRateLimitPolicies(
-                $this->pendingRequestFor($connector, new ListRecords($endpoint)),
+                $this->pendingRequestFor($connector, $request),
             );
 
-            $this->assertSame('cin7:api:acct', $policies[0]->key, $endpoint->value);
+            $this->assertSame(self::limiterKey('acct'), $policies[0]->key, $request::class);
         }
     }
 
@@ -67,9 +68,26 @@ class RateLimitTest extends TestCase
         $policyA = $connectorA->resolveRateLimitPolicies($this->pendingRequestFor($connectorA))[0];
         $policyB = $connectorB->resolveRateLimitPolicies($this->pendingRequestFor($connectorB))[0];
 
-        $this->assertSame('cin7:api:acct-a', $policyA->key);
-        $this->assertSame('cin7:api:acct-b', $policyB->key);
+        $this->assertSame(self::limiterKey('acct-a'), $policyA->key);
+        $this->assertSame(self::limiterKey('acct-b'), $policyB->key);
         $this->assertNotSame($policyA->key, $policyB->key);
+    }
+
+    /**
+     * Cin7 applies its limit per API application, so two applications of one account throttle
+     * apart, and the key carries a digest of the application key, never the key.
+     */
+    public function testDifferentApplicationsOfOneAccountGetDistinctLimiterKeys(): void
+    {
+        $connectorA = new Cin7Connector('acct', 'key-a', 60, 60);
+        $connectorB = new Cin7Connector('acct', 'key-b', 60, 60);
+
+        $policyA = $connectorA->resolveRateLimitPolicies($this->pendingRequestFor($connectorA))[0];
+        $policyB = $connectorB->resolveRateLimitPolicies($this->pendingRequestFor($connectorB))[0];
+
+        $this->assertSame(self::limiterKey('acct', 'key-a'), $policyA->key);
+        $this->assertNotSame($policyA->key, $policyB->key);
+        $this->assertStringNotContainsString('key-a', $policyA->key);
     }
 
     public function testANullStoreIsTheDefault(): void
@@ -122,7 +140,7 @@ class RateLimitTest extends TestCase
         $limiter->clear($policy, $name);
     }
 
-    public function testDifferentAccountsGetDistinctCooldownKeys(): void
+    public function testTheCooldownIsKeyedLikeTheWindow(): void
     {
         $connectorA = new Cin7Connector('acct-a', 'key');
         $connectorB = new Cin7Connector('acct-b', 'key');
@@ -130,8 +148,8 @@ class RateLimitTest extends TestCase
         $keyA = $connectorA->resolveRateLimitCooldownKeyFor($this->pendingRequestFor($connectorA));
         $keyB = $connectorB->resolveRateLimitCooldownKeyFor($this->pendingRequestFor($connectorB));
 
-        $this->assertSame(Cin7Connector::class . ':acct-a', $keyA);
-        $this->assertSame(Cin7Connector::class . ':acct-b', $keyB);
+        $this->assertSame(self::limiterKey('acct-a'), $keyA);
+        $this->assertSame(self::limiterKey('acct-b'), $keyB);
         $this->assertNotSame($keyA, $keyB);
     }
 
@@ -139,7 +157,25 @@ class RateLimitTest extends TestCase
     {
         $connector = new Cin7Connector('acct', 'key');
 
-        $this->assertSame(5, $connector->resolveRateLimitCooldownFor($this->responseWithStatus(503)));
+        $this->assertSame(5, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::throttled())));
+    }
+
+    /**
+     * 429 is the status Cin7 documents for its limit; the trait's parser reads its `Retry-After`.
+     */
+    public function testA429CoolsDownForItsRetryAfter(): void
+    {
+        $connector = new Cin7Connector('acct', 'key');
+
+        $this->assertSame(30, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached(30))));
+    }
+
+    public function testA429WithoutRetryAfterImposesAFiveSecondCooldown(): void
+    {
+        $connector = new Cin7Connector('acct', 'key');
+
+        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached())));
+        $this->assertSame(5, Cin7Connector::THROTTLE_COOLDOWN);
     }
 
     public function testOtherStatusesImposeNoCooldown(): void
@@ -147,9 +183,8 @@ class RateLimitTest extends TestCase
         $connector = new Cin7Connector('acct', 'key');
 
         // The manager runs this hook for every wire response, 200s included.
-        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseWithStatus(200)));
-        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseWithStatus(429)));
-        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseWithStatus(500)));
+        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::list('CustomerList'))));
+        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::error('boom', 500))));
     }
 
     public function testTheContainerConnectorThrottlesOnTheConfiguredDefaults(): void
@@ -170,16 +205,25 @@ class RateLimitTest extends TestCase
         $this->assertSame('redis', $this->connector()->resolveRateLimitStoreName());
     }
 
-    private function responseWithStatus(int $status): Response
+    /**
+     * The logical key the connector throttles on: the account and a short digest of the
+     * application key.
+     */
+    private static function limiterKey(string $accountId, string $applicationKey = 'key'): string
     {
-        // One attempt only, or a 503 would retry past the single mocked response.
+        return 'cin7:api:' . $accountId . ':' . substr(hash('sha256', $applicationKey), 0, 16);
+    }
+
+    private function responseTo(MockResponse $fake): Response
+    {
+        // One attempt only, or a 429 or 503 would retry past the single mocked response.
         $this->app->get('config')->set('cin7.retry.times', 1);
 
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::throttled(), $status)]);
+        $mock = Saloon::fake([$fake]);
         $connector = $this->connector();
 
         try {
-            return $connector->send(new ListRecords(Endpoint::Customer));
+            return $connector->send(new GetCustomer);
         } catch (RequestException $exception) {
             return $exception->response();
         } finally {

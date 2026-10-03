@@ -1,0 +1,100 @@
+{
+    "Resources": [
+        {
+            "IsInfinite": false,
+            "IsAllowAllCapacityUsage": false,
+            "IsAvailableOnHolidays": false,
+            "IsAvailableOnWeekends": false,
+            "IsActive": true,
+            "Code": "R-1",
+            "Name": "Chef",
+            "Tags": "",
+            "ResourceType": "Machine",
+            "CycleDuration": 2040,
+            "ResourceCapacities": [
+                {
+                    "LocationID": "489bfe24-4aec-49b9-916d-5e5466d47290",
+                    "NonOperationalFrom": null,
+                    "NonOperationalTo": null,
+                    "CustomWorkingDays": [
+                        {
+                            "DayOfWeek": "Sunday",
+                            "StartTime": 435,
+                            "EndTime": 840,
+                            "BreakStartTime": 0,
+                            "BreakEndTime": 0
+                        },
+                        {
+                            "DayOfWeek": "Saturday",
+                            "StartTime": 435,
+                            "EndTime": 840,
+                            "BreakStartTime": 0,
+                            "BreakEndTime": 0
+                        },
+                        {
+                            "DayOfWeek": "Monday",
+                            "StartTime": 435,
+                            "EndTime": 840,
+                            "BreakStartTime": 0,
+                            "BreakEndTime": 0,
+                            "Capacity": 0
+                        },
+                        {
+                            "DayOfWeek": "Tuesday",
+                            "StartTime": 435,
+                            "EndTime": 840,
+                            "BreakStartTime": 0,
+                            "BreakEndTime": 0
+                        }
+                    ],
+                    "ResourceUnits": [
+                        {
+                            "Name": "R-1 - 9",
+                            "NonOperationalFrom": null,
+                            "NonOperationalTo": null,
+                            "OperationalFrom": null,
+                            "OperationalTo": null
+                        },
+                        {
+                            "Name": "R-1 - 8",
+                            "NonOperationalFrom": null,
+                            "NonOperationalTo": null,
+                            "OperationalFrom": null,
+                            "OperationalTo": null
+                        }
+                    ]
+                },
+                {
+                    "LocationID": "0056e0df-8d4c-4daf-9709-cbfb1b398482",
+                    "NonOperationalFrom": null,
+                    "NonOperationalTo": null,
+                    "CustomWorkingDays": [],
+                    "ResourceUnits": []
+                }
+            ],
+            "ResourceCosts": [
+                {
+                    "ProductID": "0fdbfec3-ab42-4d9a-aa51-45e1f2138d15",
+                    "AccountCode": "5300",
+                    "PriceTier": 1
+                },
+                {
+                    "ProductID": "ac9629fa-8e01-439b-a0bf-938136f0065d",
+                    "AccountCode": "5100",
+                    "PriceTier": 1
+                }
+            ],
+            "ResourceRemarks": [
+                {
+                    "Remark": "hello, it's the first remark"
+                }
+            ],
+            "ResourceAttachments": [
+                {
+                    "FileName": "FileName.docx",
+                    "Content": "string Base64"
+                }
+            ]
+        }
+    ]
+}

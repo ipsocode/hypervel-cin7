@@ -16,21 +16,20 @@ A [Cin7 Core](https://www.cin7.com/) API client for
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\FindRecord;
 
 public function __construct(private readonly Cin7Connector $cin7) {}
 
-// GET sale/invoice?SaleID=…&page=1&limit=100
-$invoice = $this->cin7->send(new FindRecord(Endpoint::SaleInvoice, $saleId))->json();
+// GET customer?page=1&limit=100
+$customers = $this->cin7->customer()->get()->json();
 ```
 
 ## What this is
 
 Cin7 Core — formerly DEAR Inventory — exposes a REST API at
 `inventory.dearsystems.com`. This package is a client for it that is safe to run
-in long-lived Swoole workers: one shared connector, a bounded 503 retry, and
-throttling through the framework's rate limiter, all on `hypervel/saloon`.
+in long-lived Swoole workers: one shared connector, a bounded retry when Cin7
+throttles (429 or 503), and rate limiting through the framework's rate limiter,
+all on `hypervel/saloon`.
 
 This is an independent package. It is not affiliated with or endorsed by Cin7.
 
@@ -77,33 +76,26 @@ Every configuration key, with its environment variable and default, is in
 
 ## Usage
 
-Inject `Cin7Connector` and send one of the five generic requests.
+Inject `Cin7Connector` and call a [resource](docs/resources.md) accessor.
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\CreateRecord;
-use Ipsocode\Cin7\Requests\DeleteRecord;
-use Ipsocode\Cin7\Requests\FindRecord;
-use Ipsocode\Cin7\Requests\ListRecords;
-use Ipsocode\Cin7\Requests\UpdateRecord;
 
 public function __construct(private readonly Cin7Connector $cin7) {}
 
 // GET customer?page=1&limit=100
-$all = $this->cin7->send(new ListRecords(Endpoint::Customer))->json();
-
-// GET sale/invoice?SaleID=…&page=1&limit=100
-$one = $this->cin7->send(new FindRecord(Endpoint::SaleInvoice, $guid))->json();
+$all = $this->cin7->customer()->get()->json();
 
 // POST customer, raw JSON body, no page/limit
-$new = $this->cin7->send(new CreateRecord(Endpoint::Customer, ['Name' => 'ACME']))->json();
+$new = $this->cin7->customer()->post(['Name' => 'ACME'])->json();
 
-// PUT customer, GUID merged into the body under the endpoint's GUID key
-$this->cin7->send(new UpdateRecord(Endpoint::Customer, $guid, ['Name' => 'ACME Ltd']));
+// PUT customer, body carries ID
+$this->cin7->customer()->put(['ID' => $guid, 'Name' => 'ACME Ltd']);
 
-// DELETE sale/invoice?ID=…&page=1&limit=100
-$this->cin7->send(new DeleteRecord(Endpoint::SaleInvoice, $guid));
+// Every customer, across all pages
+foreach ($this->cin7->customer()->paginate()->items() as $customer) {
+    // …
+}
 ```
 
 The connector is registered as a singleton. It holds only readonly scalars and
@@ -115,27 +107,50 @@ worker's lifetime is safe.
 - [docs/configuration.md](docs/configuration.md) — every configuration key with
   its environment variable and default, publishing the config, and when the
   values are read.
-- [docs/requests.md](docs/requests.md) — the five requests and the request lines
-  they send, the wire protocol, the exceptions a failed call throws, and the
-  bounded 503 retry.
-- [docs/endpoints.md](docs/endpoints.md) — the endpoint table, resolving an
-  endpoint from a string with `Endpoint::fromAccessor()`, and adding a new one.
+- [docs/resources.md](docs/resources.md) — the accessor tree, the conventions
+  every resource and request follows, and adding a new resource method.
+- [docs/requests.md](docs/requests.md) — the three request bases and the
+  request lines they send, the wire protocol, the exceptions a failed call
+  throws, and the bounded throttling retry.
+- [docs/data.md](docs/data.md) — the typed request and response bodies: the
+  conventions every data class follows, the class behind each path, and the
+  empty-collection rule.
 - [docs/pagination.md](docs/pagination.md) — walking every page of a listing or
   sending the pages concurrently, and how the last page is worked out from
   Cin7's list envelope.
 - [docs/connector.md](docs/connector.md) — the shared connector, its transport
-  and timeouts, rate limiting and the choice of limiter store, and the 503
+  and timeouts, rate limiting and the choice of limiter store, and the throttling
   cooldown.
 - [docs/testing.md](docs/testing.md) — faking Cin7 in the tests of an
-  application that uses the package, and how the package's own suite is built.
+  application that uses the package, with the shipped `Cin7Fake` builders for
+  list envelopes and the Error Model, and how the package's own suite is built.
 
 ## What this package deliberately does not do
 
 - **No caching.** Response caching, cache-key shape and cache-hit logging
   semantics are consumer policy; `Cacheable`/`HasCaching` can be adopted later
   once a second consumer's needs are known.
-- **No DTOs.** Cin7 responses stay associative arrays; consumers already have a
-  typed domain layer.
+- **No mandatory DTOs.** Arrays work everywhere: a write takes an array body and
+  `json()` returns the decoded array. Typed data objects are an additive layer on
+  top ([docs/data.md](docs/data.md)), shown here for a customer:
+
+  ```php
+  use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+
+  // The fields the reference requires must be given; of the rest, only the keys you set are sent.
+  $response = $cin7->customer()->post(CustomerPostData::from([
+      'Name' => 'ACME',
+      'Status' => 'Active',
+      'Currency' => 'GBP',
+      'PaymentTerm' => '30 days',
+      'AccountReceivable' => '610',
+      'RevenueAccount' => '200',
+      'TaxRule' => 'Tax Exempt',
+  ]));
+
+  $customer = $response->dto();                      // CustomerData
+  $customers = $cin7->customer()->get()->dto();      // list<CustomerData>
+  ```
 - **No request logging.** Instrumentation writes consumer-owned models.
 
 ## Contributing

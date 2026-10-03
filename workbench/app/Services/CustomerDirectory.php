@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Workbench\App\Services;
 
 use Ipsocode\Cin7\Cin7Connector;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\CreateRecord;
-use Ipsocode\Cin7\Requests\FindRecord;
-use Ipsocode\Cin7\Requests\ListRecords;
-use Ipsocode\Cin7\Requests\UpdateRecord;
+use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
+use Ipsocode\Cin7\Data\Customer\CustomerPostData;
+use Ipsocode\Cin7\Data\Customer\CustomerPutData;
 
 /**
  * A consuming application's customer service, built on the connector.
@@ -26,43 +25,36 @@ final class CustomerDirectory
     }
 
     /**
-     * Every customer, across all pages.
+     * Every customer, across all pages of `$limit`, optionally only those whose name starts with
+     * `$name`.
      *
-     * @param array<string, mixed> $filters
      * @return list<array<string, mixed>>
      */
-    public function all(array $filters = []): array
+    public function all(?int $limit = null, ?string $name = null): array
     {
-        $paginator = $this->connector->paginate(new ListRecords(Endpoint::Customer, $filters));
+        $paginator = $this->connector->customer()->paginate(limit: $limit, name: $name);
 
         return iterator_to_array($paginator->items(), false);
     }
 
-    /**
-     * @return null|array<string, mixed>
-     */
-    public function find(string $guid): ?array
+    public function find(string $guid): ?CustomerData
     {
-        $response = $this->connector->send(new FindRecord(Endpoint::Customer, $guid));
+        return $this->connector->customer()->get(id: $guid)->dto()[0] ?? null;
+    }
 
-        return $response->json('CustomerList')[0] ?? null;
+    public function create(CustomerPostData $customer): CustomerData
+    {
+        return $this->connector->customer()->post($customer)->dto();
     }
 
     /**
-     * @param array<string, mixed> $attributes
-     * @return array<string, mixed>
+     * Send any customer, one read with `find()` say, as the PUT body of the customer `$guid`; the
+     * GUID wins over an `ID` already set on `$customer`.
      */
-    public function create(array $attributes): array
+    public function update(string $guid, AbstractCustomerData $customer): CustomerData
     {
-        return $this->connector->send(new CreateRecord(Endpoint::Customer, $attributes))->json();
-    }
-
-    /**
-     * @param array<string, mixed> $attributes
-     * @return array<string, mixed>
-     */
-    public function update(string $guid, array $attributes): array
-    {
-        return $this->connector->send(new UpdateRecord(Endpoint::Customer, $guid, $attributes))->json();
+        // Rebuilt as a data object, not spread into an array: an array body is sent verbatim, so
+        // every field the caller left unset would go out as null.
+        return $this->connector->customer()->put(CustomerPutData::from([...$customer->toArray(), 'ID' => $guid]))->dto();
     }
 }

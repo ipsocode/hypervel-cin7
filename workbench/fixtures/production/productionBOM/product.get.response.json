@@ -1,0 +1,145 @@
+{
+    "ProductID": "c07693d0-f2ea-4aeb-ab0b-e1e1378003ef",
+    "ProductionBOMs": [
+        {
+            "BOMID": "d6f30c85-582d-43c0-b9bb-20250dcf9450",
+            "OutputQuantity": 1.0,
+            "BufferPercent": 0.0,
+            "InstructionUrl": "",
+            "IgnoreCumulativeLeadTime": false,
+            "ComponentProductionLeadTime": 0,
+            "Version": 1,
+            "Name": "",
+            "IsDefault": true,
+            "CreatedDate": "2020-10-29T00:00:00",
+            "DeliveryToID": null,
+            "DeliveryToName": null,
+            "IssueMethod": 1,
+            "IsTracing": false,
+            "IssueMethodComponent": 2,
+            "IssueMethodParameter": 1,
+            "MinQuantity": 50,
+            "MaxQuantity": 100,
+            "DeviationPercent": 5,
+            "RunSize": 10,
+            "Operations": [
+                {
+                    "OperationID": "aeeb419b-fd10-4242-a4df-836adf22aa3c",
+                    "Order": 1,
+                    "Name": "Mixing-baking",
+                    "CycleTime": 1800,
+                    "UnitsPerCycle": 5.0,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "WorkCenterName": "Default Workcenter",
+                    "WorkCenterCoManProcurementType": null,
+                    "OperationType": "Manufacturing",
+                    "IsDropShip": false,
+                    "IsBackflush": false,
+                    "Resources": [
+                        {
+                            "BOMResourceID": "e2cccc1b-43e8-4cab-851d-abe04ca1b6c1",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 1.0,
+                            "Cost": 20.0,
+                            "CycleTime": 3600,
+                            "Position": 3,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Components": [
+                        {
+                            "BOMComponentID": "4cc3153d-9de4-4869-9e37-56e8cc923606",
+                            "ProductID": "028e9dba-9806-4339-822a-34c3b79c5114",
+                            "ProductName": "Flour",
+                            "ProductSKU": "Flour",
+                            "Quantity": 2.0,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "Cost": 0.451,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 2,
+                            "SalePriceTier": 0,
+                            "IsBackflush": false
+                        }
+                    ],
+                    "Attachments": [],
+                    "Notes": [
+                        {
+                            "NoteID": "69e32c17-8ad9-7ba3-14e4-a9ef77b1dfd3",
+                            "Note": "Why can't you just work faster?",
+                            "Position": 5
+                        }
+                    ],
+                    "OperationLinks": [],
+                    "InputProducts": [],
+                    "OutputProducts": [
+                        {
+                            "ID": "a09338bb-1a3a-0419-c8bc-88e42ebffdf8",
+                            "ProductID": "86875aba-9143-435e-b5f7-b036b1873dcf",
+                            "ProductFamilyID": null,
+                            "CostCalculationType": "SalesValue",
+                            "PriceTier": 1,
+                            "Ratio": 0.0,
+                            "OutputQuantity": 2.0,
+                            "ProductName": "Eggs",
+                            "ProductSKU": "Eggs",
+                            "AverageCost": 0.3864,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 4,
+                            "WastageCost": 1,
+                            "DeliveryTo": null,
+                            "DeliveryToName": null
+                        }
+                    ],
+                    "FinishedProducts": [],
+                    "VariationComponents": []
+                },
+                {
+                    "OperationID": "1eeb419b-fd10-4242-a4df-836adf22aa3d",
+                    "Order": 2,
+                    "Name": "Operation2",
+                    "CycleTime": 1800,
+                    "UnitsPerCycle": 5.0,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "WorkCenterName": "Default Workcenter",
+                    "WorkCenterCoManProcurementType": null,
+                    "OperationType": "Manufacturing",
+                    "IsDropShip": false,
+                    "IsBackflush": false,
+                    "Resources": [
+                        {
+                            "BOMResourceID": "e2cccc1b-43e8-4cab-851d-abe04ca1b6c1",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 1.0,
+                            "Cost": 20.0,
+                            "CycleTime": 3600,
+                            "Position": 3,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Components": [],
+                    "Attachments": [],
+                    "Notes": [],
+                    "OperationLinks": [
+                        {
+                            "ID": "66ac4bf2-254a-4273-9197-311152dfd895",
+                            "RelatedOperationID": "aeeb419b-fd10-4242-a4df-836adf22aa3c",
+                            "RelatedOperationName": "Mixing-baking",
+                            "RelationType": 1
+                        }
+                    ],
+                    "InputProducts": [],
+                    "OutputProducts": [],
+                    "FinishedProducts": [],
+                    "VariationComponents": []
+                }
+            ]
+        }
+    ]
+}

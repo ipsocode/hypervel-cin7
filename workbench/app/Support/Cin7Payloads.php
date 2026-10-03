@@ -5,29 +5,26 @@ declare(strict_types=1);
 namespace Workbench\App\Support;
 
 /**
- * Cin7-shaped response bodies for the Workbench application and the test suite.
+ * Cin7-shaped response bodies for the Workbench application and the test suite: the V2
+ * reference's examples, read from `workbench/fixtures/`, and a customer record.
  *
- * Lists keep Cin7's `Total`, `Page` and `<Thing>List` envelope, so a test asserts on
- * the keys the real API sends.
+ * The list envelopes and the Error Model are `Ipsocode\Cin7\Testing\Cin7Fake`'s, which ships.
  *
  * @see docs/testing.md
  */
 final class Cin7Payloads
 {
     /**
-     * One page of customers. `$total` defaults to this page's item count, so a
-     * multi-page fixture passes it.
+     * A JSON fixture under `workbench/fixtures/`, by API path and name: `load('sale/invoice',
+     * 'get.response')` reads `workbench/fixtures/sale/invoice/get.response.json`.
      *
-     * @param list<array<string, mixed>> $customers
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
-    public static function customerList(array $customers = [], int $page = 1, ?int $total = null): array
+    public static function load(string $path, string $name): array
     {
-        return [
-            'Total' => $total ?? count($customers),
-            'Page' => $page,
-            'CustomerList' => $customers,
-        ];
+        $file = dirname(__DIR__, 2) . '/fixtures/' . $path . '/' . $name . '.json';
+
+        return json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -42,40 +39,251 @@ final class Cin7Payloads
             'Name' => $name,
             'Status' => 'Active',
             'Currency' => 'GBP',
+            'PaymentTerm' => '30 days',
+            'AccountReceivable' => '610',
+            'RevenueAccount' => '200',
+            'TaxRule' => 'Tax Exempt',
         ];
     }
 
     /**
-     * A sale, which Cin7 keys by `SaleID` rather than `ID`.
+     * The `customer` GET example from the V2 reference, whole: one customer with an address,
+     * a contact and a child customer, and one with a parent, a contact and a product price.
      *
      * @return array<string, mixed>
      */
-    public static function sale(string $saleId = '99999999-8888-7777-6666-555555555555'): array
+    public static function customerExample(): array
     {
-        return [
-            'SaleID' => $saleId,
-            'Status' => 'AUTHORISED',
-            'InvoiceNumber' => 'INV-0001',
-        ];
+        return self::load('customer', 'get.response');
     }
 
     /**
-     * The body of the 503 Cin7 returns when throttling; it carries no `Retry-After` header.
+     * The `product` GET example from the V2 reference, whole, with every nested list populated
+     * except `Suppliers`, which is empty in the reference. The reference's example has an
+     * unclosed quote on the movement's `Date`; it is closed here.
      *
      * @return array<string, mixed>
      */
-    public static function throttled(): array
+    public static function productExample(): array
     {
-        return ['Errors' => ['Service Unavailable']];
+        return self::load('product', 'get.response');
     }
 
     /**
-     * The body Cin7 returns for a rejected request.
+     * A POST or PUT `customer` response: the list envelope holding the one saved customer.
      *
      * @return array<string, mixed>
      */
-    public static function error(string $message = 'Request is invalid'): array
+    public static function customerSaved(): array
     {
-        return ['Errors' => [$message]];
+        return self::load('customer', 'post.response');
+    }
+
+    /**
+     * A POST or PUT `product` response: the list envelope holding the one saved product.
+     *
+     * @return array<string, mixed>
+     */
+    public static function productSaved(): array
+    {
+        return self::load('product', 'post.response');
+    }
+
+    /**
+     * The `ref/tax` GET example from the V2 reference: two rules, the first of which has a
+     * component with no `Compound` key.
+     *
+     * @return array<string, mixed>
+     */
+    public static function taxList(): array
+    {
+        return self::load('ref/tax', 'get.response');
+    }
+
+    /**
+     * The `ref/tax` POST example response from the V2 reference: one saved rule with two
+     * components. The PUT response has the same shape.
+     *
+     * @return array<string, mixed>
+     */
+    public static function taxSaved(): array
+    {
+        return self::load('ref/tax', 'post.response');
+    }
+
+    /**
+     * The `ref/customer/credits` GET example from the V2 reference.
+     *
+     * @return array<string, mixed>
+     */
+    public static function customerCreditsExample(): array
+    {
+        return self::load('ref/customer/credits', 'get.response');
+    }
+
+    /**
+     * The `sale` GET example from the V2 reference: a sale keyed by `ID`, carrying every
+     * nested model (quote, order, fulfilment, invoice, credit note, journals, attachments,
+     * inventory movements and transactions). The `ID` is replaceable.
+     *
+     * @return array<string, mixed>
+     */
+    public static function sale(?string $id = null): array
+    {
+        $sale = self::load('sale', 'get.response');
+
+        return $id === null ? $sale : ['ID' => $id] + $sale;
+    }
+
+    /**
+     * The `saleList` GET example from the V2 reference: two sales, with the nulls it sends.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleList(): array
+    {
+        return self::load('saleList', 'get.response');
+    }
+
+    /**
+     * The Sale Order of the `sale` GET example, as `sale/order` answers it.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleOrder(): array
+    {
+        return self::load('sale/order', 'get.response');
+    }
+
+    /**
+     * Sale Invoice Partial Model, the invoice of the reference's `sale/invoice` GET example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleInvoicePartial(): array
+    {
+        return self::saleInvoices()['Invoices'][0];
+    }
+
+    /**
+     * The `{SaleID, Invoices}` envelope `sale/invoice` answers with.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleInvoices(): array
+    {
+        return self::load('sale/invoice', 'get.response');
+    }
+
+    /**
+     * Sale Invoice POST Model, the reference's `sale/invoice` POST example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleInvoicePost(): array
+    {
+        return self::load('sale/invoice', 'post.request');
+    }
+
+    /**
+     * The reference's `sale/invoice` PUT example, its trailing comma removed.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleInvoicePut(): array
+    {
+        return self::load('sale/invoice', 'put.request');
+    }
+
+    /**
+     * Sale Credit Note Invoice Partial Model, the credit note of the reference's `sale/creditnote`
+     * GET example, with the `CreditNoteBalance` and `Payments` that `IncludePaymentInfo` adds.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleCreditNotePartial(): array
+    {
+        return self::saleCreditNotes()['CreditNotes'][0];
+    }
+
+    /**
+     * The `{SaleID, CreditNotes}` envelope `sale/creditnote` answers with.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleCreditNotes(): array
+    {
+        return self::load('sale/creditnote', 'get.response');
+    }
+
+    /**
+     * Sale Credit Note POST Model, the reference's `sale/creditnote` POST example, its unquoted
+     * `SaleID` key and trailing comma fixed.
+     *
+     * @return array<string, mixed>
+     */
+    public static function saleCreditNotePost(): array
+    {
+        return self::load('sale/creditnote', 'post.request');
+    }
+
+    /**
+     * Sale Payment Line Partial Model, the payment of the reference's `sale/payment` GET example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function salePayment(): array
+    {
+        return self::salePayments()[0];
+    }
+
+    /**
+     * The bare array `sale/payment` GET answers with: the reference's example, a payment and a refund.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public static function salePayments(): array
+    {
+        return self::load('sale/payment', 'get.response');
+    }
+
+    /**
+     * The reference's `sale/payment` POST example, without the PUT-only `CreditID`.
+     *
+     * @return array<string, mixed>
+     */
+    public static function salePaymentPost(): array
+    {
+        return self::load('sale/payment', 'post.request');
+    }
+
+    /**
+     * The reference's `sale/payment` PUT example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function salePaymentPut(): array
+    {
+        return self::load('sale/payment', 'put.request');
+    }
+
+    /**
+     * The `{Total, Page, MoneyTasks}` envelope `moneyTaskList` answers with, from the reference's example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function moneyTaskList(): array
+    {
+        return self::load('moneyTaskList', 'get.response');
+    }
+
+    /**
+     * Money Task, copied from the reference's `moneyOperation` GET example.
+     *
+     * @return array<string, mixed>
+     */
+    public static function moneyTask(): array
+    {
+        return self::load('moneyTask', 'get.response');
     }
 }

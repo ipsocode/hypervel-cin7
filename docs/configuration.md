@@ -1,7 +1,7 @@
 # Configuration
 
 The package reads its settings from `config/cin7.php`: the Cin7 credentials,
-the connector's rate limit, and the 503 retry policy. The service provider
+the connector's rate limit, and the throttling retry policy. The service provider
 merges the packaged file into `config('cin7')`, so every key below has a value
 whether or not you publish your own copy, and it builds the connector from
 those values through `config()`, never by reading the environment directly.
@@ -12,10 +12,10 @@ those values through `config()`, never by reading the environment directly.
 |---|---|---|---|
 | `account_id` | `CIN7_ACCOUNT_ID` | none | Sent as the `api-auth-accountid` header |
 | `application_key` | `CIN7_APPLICATION_KEY` | none | Sent as the `api-auth-applicationkey` header |
-| `rate_limit.max` | `CIN7_RATE_MAX` | `60` | Calls allowed per window; `0` disables the window (the 503 cooldown still applies) |
+| `rate_limit.max` | `CIN7_RATE_MAX` | `60` | Calls allowed per window, per API application; `0` disables the window (the throttling cooldown still applies) |
 | `rate_limit.period` | `CIN7_RATE_PERIOD` | `60` | Window length in seconds; `0` also disables the window |
 | `rate_limit.store` | `CIN7_RATE_STORE` | none | Rate limiter store; unset falls back to `saloon.rate_limiter.store`, then `rate-limiter.default` (see [connector](connector.md)) |
-| `retry.times` | `CIN7_RETRY_TIMES` | `4` | Total attempts on a 503, not extra ones |
+| `retry.times` | `CIN7_RETRY_TIMES` | `4` | Total attempts on a 429 or 503, not extra ones |
 | `retry.delay_ms` | `CIN7_RETRY_DELAY_MS` | `5000` | Milliseconds between attempts |
 
 The credentials go in your environment:
@@ -54,7 +54,7 @@ which is evaluated when the configuration loads. Everything else goes through
 | Values | Read when | Effect of a later config change |
 |---|---|---|
 | `account_id`, `application_key`, `rate_limit.*` | The first time the container resolves `Cin7Connector` | None for that worker: the connector is a singleton built once per worker |
-| `retry.*` | Each time a request is constructed (`new ListRecords(...)` and the rest) | Applies to requests constructed after the change |
+| `retry.*` | Each time a request is constructed (`new GetCustomer(...)` and the rest) | Applies to requests constructed after the change |
 
 So set any runtime override of `retry.*` before the `new`, not just before
 `send()`.

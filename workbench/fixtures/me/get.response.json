@@ -1,0 +1,36 @@
+{
+    "Company": "Example Company",
+    "Currency": "RUB",
+    "TimeZone": "Europe/Moscow",
+    "DefaultWeightUnits": "g",
+    "DefaultDimensionsUnits": "cm",
+    "LockDate": null,
+    "OpeningBalanceDate": "2021-07-31T00:00:00",
+    "TaxCalculationMethod": "Total",
+    "DefaultSaleTaxRuleId": "cd3b41ce-e4ba-4fc4-a615-18ca17e7a4c7",
+    "DefaultSaleTaxRuleName": "Tax Exempt",
+    "MaximumDecimalPlacesInQuantity": "N2",
+    "ApplyCustomerDiscountsAfterOtherDiscounts": true,
+    "DiscountRule": "Discount",
+    "AutomaticallyApplyDiscounts": false,
+    "RoundingTable": [
+        {
+            "RangeTo": 10,
+            "RoundToNearest": 0.01,
+            "AdjustmentRule": "N",
+            "AdjustmentValue": 0
+        },
+        {
+            "RangeTo": 20,
+            "RoundToNearest": 0.01,
+            "AdjustmentRule": "S",
+            "AdjustmentValue": 0
+        },
+        {
+            "RangeTo": 30,
+            "RoundToNearest": 0.01,
+            "AdjustmentRule": "A",
+            "AdjustmentValue": 0
+        }
+    ]
+}

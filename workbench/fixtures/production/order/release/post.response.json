@@ -1,0 +1,161 @@
+{
+    "Warning": "Production Order has been released. The following tasks were created: Transfer Order <a target=\"_blank\" href=\"/StockTransfer#CF85B456-7C0E-4915-A3E5-7FBAE00DB70B\">TR-00022</a>Purchase Order <a target=\"_blank\" href=\"/Purchase#1F546B73-DE93-4AA9-B0EB-0B616CCB203B\">PO-00019</a>",
+    "ProductionOrders": [
+        {
+            "ProductionOrderID": "fd5197cc-cf19-45cf-aafc-98e86647f941",
+            "ProductID": "c07693d0-f2ea-4aeb-ab0b-e1e1378003ef",
+            "ProductName": "Bread 2",
+            "ProductSKU": "Bread 2 SKU",
+            "OrderNumber": "MO-00045",
+            "LocationID": "35c5646b-6a6d-4045-9512-04e1064a3e90",
+            "LocationName": "BFBin Shop Floor",
+            "CostingMethod": "FIFO",
+            "WarehouseID": null,
+            "WarehouseName": null,
+            "Unit": "Item",
+            "OrderStatus": "RELEASED",
+            "Status": "RELEASED",
+            "SourceName": 4,
+            "SourceTaskID": null,
+            "SourceTaskNumber": null,
+            "WIPAccountCode": "715",
+            "FinishedGoodsAccountCode": "620",
+            "Quantity": 5.0,
+            "BOMQuantity": 0.0,
+            "CapacityCalculationType": "FromStartForward",
+            "StartDate": "2021-02-12T00:00:00",
+            "ReleaseDate": "2021-02-12T00:00:00",
+            "RequiredByDate": "2021-02-13T00:00:00",
+            "CompletionDate": null,
+            "IsIgnoreLeadTime": false,
+            "RetailID": null,
+            "Comments": null,
+            "StartUpdate": false,
+            "PlannedBy": "",
+            "ReleasedBy": "",
+            "OrderCycleTime": 1800,
+            "BOMVersion": 2,
+            "BOMName": null,
+            "Tags": null,
+            "CustomField1": "Low",
+            "CustomField2": "true",
+            "CustomField3": "test",
+            "CustomField4": "",
+            "CustomField5": "",
+            "CustomField6": "",
+            "CustomField7": "",
+            "CustomField8": "",
+            "CustomField9": "",
+            "CustomField10": "",
+            "IssueMethodComponent": 2,
+            "IssueMethodParameter": 1,
+            "RunSize": 10,
+            "Operations": [
+                {
+                    "OperationID": "e3f0759a-56da-4e5f-8412-13307e6daf2d",
+                    "Order": 1,
+                    "Name": "Mixing-baking",
+                    "CycleTime": 1800,
+                    "UnitsPerCycle": 5.0,
+                    "TotalCycleTime": 1800,
+                    "TotalUnitsPerCycle": 5.0,
+                    "OperationType": "Manufacturing",
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "WorkCenterName": "Default Workcenter",
+                    "WorkCenterCode": "Default Workcenter",
+                    "WorkCenterCoManProcurementType": null,
+                    "ComponentLocationID": null,
+                    "IsDropShip": false,
+                    "Attachments": [],
+                    "IsBackflush": false,
+                    "Components": [
+                        {
+                            "OrderComponentID": "8cff6a23-9f95-4d3f-a707-dda4862b8341",
+                            "ProductID": "028e9dba-9806-4339-822a-34c3b79c5114",
+                            "ProductName": "Flour",
+                            "ProductSKU": "Flour",
+                            "Available": -1.0,
+                            "Quantity": 2.0,
+                            "TotalQuantity": 2.0,
+                            "WastageQty": 0.0,
+                            "WastagePercent": 0.0,
+                            "Cost": 0.0,
+                            "TotalCost": 0.0,
+                            "ProductCost": 0.451,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "ProductType": "Stock",
+                            "Position": 2,
+                            "SalePriceTier": 0,
+                            "IsAlternative": false,
+                            "IsBackflush": false
+                        }
+                    ],
+                    "Notes": [
+                        {
+                            "NoteID": "f0e134a8-627e-4110-845d-97359280ab42",
+                            "Note": "Why can't you just work faster?",
+                            "Position": 5
+                        }
+                    ],
+                    "Resources": [
+                        {
+                            "OrderResourceID": "13097194-a8f9-48a7-abda-80dc29d3122d",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceCode": "Cook",
+                            "ResourceName": "Cook",
+                            "Quantity": 1.0,
+                            "Cost": 0.0,
+                            "TotalCost": 0.0,
+                            "ResourceCost": 20.0,
+                            "CycleTime": 3600,
+                            "Position": 3,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "OperationLinks": [
+                        {
+                            "ID": "711e0d64-3919-488f-b1e8-b99330980c40",
+                            "RelatedOperationID": null,
+                            "RelationType": 1
+                        }
+                    ],
+                    "InputProducts": [],
+                    "OutputProducts": [
+                        {
+                            "ID": "ab97ec5e-ba58-4050-b083-21822268f705",
+                            "ProductID": "86875aba-9143-435e-b5f7-b036b1873dcf",
+                            "ProductName": "Eggs",
+                            "ProductSKU": "Eggs",
+                            "CostCalculationType": "SalesValue",
+                            "PriceTier": 1,
+                            "Ratio": 0.0,
+                            "OutputQuantity": 2.0,
+                            "TotalOutputQuantity": 0.0,
+                            "Cost": 0.0,
+                            "TotalCost": 0.0,
+                            "AverageCost": 0.3864,
+                            "FixedCost": 1.0,
+                            "CostingMethod": "FIFO",
+                            "Unit": "Item",
+                            "Position": 4,
+                            "WastageCost": 1
+                        }
+                    ],
+                    "FinishedProducts": []
+                }
+            ],
+            "Deliveries": [],
+            "SourceTasks": [
+                {
+                    "SourceTaskID": "1f98019f-3396-4370-bc2e-296f03fafdad",
+                    "SourceTaskNumber": "SO-00379"
+                },
+                {
+                    "SourceTaskID": "56b43ed5-304c-4ef7-b4ae-7752e8ae2bfb",
+                    "SourceTaskNumber": "SO-00378"
+                }
+            ]
+        }
+    ]
+}

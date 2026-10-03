@@ -1,0 +1,11 @@
+{
+    "FixedAssetTypeID": "e410a45b-a4c1-47cb-aaad-a6714112ef56",
+    "Name": "Put Third FixedAssetType Test",
+    "DepreciationMethod": "No Depreciation",
+    "AveragingMethod": "Full Month",
+    "Rate": 15,
+    "EffectiveLife": null,
+    "AssetAccountCode": "710",
+    "AccumulatedDepreciationAccountCode": "710",
+    "DepreciationExpenseAccountCode": "400"
+}

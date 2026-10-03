@@ -1,0 +1,51 @@
+{
+    "TaskID": "d144d7c8-b3f8-4b43-9d64-d6ee948606a2",
+    "Status": "DRAFT",
+    "From": "cd3ed3bb-673a-4d48-b47b-5f92a973ae8c",
+    "FromLocation": "Main Warehouse",
+    "To": "284a6935-d54a-40f6-b91d-c707604d5bec",
+    "ToLocation": "Main Warehouse: Bin 1",
+    "Number": "TR-00006",
+    "CostDistributionType": "Cost",
+    "InTransitAccount": "715",
+    "DepartureDate": "2018-03-12T00:00:00",
+    "CompletionDate": "2017-12-19T00:00:00",
+    "RequiredByDate": "2017-12-19T00:00:00",
+    "Reference": "",
+    "Lines": [
+        {
+            "ProductID": "c08b3876-89cc-46c4-af52-b77f058fdf81",
+            "SKU": "Bread",
+            "ProductName": "Baked Bread",
+            "QuantityOnHand": 800,
+            "QuantityAvailable": 800,
+            "TransferQuantity": 100,
+            "BatchSN": "1",
+            "ExpiryDate": "2017-12-13T00:00:00",
+            "Comments": "",
+            "ProductLength": 0,
+            "ProductWidth": 0,
+            "ProductHeight": 0,
+            "ProductWeight": 0,
+            "WeightUnits": "g",
+            "DimensionsUnits": "mm",
+            "ProductCustomField1": null,
+            "ProductCustomField2": null,
+            "ProductCustomField3": null,
+            "ProductCustomField4": null,
+            "ProductCustomField5": null,
+            "ProductCustomField6": null,
+            "ProductCustomField7": null,
+            "ProductCustomField8": null,
+            "ProductCustomField9": null,
+            "ProductCustomField10": null
+        }
+    ],
+    "ManualJournals": [],
+    "SkipOrder": true,
+    "Order": {
+        "Status": "NOT AVAILABLE",
+        "Lines": []
+    },
+    "LastModifiedOn": "2018-03-12T00:00:00"
+}

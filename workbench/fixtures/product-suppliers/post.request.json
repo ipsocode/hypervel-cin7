@@ -1,0 +1,85 @@
+{
+    "ProductSuppliers": [
+        {
+            "SupplierID": "33a22f89-c8a2-43e1-8b4a-f677b39f521b",
+            "ProductID": "2fcb8c53-9183-4bd3-aefa-b8f78167e159",
+            "Cost": 1,
+            "FixedCost": 2,
+            "SupplierInventoryCode": "SupplierInventoryCode",
+            "SupplierProductName": "SupplierProductName",
+            "SupplierProductURL": "SupplierProductURL",
+            "DropShip": false,
+            "Currency": "USD",
+            "PurchaseCost": 800,
+            "ProductSupplierOptions": [
+                {
+                    "LocationID": null,
+                    "LocationName": null,
+                    "ReorderQuantity": 4,
+                    "Lead": 5,
+                    "Safety": 6,
+                    "MinimumToReorder": 7,
+                    "SupplyIntervals": []
+                },
+                {
+                    "LocationID": "1e1efdc6-3e76-4b96-9159-026a7e3be233",
+                    "LocationName": "Remote Warehouse",
+                    "ReorderQuantity": 11,
+                    "Lead": 11,
+                    "Safety": 11,
+                    "SupplyIntervals": []
+                },
+                {
+                    "LocationID": "f54e58e6-5f75-4829-a924-5b7ae16ae7d1",
+                    "LocationName": "Larek",
+                    "ReorderQuantity": 12,
+                    "Lead": 12,
+                    "Safety": 12,
+                    "SupplyIntervals": [
+                        {
+                            "DeliveryMethod": "Interval",
+                            "IntervalDays": 2,
+                            "IntervalStartDate": "2022-01-19T00:00:00",
+                            "IsMonday": false,
+                            "IsTuesday": false,
+                            "IsWednesday": false,
+                            "IsThursday": false,
+                            "IsFriday": false,
+                            "IsSaturday": false,
+                            "IsSunday": false
+                        }
+                    ]
+                },
+                {
+                    "LocationID": "e822dd3f-f24d-4724-a938-6adcf126228d",
+                    "LocationName": "Larek 2",
+                    "ReorderQuantity": 13,
+                    "Lead": 13,
+                    "Safety": 13,
+                    "SupplyIntervals": [
+                        {
+                            "DeliveryMethod": "Fixed",
+                            "IntervalDays": 0,
+                            "IntervalStartDate": null,
+                            "IsMonday": true,
+                            "IsTuesday": false,
+                            "IsWednesday": true,
+                            "IsThursday": false,
+                            "IsFriday": true,
+                            "IsSaturday": false,
+                            "IsSunday": false
+                        }
+                    ]
+                },
+                {
+                    "LocationID": "4710c076-fde9-4baa-b7b2-683200eeb9e8",
+                    "LocationName": "Main Warehouse",
+                    "ReorderQuantity": 0,
+                    "Lead": 0,
+                    "Safety": 0,
+                    "SupplyIntervals": []
+                }
+            ]
+        }
+    ]
+}

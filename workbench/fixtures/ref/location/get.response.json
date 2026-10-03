@@ -1,0 +1,115 @@
+{
+    "Total": 4,
+    "Page": 1,
+    "LocationList": [
+        {
+            "ID": "aa4ab1cf-c989-45cd-8926-23d1edd6601e",
+            "Name": "Fixed asset test",
+            "IsDefault": false,
+            "IsDeprecated": false,
+            "Bins": null,
+            "FixedAssetsLocation": true,
+            "ParentID": null,
+            "ParentName": null,
+            "ReferenceCount": 0,
+            "AddressLine1": "",
+            "AddressLine2": "",
+            "AddressCitySuburb": "",
+            "AddressStateProvince": "",
+            "AddressZipPostCode": "",
+            "AddressCountry": "",
+            "PickZones": null,
+            "IsShopfloor": true,
+            "IsCoMan": false,
+            "IsStaging": false
+        },
+        {
+            "ID": "6b7f713d-aad1-4ae6-850c-2db7a0afa321",
+            "Name": "Test new location",
+            "IsDefault": true,
+            "IsDeprecated": false,
+            "FixedAssetsLocation": false,
+            "ParentID": null,
+            "Bins": [
+                {
+                    "ID": "5F8EE220-DFEA-4E8D-8095-A074E44FA955",
+                    "Name": "Test bin",
+                    "IsDeprecated": false,
+                    "IsStaging": false
+                },
+                {
+                    "ID": "52DDBCF5-05AD-4DF5-B66D-F14C09823052",
+                    "Name": "Test bin 2",
+                    "IsDeprecated": false,
+                    "IsStaging": false
+                },
+                {
+                    "ID": "D88A25EF-44ED-4B9F-8FF9-DD6E66A3C7C9",
+                    "Name": "Test bin post",
+                    "IsDeprecated": false,
+                    "IsStaging": false
+                },
+                {
+                    "ID": "9361C7E0-F702-4F51-9B31-CD032ED3CE6D",
+                    "Name": "Test bin post wrong ParentID",
+                    "IsDeprecated": false,
+                    "IsStaging": true
+                }
+            ],
+            "ParentName": null,
+            "ReferenceCount": 31,
+            "AddressLine1": "Test address line",
+            "AddressLine2": "Test address line 2",
+            "AddressCitySuburb": "Test address city",
+            "AddressStateProvince": "Test address state",
+            "AddressZipPostCode": "Test address ZIP",
+            "AddressCountry": "Test address country",
+            "PickZones": "Test pick zone,Test pick zone 2",
+            "IsShopfloor": false,
+            "IsCoMan": false,
+            "IsStaging": false
+        },
+        {
+            "ID": "5f8ee220-dfea-4e8d-8095-a074e44fa955",
+            "Name": "Test bin",
+            "IsDefault": false,
+            "IsDeprecated": false,
+            "Bins": null,
+            "FixedAssetsLocation": false,
+            "ParentID": "6b7f713d-aad1-4ae6-850c-2db7a0afa321",
+            "ParentName": "Test new location",
+            "ReferenceCount": 0,
+            "AddressLine1": "",
+            "AddressLine2": "",
+            "AddressCitySuburb": "",
+            "AddressStateProvince": "",
+            "AddressZipPostCode": "",
+            "AddressCountry": "",
+            "PickZones": null,
+            "IsShopfloor": false,
+            "IsCoMan": false,
+            "IsStaging": false
+        },
+        {
+            "ID": "52ddbcf5-05ad-4df5-b66d-f14c09823052",
+            "Name": "Test bin second",
+            "IsDefault": false,
+            "IsDeprecated": false,
+            "Bins": null,
+            "FixedAssetsLocation": false,
+            "ParentID": "6b7f713d-aad1-4ae6-850c-2db7a0afa321",
+            "ParentName": "Test new location",
+            "ReferenceCount": 0,
+            "AddressLine1": "",
+            "AddressLine2": "",
+            "AddressCitySuburb": "",
+            "AddressStateProvince": "",
+            "AddressZipPostCode": "",
+            "AddressCountry": "",
+            "PickZones": null,
+            "IsShopfloor": false,
+            "IsCoMan": false,
+            "IsStaging": false
+        }
+    ]
+}

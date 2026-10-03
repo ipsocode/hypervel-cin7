@@ -1,0 +1,14 @@
+{
+    "Total": 1,
+    "Page": 1,
+    "PaymentTermList": [
+        {
+            "ID": "e6c25fa9-bb14-45b2-afe7-428e454663ef",
+            "Name": "5 days since end of month",
+            "Duration": 5,
+            "Method": "days since the end of the month",
+            "IsActive": true,
+            "IsDefault": false
+        }
+    ]
+}

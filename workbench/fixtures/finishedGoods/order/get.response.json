@@ -1,0 +1,18 @@
+{
+    "TaskID": "c1819dba-772c-4689-8032-0ee7acb4bd66",
+    "Status": "COMPLETED",
+    "OrderLines": [
+        {
+            "ProductID": "b05c1c28-a125-4178-bb1b-ba200955e9f5",
+            "ProductCode": "BOOK",
+            "Name": "Fish out of Water: Finding Your Brand",
+            "ExpenseAccount": "",
+            "Quantity": 1,
+            "Unit": "",
+            "WastagePercent": 0,
+            "WastageQuantity": 0,
+            "TotalQuantity": 1,
+            "TotalCost": 0.5
+        }
+    ]
+}

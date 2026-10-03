@@ -1,0 +1,8 @@
+{
+    "SuspendReasonID": "94f2bd01-fb4f-4c44-b679-0c700c1f1df9",
+    "Reason": "some new text",
+    "Workcenters": [
+        "94f2bd01-fb4f-4c44-b679-0c700c1f1df1",
+        "94f2bd01-fb4f-4c44-b679-0c700c1f1df2"
+    ]
+}

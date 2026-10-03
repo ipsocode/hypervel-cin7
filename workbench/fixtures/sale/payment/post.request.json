@@ -1,0 +1,9 @@
+{
+    "TaskID": "4733ba69-21c5-48f5-95e5-307aa9889747",
+    "Type": "Payment",
+    "Reference": "",
+    "Amount": 1,
+    "DatePaid": "2017-11-30T00:00:00",
+    "Account": "718",
+    "CurrencyRate": 1
+}

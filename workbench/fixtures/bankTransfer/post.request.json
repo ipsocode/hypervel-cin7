@@ -1,0 +1,10 @@
+{
+    "Status": "DRAFT",
+    "FromAccount": "198489",
+    "ToAccount": "713",
+    "FromAmount": 3,
+    "ToAmount": 6,
+    "Reference": "Test",
+    "Date": "2018-01-17T00:00:00",
+    "Note": "Memo"
+}

@@ -1,0 +1,61 @@
+{
+    "TaskID": "38cddb52-9a81-4c07-9791-362936efa552",
+    "DisassemblyNumber": "FG-00026",
+    "Status": "COMPLETED",
+    "ProductID": "524c20a3-a8ec-44f2-9685-311f1f7d1498",
+    "ProductCode": "Bread",
+    "ProductName": "Baked Bread",
+    "LocationID": "19aeca31-bd49-4fbe-8abd-37a6169cc2cb",
+    "Location": "Main Warehouse",
+    "CompletionDate": "2017-12-21T00:00:00",
+    "WIPAccount": "715",
+    "Quantity": 1,
+    "AssemblyInstructionURL": "",
+    "PickLines": [
+        {
+            "BinID": null,
+            "Bin": null,
+            "Date": "2017-12-27T00:00:00",
+            "BatchSN": "3",
+            "ExpiryDate": "2017-12-21T00:00:00",
+            "Available": 48,
+            "UnitCost": 5,
+            "Quantity": 1,
+            "TotalCost": 5
+        }
+    ],
+    "OrderLines": [
+        {
+            "ProductID": "8879b7f5-3aa7-4c7c-ba2c-d0bcc48ba7c3",
+            "ProductCode": "GB3-White",
+            "Name": "Golf balls white 3-pack",
+            "BinID": null,
+            "Bin": null,
+            "Unit": "Item",
+            "BatchSN": null,
+            "ExpiryDate": null,
+            "Account": "715",
+            "Quantity": 1,
+            "Cost": 5
+        }
+    ],
+    "OrderServiceLines": [
+        {
+            "ProductID": "5c6a9204-275f-4a8b-8a90-317d674a4504",
+            "Name": "Half day training - Microsoft Office",
+            "Account": "416",
+            "Comments": "",
+            "Amount": 600
+        }
+    ],
+    "Transactions": [
+        {
+            "ID": "80b705e7-00af-4260-9dd2-22240e31ff89",
+            "EffectiveDate": "2018-01-12T00:00:00",
+            "Debit": "715",
+            "Credit": "416",
+            "Amount": 600
+        }
+    ],
+    "Errors": []
+}

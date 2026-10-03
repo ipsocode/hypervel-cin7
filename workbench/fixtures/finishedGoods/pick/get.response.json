@@ -1,0 +1,22 @@
+{
+    "TaskID": "c1819dba-772c-4689-8032-0ee7acb4bd66",
+    "Status": "COMPLETED",
+    "WIPAccount": "715",
+    "WIPDate": "2019-02-15T00:00:00",
+    "Account": "714",
+    "CompletionDate": "2019-02-16T00:00:00",
+    "PickLines": [
+        {
+            "ProductID": "b05c1c28-a125-4178-bb1b-ba200955e9f5",
+            "ProductCode": "BOOK",
+            "Name": "Fish out of Water: Finding Your Brand",
+            "BinID": null,
+            "Bin": null,
+            "BatchSN": null,
+            "ExpiryDate": null,
+            "Quantity": 1,
+            "Unit": "Item",
+            "Cost": 0
+        }
+    ]
+}

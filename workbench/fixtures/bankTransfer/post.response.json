@@ -1,0 +1,14 @@
+{
+    "TaskID": "675e7c7c-f660-49d4-a1d4-0a644c4e177c",
+    "Status": "DRAFT",
+    "FromAccount": "198489",
+    "ToAccount": "713",
+    "FromAmount": 3,
+    "ToAmount": 6,
+    "CurrencyConversionRate": 2,
+    "Reference": "Test",
+    "Date": "2018-01-17T00:00:00",
+    "Note": "Memo",
+    "Transactions": [],
+    "Attachments": []
+}

@@ -1,0 +1,80 @@
+{
+    "ProductSuppliers": [
+        {
+            "ProductSupplierID": "b48ceb52-e4ac-40e0-b549-4e046da1541e",
+            "SupplierID": "33a22f89-c8a2-43e1-8b4a-f677b39f521b",
+            "SupplierName": "Tom the Supplier",
+            "ProductID": "2fcb8c53-9183-4bd3-aefa-b8f78167e159",
+            "ProductSKU": "Async Pra 1",
+            "Cost": 1,
+            "FixedCost": 2,
+            "SupplierInventoryCode": "SupplierInventoryCode",
+            "SupplierProductName": "SupplierProductName",
+            "SupplierProductURL": "SupplierProductURL",
+            "DropShip": false,
+            "Currency": "RUB",
+            "PurchaseCost": 1,
+            "LastSupplied": "2022-04-18T00:00:00",
+            "ProductSupplierOptions": [
+                {
+                    "ID": "0f8352e1-f1c0-4dd0-b6b5-675d3e8c5e8e",
+                    "LocationID": "e822dd3f-f24d-4724-a938-6adcf126228d",
+                    "LocationName": "Larek 2",
+                    "ReorderQuantity": 130,
+                    "Lead": 130,
+                    "Safety": 130,
+                    "MinimumToReorder": null,
+                    "SupplyIntervals": [
+                        {
+                            "ID": "afee05a8-2e5c-4e46-9570-391c2195a76b",
+                            "DeliveryMethod": "Fixed",
+                            "IntervalDays": 0,
+                            "IntervalStartDate": null,
+                            "IsMonday": false,
+                            "IsTuesday": true,
+                            "IsWednesday": false,
+                            "IsThursday": false,
+                            "IsFriday": false,
+                            "IsSaturday": false,
+                            "IsSunday": false
+                        }
+                    ]
+                },
+                {
+                    "ID": "f4768e9b-49ac-4a11-ad2e-7337e924ba4d",
+                    "LocationID": "f54e58e6-5f75-4829-a924-5b7ae16ae7d1",
+                    "LocationName": "Larek",
+                    "ReorderQuantity": 120,
+                    "Lead": 120,
+                    "Safety": 120,
+                    "MinimumToReorder": null,
+                    "SupplyIntervals": [
+                        {
+                            "ID": "a4915aa5-504c-4439-95b6-8c461da61ddd",
+                            "DeliveryMethod": "Interval",
+                            "IntervalDays": 12,
+                            "IntervalStartDate": "2022-01-19T00:00:00",
+                            "IsMonday": false,
+                            "IsTuesday": false,
+                            "IsWednesday": false,
+                            "IsThursday": false,
+                            "IsFriday": false,
+                            "IsSaturday": false,
+                            "IsSunday": false
+                        }
+                    ]
+                },
+                {
+                    "ID": "739ec37c-a3f3-43fe-ad67-fd333ccb6eb3",
+                    "LocationID": null,
+                    "LocationName": null,
+                    "ReorderQuantity": 40,
+                    "Lead": 50,
+                    "Safety": 60,
+                    "MinimumToReorder": 70,
+                    "SupplyIntervals": []
+                }
+            ]
+        }
+    ]
+}

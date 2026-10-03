@@ -1,0 +1,26 @@
+{
+    "Name": "my task workflow 2",
+    "IsActive": true,
+    "EntityType": "Sale",
+    "DueDaysType": "COMPLETED_DATE",
+    "Steps": [
+        {
+            "Name": "Task 1",
+            "Category": null,
+            "Days": 0,
+            "StartTime": "03:00:00",
+            "EndTime": "06:00:00",
+            "UserName": "niknav@yandex.ru",
+            "SkipHoliday": "move_previous"
+        },
+        {
+            "Name": "Task 2",
+            "Category": "API test category",
+            "Days": 0,
+            "StartTime": null,
+            "EndTime": null,
+            "UserName": null,
+            "SkipHoliday": "leave"
+        }
+    ]
+}

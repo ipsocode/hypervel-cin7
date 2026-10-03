@@ -1,0 +1,62 @@
+{
+    "ProductFamilyID": "a1688709-6639-4324-aa53-a2120185a7bf",
+    "ProductionBOMs": [
+        {
+            "BOMID": "9f13328c-de21-45c0-ac29-c8ab29d5e37f",
+            "OutputQuantity": 15.0,
+            "BufferPercent": 0.0,
+            "InstructionUrl": "",
+            "IgnoreCumulativeLeadTime": false,
+            "ComponentProductionLeadTime": 0,
+            "Version": 3,
+            "Name": "Second BOM",
+            "IsDefault": true,
+            "CreatedDate": "2021-02-11T00:00:00",
+            "DeliveryToID": null,
+            "DeliveryToName": null,
+            "IssueMethod": 4,
+            "Operations": [
+                {
+                    "OperationID": "7bde4f66-6604-430b-aea6-db1e824a9be8",
+                    "Order": 1,
+                    "Name": "Operation ZZZZ",
+                    "CycleTime": 3600,
+                    "UnitsPerCycle": 1.0,
+                    "WorkCenterID": "a11ac85f-e4ef-487e-8196-9cc0dc954697",
+                    "WorkCenterName": "Default Workcenter",
+                    "WorkCenterCoManProcurementType": null,
+                    "OperationType": "Manufacturing",
+                    "IsDropShip": false,
+                    "Resources": [
+                        {
+                            "BOMResourceID": "c096b60c-bfe0-4d2c-9cbc-50a624fecdd0",
+                            "ResourceID": "c49cd399-2904-4868-98ad-14449da5b2d7",
+                            "ResourceName": "Cook",
+                            "ResourceCode": "Cook",
+                            "Quantity": 7.0,
+                            "Cost": 20.0,
+                            "CycleTime": 3600,
+                            "Position": 1,
+                            "CostCalculationType": "CostPerUnitTime"
+                        }
+                    ],
+                    "Components": [],
+                    "Attachments": [],
+                    "Notes": [],
+                    "OperationLinks": [
+                        {
+                            "ID": "4f2ef43b-179e-4ca1-831a-12d627d8a25f",
+                            "RelatedOperationID": null,
+                            "RelatedOperationName": null,
+                            "RelationType": 1
+                        }
+                    ],
+                    "InputProducts": [],
+                    "OutputProducts": [],
+                    "FinishedProducts": [],
+                    "VariationComponents": []
+                }
+            ]
+        }
+    ]
+}

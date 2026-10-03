@@ -1,12 +1,15 @@
 # Pagination
 
-`ListRecords` is the one paginatable request. `Cin7Connector` implements
-Saloon's `HasPagination`, and its `paginate()` returns a
-[`Cin7Paginator`](../src/Pagination/Cin7Paginator.php) that reads Cin7's list
-envelope and works out the last page from it, so a listing can walk every page
-or send them all at once through the framework's coroutine pool. The requests
-themselves are described in [requests](requests.md), and the `page`/`limit`
-defaults every list carries under [page defaults](requests.md#page-defaults).
+A [`ListRequest`](requests.md#the-bases) is the only paginatable
+request. `Cin7Connector` implements Saloon's `HasPagination`, and its
+`paginate()` returns a [`Cin7Paginator`](../src/Pagination/Cin7Paginator.php)
+that reads Cin7's list envelope and works out the last page from it, so a
+listing can walk every page or send them all at once through the framework's
+coroutine pool. A resource's own `paginate()` method, such as
+`CustomerResource::paginate()`, is the usual way to reach it; see
+[resources](resources.md). The requests themselves are described in
+[requests](requests.md), and the `page`/`limit` defaults every list carries
+under [page defaults](requests.md#page-defaults).
 
 ## Walking every item
 
@@ -14,32 +17,32 @@ defaults every list carries under [page defaults](requests.md#page-defaults).
 page's list:
 
 ```php
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\ListRecords;
-
-foreach ($this->cin7->paginate(new ListRecords(Endpoint::Customer))->items() as $customer) {
+foreach ($this->cin7->customer()->paginate()->items() as $customer) {
     // $customer is one entry of CustomerList
 }
 ```
 
-Filters go in the request's parameters, and every page carries them:
+Filters are the resource method's named arguments, and every page carries them:
 
 ```php
-$paginator = $this->cin7->paginate(new ListRecords(Endpoint::Customer, ['Name' => 'ACME']));
+$paginator = $this->cin7->customer()->paginate(name: 'ACME');
 ```
 
 ## Page size
 
 `perPageLimit()` sends `limit` (lowercase, the spelling Cin7 reads) on every
-page, and takes precedence over a `limit` passed in the request's parameters:
+page, and takes precedence over the request's `limit` argument. It
+takes 1 to `PageDefaults::LIMIT_MAX` (1000), the largest page Cin7 serves, and
+`startPage()` a page of at least 1; anything else throws an
+`InvalidArgumentException` before the first page is sent:
 
 ```php
-$paginator = $this->cin7->paginate(new ListRecords(Endpoint::Customer))->perPageLimit(250);
+$paginator = $this->cin7->customer()->paginate()->perPageLimit(250);
 ```
 
 Without `perPageLimit()`, `applyPagination()` sets only `page` and leaves
-`limit` alone, so the request's own value stands: a `limit` in its parameters,
-or `PageDefaults::LIMIT` (100) when there is none.
+`limit` alone, so the request's own value stands: its `limit` argument, or
+`PageDefaults::LIMIT` (100) when there is none.
 
 ## Fetching pages concurrently
 
@@ -52,7 +55,7 @@ is the first page):
 use Hypervel\Saloon\Http\Response;
 
 /** @var array<int, Response> $responses */
-$responses = $this->cin7->paginate(new ListRecords(Endpoint::Customer))
+$responses = $this->cin7->customer()->paginate()
     ->perPageLimit(100)
     ->pool(concurrency: 5);
 ```
@@ -77,14 +80,20 @@ Cin7 wraps a list in an envelope:
 
 - `Total` is the full number of matching records, across all pages.
 - `Page` is the page just served.
-- The list itself sits under a key that differs per endpoint (`CustomerList`,
-  `ProductList`, `SaleList`, …).
+- The list itself sits under a key that differs per endpoint (`CustomerList`
+  for `customer`, `Products` for `product`), and not every endpoint's key ends
+  in `List`.
 
-The paginator finds the list by its suffix: the first string key ending in
-`List` whose value is an array. It does not take the first array in the body,
-because an envelope can also carry arrays such as `Errors` or `Warnings`, and
-those are ignored wherever they appear. An envelope with no `…List` key yields
-no items.
+Each `ListRequest` names that key in `$listKey`, and the paginator reads a
+page's items from it through the request's `mapPaginatedResponseItems()`, which `dto()` reads too. A
+response without the key yields no items.
+
+No request in this package needs it, but a paginatable request that does not
+map its own items falls back to a lookup by suffix: the first string key
+ending in `List` whose value is an array. It does not take the first array in
+the body, because an envelope can also carry arrays such as `Errors` or
+`Warnings`, and those are ignored wherever they appear. An envelope with no
+`…List` key yields no items.
 
 ## Finding the last page
 
@@ -105,9 +114,23 @@ Reading the limit off the sent request matters: a caller can set `limit` as a
 request parameter without ever calling `perPageLimit()`, and dividing by the
 default of 100 in that case would undercount the pages and stop early.
 
-## Only `ListRecords` paginates
+## An envelope with no `Total`
 
-`ListRecords` is the only request that implements `Paginatable`. Saloon's
+`ref/customer/credits` answers `{Page, CustomerCredits}` and `ref/supplier/deposits`
+`{Page, SupplierDeposits}`, with no `Total`. When `Total` is absent, a page is the last one
+when it holds fewer items than the `limit` sent, so an empty page ends the walk too. `items()`
+follows this; `pool()` cannot, because it needs the total to plan the remaining pages, so on
+credits and deposits it sends page one and stops. Walk them with `items()`.
+
+## Typed pages
+
+Iterating `paginate()` yields each page's `Response`, so `->dto()` returns that page's
+items as data objects. `items()`, `collect()` and `pool()` keep yielding arrays. See
+[data](data.md#typed-pages).
+
+## Only a `ListRequest` paginates
+
+`ListRequest` is the only request base that implements `Paginatable`. Saloon's
 paginator rejects any other request with an `InvalidArgumentException`, and no
 request declares `HasRequestPagination`, so `Cin7Paginator` is the only
 paginator the connector needs.

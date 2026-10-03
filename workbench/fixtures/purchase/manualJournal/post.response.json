@@ -1,0 +1,22 @@
+{
+    "TaskID": "02b08cd2-51d2-41e6-ab97-85bcd13e7136",
+    "Status": "DRAFT",
+    "Lines": [
+        {
+            "Reference": "Rounding",
+            "Amount": 2,
+            "Date": "2017-12-06T00:00:00",
+            "Debit": "720",
+            "Credit": "404",
+            "IsSystem": true
+        },
+        {
+            "Reference": "Rounding",
+            "Amount": 2,
+            "Date": "2017-12-06T00:00:00",
+            "Debit": "720",
+            "Credit": "404",
+            "IsSystem": false
+        }
+    ]
+}

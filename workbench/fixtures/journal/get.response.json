@@ -1,0 +1,33 @@
+{
+    "Total": 5,
+    "Page": 1,
+    "Journals": [
+        {
+            "TaskID": "1c6887f3-f7f2-4dbe-8f09-4903739f9175",
+            "Status": "COMPLETED",
+            "JournalNumber": "JR-00001",
+            "Currency": "TOP",
+            "CurrencyConversionRate": 25.2803,
+            "EffectiveDate": "2018-01-19T00:00:00",
+            "Narration": "Test",
+            "Notes": "Test 1",
+            "Lines": [
+                {
+                    "Debit": "260",
+                    "Credit": "270",
+                    "Reference": "3",
+                    "Amount": 2,
+                    "BaseAmount": 50.5606
+                }
+            ],
+            "Attachments": [
+                {
+                    "ID": "8a720cdd-7871-42bb-8bfe-13cf6ea162a5",
+                    "ContentType": "image/jpeg",
+                    "FileName": "1471081716149.jpg",
+                    "DownloadUrl": "https://inventory.dearsystems.com/Attachment/Download?ID=8a720cdd-7871-42bb-8bfe-13cf6ea162a5&ContentType=image/jpeg&FileName=1471081716149.jpg"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,114 @@
+{
+    "Total": 2,
+    "Page": 1,
+    "SupplierList": [
+        {
+            "ID": "733062e8-56d7-4de6-ba06-ed8c690f5f01",
+            "Name": "Bayside Club",
+            "Currency": "AUD",
+            "PaymentTerm": "30 days",
+            "TaxRule": "GST on Capital Imports",
+            "Discount": 0,
+            "Comments": null,
+            "AccountPayable": "800",
+            "TaxNumber": null,
+            "AdditionalAttribute1": null,
+            "AdditionalAttribute2": null,
+            "AdditionalAttribute3": null,
+            "AdditionalAttribute4": null,
+            "AdditionalAttribute5": null,
+            "AdditionalAttribute6": null,
+            "AdditionalAttribute7": null,
+            "AdditionalAttribute8": null,
+            "AdditionalAttribute9": null,
+            "AdditionalAttribute10": null,
+            "AttributeSet": null,
+            "Status": "Active",
+            "LastModifiedOn": "2017-12-28T06:15:17.237Z",
+            "Addresses": [
+                {
+                    "Line1": "148 Bay Harbour Road",
+                    "Line2": "",
+                    "City": "Ridge Heights",
+                    "State": "Madeupville",
+                    "Postcode": "MVL 6001",
+                    "Country": "Australia",
+                    "Type": "Business",
+                    "DefaultForType": true
+                },
+                {
+                    "Line1": "P O Box 3354",
+                    "Line2": "South Mailing Center",
+                    "City": "Ridge Heights",
+                    "State": "Madeupville",
+                    "Postcode": "MVL 6001",
+                    "Country": "Australia",
+                    "Type": "Billing",
+                    "DefaultForType": true
+                }
+            ],
+            "Contacts": [
+                {
+                    "Name": "Bob Partridge",
+                    "Phone": "02 2024455",
+                    "MobilePhone": "02 2024455",
+                    "Fax": "02 2025566",
+                    "Email": "secretarybob@bsclub.co",
+                    "Website": null,
+                    "Default": true,
+                    "Comment": null,
+                    "IncludeInEmail": false
+                }
+            ]
+        },
+        {
+            "ID": "4e580c82-440e-4ea4-8a66-838ac67beb6d",
+            "Name": "Post Supplier testing",
+            "Currency": "USD",
+            "PaymentTerm": "30 days",
+            "TaxRule": "BAS Excluded",
+            "Discount": 0,
+            "Comments": "",
+            "AccountPayable": "800",
+            "TaxNumber": "",
+            "AdditionalAttribute1": "Black",
+            "AdditionalAttribute2": "true",
+            "AdditionalAttribute3": "blablabla",
+            "AdditionalAttribute4": "",
+            "AdditionalAttribute5": "",
+            "AdditionalAttribute6": "",
+            "AdditionalAttribute7": "",
+            "AdditionalAttribute8": "",
+            "AdditionalAttribute9": "",
+            "AdditionalAttribute10": "",
+            "AttributeSet": "Test set",
+            "Status": "Active",
+            "LastModifiedOn": "2018-02-02T03:37:30.39Z",
+            "Addresses": [
+                {
+                    "Line1": "Test address",
+                    "Line2": "",
+                    "City": null,
+                    "State": null,
+                    "Postcode": null,
+                    "Country": "Australia",
+                    "Type": "Shipping",
+                    "DefaultForType": false
+                }
+            ],
+            "Contacts": [
+                {
+                    "Name": "Test contact",
+                    "Phone": "",
+                    "MobilePhone": "02 2024455",
+                    "Fax": "",
+                    "Email": "",
+                    "Website": "",
+                    "Default": false,
+                    "Comment": "",
+                    "IncludeInEmail": false
+                }
+            ]
+        }
+    ]
+}

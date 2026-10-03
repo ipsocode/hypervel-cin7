@@ -1,0 +1,15 @@
+{
+    "ProductID": "7C8795C2-1A6B-4318-BA72-291F61444906",
+    "MarkupPrices": [
+        {
+            "TierNumber": 1,
+            "MarkupType": "A",
+            "UsePriceType": "A",
+            "MarkupValue": 11
+        },
+        {
+            "TierNumber": 3,
+            "MarkupType": "D"
+        }
+    ]
+}

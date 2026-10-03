@@ -1,0 +1,29 @@
+{
+    "TaskID": "122df91c-1ce5-46e2-86f7-52cc14e7964b",
+    "Status": "COMPLETED",
+    "CompletionDate": "2017-12-21T00:00:00",
+    "OrderLines": [
+        {
+            "ProductID": "8879b7f5-3aa7-4c7c-ba2c-d0bcc48ba7c3",
+            "ProductCode": "GB3-White",
+            "Name": "Golf balls white 3-pack",
+            "BinID": null,
+            "Bin": null,
+            "Unit": "Item",
+            "BatchSN": null,
+            "ExpiryDate": null,
+            "Account": "715",
+            "Quantity": 1,
+            "Cost": 5
+        }
+    ],
+    "OrderServiceLines": [
+        {
+            "ProductID": "5c6a9204-275f-4a8b-8a90-317d674a4504",
+            "Name": "Half day training - Microsoft Office",
+            "Account": "416",
+            "Comments": "",
+            "Amount": 600
+        }
+    ]
+}

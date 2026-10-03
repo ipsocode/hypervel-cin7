@@ -1,0 +1,19 @@
+{
+    "DiscountRules": [
+        {
+            "ID": "c74ac47e-c5db-4b82-8fe0-ebdbd07a5920",
+            "Name": "The second one v2",
+            "IsActive": false,
+            "Type": "Simple",
+            "DiscountLines": [
+                {
+                    "ID": "b4724004-73c8-4700-9d94-20d718fec82e",
+                    "MinValue": 0,
+                    "MaxValue": 100,
+                    "DiscountType": "MarkupPercent",
+                    "Amount": 30
+                }
+            ]
+        }
+    ]
+}

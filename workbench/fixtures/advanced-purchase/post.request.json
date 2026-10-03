@@ -1,0 +1,45 @@
+{
+    "SupplierID": "92c27d86-a8d3-4335-9da1-d3ebd82cb568",
+    "Supplier": "ABPA",
+    "TaxRule": "Sales Tax on Imports",
+    "TaxCalculation": "Exclusive",
+    "Terms": "30 days",
+    "Approach": "Stock",
+    "BlindReceipt": false,
+    "Contact": "No Name",
+    "Phone": "",
+    "CurrencyRate": 1,
+    "Location": "Main Warehouse",
+    "PurchaseType": "Simple",
+    "Note": "",
+    "RequiredBy": null,
+    "BillingAddress": {
+        "Line1": "3 Park Street Industrial Village",
+        "Line2": "Southbank",
+        "City": "Melbourne",
+        "State": "VIC",
+        "Postcode": "3331",
+        "Country": "USA"
+    },
+    "ShippingAddress": {
+        "Line1": "3 Park Street Industrial Village",
+        "Line2": "Southbank",
+        "City": "Melbourne",
+        "State": "VIC",
+        "Postcode": "3331",
+        "Country": "USA",
+        "ShipToOther": false
+    },
+    "AdditionalAttributes": {
+        "AdditionalAttribute1": "",
+        "AdditionalAttribute2": "",
+        "AdditionalAttribute3": "",
+        "AdditionalAttribute4": "",
+        "AdditionalAttribute5": "",
+        "AdditionalAttribute6": "",
+        "AdditionalAttribute7": "",
+        "AdditionalAttribute8": "",
+        "AdditionalAttribute9": "",
+        "AdditionalAttribute10": ""
+    }
+}

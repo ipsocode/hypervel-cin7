@@ -7,10 +7,9 @@ namespace Ipsocode\Cin7\Tests\Feature\Connector;
 use Hypervel\Saloon\Exceptions\Request\ClientException;
 use Hypervel\Saloon\Exceptions\Request\ServerException;
 use Hypervel\Saloon\Facades\Saloon;
-use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Sleep;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\ListRecords;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -36,10 +35,10 @@ class RetryTest extends TestCase
 
     public function testA503IsRetriedUpToTheConfiguredAttemptCount(): void
     {
-        $mock = Saloon::fake(array_fill(0, 4, MockResponse::make(Cin7Payloads::throttled(), 503)));
+        $mock = Saloon::fake(array_fill(0, 4, Cin7Fake::throttled()));
 
         try {
-            $this->connector()->send(new ListRecords(Endpoint::Customer));
+            $this->connector()->send(new GetCustomer);
             $this->fail('The exhausted retry should have surfaced a ServerException.');
         } catch (ServerException $exception) {
             $this->assertSame(503, $exception->status());
@@ -57,11 +56,11 @@ class RetryTest extends TestCase
     public function testA503ThatClearsReturnsTheEventualSuccess(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::throttled(), 503),
-            MockResponse::make(Cin7Payloads::customerList([Cin7Payloads::customer()])),
+            Cin7Fake::throttled(),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer()]),
         ]);
 
-        $response = $this->connector()->send(new ListRecords(Endpoint::Customer));
+        $response = $this->connector()->send(new GetCustomer);
 
         $this->assertSame(200, $response->status());
         $this->assertCount(1, $response->json('CustomerList'));
@@ -69,14 +68,31 @@ class RetryTest extends TestCase
         Sleep::assertSleptTimes(1);
     }
 
+    /**
+     * 429 is the status Cin7 documents for its 60 calls per minute limit.
+     */
+    public function testA429IsRetriedLikeA503(): void
+    {
+        $mock = Saloon::fake([
+            Cin7Fake::limitReached(),
+            Cin7Fake::list('CustomerList', [Cin7Payloads::customer()]),
+        ]);
+
+        $response = $this->connector()->send(new GetCustomer);
+
+        $this->assertSame(200, $response->status());
+        $mock->assertSentCount(2);
+        Sleep::assertSequence([Sleep::usleep(5_000_000)]);
+    }
+
     public function testAClientErrorIsNotRetried(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::error('Request is invalid'), 400),
+            Cin7Fake::error('Request is invalid'),
         ]);
 
         try {
-            $this->connector()->send(new ListRecords(Endpoint::Customer));
+            $this->connector()->send(new GetCustomer);
             $this->fail('A 400 should have surfaced a ClientException.');
         } catch (ClientException $exception) {
             $this->assertSame(400, $exception->status());
@@ -92,13 +108,13 @@ class RetryTest extends TestCase
     public function testARejectedCredentialIsNotRetried(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::error('Incorrect credentials!'), 403),
+            Cin7Fake::credentialsRejected(),
         ]);
 
         $this->expectException(ClientException::class);
 
         try {
-            $this->connector()->send(new ListRecords(Endpoint::Customer));
+            $this->connector()->send(new GetCustomer);
         } finally {
             $mock->assertSentCount(1);
             Sleep::assertNeverSlept();
@@ -108,13 +124,13 @@ class RetryTest extends TestCase
     public function testA500IsNotRetried(): void
     {
         $mock = Saloon::fake([
-            MockResponse::make(Cin7Payloads::error('boom'), 500),
+            Cin7Fake::error('boom', 500),
         ]);
 
         $this->expectException(ServerException::class);
 
         try {
-            $this->connector()->send(new ListRecords(Endpoint::Customer));
+            $this->connector()->send(new GetCustomer);
         } finally {
             $mock->assertSentCount(1);
             Sleep::assertNeverSlept();
@@ -123,9 +139,9 @@ class RetryTest extends TestCase
 
     public function testASuccessIsNotSleptOn(): void
     {
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::customerList())]);
+        $mock = Saloon::fake([Cin7Fake::list('CustomerList')]);
 
-        $this->connector()->send(new ListRecords(Endpoint::Customer));
+        $this->connector()->send(new GetCustomer);
 
         $mock->assertSentCount(1);
         Sleep::assertNeverSlept();
@@ -136,10 +152,10 @@ class RetryTest extends TestCase
         $this->app->get('config')->set('cin7.retry.times', 2);
         $this->app->get('config')->set('cin7.retry.delay_ms', 250);
 
-        $mock = Saloon::fake(array_fill(0, 2, MockResponse::make(Cin7Payloads::throttled(), 503)));
+        $mock = Saloon::fake(array_fill(0, 2, Cin7Fake::throttled()));
 
         // The retry policy is read at construction, so config must be set first.
-        $request = new ListRecords(Endpoint::Customer);
+        $request = new GetCustomer;
 
         $this->expectException(ServerException::class);
 
@@ -155,9 +171,9 @@ class RetryTest extends TestCase
     {
         $this->app->get('config')->set('cin7.retry.times', 0);
 
-        $mock = Saloon::fake([MockResponse::make(Cin7Payloads::throttled(), 503)]);
+        $mock = Saloon::fake([Cin7Fake::throttled()]);
 
-        $request = new ListRecords(Endpoint::Customer);
+        $request = new GetCustomer;
 
         $this->expectException(ServerException::class);
 
@@ -177,9 +193,9 @@ class RetryTest extends TestCase
         $this->app->get('config')->set('cin7.retry.times', 2);
         $this->app->get('config')->set('cin7.retry.delay_ms', -1);
 
-        $mock = Saloon::fake(array_fill(0, 2, MockResponse::make(Cin7Payloads::throttled(), 503)));
+        $mock = Saloon::fake(array_fill(0, 2, Cin7Fake::throttled()));
 
-        $request = new ListRecords(Endpoint::Customer);
+        $request = new GetCustomer;
 
         $this->expectException(ServerException::class);
 
@@ -196,9 +212,9 @@ class RetryTest extends TestCase
         $this->app->get('config')->set('cin7.retry.times', null);
         $this->app->get('config')->set('cin7.retry.delay_ms', null);
 
-        $mock = Saloon::fake(array_fill(0, 4, MockResponse::make(Cin7Payloads::throttled(), 503)));
+        $mock = Saloon::fake(array_fill(0, 4, Cin7Fake::throttled()));
 
-        $request = new ListRecords(Endpoint::Customer);
+        $request = new GetCustomer;
 
         $this->expectException(ServerException::class);
 

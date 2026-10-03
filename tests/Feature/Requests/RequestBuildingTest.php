@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Requests;
 
+use DateTimeImmutable;
 use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
@@ -11,12 +12,23 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
-use Ipsocode\Cin7\Endpoint;
-use Ipsocode\Cin7\Requests\CreateRecord;
-use Ipsocode\Cin7\Requests\DeleteRecord;
-use Ipsocode\Cin7\Requests\FindRecord;
-use Ipsocode\Cin7\Requests\ListRecords;
-use Ipsocode\Cin7\Requests\UpdateRecord;
+use InvalidArgumentException;
+use Ipsocode\Cin7\Data\Customer\CustomerPutData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPostData;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxPutData;
+use Ipsocode\Cin7\Enums\CountryFormat;
+use Ipsocode\Cin7\Enums\PickingStatus;
+use Ipsocode\Cin7\Enums\SaleStatus;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Requests\Customer\PostCustomer;
+use Ipsocode\Cin7\Requests\Customer\PutCustomer;
+use Ipsocode\Cin7\Requests\Product\GetProduct;
+use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
+use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
+use Ipsocode\Cin7\Requests\Sale\GetSale;
+use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use Workbench\App\Support\Cin7Payloads;
 
@@ -27,6 +39,13 @@ use Workbench\App\Support\Cin7Payloads;
  */
 class RequestBuildingTest extends TestCase
 {
+    /**
+     * The fields every tax rule requires.
+     *
+     * @var array<string, bool|string>
+     */
+    private const array TAX = ['Name' => 'VAT', 'Account' => '820', 'IsActive' => true, 'TaxInclusive' => false];
+
     private MockClient $mock;
 
     protected function setUp(): void
@@ -34,12 +53,12 @@ class RequestBuildingTest extends TestCase
         parent::setUp();
 
         // One response per send in the longest test; only the request is asserted on.
-        $this->mock = Saloon::fake(array_fill(0, 5, MockResponse::make(Cin7Payloads::customerList())));
+        $this->mock = Saloon::fake(array_fill(0, 7, Cin7Fake::list('CustomerList')));
     }
 
     public function testEveryRequestCarriesTheAuthAndContentTypeHeaders(): void
     {
-        $pending = $this->send(new ListRecords(Endpoint::Customer));
+        $pending = $this->send(new GetCustomer);
 
         $this->assertSame('acct-test', $pending->headers()['api-auth-accountid']);
         $this->assertSame('key-test', $pending->headers()['api-auth-applicationkey']);
@@ -48,87 +67,105 @@ class RequestBuildingTest extends TestCase
 
     public function testTheBaseUrlAndEndpointPathAreJoined(): void
     {
-        $pending = $this->send(new ListRecords(Endpoint::SaleInvoice));
+        $pending = $this->send(new GetCustomer);
 
         $this->assertSame(
-            'https://inventory.dearsystems.com/ExternalApi/v2/sale/invoice',
+            'https://inventory.dearsystems.com/ExternalApi/v2/customer',
             $pending->uri()->getScheme() . '://' . $pending->uri()->getHost() . $pending->uri()->getPath(),
         );
     }
 
-    public function testEveryEndpointResolvesToItsOwnPath(): void
-    {
-        foreach (Endpoint::cases() as $endpoint) {
-            $this->assertSame($endpoint->path(), new ListRecords($endpoint)->resolveEndpoint());
-        }
-    }
-
-    public function testARequestExposesTheEndpointItTargets(): void
-    {
-        $this->assertSame(Endpoint::SaleInvoice, new ListRecords(Endpoint::SaleInvoice)->endpoint());
-        $this->assertSame(Endpoint::Customer, new FindRecord(Endpoint::Customer, 'guid')->endpoint());
-        $this->assertSame(Endpoint::Product, new CreateRecord(Endpoint::Product, [])->endpoint());
-        $this->assertSame(Endpoint::Tax, new UpdateRecord(Endpoint::Tax, 'guid', [])->endpoint());
-        $this->assertSame(Endpoint::Sale, new DeleteRecord(Endpoint::Sale, 'guid')->endpoint());
-    }
-
     public function testListInjectsThePageDefaults(): void
     {
-        $pending = $this->send(new ListRecords(Endpoint::Customer));
+        $pending = $this->send(new GetCustomer);
 
         $this->assertSame(Method::GET, $pending->method());
         $this->assertSame(['page' => 1, 'limit' => 100], $pending->queryParameters());
     }
 
-    public function testListLetsCallerValuesWin(): void
+    public function testListSendsTheCallersPageLimitAndFilters(): void
     {
-        $pending = $this->send(new ListRecords(Endpoint::Customer, ['page' => 4, 'limit' => 10, 'Name' => 'ACME']));
+        $pending = $this->send(new GetCustomer(page: 4, limit: 10, name: 'ACME'));
 
         $this->assertSame(
-            ['page' => 4, 'limit' => 10, 'Name' => 'ACME'],
+            ['Name' => 'ACME', 'page' => 4, 'limit' => 10],
             $pending->queryParameters(),
         );
     }
 
-    public function testOnlyTheListRequestIsPaginatable(): void
+    public function testANullParameterIsLeftOut(): void
     {
-        $this->assertInstanceOf(Paginatable::class, new ListRecords(Endpoint::Customer));
-        $this->assertNotInstanceOf(Paginatable::class, new FindRecord(Endpoint::Customer, 'guid'));
-        $this->assertNotInstanceOf(Paginatable::class, new CreateRecord(Endpoint::Customer, []));
+        $pending = $this->send(new GetCustomer(page: null, limit: null, name: null));
+
+        $this->assertSame(['page' => 1, 'limit' => 100], $pending->queryParameters());
     }
 
-    public function testFindSendsTheGuidAsAQueryParameter(): void
+    public function testBooleanFiltersAreSentAsTrueAndFalseStrings(): void
     {
-        $pending = $this->send(new FindRecord(Endpoint::Customer, 'guid-1'));
+        $pending = $this->send(new GetProduct(includeDeprecated: true, includeBom: false));
 
-        $this->assertSame(Method::GET, $pending->method());
         $this->assertSame(
-            ['ID' => 'guid-1', 'page' => 1, 'limit' => 100],
+            ['IncludeDeprecated' => 'true', 'IncludeBOM' => 'false', 'page' => 1, 'limit' => 100],
             $pending->queryParameters(),
         );
     }
 
-    public function testFindUsesTheSaleIdKeyOnSaleSubEndpoints(): void
+    /**
+     * Cin7 reads dates as ISO 8601 in UTC with milliseconds, `yyyy-MM-ddTHH:mm:ss.fff`.
+     */
+    public function testDateFiltersAreSentInUtcWithMilliseconds(): void
     {
-        $pending = $this->send(new FindRecord(Endpoint::SaleInvoice, 'guid-2'));
+        $pending = $this->send(new GetCustomer(modifiedSince: new DateTimeImmutable('2012-11-14T23:28:33.363+10:00')));
 
         $this->assertSame(
-            ['SaleID' => 'guid-2', 'page' => 1, 'limit' => 100],
+            ['ModifiedSince' => '2012-11-14T13:28:33.363', 'page' => 1, 'limit' => 100],
             $pending->queryParameters(),
         );
-        $this->assertArrayNotHasKey('ID', $pending->queryParameters());
     }
 
-    public function testFindGuidWinsOverACallerSuppliedValue(): void
+    public function testADateGivenAsAStringIsSentAsWritten(): void
     {
-        $pending = $this->send(new FindRecord(Endpoint::Customer, 'guid-3', ['ID' => 'ignored']));
+        $pending = $this->send(new GetSaleList(updatedSince: '2012-11-14'));
 
-        $this->assertSame('guid-3', $pending->queryParameters()['ID']);
+        $this->assertSame(['UpdatedSince' => '2012-11-14', 'page' => 1, 'limit' => 100], $pending->queryParameters());
     }
 
-    public function testCreateSendsAnUntouchedJsonBodyAndNoPageDefaults(): void
+    public function testAnEnumParameterIsSentAsItsValue(): void
     {
-        $pending = $this->send(new CreateRecord(Endpoint::Customer, ['Name' => 'ACME']));
+        $this->assertSame(
+            ['CombinedPickStatus' => 'NOT PICKED', 'Status' => 'ORDERED', 'page' => 1, 'limit' => 100],
+            $this->send(new GetSaleList(combinedPickStatus: PickingStatus::NotPicked, status: SaleStatus::Ordered))->queryParameters(),
+        );
+        $this->assertSame(
+            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CountryFormat' => 'Code2'],
+            $this->send(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', countryFormat: CountryFormat::Code2))->queryParameters(),
+        );
+    }
+
+    public function testOnlyAListRequestIsPaginatable(): void
+    {
+        $this->assertInstanceOf(Paginatable::class, new GetCustomer);
+        $this->assertNotInstanceOf(Paginatable::class, new PostCustomer);
+        $this->assertNotInstanceOf(Paginatable::class, new PutCustomer);
+    }
+
+    public function testPaginatingAGetSaleThrows(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->connector()->paginate(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'));
+    }
+
+    public function testTheIdentifierComesFirstAndTheUnsetParametersAreLeftOut(): void
+    {
+        $pending = $this->send(new GetSale('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', includeTransactions: true));
+
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'IncludeTransactions' => 'true'], $pending->queryParameters());
+    }
+
+    public function testCreateSendsAnUntouchedJsonBodyAndNoQueryString(): void
+    {
+        $pending = $this->send(new PostCustomer(['Name' => 'ACME']));
 
         $this->assertSame(Method::POST, $pending->method());
         $this->assertSame(['Name' => 'ACME'], $pending->body());
@@ -140,71 +177,80 @@ class RequestBuildingTest extends TestCase
      */
     public function testCreateSendsAnEmptyBodyWhenGivenNoData(): void
     {
-        $pending = $this->send(new CreateRecord(Endpoint::Customer));
+        $pending = $this->send(new PostCustomer);
 
         $this->assertSame([], $pending->body());
     }
 
-    public function testUpdateMergesTheGuidIntoTheBody(): void
+    public function testUpdateSendsTheBodyVerbatim(): void
     {
-        $pending = $this->send(new UpdateRecord(Endpoint::Customer, 'guid-4', ['Name' => 'ACME Ltd']));
+        $pending = $this->send(new PutCustomer(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf4', 'Name' => 'ACME Ltd']));
 
         $this->assertSame(Method::PUT, $pending->method());
-        $this->assertSame(
-            ['Name' => 'ACME Ltd', 'ID' => 'guid-4'],
-            $pending->body(),
-        );
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf4', 'Name' => 'ACME Ltd'], $pending->body());
         $this->assertSame([], $pending->queryParameters());
     }
 
-    public function testUpdateGuidWinsOverACallerSuppliedValue(): void
+    /**
+     * `Optional` properties are left out of the body, so a PUT never sends a key the caller
+     * did not set. A collection sent as `[]` would delete the records on the other side.
+     */
+    public function testADataObjectSendsOnlyTheKeysThatWereSet(): void
     {
-        $pending = $this->send(new UpdateRecord(Endpoint::Customer, 'guid-8', ['ID' => 'ignored']));
+        $pending = $this->send(new PutTax(TaxPutData::from([...self::TAX, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])));
 
-        $this->assertSame(['ID' => 'guid-8'], $pending->body());
+        $this->assertSame(Method::PUT, $pending->method());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ...self::TAX], $pending->body());
+        $this->assertArrayNotHasKey('Components', $pending->body());
     }
 
     /**
-     * An update carries the GUID under `guidKey()`, the find key; `sale` finds by `ID`, and no
-     * endpoint that finds by `SaleID` accepts a PUT.
+     * A data object's null means not set, so it is never sent; an explicit null, to clear a
+     * field, goes in an array body, which is sent as given.
      */
-    public function testUpdateUsesTheFindKeyOnSaleSubEndpoints(): void
+    public function testANullIsSentOnlyFromAnArrayBody(): void
     {
-        $pending = $this->send(new UpdateRecord(Endpoint::Sale, 'guid-9', ['Status' => 'AUTHORISED']));
+        $customer = Cin7Payloads::customer('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1');
 
-        $this->assertSame(['Status' => 'AUTHORISED', 'ID' => 'guid-9'], $pending->body());
+        $this->assertArrayNotHasKey('TaxNumber', $this->send(new PutCustomer(CustomerPutData::from([...$customer, 'TaxNumber' => null])))->body());
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null], $this->send(new PutCustomer(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'TaxNumber' => null]))->body());
     }
 
-    public function testDeleteUsesTheDeleteGuidKeyAndKeepsThePageDefaults(): void
+    /**
+     * Nulls go at every depth, but a list keeps its items so it still encodes as a JSON array.
+     */
+    public function testNestedNullsAreLeftOutAndListsKeepTheirShape(): void
     {
-        // `sale/invoice` finds by SaleID, but Cin7 reads a delete's GUID under ID.
-        $pending = $this->send(new DeleteRecord(Endpoint::SaleInvoice, 'guid-5'));
+        $gst = ['Name' => 'GST', 'Percent' => '5.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '1'];
+        $pst = ['Name' => 'PST', 'Percent' => '7.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '2'];
 
-        $this->assertSame(Method::DELETE, $pending->method());
-        $this->assertSame(
-            ['ID' => 'guid-5', 'page' => 1, 'limit' => 100],
-            $pending->queryParameters(),
-        );
+        $body = $this->send(new PutTax(TaxPutData::from([
+            ...self::TAX,
+            'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1',
+            'Components' => [[...$gst, 'Compound' => null], [...$pst, 'ID' => null]],
+        ])))->body();
+
+        $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Components' => [$gst, $pst], ...self::TAX], $body);
+        $this->assertStringContainsString('"Components":[{"Name":"GST"', (string) json_encode($body));
     }
 
-    public function testDeleteGuidWinsOverACallerSuppliedValue(): void
+    public function testASetCollectionIsSentAndAnUnsetOneIsLeftOut(): void
     {
-        $pending = $this->send(new DeleteRecord(Endpoint::Sale, 'guid-10', ['ID' => 'ignored', 'Force' => 'true']));
+        $component = ['Name' => 'Tax', 'Percent' => '20.0000000000', 'AccountCode' => '820', 'ComponentOrder' => '1'];
+        $withComponents = TaxPostData::from([...self::TAX, 'Components' => [$component]]);
 
-        $this->assertSame(
-            ['ID' => 'guid-10', 'Force' => 'true', 'page' => 1, 'limit' => 100],
-            $pending->queryParameters(),
-        );
+        $this->assertInstanceOf(TaxComponentData::class, $withComponents->Components[0]);
+        $this->assertSame(['Components' => [$component], ...self::TAX], $this->send(new PostTax($withComponents))->body());
     }
 
     public function testTheDecodedBodyIsReturnedAsAnArray(): void
     {
-        $body = Cin7Payloads::customerList([Cin7Payloads::customer('a')]);
+        $body = Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a')])->body()->all();
 
         Saloon::clearFake();
         Saloon::fake([MockResponse::make($body)]);
 
-        $response = $this->connector()->send(new ListRecords(Endpoint::Customer));
+        $response = $this->connector()->send(new GetCustomer);
 
         $this->assertSame($body, $response->json());
         $this->assertSame('a', $response->json('CustomerList')[0]['ID']);

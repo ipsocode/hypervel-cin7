@@ -1,0 +1,35 @@
+{
+    "PurchaseID": "5a7fb526-527a-4229-b331-90b6f5535aab",
+    "ManualJournals": [
+        {
+            "TaskID": "807c3266-157b-4c0d-8131-a3b8e06c0d97",
+            "Status": "AUTHORISED",
+            "Lines": [
+                {
+                    "Reference": "Inventory discrepancy correction",
+                    "Amount": 71.17,
+                    "Date": "2018-04-20T00:00:00",
+                    "Debit": "715",
+                    "Credit": "433",
+                    "IsSystem": true
+                },
+                {
+                    "Reference": "Stock in Transit",
+                    "Amount": 750,
+                    "Date": "2018-04-20T00:00:00",
+                    "Debit": "715",
+                    "Credit": "715",
+                    "IsSystem": true
+                },
+                {
+                    "Reference": "",
+                    "Amount": 20,
+                    "Date": "2018-04-23T00:00:00",
+                    "Debit": "715",
+                    "Credit": "860",
+                    "IsSystem": false
+                }
+            ]
+        }
+    ]
+}
