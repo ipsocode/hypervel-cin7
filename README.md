@@ -98,9 +98,21 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
 }
 ```
 
-The connector is registered as a singleton. It holds only readonly scalars and
-is never mutated per request, so sharing one instance across coroutines for a
-worker's lifetime is safe.
+Each connector holds only readonly scalars and is never mutated per request, so
+sharing one instance across coroutines for a worker's lifetime is safe.
+Injecting `Cin7Connector` gives the default connection.
+
+For a second account, such as a sandbox, add it under `connections` in
+`config/cin7.php` and ask `Cin7Manager` for it by name:
+
+```php
+use Ipsocode\Cin7\Cin7Manager;
+
+$sandbox = app(Cin7Manager::class)->connection('sandbox');
+```
+
+Each connection throttles on its own, as
+[docs/connector.md](docs/connector.md#named-connections) describes.
 
 ## Documentation
 

@@ -10,6 +10,7 @@ use Hypervel\Support\Facades\Artisan;
 use Hypervel\Support\Facades\Schema;
 use Hypervel\Support\ServiceProvider;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Cin7Manager;
 use Ipsocode\Cin7\Cin7ServiceProvider;
 use Ipsocode\Cin7\Tests\TestCase;
 
@@ -57,7 +58,7 @@ class ServiceProviderTest extends TestCase
     {
         $this->app->get('config')->set('cin7.account_id', null);
         $this->app->get('config')->set('cin7.application_key', null);
-        $this->app->forgetInstance(Cin7Connector::class);
+        $this->app->forgetInstance(Cin7Manager::class);
 
         $connector = $this->connector();
 
@@ -69,7 +70,7 @@ class ServiceProviderTest extends TestCase
     {
         $this->app->get('config')->set('cin7.rate_limit.max', '30');
         $this->app->get('config')->set('cin7.rate_limit.period', '15');
-        $this->app->forgetInstance(Cin7Connector::class);
+        $this->app->forgetInstance(Cin7Manager::class);
 
         $policies = $this->connector()->resolveRateLimitPolicies(
             $this->pendingRequestFor($this->connector()),

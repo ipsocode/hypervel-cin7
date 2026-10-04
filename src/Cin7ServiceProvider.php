@@ -24,20 +24,13 @@ class Cin7ServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/cin7.php', 'cin7');
 
-        // One connector per worker, shared across coroutines: it holds only readonly scalars.
-        $this->app->singleton(Cin7Connector::class, function () {
-            // The casts stop unset CIN7_* values (null) and string numbers from a TypeError
-            // on resolve; a null store stays null.
-            $store = config('cin7.rate_limit.store');
+        // One connector per connection per worker, shared across coroutines: each holds only
+        // readonly scalars, and the manager keeps them in a map.
+        $this->app->singleton(Cin7Manager::class);
 
-            return new Cin7Connector(
-                (string) config('cin7.account_id'),
-                (string) config('cin7.application_key'),
-                (int) config('cin7.rate_limit.max', 60),
-                (int) config('cin7.rate_limit.period', 60),
-                $store === null ? null : (string) $store,
-            );
-        });
+        // Injecting the connector by type resolves the default connection. Not a singleton of
+        // its own, so the manager's map is the one place an instance lives.
+        $this->app->bind(Cin7Connector::class, fn ($app) => $app->make(Cin7Manager::class)->connection());
     }
 
     public function boot(): void

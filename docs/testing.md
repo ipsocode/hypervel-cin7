@@ -234,7 +234,7 @@ the seam a consuming application has:
 
 | Piece | Purpose |
 |---|---|
-| [`CustomerDirectory`](../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's singleton resolves as a dependency of an application's own service, not only through `$app->make()`. |
+| [`CustomerDirectory`](../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's default connector resolves as a dependency of an application's own service, not only through `$app->make()`. |
 | [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies. `load($path, $name)` reads the V2 reference's examples from `workbench/fixtures/<api path>/<verb>.<request\|response>.json`, and named helpers wrap them: `sale()` (the Sale example, keyed by `ID`), `saleList()`, `saleInvoices()`, `saleInvoicePost()`, `salePayments()` and the rest, plus `customer()`, one record for a list's items. The list envelopes and the Error Model are not here: they are `Cin7Fake`'s, which ships (above), so the suite fakes with what an application does and the coverage gate covers it. |
 | [`cin7:customers`](../workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for calling the live API by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
 
