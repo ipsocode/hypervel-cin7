@@ -22,6 +22,10 @@ class ServiceProviderTest extends TestCase
         $this->assertSame(60, config('cin7.rate_limit.period'));
         $this->assertSame(4, config('cin7.retry.times'));
         $this->assertSame(5000, config('cin7.retry.delay_ms'));
+        $this->assertSame(1.0, config('cin7.retry.backoff'));
+        $this->assertSame(0, config('cin7.retry.max_delay_ms'));
+        $this->assertSame(0, config('cin7.retry.jitter_ms'));
+        $this->assertSame(5, config('cin7.rate_limit.cooldown'));
     }
 
     /**

@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Provider;
 
+use Hypervel\Saloon\Exceptions\Request\RequestException;
+use Hypervel\Saloon\Facades\Saloon;
 use InvalidArgumentException;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Cin7Manager;
 use Ipsocode\Cin7\Cin7ServiceProvider;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 
 class Cin7ManagerTest extends TestCase
@@ -113,6 +117,25 @@ class Cin7ManagerTest extends TestCase
         $this->assertNull($this->manager()->connection()->resolveRateLimitStoreName());
     }
 
+    public function testTheCooldownIsInheritedOrOverriddenPerConnection(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', '9');
+        $this->useSandbox(['cooldown' => '2']);
+        $this->app->get('config')->set('cin7.connections.plain', [
+            'account_id' => 'acct-plain',
+            'application_key' => 'key-plain',
+        ]);
+
+        $this->assertSame(2, $this->cooldown('sandbox'));
+        $this->assertSame(9, $this->cooldown('plain'));
+        $this->assertSame(9, $this->cooldown(null));
+
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', null);
+        $this->app->forgetInstance(Cin7Manager::class);
+
+        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $this->cooldown('plain'));
+    }
+
     public function testAConnectionInheritsTheTopLevelStoreOrOverridesItWithNull(): void
     {
         $this->app->get('config')->set('cin7.rate_limit.store', 'redis');
@@ -177,6 +200,23 @@ class Cin7ManagerTest extends TestCase
                 'rate_limit' => $rateLimit,
             ], fn (mixed $value): bool => $value !== null),
         ]);
+    }
+
+    private function cooldown(?string $name): ?int
+    {
+        $connector = $this->manager()->connection($name);
+
+        // One attempt only, or the 503 would retry past the single mocked response.
+        $this->app->get('config')->set('cin7.retry.times', 1);
+        Saloon::fake([Cin7Fake::throttled()]);
+
+        try {
+            $response = $connector->send(new GetCustomer);
+        } catch (RequestException $exception) {
+            $response = $exception->response();
+        }
+
+        return $connector->resolveRateLimitCooldownFor($response);
     }
 
     private function policy(Cin7Connector $connector): object

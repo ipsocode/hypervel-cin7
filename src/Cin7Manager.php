@@ -71,6 +71,7 @@ final class Cin7Manager
             (int) ($rateLimit['max'] ?? config('cin7.rate_limit.max', 60)),
             (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', 60)),
             $store === null ? null : (string) $store,
+            (int) ($rateLimit['cooldown'] ?? config('cin7.rate_limit.cooldown') ?? Cin7Connector::THROTTLE_COOLDOWN),
         );
     }
 }

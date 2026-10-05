@@ -55,7 +55,9 @@ assert on its `headers()`, `queryParameters()` and `body()`.
 - **Faking a 429 or 503.** `Cin7Fake::limitReached()` is the 429 and
   `Cin7Fake::throttled()` the 503, which comes with no `Retry-After`;
   `limitReached(30)` adds one. The request retries it, 4 attempts 5 seconds apart
-  by default (see [retry policy](requests.md#retry-policy)). Call
+  by default (see [retry policy](requests.md#retry-policy)); a backoff or jitter
+  changes those gaps, and `Ipsocode\Cin7\Support\Jitter` can be bound with
+  `$this->instance()` to pin the jitter. Call
   `Hypervel\Support\Sleep::fake()` so the waits take no time, and fake one
   response per attempt; or set `cin7.retry.times` to `1` before constructing
   the request, since the retry policy is read in the constructor.
@@ -200,7 +202,7 @@ the `HasRateLimits` accessors directly, with a `PendingRequest` from
 | `resolveRateLimitStoreName()` | `null` by default, the configured store otherwise |
 | `shouldWaitForRateLimits()` | wait for capacity instead of throwing |
 | `resolveRateLimitCooldownKeyFor()` | the cooldown is keyed like the window |
-| `resolveRateLimitCooldownFor()` | a 429's `Retry-After`, or 5 seconds without one; 5 seconds for a 503; `null` for anything else, 200 included |
+| `resolveRateLimitCooldownFor()` | a 429's `Retry-After`, or the configured cooldown (5 seconds by default) without one; the configured cooldown for a 503; `null` for anything else, 200 included, and for a cooldown of `0` |
 
 It also consumes the policy to exhaustion on the suite's default limiter store
 (Testbench's `worker-array`) to show the framework limiter really denies on it.

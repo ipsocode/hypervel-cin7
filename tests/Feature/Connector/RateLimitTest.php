@@ -11,6 +11,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Cin7Manager;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
@@ -178,6 +179,30 @@ class RateLimitTest extends TestCase
         $this->assertSame(5, Cin7Connector::THROTTLE_COOLDOWN);
     }
 
+    public function testAConfiguredCooldownReplacesTheDefaultForA503AndAnUnadvised429(): void
+    {
+        $connector = new Cin7Connector('acct', 'key', 60, 60, null, 12);
+
+        $this->assertSame(12, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::throttled())));
+        $this->assertSame(12, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached())));
+    }
+
+    public function testA429RetryAfterStillWinsOverAConfiguredCooldown(): void
+    {
+        $connector = new Cin7Connector('acct', 'key', 60, 60, null, 12);
+
+        $this->assertSame(30, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached(30))));
+    }
+
+    public function testAZeroCooldownRecordsNoneForA503OrAnUnadvised429(): void
+    {
+        $connector = new Cin7Connector('acct', 'key', 60, 60, null, 0);
+
+        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::throttled())));
+        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached())));
+        $this->assertSame(30, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached(30))));
+    }
+
     public function testOtherStatusesImposeNoCooldown(): void
     {
         $connector = new Cin7Connector('acct', 'key');
@@ -196,6 +221,23 @@ class RateLimitTest extends TestCase
         $this->assertCount(1, $policies);
         $this->assertSame(60, $policies[0]->maxAttempts);
         $this->assertSame(60, $policies[0]->decaySeconds);
+    }
+
+    public function testTheCooldownConfigIsCastAndFallsBackWhenAbsent(): void
+    {
+        $response = $this->responseTo(Cin7Fake::throttled());
+
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', '9');
+        $this->app->forgetInstance(Cin7Manager::class);
+        $this->assertSame(9, $this->connector()->resolveRateLimitCooldownFor($response));
+
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', null);
+        $this->app->forgetInstance(Cin7Manager::class);
+        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $this->connector()->resolveRateLimitCooldownFor($response));
+
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', 0);
+        $this->app->forgetInstance(Cin7Manager::class);
+        $this->assertNull($this->connector()->resolveRateLimitCooldownFor($response));
     }
 
     public function testTheContainerConnectorPicksUpAConfiguredStore(): void

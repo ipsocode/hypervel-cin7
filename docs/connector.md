@@ -41,8 +41,9 @@ by. It is a credential: log or print neither it nor the application key.
 | `rateLimitMax` | `60` | `cin7.rate_limit.max` |
 | `rateLimitPeriod` | `60` | `cin7.rate_limit.period` |
 | `rateLimitStore` | `null` | `cin7.rate_limit.store` |
+| `rateLimitCooldown` | `5` | `cin7.rate_limit.cooldown` |
 
-The keys are the `default` connection's; a named connection reads the same four
+The keys are the `default` connection's; a named connection reads the same six
 from its own entry.
 
 ## Named connections
@@ -192,9 +193,15 @@ a cooldown:
 | Response | Cooldown |
 |---|---|
 | 429 with `Retry-After` | the seconds `Retry-After` names (seconds or an HTTP date) |
-| 429 without `Retry-After` | `Cin7Connector::THROTTLE_COOLDOWN`, 5 seconds |
-| 503 | 5 seconds; Cin7 sends no `Retry-After` with it |
+| 429 without `Retry-After` | `rate_limit.cooldown`, 5 seconds by default |
+| 503 | `rate_limit.cooldown`; Cin7 sends no `Retry-After` with it |
 | anything else | none |
+
+`rate_limit.cooldown` (`CIN7_RATE_COOLDOWN`) reaches the connector as its sixth
+constructor argument, `$rateLimitCooldown`, which defaults to
+`Cin7Connector::THROTTLE_COOLDOWN` (5). A 429's own `Retry-After` always wins.
+At `0` or less, a 503 and a 429 without `Retry-After` record no cooldown at all,
+and `resolveRateLimitCooldown()` returns `null` for them.
 
 The cooldown is recorded in the same limiter store under the same logical key as
 the window (the store keeps the two apart), and every send for that application

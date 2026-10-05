@@ -67,7 +67,7 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * The cooldown, in seconds, after a throttling response that names no `Retry-After`.
+     * The default cooldown, in seconds, after a throttling response that names no `Retry-After`.
      */
     public const int THROTTLE_COOLDOWN = 5;
 
@@ -93,6 +93,7 @@ final class Cin7Connector extends Connector implements HasPagination
         private readonly int $rateLimitMax = 60,
         private readonly int $rateLimitPeriod = 60,
         private readonly ?string $rateLimitStore = null,
+        private readonly int $rateLimitCooldown = self::THROTTLE_COOLDOWN,
     ) {
         $this->headers = [
             'Content-Type' => 'application/json',
@@ -340,15 +341,24 @@ final class Cin7Connector extends Connector implements HasPagination
     /**
      * Cin7 throttles with a 429 (its documented limit response) or a 503. A 429 cools down for its
      * `Retry-After`, parsed by the `HasRateLimits` method aliased as `retryAfterCooldown()`; a 429
-     * without one, and every 503, for `THROTTLE_COOLDOWN` seconds.
+     * without one, and every 503, for the configured cooldown, `THROTTLE_COOLDOWN` seconds by
+     * default; a cooldown of 0 or less records none for those.
      */
     protected function resolveRateLimitCooldown(Response $response): ?int
     {
         return match ($response->status()) {
-            429 => $this->retryAfterCooldown($response) ?? self::THROTTLE_COOLDOWN,
-            503 => self::THROTTLE_COOLDOWN,
+            429 => $this->retryAfterCooldown($response) ?? $this->throttleCooldown(),
+            503 => $this->throttleCooldown(),
             default => null,
         };
+    }
+
+    /**
+     * The cooldown for a throttling response with no `Retry-After`, or null for none.
+     */
+    private function throttleCooldown(): ?int
+    {
+        return $this->rateLimitCooldown > 0 ? $this->rateLimitCooldown : null;
     }
 
     /**
