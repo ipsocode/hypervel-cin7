@@ -9,14 +9,15 @@ This page covers how it is shared, how it reaches Cin7, and how its rate
 limiting behaves; the requests it sends are in [requests](requests.md) and its
 configuration keys in [configuration](configuration.md).
 
-## One connector per worker
+## One connector per connection per worker
 
-`Cin7ServiceProvider` binds the connector as a container singleton. It holds
-only readonly values, all set in its constructor: the account ID, the
-application key and the three rate limit settings, and the headers, rate limit
-key and rate limit policy it builds from them once rather than on every send.
-Nothing is mutated per send, so one instance serves every coroutine in a worker
-for the worker's lifetime. Inject it rather than building one per call:
+`Cin7ServiceProvider` resolves the default connector through `Cin7Manager`, which
+builds each connection once (see [named connections](#named-connections)). A
+connector holds only readonly values, all set in its constructor: the account ID,
+the application key and the three rate limit settings, and the headers, rate
+limit key and rate limit policy it builds from them once rather than on every
+send. Nothing is mutated per send, so one instance serves every coroutine in a
+worker for the worker's lifetime. Inject it rather than building one per call:
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
@@ -25,15 +26,10 @@ public function __construct(private readonly Cin7Connector $cin7) {}
 ```
 
 The credentials are constructor-injected. The provider reads them from
-`config('cin7.*')` when the singleton is first resolved and passes them in;
+`config('cin7.*')` when a connection is first resolved and passes them in;
 nothing calls `env()` or `getenv()` at request time. A second Cin7 account,
-such as a sandbox next to production, is a second instance built with its own
-credentials, and it throttles on its own key, as does a second API application
-of the same account:
-
-```php
-$sandbox = new Cin7Connector($sandboxAccountId, $sandboxApplicationKey);
-```
+such as a sandbox next to production, is a named connection (below), and it
+throttles on its own key, as does a second API application of the same account.
 
 `accountId()` returns the account the connector calls, which the [sync](sync.md) keys its rows
 by. It is a credential: log or print neither it nor the application key.
@@ -45,6 +41,53 @@ by. It is a credential: log or print neither it nor the application key.
 | `rateLimitMax` | `60` | `cin7.rate_limit.max` |
 | `rateLimitPeriod` | `60` | `cin7.rate_limit.period` |
 | `rateLimitStore` | `null` | `cin7.rate_limit.store` |
+| `rateLimitCooldown` | `5` | `cin7.rate_limit.cooldown` |
+
+The keys are the `default` connection's; a named connection reads the same six
+from its own entry.
+
+## Named connections
+
+`Cin7Manager`, a container singleton, resolves a connector by connection name.
+Each is built the first time it is asked for, with the casts the
+[configuration](configuration.md#casts-and-fallbacks) lists, and kept in a map
+for the worker's life. The connectors are immutable, so sharing the map across
+coroutines is safe.
+
+```php
+// config/cin7.php
+'connections' => [
+    'sandbox' => [
+        'account_id' => env('CIN7_SANDBOX_ACCOUNT_ID'),
+        'application_key' => env('CIN7_SANDBOX_APPLICATION_KEY'),
+        'rate_limit' => ['max' => 30],
+    ],
+],
+```
+
+```php
+use Ipsocode\Cin7\Cin7Manager;
+
+public function __construct(private readonly Cin7Manager $cin7) {}
+
+$production = $this->cin7->connection();          // the default connection
+$sandbox = $this->cin7->connection('sandbox');
+```
+
+- **The default.** The top-level `account_id`, `application_key` and
+  `rate_limit` are the implicit `default` connection, so a published config and
+  the current env vars keep working unchanged. `cin7.default`
+  (`CIN7_CONNECTION`) names the connection that `connection()` without a name
+  and an injected `Cin7Connector` resolve.
+- **Rate limit.** A connection with no `rate_limit`, or with some of its keys,
+  takes the top-level values for the rest.
+- **Unknown names.** A name that is neither in `connections` nor `default`
+  throws an `InvalidArgumentException` naming it.
+- **Isolation.** The window and the cooldown share one key,
+  `cin7:api:<accountId>:<digest>`, so two connections with different accounts
+  or application keys never throttle or cool down each other, even on a shared
+  store. Two connections with the same account and key share one window, as
+  they should: Cin7 meters the API application.
 
 ## Resources
 

@@ -18,9 +18,24 @@ declare(strict_types=1);
 */
 
 return [
-    // Sent as the api-auth-accountid and api-auth-applicationkey headers.
+    // Sent as the api-auth-accountid and api-auth-applicationkey headers. These two keys are
+    // the implicit `default` connection, so a single account needs nothing else.
     'account_id' => env('CIN7_ACCOUNT_ID'),
     'application_key' => env('CIN7_APPLICATION_KEY'),
+
+    // The connection `Cin7Connector` injection and `Cin7Manager::connection()` resolve.
+    'default' => env('CIN7_CONNECTION', 'default'),
+
+    // More accounts, or more API applications, by name: `account_id`, `application_key` and
+    // an optional `rate_limit` block, whose missing keys are the top-level ones below. Each
+    // connection throttles and cools down on its own.
+    'connections' => [
+        // 'sandbox' => [
+        //     'account_id' => env('CIN7_SANDBOX_ACCOUNT_ID'),
+        //     'application_key' => env('CIN7_SANDBOX_APPLICATION_KEY'),
+        //     'rate_limit' => ['max' => 30],
+        // ],
+    ],
 
     // Local throttle for Cin7's limit of 60 calls per minute per API application.
     // Set `max` or `period` to 0 to remove the window; the throttling cooldown still applies.

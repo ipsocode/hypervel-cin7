@@ -12,6 +12,8 @@ those values through `config()`, never by reading the environment directly.
 |---|---|---|---|
 | `account_id` | `CIN7_ACCOUNT_ID` | none | Sent as the `api-auth-accountid` header |
 | `application_key` | `CIN7_APPLICATION_KEY` | none | Sent as the `api-auth-applicationkey` header |
+| `default` | `CIN7_CONNECTION` | `default` | The [connection](connector.md#named-connections) that `Cin7Connector` injection and `Cin7Manager::connection()` resolve |
+| `connections` | none | `[]` | More accounts or API applications by name, each with `account_id`, `application_key` and an optional `rate_limit` block |
 | `rate_limit.max` | `CIN7_RATE_MAX` | `60` | Calls allowed per window, per API application; `0` disables the window (the throttling cooldown still applies) |
 | `rate_limit.period` | `CIN7_RATE_PERIOD` | `60` | Window length in seconds; `0` also disables the window |
 | `rate_limit.store` | `CIN7_RATE_STORE` | none | Rate limiter store; unset falls back to `saloon.rate_limiter.store`, then `rate-limiter.default` (see [connector](connector.md)) |
@@ -41,6 +43,11 @@ CIN7_ACCOUNT_ID=
 CIN7_APPLICATION_KEY=
 ```
 
+The top-level `account_id`, `application_key` and `rate_limit` are the implicit
+`default` connection, so a single account needs nothing more. A second account,
+such as a sandbox, is an entry in `connections`; see
+[named connections](connector.md#named-connections).
+
 The `rate_limit` defaults match Cin7's limit of roughly 60 calls per minute per
 account. How the limit is enforced, and which stores share it across workers
 and servers, is in [connector](connector.md). How the retry
@@ -69,7 +76,8 @@ which is evaluated when the configuration loads. Everything else goes through
 
 | Values | Read when | Effect of a later config change |
 |---|---|---|
-| `account_id`, `application_key`, `rate_limit.*` | The first time the container resolves `Cin7Connector` | None for that worker: the connector is a singleton built once per worker |
+| `account_id`, `application_key`, `rate_limit.*`, `connections.*` | The first time a connection is resolved, by `Cin7Connector` injection or `Cin7Manager::connection()` | None for that worker: each connector is built once per worker |
+| `default` | Each time `Cin7Connector` is resolved or `connection()` is called without a name | Picks which connection that resolves; the connectors already built stay |
 | `retry.*` | Each time a request is constructed (`new GetCustomer(...)` and the rest) | Applies to requests constructed after the change |
 | `sync.enabled` | When the provider boots | None for that worker: the migration and the schedule are registered at boot |
 | the other `sync.*` | Each time a pull, the schedule or the job reads them | Applies from the next read |
@@ -83,8 +91,8 @@ You may add your own keys to the published file. `mergeConfigFrom()` keeps the
 published copy authoritative on the keys it shares with the packaged one and
 leaves your extra keys alone.
 
-The merge covers top-level keys only. A `rate_limit` or `retry` array in the
-published file wins over the packaged array as a whole, so a key you leave out
+The merge covers top-level keys only. A `rate_limit`, `retry` or `connections`
+array in the published file wins over the packaged array as a whole, so a key you leave out
 of it is absent rather than taken from the packaged file. Absent keys fall back
 as listed under [Casts and fallbacks](#casts-and-fallbacks).
 
@@ -105,6 +113,11 @@ than trusting its type, so a missing or loosely typed value does not throw a
 | `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. A key present but `null` becomes `0`, which disables the window |
 | `rate_limit.store` | `null` stays `null`; anything else `(string)` | `null` lets the store fallback chain apply |
 | `rate_limit.cooldown` | `(int)`, falling back to `5` when the key is absent or `null` | A string such as `'9'` becomes `9`. `0` or less records no cooldown after a 503 or a 429 without `Retry-After` |
+| `connections.<name>.rate_limit.*` | the same casts | A key the connection leaves out is the top-level one, `store` included. A key present but `null` is not left out: `max` and `period` become `0`, and `store` stays `null`; a `null` `cooldown` is left out |
+
+`Cin7Manager` applies these when it builds a connection. A name with no
+`connections` entry, and not `default`, throws an `InvalidArgumentException`
+naming it, as does an entry that is not an array.
 
 [`Cin7Request`](../src/Requests/Cin7Request.php) applies the retry values with
 its own fallbacks: a `null` or absent `retry.times` or `retry.delay_ms` falls
