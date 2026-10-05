@@ -15,6 +15,7 @@ use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Traits\Plugins\AlwaysThrowOnErrors;
+use Ipsocode\Cin7\Support\Jitter;
 
 /**
  * Base for every Cin7 request: sets the throttling retry policy.
@@ -32,9 +33,24 @@ abstract class Cin7Request extends Request
     {
         // Set here, not in a boot hook: PendingRequest snapshots the retry policy in its
         // constructor.
+        $delay = max(0, (int) (config('cin7.retry.delay_ms') ?? 5000));
+        $backoff = max(1.0, (float) (config('cin7.retry.backoff') ?? 1));
+        $maxDelay = max(0, (int) (config('cin7.retry.max_delay_ms') ?? 0));
+        $jitter = max(0, (int) (config('cin7.retry.jitter_ms') ?? 0));
+
         $this->retry(
             times: max(1, (int) (config('cin7.retry.times') ?? 4)),
-            sleepMilliseconds: max(0, (int) (config('cin7.retry.delay_ms') ?? 5000)),
+            // The wait after failed attempt n: delay * backoff^(n-1), capped at max_delay_ms
+            // unless that is 0, plus a random 0..jitter_ms. The defaults are a constant delay.
+            sleepMilliseconds: static function (int $attempt) use ($delay, $backoff, $maxDelay, $jitter): int {
+                $wait = $delay * $backoff ** ($attempt - 1);
+
+                if ($maxDelay > 0) {
+                    $wait = min($wait, $maxDelay);
+                }
+
+                return (int) min($wait, PHP_INT_MAX) + ($jitter > 0 ? app(Jitter::class)->upTo($jitter) : 0);
+            },
             // Cin7 throttles with a 429 or a 503. FatalRequestException (DNS failure, refused
             // connection, timeout) is not retried.
             when: fn (FatalRequestException|RequestException $exception): bool => $exception instanceof RequestException

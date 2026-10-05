@@ -15,8 +15,12 @@ those values through `config()`, never by reading the environment directly.
 | `rate_limit.max` | `CIN7_RATE_MAX` | `60` | Calls allowed per window, per API application; `0` disables the window (the throttling cooldown still applies) |
 | `rate_limit.period` | `CIN7_RATE_PERIOD` | `60` | Window length in seconds; `0` also disables the window |
 | `rate_limit.store` | `CIN7_RATE_STORE` | none | Rate limiter store; unset falls back to `saloon.rate_limiter.store`, then `rate-limiter.default` (see [connector](connector.md)) |
+| `rate_limit.cooldown` | `CIN7_RATE_COOLDOWN` | `5` | Seconds of cooldown after a 503, or a 429 without `Retry-After`; a 429's own `Retry-After` still wins; `0` records none (see [connector](connector.md#the-throttling-cooldown)) |
 | `retry.times` | `CIN7_RETRY_TIMES` | `4` | Total attempts on a 429 or 503, not extra ones |
-| `retry.delay_ms` | `CIN7_RETRY_DELAY_MS` | `5000` | Milliseconds between attempts |
+| `retry.delay_ms` | `CIN7_RETRY_DELAY_MS` | `5000` | Milliseconds waited after the first failed attempt |
+| `retry.backoff` | `CIN7_RETRY_BACKOFF` | `1` | Multiplier applied to the wait after each further failure; `1` keeps it constant |
+| `retry.max_delay_ms` | `CIN7_RETRY_MAX_DELAY_MS` | `0` | Cap on the backed-off wait, before jitter; `0` for none |
+| `retry.jitter_ms` | `CIN7_RETRY_JITTER_MS` | `0` | A random `0..n` ms added to each wait; `0` for none |
 | `sync.enabled` | `CIN7_SYNC` | `false` | The [sync](sync.md): off, it creates no table, schedules nothing and runs no query |
 | `sync.cron` | `CIN7_SYNC_CRON` | `0 * * * *` | When the modules that read only what changed are pulled; `null` schedules none |
 | `sync.modules` | none | `'*'` | The modules synced, in order; `'*'`, alone or in a list, is every module in [dependency order](sync.md#modules) |
@@ -100,11 +104,14 @@ than trusting its type, so a missing or loosely typed value does not throw a
 | `account_id`, `application_key` | `(string)` | Unset (`null`) becomes `''`. The connector resolves, and Cin7 rejects the call instead |
 | `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. A key present but `null` becomes `0`, which disables the window |
 | `rate_limit.store` | `null` stays `null`; anything else `(string)` | `null` lets the store fallback chain apply |
+| `rate_limit.cooldown` | `(int)`, falling back to `5` when the key is absent or `null` | A string such as `'9'` becomes `9`. `0` or less records no cooldown after a 503 or a 429 without `Retry-After` |
 
 [`Cin7Request`](../src/Requests/Cin7Request.php) applies the retry values with
 its own fallbacks: a `null` or absent `retry.times` or `retry.delay_ms` falls
 back to `4` and `5000`, and the results are clamped to at least one attempt and
-at least `0` ms. See [requests](requests.md#retry-policy).
+at least `0` ms. A `null` or absent `retry.backoff`, `retry.max_delay_ms` or
+`retry.jitter_ms` falls back to `1`, `0` and `0`; the backoff is clamped to at
+least `1`, the other two to at least `0`. See [requests](requests.md#retry-policy).
 
 [`SyncConfig`](../src/Sync/SyncConfig.php) reads `sync.*` the same way: an absent or `null`
 number falls back to its default, and each is clamped (`limit` to 1–1000, `timeout` to at

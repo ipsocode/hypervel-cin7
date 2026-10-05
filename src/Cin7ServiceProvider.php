@@ -36,6 +36,7 @@ class Cin7ServiceProvider extends ServiceProvider
                 (int) config('cin7.rate_limit.max', 60),
                 (int) config('cin7.rate_limit.period', 60),
                 $store === null ? null : (string) $store,
+                (int) (config('cin7.rate_limit.cooldown') ?? Cin7Connector::THROTTLE_COOLDOWN),
             );
         });
     }

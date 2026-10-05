@@ -31,12 +31,24 @@ return [
         // Unset falls back to `saloon.rate_limiter.store`, then `rate-limiter.default`.
         // Pick a store every worker and server shares, or the effective limit multiplies.
         'store' => env('CIN7_RATE_STORE'),
+
+        // Seconds every worker waits after a 503, or a 429 without `Retry-After`; a 429's own
+        // `Retry-After` still wins. 0 records no cooldown for those.
+        'cooldown' => (int) env('CIN7_RATE_COOLDOWN', 5),
     ],
 
     // Bounded retries on HTTP 429 and 503; `times` is the total number of attempts.
     'retry' => [
         'times' => (int) env('CIN7_RETRY_TIMES', 4),
         'delay_ms' => (int) env('CIN7_RETRY_DELAY_MS', 5000),
+
+        // The wait after failed attempt n is min(delay_ms * backoff^(n-1), max_delay_ms) + jitter.
+        // The defaults keep `delay_ms` constant: a backoff of 1, no cap (0), no jitter (0).
+        'backoff' => (float) env('CIN7_RETRY_BACKOFF', 1),
+        'max_delay_ms' => (int) env('CIN7_RETRY_MAX_DELAY_MS', 0),
+
+        // A random 0..n ms added to each wait, so throttled coroutines do not retry in lockstep.
+        'jitter_ms' => (int) env('CIN7_RETRY_JITTER_MS', 0),
     ],
 
     // A scheduled copy of Cin7's records in one local table, off by default. Off, the package

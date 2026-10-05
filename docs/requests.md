@@ -682,16 +682,29 @@ calls a minute, or a 503. Those are the only responses retried:
   on every call, so retrying it would only turn a configuration mistake into a
   delay of about 15 s (three 5 s waits) per call.
 - **Bounded.** `cin7.retry.times` is the total number of attempts, not the
-  number of extra ones, and `cin7.retry.delay_ms` is the wait between them. The
-  defaults, `4` and `5000`, mean at most four attempts with three 5 s waits.
+  number of extra ones, and `cin7.retry.delay_ms` is the wait after the first
+  failed attempt. The defaults, `4` and `5000`, mean at most four attempts with
+  three 5 s waits.
   When the attempts run out, the last 429 throws as a `ClientException` and the
   last 503 as a `ServerException`.
+- **Backoff and jitter.** The wait after failed attempt *n* (counting from 1) is
+  `min(delay_ms * backoff^(n-1), max_delay_ms) + jitter`. `retry.backoff` is the
+  multiplier (default `1`, a constant delay), `retry.max_delay_ms` the cap
+  (default `0`, none) and `retry.jitter_ms` a random `0..n` ms added to each wait
+  (default `0`, none). With `delay_ms` `5000` and a backoff of `2`, the waits are
+  5 s, 10 s and 20 s. Jitter spreads out the coroutines a burst throttled
+  together, which would otherwise all retry at the same moment. It comes from
+  `Ipsocode\Cin7\Support\Jitter`, resolved from the container, so a test binds
+  a pinned one. The cooldown below is a separate floor under the wait.
 - **Clamped.** `times` is raised to at least `1` and `delay_ms` to at least `0`.
+  `backoff` is raised to at least `1`, and `max_delay_ms` and `jitter_ms` to at
+  least `0`.
   Saloon's `RetryPolicy` throws an `InvalidArgumentException` for zero attempts
   or a negative delay, so without the clamp a bad environment value would fail
   every request at construction. At `0` ms the attempts run back to back.
 - **Fallbacks.** A `null` or absent `retry.times` or `retry.delay_ms` falls back
-  to `4` or `5000`, not to `0`.
+  to `4` or `5000`, not to `0`; `retry.backoff`, `retry.max_delay_ms` and
+  `retry.jitter_ms` fall back to `1`, `0` and `0`.
 - **Read at construction.** `Cin7Request`'s constructor reads the config and
   sets the policy on the request, because Saloon's `PendingRequest` copies the
   request's retry policy when it is built, before any boot hook runs. A config
@@ -705,7 +718,7 @@ calls a minute, or a 503. Those are the only responses retried:
 
 The wait goes through `Hypervel\Support\Sleep`, which suspends only the
 calling coroutine. A 429 or 503 off the wire also puts the API application into
-the connector's cooldown, for a 429's `Retry-After` or 5 seconds, and the next
+the connector's cooldown, for a 429's `Retry-After` or `rate_limit.cooldown` (5 seconds by default), and the next
 attempt waits it out; see [connector](connector.md#the-throttling-cooldown).
 
 ## Writing a request class
