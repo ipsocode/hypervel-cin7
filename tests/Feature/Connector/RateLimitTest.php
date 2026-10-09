@@ -13,6 +13,9 @@ use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\Response;
+use Hypervel\Support\Carbon;
+use Hypervel\Support\Facades\Http;
+use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Cin7Manager;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
@@ -274,6 +277,52 @@ class RateLimitTest extends TestCase
         $this->app->get('config')->set('cin7.rate_limit.cooldown', 0);
         $this->app->forgetInstance(Cin7Manager::class);
         $this->assertNull($this->connector()->resolveRateLimitCooldownFor($response));
+    }
+
+    /**
+     * The manager enforces limits only for a send no fake matched, so these fake the HTTP client
+     * instead of Saloon, and sleeps move the frozen clock the limiter reads.
+     */
+    public function testTheManagerWaitsOutAFullWindowInsteadOfThrowing(): void
+    {
+        Carbon::setTestNow('2026-10-09 12:00:00');
+        Sleep::fake(syncWithCarbon: true);
+        Http::fake(['*' => Http::response(['Total' => 0, 'Page' => 1, 'CustomerList' => []])]);
+
+        $connector = new Cin7Connector('acct-wait', 'key', 1, 60);
+
+        $connector->send(new GetCustomer);
+        $connector->send(new GetCustomer);
+
+        Http::assertSentCount(2);
+        Sleep::assertSleptTimes(1);
+        $this->assertSame(60.0, Carbon::now()->diffInSeconds('2026-10-09 12:00:00', true));
+    }
+
+    public function testTheManagerWaitsOutTheCooldownAWire429Records(): void
+    {
+        Carbon::setTestNow('2026-10-09 12:00:00');
+        Sleep::fake(syncWithCarbon: true);
+        Http::fake(['*' => Http::sequence()
+            ->push(['ErrorCode' => 429, 'Exception' => 'You reached 60 calls per minute API limit'], 429)
+            ->push(['Total' => 0, 'Page' => 1, 'CustomerList' => []])]);
+
+        // One attempt only, so the 429 throws instead of retrying into the second response.
+        $this->app->get('config')->set('cin7.retry.times', 1);
+        $connector = new Cin7Connector('acct-cooldown', 'key', 0, 0, null, 7);
+
+        try {
+            $connector->send(new GetCustomer);
+            $this->fail('The 429 should have thrown.');
+        } catch (RequestException $exception) {
+            $this->assertSame(429, $exception->response()->status());
+        }
+
+        $connector->send(new GetCustomer);
+
+        Http::assertSentCount(2);
+        Sleep::assertSleptTimes(1);
+        $this->assertSame(7.0, Carbon::now()->diffInSeconds('2026-10-09 12:00:00', true));
     }
 
     public function testTheContainerConnectorPicksUpAConfiguredStore(): void

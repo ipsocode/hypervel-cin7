@@ -214,6 +214,9 @@ class Cin7ManagerTest extends TestCase
             $response = $connector->send(new GetCustomer);
         } catch (RequestException $exception) {
             $response = $exception->response();
+        } finally {
+            // fake() adds to the existing client, so leave none for the next call.
+            Saloon::clearFake();
         }
 
         return $connector->resolveRateLimitCooldownFor($response);

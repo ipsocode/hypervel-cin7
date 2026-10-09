@@ -216,8 +216,9 @@ even when it is longer than the retry delay.
 
 Saloon calls `resolveRateLimitCooldown()` for every response that came off the
 wire, 200s included, and never for a mocked or cached one. That is why it must
-return `null` for anything but a 429 or 503, and why the suite tests it by
-calling it directly.
+return `null` for anything but a 429 or 503. The suite tests it by calling it
+directly, and drives one wire 429 through the manager with `Http::fake()` (see
+[rate-limit tests](testing.md#rate-limit-tests)).
 
 ## Error Model responses
 

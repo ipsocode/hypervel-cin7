@@ -29,6 +29,10 @@ $mock->assertSentCount(1);
 `$mock->lastPendingRequest()` is the last request as it went out, so a test can
 assert on its `headers()`, `queryParameters()` and `body()`.
 
+A second `Saloon::fake()` in the same test adds its responses to the same mock
+client, which still holds the requests already sent. Call `Saloon::clearFake()`
+first when a later phase must assert on its own requests alone.
+
 - **Shape the fakes like Cin7.** A list comes back in the
   `{Total, Page, <Thing>List}` envelope described in
   [pagination](pagination.md#the-list-envelope), and a failure as the Error
@@ -206,8 +210,14 @@ the `HasRateLimits` accessors directly, with a `PendingRequest` from
 
 It also consumes the policy to exhaustion on the suite's default limiter store
 (Testbench's `worker-array`) to show the framework limiter really denies on it.
-The wait loop itself is not driven: it spins until the window frees up, and a
-faked `Sleep` never advances the store's clock.
+Two tests then drive the wait through the real manager. They fake the HTTP
+client with `Http::fake()` instead of Saloon, so no Saloon fake matches and the
+manager enforces the limit and records the cooldown. They freeze the clock and
+call `Sleep::fake(syncWithCarbon: true)`, so each wait moves the clock the
+limiter reads and the loop ends:
+
+- a window of one call a minute: the second send waits 60 seconds, then sends;
+- a wire 429 without `Retry-After`: the next send waits the configured cooldown.
 
 ### Retry tests
 
