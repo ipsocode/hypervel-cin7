@@ -193,7 +193,7 @@ a cooldown:
 | Response | Cooldown |
 |---|---|
 | 429 with `Retry-After` | the seconds `Retry-After` names (seconds or an HTTP date) |
-| 429 without `Retry-After` | `rate_limit.cooldown`, 5 seconds by default |
+| 429 without a usable `Retry-After` (missing, empty, malformed or oversized) | `rate_limit.cooldown`, 5 seconds by default |
 | 503 | `rate_limit.cooldown`; Cin7 sends no `Retry-After` with it |
 | anything else | none |
 
@@ -216,8 +216,9 @@ even when it is longer than the retry delay.
 
 Saloon calls `resolveRateLimitCooldown()` for every response that came off the
 wire, 200s included, and never for a mocked or cached one. That is why it must
-return `null` for anything but a 429 or 503, and why the suite tests it by
-calling it directly.
+return `null` for anything but a 429 or 503. The suite tests it by calling it
+directly, and drives one wire 429 through the manager with `Http::fake()` (see
+[rate-limit tests](testing.md#rate-limit-tests)).
 
 ## Error Model responses
 
@@ -235,14 +236,10 @@ The connector is `final`, so this concerns changes to the package itself.
 
 This is a method of the `HasRateLimits` trait, not of `Connector`. The
 connector's own method shadows the trait's, so
-`parent::resolveRateLimitCooldown()` is a fatal error. The connector reuses the
-trait's `Retry-After` parser for a 429 through an alias:
-
-```php
-use HasRateLimits {
-    resolveRateLimitCooldown as retryAfterCooldown;
-}
-```
+`parent::resolveRateLimitCooldown()` is a fatal error. The trait's `Retry-After` parser is private, and since `hypervel/components#651` it answers 60
+seconds for a value it cannot read, so the connector parses the header itself
+(`retryAfter()`) and falls back to `rate_limit.cooldown` for a missing, malformed or
+oversized value.
 
 ### `resolveRateLimitCooldownKey()`
 

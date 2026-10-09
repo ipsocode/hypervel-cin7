@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Connector;
 
+use Hypervel\RateLimiter\Cooldown;
+use Hypervel\RateLimiter\CooldownResult;
 use Hypervel\RateLimiter\Limit;
+use Hypervel\RateLimiter\LimitResult;
 use Hypervel\RateLimiter\RateLimiter;
 use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\Response;
+use Hypervel\Support\Carbon;
+use Hypervel\Support\Facades\Http;
+use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Cin7Manager;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
@@ -28,8 +34,14 @@ class RateLimitTest extends TestCase
     {
         $connector = new Cin7Connector('acct', 'key');
 
-        $this->assertTrue($connector->usesRateLimits());
-        $this->assertTrue($connector->shouldWaitForRateLimits());
+        $this->assertTrue($connector->usesRateLimits($this->pendingRequestFor($connector)));
+
+        // The connector waits whatever the policy and the decision, so any pair gets true.
+        $policy = $connector->resolveRateLimitPolicies($this->pendingRequestFor($connector))[0];
+        $decision = new LimitResult(false, 60, 0, 1_000_000, 1_000_000);
+
+        $this->assertTrue($connector->shouldWaitForRateLimits($policy, $decision));
+        $this->assertTrue($connector->shouldWaitForRateLimits(Cooldown::for('k'), new CooldownResult(false, 1_000_000)));
     }
 
     public function testItPublishesOneSharedPolicyKeyedByTheApplication(): void
@@ -179,6 +191,33 @@ class RateLimitTest extends TestCase
         $this->assertSame(5, Cin7Connector::THROTTLE_COOLDOWN);
     }
 
+    public function testAMalformedOrOversizedRetryAfterFallsBackToTheConfiguredCooldown(): void
+    {
+        $connector = new Cin7Connector('acct', 'key', 60, 60, null, 12);
+
+        foreach (['soon', '-5', '1.5', '30s', 'Tue, 31 Feb 2026 10:00:00 GMT', '99999999999999999999', '99999999999', 'Fri, 31 Dec 9999 23:59:59 GMT'] as $value) {
+            $response = $this->responseTo(MockResponse::make(['ErrorCode' => 429, 'Exception' => 'x'], 429, ['Retry-After' => $value]));
+
+            $this->assertSame(12, $connector->resolveRateLimitCooldownFor($response), $value);
+        }
+
+        $response = $this->responseTo(MockResponse::make(['ErrorCode' => 429, 'Exception' => 'x'], 429, ['Retry-After' => ' ']));
+        $this->assertSame(12, $connector->resolveRateLimitCooldownFor($response));
+    }
+
+    public function testAnHttpDateRetryAfterIsReadAndAPastOneRecordsNone(): void
+    {
+        $connector = new Cin7Connector('acct', 'key');
+        $future = gmdate('D, d M Y H:i:s \G\M\T', time() + 45);
+        $past = gmdate('D, d M Y H:i:s \G\M\T', time() - 45);
+
+        $seconds = $connector->resolveRateLimitCooldownFor($this->responseTo(MockResponse::make([], 429, ['Retry-After' => $future])));
+
+        $this->assertGreaterThanOrEqual(43, $seconds);
+        $this->assertLessThanOrEqual(45, $seconds);
+        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(MockResponse::make([], 429, ['Retry-After' => $past]))));
+    }
+
     public function testAConfiguredCooldownReplacesTheDefaultForA503AndAnUnadvised429(): void
     {
         $connector = new Cin7Connector('acct', 'key', 60, 60, null, 12);
@@ -238,6 +277,52 @@ class RateLimitTest extends TestCase
         $this->app->get('config')->set('cin7.rate_limit.cooldown', 0);
         $this->app->forgetInstance(Cin7Manager::class);
         $this->assertNull($this->connector()->resolveRateLimitCooldownFor($response));
+    }
+
+    /**
+     * The manager enforces limits only for a send no fake matched, so these fake the HTTP client
+     * instead of Saloon, and sleeps move the frozen clock the limiter reads.
+     */
+    public function testTheManagerWaitsOutAFullWindowInsteadOfThrowing(): void
+    {
+        Carbon::setTestNow('2026-10-09 12:00:00');
+        Sleep::fake(syncWithCarbon: true);
+        Http::fake(['*' => Http::response(['Total' => 0, 'Page' => 1, 'CustomerList' => []])]);
+
+        $connector = new Cin7Connector('acct-wait', 'key', 1, 60);
+
+        $connector->send(new GetCustomer);
+        $connector->send(new GetCustomer);
+
+        Http::assertSentCount(2);
+        Sleep::assertSleptTimes(1);
+        $this->assertSame(60.0, Carbon::now()->diffInSeconds('2026-10-09 12:00:00', true));
+    }
+
+    public function testTheManagerWaitsOutTheCooldownAWire429Records(): void
+    {
+        Carbon::setTestNow('2026-10-09 12:00:00');
+        Sleep::fake(syncWithCarbon: true);
+        Http::fake(['*' => Http::sequence()
+            ->push(['ErrorCode' => 429, 'Exception' => 'You reached 60 calls per minute API limit'], 429)
+            ->push(['Total' => 0, 'Page' => 1, 'CustomerList' => []])]);
+
+        // One attempt only, so the 429 throws instead of retrying into the second response.
+        $this->app->get('config')->set('cin7.retry.times', 1);
+        $connector = new Cin7Connector('acct-cooldown', 'key', 0, 0, null, 7);
+
+        try {
+            $connector->send(new GetCustomer);
+            $this->fail('The 429 should have thrown.');
+        } catch (RequestException $exception) {
+            $this->assertSame(429, $exception->response()->status());
+        }
+
+        $connector->send(new GetCustomer);
+
+        Http::assertSentCount(2);
+        Sleep::assertSleptTimes(1);
+        $this->assertSame(7.0, Carbon::now()->diffInSeconds('2026-10-09 12:00:00', true));
     }
 
     public function testTheContainerConnectorPicksUpAConfiguredStore(): void

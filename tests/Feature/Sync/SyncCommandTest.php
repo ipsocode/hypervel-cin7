@@ -110,6 +110,8 @@ class SyncCommandTest extends SyncTestCase
         Saloon::fake([Cin7Fake::list('CustomerList', [$this->customer('c-1'), $this->customer('c-2', '2026-10-02T08:00:00.5Z')])]);
         $this->artisan('cin7:sync customer')->assertExitCode(0);
 
+        // fake() keeps the existing client, so start the second phase from a clean recorder.
+        Saloon::clearFake();
         $mock = Saloon::fake([]);
 
         $this->artisan('cin7:sync customer supplier --status')
