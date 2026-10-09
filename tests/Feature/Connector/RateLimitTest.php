@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Connector;
 
+use Hypervel\RateLimiter\Cooldown;
+use Hypervel\RateLimiter\CooldownResult;
 use Hypervel\RateLimiter\Limit;
+use Hypervel\RateLimiter\LimitResult;
 use Hypervel\RateLimiter\RateLimiter;
 use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Saloon\Facades\Saloon;
@@ -28,8 +31,14 @@ class RateLimitTest extends TestCase
     {
         $connector = new Cin7Connector('acct', 'key');
 
-        $this->assertTrue($connector->usesRateLimits());
-        $this->assertTrue($connector->shouldWaitForRateLimits());
+        $this->assertTrue($connector->usesRateLimits($this->pendingRequestFor($connector)));
+
+        // The connector waits whatever the policy and the decision, so any pair gets true.
+        $policy = $connector->resolveRateLimitPolicies($this->pendingRequestFor($connector))[0];
+        $decision = new LimitResult(false, 60, 0, 1_000_000, 1_000_000);
+
+        $this->assertTrue($connector->shouldWaitForRateLimits($policy, $decision));
+        $this->assertTrue($connector->shouldWaitForRateLimits(Cooldown::for('k'), new CooldownResult(false, 1_000_000)));
     }
 
     public function testItPublishesOneSharedPolicyKeyedByTheApplication(): void
@@ -177,6 +186,33 @@ class RateLimitTest extends TestCase
 
         $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $connector->resolveRateLimitCooldownFor($this->responseTo(Cin7Fake::limitReached())));
         $this->assertSame(5, Cin7Connector::THROTTLE_COOLDOWN);
+    }
+
+    public function testAMalformedOrOversizedRetryAfterFallsBackToTheConfiguredCooldown(): void
+    {
+        $connector = new Cin7Connector('acct', 'key', 60, 60, null, 12);
+
+        foreach (['soon', '-5', '1.5', '30s', 'Tue, 31 Feb 2026 10:00:00 GMT', '99999999999999999999'] as $value) {
+            $response = $this->responseTo(MockResponse::make(['ErrorCode' => 429, 'Exception' => 'x'], 429, ['Retry-After' => $value]));
+
+            $this->assertSame(12, $connector->resolveRateLimitCooldownFor($response), $value);
+        }
+
+        $response = $this->responseTo(MockResponse::make(['ErrorCode' => 429, 'Exception' => 'x'], 429, ['Retry-After' => ' ']));
+        $this->assertSame(12, $connector->resolveRateLimitCooldownFor($response));
+    }
+
+    public function testAnHttpDateRetryAfterIsReadAndAPastOneRecordsNone(): void
+    {
+        $connector = new Cin7Connector('acct', 'key');
+        $future = gmdate('D, d M Y H:i:s \G\M\T', time() + 45);
+        $past = gmdate('D, d M Y H:i:s \G\M\T', time() - 45);
+
+        $seconds = $connector->resolveRateLimitCooldownFor($this->responseTo(MockResponse::make([], 429, ['Retry-After' => $future])));
+
+        $this->assertGreaterThanOrEqual(43, $seconds);
+        $this->assertLessThanOrEqual(45, $seconds);
+        $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(MockResponse::make([], 429, ['Retry-After' => $past]))));
     }
 
     public function testAConfiguredCooldownReplacesTheDefaultForA503AndAnUnadvised429(): void

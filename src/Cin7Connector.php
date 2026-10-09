@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use Hypervel\RateLimiter\AdmissionPolicy;
+use Hypervel\RateLimiter\Contracts\Decision;
+use Hypervel\RateLimiter\Cooldown;
 use Hypervel\RateLimiter\Limit;
 use Hypervel\Saloon\Http\Connector;
 use Hypervel\Saloon\Http\PendingRequest;
@@ -62,9 +66,7 @@ use UnitEnum;
  */
 final class Cin7Connector extends Connector implements HasPagination
 {
-    use HasRateLimits {
-        resolveRateLimitCooldown as retryAfterCooldown;
-    }
+    use HasRateLimits;
 
     /**
      * The default cooldown, in seconds, after a throttling response that names no `Retry-After`.
@@ -323,9 +325,10 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * Wait for capacity instead of throwing; the wait suspends only the calling coroutine.
+     * Wait for capacity instead of throwing; the wait suspends only the calling coroutine. Every
+     * policy and decision gets the same answer, so the arguments are unused.
      */
-    protected function waitForRateLimits(): bool
+    protected function waitForRateLimits(AdmissionPolicy|Cooldown $policy, Decision $result): bool
     {
         return true;
     }
@@ -340,21 +343,53 @@ final class Cin7Connector extends Connector implements HasPagination
 
     /**
      * Cin7 throttles with a 429 (its documented limit response) or a 503. A 429 cools down for its
-     * `Retry-After`, parsed by the `HasRateLimits` method aliased as `retryAfterCooldown()`; a 429
-     * without one, and every 503, for the configured cooldown, `THROTTLE_COOLDOWN` seconds by
+     * `Retry-After`, parsed here because the trait's parser is private and answers 60 seconds for a
+     * value it cannot read; a 429 without a usable one, and every 503, for the configured cooldown, `THROTTLE_COOLDOWN` seconds by
      * default; a cooldown of 0 or less records none for those.
      */
     protected function resolveRateLimitCooldown(Response $response): ?int
     {
         return match ($response->status()) {
-            429 => $this->retryAfterCooldown($response) ?? $this->throttleCooldown(),
+            429 => $this->retryAfter($response),
             503 => $this->throttleCooldown(),
             default => null,
         };
     }
 
     /**
-     * The cooldown for a throttling response with no `Retry-After`, or null for none.
+     * The cooldown a 429 names in `Retry-After`: a count of seconds or an HTTP date. A date
+     * already past names none to wait for, so it records no cooldown; a missing, malformed or
+     * oversized value falls back to the configured cooldown.
+     */
+    private function retryAfter(Response $response): ?int
+    {
+        $value = trim($response->header('Retry-After'));
+
+        if ($value === '') {
+            return $this->throttleCooldown();
+        }
+
+        $limit = intdiv(AdmissionPolicy::MAX_INTEGER, 1_000_000);
+
+        if (ctype_digit($value)) {
+            $seconds = strlen($value) > 15 ? null : (int) $value;
+        } else {
+            $date = DateTimeImmutable::createFromFormat('!D, d M Y H:i:s \G\M\T', $value, new DateTimeZone('GMT'));
+            $errors = DateTimeImmutable::getLastErrors();
+            $valid = $date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))
+                && $date->format('D, d M Y H:i:s \G\M\T') === $value;
+            $seconds = $valid ? $date->getTimestamp() - time() : null;
+        }
+
+        if ($seconds === null || $seconds > $limit) {
+            return $this->throttleCooldown();
+        }
+
+        return $seconds > 0 ? $seconds : null;
+    }
+
+    /**
+     * The cooldown for a throttling response with no usable `Retry-After`, or null for none.
      */
     private function throttleCooldown(): ?int
     {
