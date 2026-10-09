@@ -235,8 +235,7 @@ The connector is `final`, so this concerns changes to the package itself.
 
 This is a method of the `HasRateLimits` trait, not of `Connector`. The
 connector's own method shadows the trait's, so
-`parent::resolveRateLimitCooldown()` is a fatal error. The connector reuses the
-trait's `Retry-After` parser is private, and since `hypervel/components#651` it answers 60
+`parent::resolveRateLimitCooldown()` is a fatal error. The trait's `Retry-After` parser is private, and since `hypervel/components#651` it answers 60
 seconds for a value it cannot read, so the connector parses the header itself
 (`retryAfter()`) and falls back to `rate_limit.cooldown` for a missing, malformed or
 oversized value.

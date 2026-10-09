@@ -192,7 +192,7 @@ class RateLimitTest extends TestCase
     {
         $connector = new Cin7Connector('acct', 'key', 60, 60, null, 12);
 
-        foreach (['soon', '-5', '1.5', '30s', 'Tue, 31 Feb 2026 10:00:00 GMT', '99999999999999999999'] as $value) {
+        foreach (['soon', '-5', '1.5', '30s', 'Tue, 31 Feb 2026 10:00:00 GMT', '99999999999999999999', '99999999999', 'Fri, 31 Dec 9999 23:59:59 GMT'] as $value) {
             $response = $this->responseTo(MockResponse::make(['ErrorCode' => 429, 'Exception' => 'x'], 429, ['Retry-After' => $value]));
 
             $this->assertSame(12, $connector->resolveRateLimitCooldownFor($response), $value);
