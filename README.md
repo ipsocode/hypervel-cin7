@@ -114,6 +114,13 @@ $sandbox = app(Cin7Manager::class)->connection('sandbox');
 Each connection throttles on its own, as
 [docs/connector.md](docs/connector.md#named-connections) describes.
 
+### Checking the setup
+
+`php artisan cin7:check` sends one `GET me` with a connection's credentials
+(`--connection=` names one) and prints the company Cin7 answers with, or why
+the call failed, without printing either credential; see
+[docs/connector.md](docs/connector.md#checking-a-connection).
+
 ## Documentation
 
 - [docs/configuration.md](docs/configuration.md) — every configuration key with
@@ -131,8 +138,8 @@ Each connection throttles on its own, as
   sending the pages concurrently, and how the last page is worked out from
   Cin7's list envelope.
 - [docs/connector.md](docs/connector.md) — the shared connector, its transport
-  and timeouts, rate limiting and the choice of limiter store, and the throttling
-  cooldown.
+  and timeouts, rate limiting and the choice of limiter store, the throttling
+  cooldown, and checking a connection with `cin7:check`.
 - [docs/sync.md](docs/sync.md) — the optional scheduled copy of Cin7's records
   in one local table: the modules and their order, how a pull works, the
   schedule, the `cin7:sync` command and reading the table.

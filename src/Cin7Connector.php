@@ -118,6 +118,25 @@ final class Cin7Connector extends Connector implements HasPagination
         return $this->accountId;
     }
 
+    /**
+     * The limiter store the connection names, or null to fall back to `saloon.rate_limiter.store`
+     * and then the limiter's default.
+     */
+    public function rateLimitStore(): ?string
+    {
+        return $this->rateLimitStore;
+    }
+
+    /**
+     * The window as `[calls, seconds]`, or null when a non-positive max or period turns it off.
+     *
+     * @return null|array{int, int}
+     */
+    public function rateLimitWindow(): ?array
+    {
+        return $this->rateLimitPolicies === [] ? null : [$this->rateLimitMax, $this->rateLimitPeriod];
+    }
+
     public function resolveBaseUrl(): string
     {
         return 'https://inventory.dearsystems.com/ExternalApi/v2/';

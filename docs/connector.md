@@ -33,6 +33,9 @@ throttles on its own key, as does a second API application of the same account.
 
 `accountId()` returns the account the connector calls, which the [sync](sync.md) keys its rows
 by. It is a credential: log or print neither it nor the application key.
+`rateLimitStore()` returns the limiter store the connection names (`null` falls back as
+[choosing the limiter store](#choosing-the-limiter-store) describes), and `rateLimitWindow()` the
+window as `[calls, seconds]`, or `null` when it is off.
 
 | Constructor argument | Default | Config key |
 |---|---|---|
@@ -88,6 +91,34 @@ $sandbox = $this->cin7->connection('sandbox');
   or application keys never throttle or cool down each other, even on a shared
   store. Two connections with the same account and key share one window, as
   they should: Cin7 meters the API application.
+
+## Checking a connection
+
+`cin7:check` proves a connection's setup before the first real call does:
+
+```sh
+php artisan cin7:check                       # the default connection
+php artisan cin7:check --connection=sandbox  # a named one
+php artisan cin7:check --json                # one JSON object, for a health check
+```
+
+It resolves the connection, reports its rate limit and the limiter store it
+resolves to, reads that store without taking from any window, then sends
+`GET me`, the cheapest call Cin7 authenticates, and prints the company,
+currency and time zone it answers with. It exits 0 when every step passes and 1
+at the first that fails:
+
+| Failure | Prints |
+|---|---|
+| no such connection | the manager's `InvalidArgumentException` |
+| the limiter store throws | `The limiter store [<name>] failed: …` |
+| a 403 | `Cin7 rejected the credentials (403).` |
+| an Error Model body, or any other failed status | `Cin7 answered <status>: <Exception>`, or the status alone |
+| no response at all | `Could not reach Cin7: …` |
+
+It prints neither the account ID nor the application key. With `--json` the
+object carries `ok`, the details found so far and, on a failure, `error`. The
+provider registers it only in the console.
 
 ## Resources
 
