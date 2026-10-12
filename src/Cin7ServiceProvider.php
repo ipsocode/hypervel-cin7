@@ -8,6 +8,7 @@ use Composer\InstalledVersions;
 use Hypervel\Console\Scheduling\Schedule;
 use Hypervel\Foundation\Console\AboutCommand;
 use Hypervel\Support\ServiceProvider;
+use Ipsocode\Cin7\Console\CheckCommand;
 use Ipsocode\Cin7\Console\SyncCommand;
 use Ipsocode\Cin7\Sync\Pull;
 use Ipsocode\Cin7\Sync\SyncConfig;
@@ -45,7 +46,7 @@ class Cin7ServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations' => database_path('migrations'),
             ], 'cin7-migrations');
 
-            $this->commands([SyncCommand::class]);
+            $this->commands([CheckCommand::class, SyncCommand::class]);
 
             $this->registerAbout();
         }
