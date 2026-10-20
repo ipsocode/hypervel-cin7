@@ -192,6 +192,53 @@ application discovers it from the components manifest; the Testbench skeleton
 does not, and it registers the `saloon` HTTP connection the connector sends
 over.
 
+### The sync on real databases
+
+The in-memory run above is the coverage gate, and it never meets a real server.
+`.github/workflows/databases.yml` runs `tests/Feature/Sync` again on the
+servers `hypervel/components` tests the framework on, each on PHP 8.4 and 8.5,
+on every pull request:
+
+| Engine | Versions |
+|---|---|
+| MySQL | 5.7, 8.4, 9.7 |
+| MariaDB | 10, 11, 12.3 |
+
+The workflow mirrors the MySQL and MariaDB jobs of `databases.yml` in
+`hypervel/components` (branch `0.4`, e44bad61bfd91a0f68eacbfdbc9d871f56cbb100,
+named in its header), as `bin/run-database-tests.sh` and
+`.github/actions/log-trigger-context` mirror upstream's runner and action. They
+differ in two ways: the job runs in this package's CI image, and installs with
+`composer update`, as `tests.yml` does. When upstream changes a version, change
+it here too.
+
+The job's environment wins over the `<env>` block in `phpunit.xml`, which
+PHPUnit applies only to variables not already set, so `DB_CONNECTION` and
+`DB_DATABASE` need no change there. ParaTest gives each worker its own database,
+`testing_test_<n>`, so the workers do not share rows the way a single `testing`
+database would.
+
+To run one locally, start the server, wait until it answers, and run the script
+in the CI image with the connection's variables set:
+
+```bash
+docker network create cin7-db
+docker run -d --rm --name cin7-mysql --network cin7-db \
+    -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=testing mysql:8.4
+
+docker run --rm -it --network cin7-db -v "$PWD":/data -w /data \
+    -e OTEL_SDK_DISABLED=true \
+    -e DB_HOST=cin7-mysql -e DB_PORT=3306 -e DB_DATABASE=testing \
+    -e DB_USERNAME=root -e DB_PASSWORD=password \
+    ghcr.io/ipsocode/hypervel/ci:8.4-latest bin/run-database-tests.sh mysql
+```
+
+For MariaDB use `mariadb:<version>` with `MARIADB_ROOT_PASSWORD` and
+`MARIADB_DATABASE`, and pass `mariadb` to the script. Options after the
+connection name go to ParaTest, as in `bin/run-database-tests.sh mysql
+--filter=PayloadTest`; the script then tolerates a directory with no matching
+tests, whereas a run without options fails on an empty suite.
+
 ### Rate-limit tests
 
 Saloon enforces rate limits only when no fake matched, and records cooldowns
