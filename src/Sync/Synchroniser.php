@@ -252,6 +252,8 @@ final class Synchroniser
 
         return $this->pair($module, fromList: true)
             ->where(fn (QueryBuilder $query) => $query->whereNull('d.id')->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at'))
+            // Rows with no modified time come first, whichever database sorts NULLs last (PostgreSQL does).
+            ->orderByRaw('l.cin7_modified_at is not null')
             ->orderBy('l.cin7_modified_at')
             ->orderBy('l.id')
             ->limit($limit)

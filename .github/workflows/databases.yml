@@ -1,5 +1,5 @@
-# The MySQL and MariaDB jobs of hypervel/components' .github/workflows/databases.yml, branch 0.4,
-# at e44bad61bfd91a0f68eacbfdbc9d871f56cbb100. The PostgreSQL and SQLite jobs follow in #109.
+# The MySQL, MariaDB, PostgreSQL and SQLite jobs of hypervel/components' .github/workflows/databases.yml,
+# branch 0.4, at e44bad61bfd91a0f68eacbfdbc9d871f56cbb100.
 # Compare the two when upstream changes a version, and change it here too. Two things differ on
 # purpose: the CI image, and the Composer step (this package has no lockfile, as tests.yml).
 name: databases
@@ -357,3 +357,154 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: password
         run: bin/run-database-tests.sh mariadb
+
+  pgsql_17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.7-pg17
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: testing
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    container:
+      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.4", "8.5"]
+
+    name: PostgreSQL 17 (PHP ${{ matrix.php }})
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Log trigger context
+        uses: ./.github/actions/log-trigger-context
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: /tmp/composer-cache
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ matrix.php }}-
+
+      - name: Install dependencies
+        run: |
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+          composer update --prefer-dist --no-interaction --optimize-autoloader
+      - name: Execute integration tests
+        env:
+          DB_HOST: postgres
+          DB_PORT: 5432
+          DB_DATABASE: testing
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: bin/run-database-tests.sh pgsql
+
+  pgsql_18:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.7-pg18
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: testing
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    container:
+      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.4", "8.5"]
+
+    name: PostgreSQL 18 (PHP ${{ matrix.php }})
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Log trigger context
+        uses: ./.github/actions/log-trigger-context
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: /tmp/composer-cache
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ matrix.php }}-
+
+      - name: Install dependencies
+        run: |
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+          composer update --prefer-dist --no-interaction --optimize-autoloader
+      - name: Execute integration tests
+        env:
+          DB_HOST: postgres
+          DB_PORT: 5432
+          DB_DATABASE: testing
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: bin/run-database-tests.sh pgsql
+
+  sqlite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    container:
+      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.4", "8.5"]
+
+    name: SQLite (PHP ${{ matrix.php }})
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Log trigger context
+        uses: ./.github/actions/log-trigger-context
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: /tmp/composer-cache
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.json') }}
+          restore-keys: composer-${{ matrix.php }}-
+
+      - name: Install dependencies
+        run: |
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+          composer update --prefer-dist --no-interaction --optimize-autoloader
+      - name: Execute integration tests
+        env:
+          DB_DATABASE: /tmp/testing.sqlite
+        run: |
+          touch /tmp/testing.sqlite
+          bin/run-database-tests.sh sqlite

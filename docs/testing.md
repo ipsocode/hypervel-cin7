@@ -203,8 +203,10 @@ on every pull request:
 |---|---|
 | MySQL | 5.7, 8.4, 9.7 |
 | MariaDB | 10, 11, 12.3 |
+| PostgreSQL | 17, 18 (`pgvector/pgvector:0.8.7-pg<version>`) |
+| SQLite | a file, `/tmp/testing.sqlite` |
 
-The workflow mirrors the MySQL and MariaDB jobs of `databases.yml` in
+The workflow mirrors the jobs of `databases.yml` in
 `hypervel/components` (branch `0.4`, e44bad61bfd91a0f68eacbfdbc9d871f56cbb100,
 named in its header), as `bin/run-database-tests.sh` and
 `.github/actions/log-trigger-context` mirror upstream's runner and action. They
@@ -238,6 +240,12 @@ For MariaDB use `mariadb:<version>` with `MARIADB_ROOT_PASSWORD` and
 connection name go to ParaTest, as in `bin/run-database-tests.sh mysql
 --filter=PayloadTest`; the script then tolerates a directory with no matching
 tests, whereas a run without options fails on an empty suite.
+
+For PostgreSQL use `pgvector/pgvector:0.8.7-pg<version>` with `POSTGRES_PASSWORD=password` and
+`POSTGRES_DB=testing`, `DB_PORT=5432` and `DB_USERNAME=postgres`, and pass `pgsql`. For file-based SQLite
+no server is needed: `touch /tmp/testing.sqlite`, then run `DB_DATABASE=/tmp/testing.sqlite
+bin/run-database-tests.sh sqlite`. Testbench rewrites the path per ParaTest worker, so it runs in
+parallel; this is a different code path from the in-memory database the coverage gate uses.
 
 ### Rate-limit tests
 
