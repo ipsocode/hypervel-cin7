@@ -247,6 +247,46 @@ no server is needed: `touch /tmp/testing.sqlite`, then run `DB_DATABASE=/tmp/tes
 bin/run-database-tests.sh sqlite`. Testbench rewrites the path per ParaTest worker, so it runs in
 parallel; this is a different code path from the in-memory database the coverage gate uses.
 
+### The locks and the rate limiter on real Redis
+
+The sync's module locks and the connector's rate-limit window and cooldown only do their job
+when every worker shares one store, which the in-memory stores of the coverage gate cannot show.
+`.github/workflows/redis.yml` runs `tests/Feature/Redis` on the servers `hypervel/components` tests
+the framework on, each on PHP 8.4 and 8.5, on every pull request:
+
+| Job | Server |
+|---|---|
+| Redis 8 | the `redis:8` service, with the tests spread over ParaTest workers, one Redis database each |
+| Redis Cluster | three masters on ports 7000-7002, Redis 8.0 or later, run serially |
+
+The tests skip unless `REDIS_HOST` or `REDIS_CLUSTER_HOSTS_AND_PORTS` is set, so the default run and
+its coverage gate are unchanged. They configure Redis through the framework's `InteractsWithRedis`
+and `RedisTestConfiguration`, as upstream's integration tests do, and point `cache.default`,
+`cin7.rate_limit.store` and `rate-limiter.default` at Redis themselves. Each one stands in for a second
+worker by dropping the cache or limiter store it used, so the second side has its own connection and
+nothing of the first one's memory; a per-process store fails them. The rest of `tests/Feature/Sync` is
+not run on Redis: it assumes a fresh in-memory cache per test.
+
+The jobs mirror `redis_8` and `redis_cluster` in `hypervel/components`' `redis.yml` (branch `0.4`,
+e44bad61bfd91a0f68eacbfdbc9d871f56cbb100, named in the workflow's header), with this package's CI
+image, `composer update` and test directory. When upstream changes a version, change it here too.
+
+To run them locally, start Redis and run the suite in the CI image on the same network:
+
+```bash
+docker network create cin7-redis
+docker run -d --rm --name cin7-redis --network cin7-redis redis:8
+
+docker run --rm -it --network cin7-redis -v "$PWD":/data -w /data \
+    -e OTEL_SDK_DISABLED=true \
+    -e REDIS_HOST=cin7-redis -e REDIS_PORT=6379 -e REDIS_DB=0 -e REDIS_TEST_SECONDARY_DB=1 \
+    ghcr.io/ipsocode/hypervel/ci:8.4-latest vendor/bin/paratest --max-processes=15 tests/Feature/Redis
+```
+
+For a cluster, start three nodes with `--cluster-enabled yes`, join them with `redis-cli --cluster
+create`, set `REDIS_CLUSTER_HOSTS_AND_PORTS` to their `host:port` list instead of `REDIS_HOST`, and run
+`vendor/bin/phpunit tests/Feature/Redis`: a cluster has one database, so ParaTest is refused.
+
 ### Rate-limit tests
 
 Saloon enforces rate limits only when no fake matched, and records cooldowns
