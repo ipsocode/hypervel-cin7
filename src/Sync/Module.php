@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Sync;
 
+use Closure;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -91,11 +92,7 @@ enum Module: string
      */
     public function source(): ?self
     {
-        return match ($this) {
-            self::Sale => self::SaleList,
-            self::AdvancedPurchase => self::PurchaseList,
-            default => null,
-        };
+        return $this->definition()['source'];
     }
 
     /**
@@ -103,14 +100,7 @@ enum Module: string
      */
     public function idKey(): string
     {
-        return match ($this) {
-            self::Account => 'Code',
-            self::BankAccount => 'AccountID',
-            self::Carrier => 'CarrierID',
-            self::FixedAssetType => 'FixedAssetTypeID',
-            self::SaleList => 'SaleID',
-            default => 'ID',
-        };
+        return $this->definition()['id'];
     }
 
     /**
@@ -130,12 +120,7 @@ enum Module: string
      */
     public function modifiedKey(): ?string
     {
-        return match ($this) {
-            self::Customer, self::Supplier, self::Product => 'LastModifiedOn',
-            self::SaleList => 'Updated',
-            self::PurchaseList => 'LastUpdatedDate',
-            default => null,
-        };
+        return $this->definition()['modified'];
     }
 
     /**
@@ -149,26 +134,11 @@ enum Module: string
      */
     public function listRequest(?DateTimeInterface $since, DateTimeInterface $until): ListRequest
     {
-        return match ($this) {
-            self::Account => new GetAccount,
-            self::BankAccount => new GetAccountBank,
-            self::Location => new GetLocation,
-            self::Tax => new GetTax,
-            self::PaymentTerm => new GetPaymentTerm,
-            self::Category => new GetCategory,
-            self::Brand => new GetBrand,
-            self::Unit => new GetUnit,
-            self::Carrier => new GetCarrier,
-            self::AttributeSet => new GetAttributeSet,
-            self::FixedAssetType => new GetFixedAssetType,
-            self::Customer => new GetCustomer(modifiedSince: $since, includeDeprecated: true),
-            self::Supplier => new GetSupplier(modifiedSince: $since, includeDeprecated: true),
-            self::Product => new GetProduct(modifiedSince: $since, includeDeprecated: true),
-            // An upper bound keeps the pages still while they are walked.
-            self::SaleList => new GetSaleList(updatedSince: $since, updatedUntil: $until),
-            self::PurchaseList => new GetPurchaseList(updatedSince: $since, updatedUntil: $until),
-            default => throw new LogicException("[{$this->value}] is a document module: it reads the rows of its list."),
-        };
+        $list = $this->definition()['list'];
+
+        return $list === null
+            ? throw new LogicException("[{$this->value}] is a document module: it reads the rows of its list.")
+            : $list($since, $until);
     }
 
     /**
@@ -180,11 +150,11 @@ enum Module: string
      */
     public function documentRequest(string $id): Cin7Request
     {
-        return match ($this) {
-            self::Sale => new GetSale($id),
-            self::AdvancedPurchase => new GetAdvancedPurchase($id),
-            default => throw new LogicException("[{$this->value}] is a list module: it is paged, not read one record at a time."),
-        };
+        $document = $this->definition()['document'];
+
+        return $document === null
+            ? throw new LogicException("[{$this->value}] is a list module: it is paged, not read one record at a time.")
+            : $document($id);
     }
 
     /**
@@ -194,26 +164,115 @@ enum Module: string
      */
     public function dataClass(): string
     {
+        return $this->definition()['data'];
+    }
+
+    /**
+     * Everything the sync knows about a module, in one place. The match has no default, so a case
+     * without a definition throws rather than taking one.
+     *
+     * - `id`: the key of a record's identifier.
+     * - `modified`: the key of the modified time; null for a reference book and a document.
+     * - `source`: the list module a document module reads; null for a list module.
+     * - `data`: the data class a stored payload maps to.
+     * - `list`: builds the list request; null for a document module. A closure rather than a
+     *   request, because the since and until arguments and the deprecated records differ by module.
+     * - `document`: builds the request for one document; null for a list module.
+     *
+     * @return array{
+     *     id: string,
+     *     modified: ?string,
+     *     source: ?self,
+     *     data: class-string<Data>,
+     *     list: null|(Closure(?DateTimeInterface, DateTimeInterface): ListRequest<covariant Data&WithResponse>),
+     *     document: null|(Closure(string): Cin7Request<covariant Data>),
+     * }
+     */
+    private function definition(): array
+    {
         return match ($this) {
-            self::Account => AccountData::class,
-            self::BankAccount => BankAccountData::class,
-            self::Location => LocationData::class,
-            self::Tax => TaxData::class,
-            self::PaymentTerm => PaymentTermData::class,
-            self::Category => ProductCategoryData::class,
-            self::Brand => BrandData::class,
-            self::Unit => UnitOfMeasureData::class,
-            self::Carrier => CarrierData::class,
-            self::AttributeSet => AttributeSetData::class,
-            self::FixedAssetType => FixedAssetTypeData::class,
-            self::Customer => CustomerData::class,
-            self::Supplier => SupplierData::class,
-            self::Product => ProductData::class,
-            self::SaleList => SaleListData::class,
-            self::PurchaseList => PurchaseListData::class,
-            self::Sale => SaleData::class,
-            self::AdvancedPurchase => AdvancedPurchaseData::class,
+            self::Account => $this->reference('Code', AccountData::class, static fn () => new GetAccount),
+            self::BankAccount => $this->reference('AccountID', BankAccountData::class, static fn () => new GetAccountBank),
+            self::Location => $this->reference('ID', LocationData::class, static fn () => new GetLocation),
+            self::Tax => $this->reference('ID', TaxData::class, static fn () => new GetTax),
+            self::PaymentTerm => $this->reference('ID', PaymentTermData::class, static fn () => new GetPaymentTerm),
+            self::Category => $this->reference('ID', ProductCategoryData::class, static fn () => new GetCategory),
+            self::Brand => $this->reference('ID', BrandData::class, static fn () => new GetBrand),
+            self::Unit => $this->reference('ID', UnitOfMeasureData::class, static fn () => new GetUnit),
+            self::Carrier => $this->reference('CarrierID', CarrierData::class, static fn () => new GetCarrier),
+            self::AttributeSet => $this->reference('ID', AttributeSetData::class, static fn () => new GetAttributeSet),
+            self::FixedAssetType => $this->reference('FixedAssetTypeID', FixedAssetTypeData::class, static fn () => new GetFixedAssetType),
+            self::Customer => [
+                'id' => 'ID',
+                'modified' => 'LastModifiedOn',
+                'source' => null,
+                'data' => CustomerData::class,
+                'list' => static fn (?DateTimeInterface $since) => new GetCustomer(modifiedSince: $since, includeDeprecated: true),
+                'document' => null,
+            ],
+            self::Supplier => [
+                'id' => 'ID',
+                'modified' => 'LastModifiedOn',
+                'source' => null,
+                'data' => SupplierData::class,
+                'list' => static fn (?DateTimeInterface $since) => new GetSupplier(modifiedSince: $since, includeDeprecated: true),
+                'document' => null,
+            ],
+            self::Product => [
+                'id' => 'ID',
+                'modified' => 'LastModifiedOn',
+                'source' => null,
+                'data' => ProductData::class,
+                'list' => static fn (?DateTimeInterface $since) => new GetProduct(modifiedSince: $since, includeDeprecated: true),
+                'document' => null,
+            ],
+            // An upper bound keeps the pages still while they are walked.
+            self::SaleList => [
+                'id' => 'SaleID',
+                'modified' => 'Updated',
+                'source' => null,
+                'data' => SaleListData::class,
+                'list' => static fn (?DateTimeInterface $since, DateTimeInterface $until) => new GetSaleList(updatedSince: $since, updatedUntil: $until),
+                'document' => null,
+            ],
+            self::PurchaseList => [
+                'id' => 'ID',
+                'modified' => 'LastUpdatedDate',
+                'source' => null,
+                'data' => PurchaseListData::class,
+                'list' => static fn (?DateTimeInterface $since, DateTimeInterface $until) => new GetPurchaseList(updatedSince: $since, updatedUntil: $until),
+                'document' => null,
+            ],
+            self::Sale => [
+                'id' => 'ID',
+                'modified' => null,
+                'source' => self::SaleList,
+                'data' => SaleData::class,
+                'list' => null,
+                'document' => static fn (string $id) => new GetSale($id),
+            ],
+            self::AdvancedPurchase => [
+                'id' => 'ID',
+                'modified' => null,
+                'source' => self::PurchaseList,
+                'data' => AdvancedPurchaseData::class,
+                'list' => null,
+                'document' => static fn (string $id) => new GetAdvancedPurchase($id),
+            ],
         };
+    }
+
+    /**
+     * The definition of a reference book: no modified time, no source, read whole on every pull.
+     *
+     * @param class-string<Data> $data
+     * @param Closure(): ListRequest<covariant Data&WithResponse> $list
+     *
+     * @return array{id: string, modified: null, source: null, data: class-string<Data>, list: Closure(): ListRequest<covariant Data&WithResponse>, document: null}
+     */
+    private function reference(string $id, string $data, Closure $list): array
+    {
+        return ['id' => $id, 'modified' => null, 'source' => null, 'data' => $data, 'list' => $list, 'document' => null];
     }
 
     /**
