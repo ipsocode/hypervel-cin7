@@ -13,6 +13,7 @@ use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
 use InvalidArgumentException;
+use Ipsocode\Cin7\Cin7Manager;
 use Ipsocode\Cin7\Data\Customer\CustomerPutData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxComponentData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxPostData;
@@ -73,6 +74,44 @@ class RequestBuildingTest extends TestCase
             'https://inventory.dearsystems.com/ExternalApi/v2/customer',
             $pending->uri()->getScheme() . '://' . $pending->uri()->getHost() . $pending->uri()->getPath(),
         );
+    }
+
+    public function testTheConfiguredBaseUrlIsJoinedToThePath(): void
+    {
+        $this->app->get('config')->set('cin7.base_url', 'http://stub.test/api/');
+        $this->app->forgetInstance(Cin7Manager::class);
+
+        $pending = $this->send(new GetCustomer);
+
+        $this->assertSame('http://stub.test/api/customer', $pending->uri()->getScheme() . '://' . $pending->uri()->getHost() . $pending->uri()->getPath());
+    }
+
+    public function testNoTimeoutOptionIsSentByDefault(): void
+    {
+        $options = $this->send(new GetCustomer)->options();
+
+        $this->assertArrayNotHasKey('timeout', $options);
+        $this->assertArrayNotHasKey('connect_timeout', $options);
+    }
+
+    public function testOnlyTheConfiguredTimeoutsAreSent(): void
+    {
+        $this->app->get('config')->set('cin7.timeout', 90);
+        $this->app->forgetInstance(Cin7Manager::class);
+
+        $options = $this->send(new GetCustomer)->options();
+
+        $this->assertSame(90, $options['timeout']);
+        $this->assertArrayNotHasKey('connect_timeout', $options);
+
+        $this->app->get('config')->set('cin7.timeout', null);
+        $this->app->get('config')->set('cin7.connect_timeout', '3');
+        $this->app->forgetInstance(Cin7Manager::class);
+
+        $options = $this->send(new GetCustomer)->options();
+
+        $this->assertArrayNotHasKey('timeout', $options);
+        $this->assertSame(3, $options['connect_timeout']);
     }
 
     public function testListInjectsThePageDefaults(): void

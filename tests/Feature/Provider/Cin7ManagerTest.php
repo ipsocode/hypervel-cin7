@@ -47,6 +47,30 @@ class Cin7ManagerTest extends TestCase
         );
     }
 
+    public function testTheTransportKeysFallBackToTheTopLevelOnesAndCanBeOverriddenPerConnection(): void
+    {
+        $this->app->get('config')->set('cin7.base_url', 'http://stub.test/v2/');
+        $this->app->get('config')->set('cin7.timeout', '60');
+        $this->app->get('config')->set('cin7.connections', [
+            'inherits' => ['account_id' => 'a', 'application_key' => 'k'],
+            'own' => [
+                'account_id' => 'b',
+                'application_key' => 'k',
+                'base_url' => 'http://own.test/v2/',
+                'timeout' => 5,
+                'connect_timeout' => 2,
+            ],
+        ]);
+
+        $inherits = $this->manager()->connection('inherits');
+        $own = $this->manager()->connection('own');
+
+        $this->assertSame('http://stub.test/v2/', $inherits->resolveBaseUrl());
+        $this->assertSame('http://own.test/v2/', $own->resolveBaseUrl());
+        $this->assertSame(['timeout' => 60], $inherits->options());
+        $this->assertSame(['timeout' => 5, 'connect_timeout' => 2], $own->options());
+    }
+
     public function testTheConnectorTypeResolvesTheDefaultConnection(): void
     {
         $this->assertSame($this->manager()->connection(), $this->connector());

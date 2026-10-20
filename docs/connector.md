@@ -136,7 +136,8 @@ resource builds are in [resources](resources.md).
 
 ## Transport
 
-The base URL is `https://inventory.dearsystems.com/ExternalApi/v2/`, and every
+The base URL is `cin7.base_url`, `https://inventory.dearsystems.com/ExternalApi/v2/`
+unless you point it at a stub server or a staging proxy, and every
 request carries `Content-Type: application/json`, `api-auth-accountid` and
 `api-auth-applicationkey`; the full wire format is in
 [requests](requests.md#wire-protocol).
@@ -154,6 +155,14 @@ the framework's `saloon` connection, which `hypervel/saloon` registers from its
 A call that hangs therefore fails after 30 seconds with a
 `FatalRequestException`, which is not retried. Those options belong to the
 application's Saloon configuration and apply to every Saloon connector in it.
+
+To give Cin7 timeouts of its own, set `cin7.timeout` and `cin7.connect_timeout`
+(or `CIN7_TIMEOUT` and `CIN7_CONNECT_TIMEOUT`), in seconds, on the top level or
+on a [named connection](#named-connections). The connector sends only the ones
+that are set, as Saloon request options, which override the connection's for
+this connector alone; one left unset inherits the connection's value. The
+connector keeps using the framework's `saloon` HTTP connection, so transport
+sharing is unchanged.
 
 ## Rate limiting
 

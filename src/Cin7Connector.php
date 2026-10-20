@@ -74,6 +74,11 @@ final class Cin7Connector extends Connector implements HasPagination
     public const int THROTTLE_COOLDOWN = 5;
 
     /**
+     * The Cin7 Core V2 API, which `cin7.base_url` defaults to.
+     */
+    public const string BASE_URL = 'https://inventory.dearsystems.com/ExternalApi/v2/';
+
+    /**
      * @var array<string, string>
      */
     private readonly array $headers;
@@ -96,6 +101,9 @@ final class Cin7Connector extends Connector implements HasPagination
         private readonly int $rateLimitPeriod = 60,
         private readonly ?string $rateLimitStore = null,
         private readonly int $rateLimitCooldown = self::THROTTLE_COOLDOWN,
+        private readonly string $baseUrl = self::BASE_URL,
+        private readonly ?int $timeout = null,
+        private readonly ?int $connectTimeout = null,
     ) {
         $this->headers = [
             'Content-Type' => 'application/json',
@@ -139,7 +147,21 @@ final class Cin7Connector extends Connector implements HasPagination
 
     public function resolveBaseUrl(): string
     {
-        return 'https://inventory.dearsystems.com/ExternalApi/v2/';
+        return $this->baseUrl;
+    }
+
+    /**
+     * Only the timeouts the connection sets: a request option overrides the `saloon` HTTP
+     * connection's, and one left null inherits it.
+     *
+     * @return array<string, int>
+     */
+    protected function defaultOptions(): array
+    {
+        return array_filter([
+            'timeout' => $this->timeout,
+            'connect_timeout' => $this->connectTimeout,
+        ], static fn (?int $seconds): bool => $seconds !== null);
     }
 
     public function paginate(Request $request): Cin7Paginator
