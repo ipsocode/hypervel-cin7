@@ -58,6 +58,14 @@ class ServiceProviderTest extends TestCase
         $this->assertSame('application/json', $connector->headers()['Content-Type']);
     }
 
+    public function testTheTransportDefaultsAreTheV2UrlAndNoTimeouts(): void
+    {
+        $connector = $this->connector();
+
+        $this->assertSame(Cin7Connector::BASE_URL, $connector->resolveBaseUrl());
+        $this->assertSame([], $connector->options());
+    }
+
     public function testMissingCredentialsDoNotBreakContainerResolution(): void
     {
         $this->app->get('config')->set('cin7.account_id', null);

@@ -65,6 +65,9 @@ final class Cin7Manager
         $rateLimit = is_array($connection['rate_limit'] ?? null) ? $connection['rate_limit'] : [];
         $store = array_key_exists('store', $rateLimit) ? $rateLimit['store'] : config('cin7.rate_limit.store');
 
+        $timeout = $connection['timeout'] ?? config('cin7.timeout');
+        $connectTimeout = $connection['connect_timeout'] ?? config('cin7.connect_timeout');
+
         return new Cin7Connector(
             (string) ($connection['account_id'] ?? ''),
             (string) ($connection['application_key'] ?? ''),
@@ -72,6 +75,9 @@ final class Cin7Manager
             (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', 60)),
             $store === null ? null : (string) $store,
             (int) ($rateLimit['cooldown'] ?? config('cin7.rate_limit.cooldown') ?? Cin7Connector::THROTTLE_COOLDOWN),
+            (string) ($connection['base_url'] ?? config('cin7.base_url') ?? Cin7Connector::BASE_URL),
+            $timeout === null ? null : (int) $timeout,
+            $connectTimeout === null ? null : (int) $connectTimeout,
         );
     }
 }
