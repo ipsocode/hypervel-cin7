@@ -1,6 +1,9 @@
-# Level 5, the level hypervel/components runs on its own source.
+# Level 6, one step beyond the level hypervel/components runs on its own source.
+includes:
+    - phpstan-baseline.neon
+
 parameters:
-    level: 5
+    level: 6
 
     # In tests/.cache/ (gitignored) rather than the system temp dir, so the cache persists
     # between runs. .github/workflows/tests.yml caches tests/.cache/, so the two must agree.
