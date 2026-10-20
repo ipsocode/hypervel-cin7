@@ -1,7 +1,7 @@
 # The redis_8 and redis_cluster jobs of hypervel/components' .github/workflows/redis.yml,
 # branch 0.4, at e44bad61bfd91a0f68eacbfdbc9d871f56cbb100.
 # Compare the two when upstream changes a version, and change it here too. Differences, on purpose:
-# the CI image, the Composer step (this package has no lockfile, as tests.yml), and the test
+# the CI image (Alpine, so the cluster job installs Redis with apk, not apt-get), the Composer step (this package has no lockfile, as tests.yml), and the test
 # directory: only tests/Feature/Redis needs a real Redis. The valkey_9 job is not copied.
 name: redis
 
@@ -118,8 +118,7 @@ jobs:
 
       - name: Install Redis
         run: |
-          apt-get update -qq
-          DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends redis-server redis-tools
+          apk add --no-cache redis
 
       - name: Verify Redis version
         run: |
