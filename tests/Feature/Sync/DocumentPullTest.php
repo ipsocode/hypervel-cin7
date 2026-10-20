@@ -40,6 +40,25 @@ class DocumentPullTest extends SyncTestCase
         Sleep::assertSequence([Sleep::usleep(1_000_000)]);
     }
 
+    public function testListRowsWithoutAModifiedTimeAreReadFirstInListOrder(): void
+    {
+        $undated = static fn (string $id): array => ['SaleID' => $id, 'OrderNumber' => 'SO-' . $id, 'Updated' => null];
+
+        $mock = Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-02T09:00:00Z'), $undated('s-2'), $this->sale('s-3', '2026-10-01T09:00:00Z'), $undated('s-4')]),
+            Cin7Fake::record(['ID' => 's-2']),
+            Cin7Fake::record(['ID' => 's-4']),
+            Cin7Fake::record(['ID' => 's-3']),
+            Cin7Fake::record(['ID' => 's-1']),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->synchroniser()->pull(Module::Sale);
+
+        // The same on every database: PostgreSQL sorts NULLs last, SQLite and MySQL first.
+        $this->assertSame(['s-2', 's-4', 's-3', 's-1'], array_column(array_slice($this->queries($mock), 1), 'ID'));
+    }
+
     public function testOnlyAListRowThatChangedMakesItsDocumentPendingAgain(): void
     {
         $mock = Saloon::fake([

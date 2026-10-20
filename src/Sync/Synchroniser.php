@@ -250,13 +250,27 @@ final class Synchroniser
             return [];
         }
 
-        return $this->pair($module, fromList: true)
-            ->where(fn (QueryBuilder $query) => $query->whereNull('d.id')->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at'))
-            ->orderBy('l.cin7_modified_at')
+        $due = fn (): QueryBuilder => $this->pair($module, fromList: true)
+            ->where(fn (QueryBuilder $query) => $query->whereNull('d.id')->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at'));
+
+        // Rows with no modified time come first, read on their own because databases disagree on
+        // where NULLs sort (PostgreSQL puts them last, SQLite and MySQL first).
+        $rows = $due()->whereNull('l.cin7_modified_at')
             ->orderBy('l.id')
             ->limit($limit)
             ->get(['l.cin7_id', 'l.cin7_modified_at'])
             ->all();
+
+        if (count($rows) < $limit) {
+            $rows = [...$rows, ...$due()->whereNotNull('l.cin7_modified_at')
+                ->orderBy('l.cin7_modified_at')
+                ->orderBy('l.id')
+                ->limit($limit - count($rows))
+                ->get(['l.cin7_id', 'l.cin7_modified_at'])
+                ->all()];
+        }
+
+        return $rows;
     }
 
     /**
