@@ -243,7 +243,12 @@ throttling response on one application never cools down another.
 The cooldown sits alongside the request's own retry on 429 and 503 (see
 [retry policy](requests.md#retry-policy)): a retried attempt passes the same
 cooldown and limit check as a fresh send, so a 429's `Retry-After` is honoured
-even when it is longer than the retry delay.
+even when it is longer than the retry delay. The two waits overlap rather than add
+up: the cooldown runs from the throttled answer, so the retry delay counts toward
+it, and one throttled attempt waits the longer of `retry.delay_ms` and the
+cooldown. With the default delay of 5 seconds, a 429 with `Retry-After: 30` waits
+30 seconds, not 35, and one with `Retry-After: 2` waits 5; a 503 waits the longer
+of the delay and `rate_limit.cooldown`.
 
 Saloon calls `resolveRateLimitCooldown()` for every response that came off the
 wire, 200s included, and never for a mocked or cached one. That is why it must
