@@ -71,6 +71,37 @@ class Cin7ManagerTest extends TestCase
         $this->assertSame(['timeout' => 5, 'connect_timeout' => 2], $own->options());
     }
 
+    public function testBlankTransportKeysCountAsUnset(): void
+    {
+        // A blank `CIN7_TIMEOUT=` in .env reads as '', which cast would be a timeout of 0.
+        $this->app->get('config')->set('cin7.base_url', '');
+        $this->app->get('config')->set('cin7.timeout', '');
+        $this->app->get('config')->set('cin7.connect_timeout', '');
+        $this->app->get('config')->set('cin7.connections', [
+            'blank' => ['account_id' => 'a', 'application_key' => 'k'],
+            'inherits' => [
+                'account_id' => 'b',
+                'application_key' => 'k',
+                'base_url' => '',
+                'timeout' => '',
+                'connect_timeout' => '',
+            ],
+        ]);
+
+        $blank = $this->manager()->connection('blank');
+
+        $this->assertSame(Cin7Connector::BASE_URL, $blank->resolveBaseUrl());
+        $this->assertSame([], $blank->options());
+
+        $this->app->get('config')->set('cin7.base_url', 'http://stub.test/v2/');
+        $this->app->get('config')->set('cin7.timeout', '60');
+
+        $inherits = $this->manager()->connection('inherits');
+
+        $this->assertSame('http://stub.test/v2/', $inherits->resolveBaseUrl());
+        $this->assertSame(['timeout' => 60], $inherits->options());
+    }
+
     public function testTheConnectorTypeResolvesTheDefaultConnection(): void
     {
         $this->assertSame($this->manager()->connection(), $this->connector());

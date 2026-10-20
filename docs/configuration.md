@@ -116,8 +116,8 @@ than trusting its type, so a missing or loosely typed value does not throw a
 | Value | Cast | Result |
 |---|---|---|
 | `account_id`, `application_key` | `(string)` | Unset (`null`) becomes `''`. The connector resolves, and Cin7 rejects the call instead |
-| `base_url` | `(string)`, falling back to the V2 URL when absent or `null` | A connection's own `base_url` wins over the top-level one |
-| `timeout`, `connect_timeout` | `null` stays `null`; anything else `(int)` | `null` sends no option, so the `saloon` connection's value applies. A connection's own key wins over the top-level one |
+| `base_url` | `(string)`, falling back to the V2 URL when absent, `null` or `''` | A connection's own `base_url` wins over the top-level one; a blank `CIN7_BASE_URL=` counts as unset |
+| `timeout`, `connect_timeout` | `null` and `''` become `null`; anything else `(int)` | `null` sends no option, so the `saloon` connection's value applies; a blank `CIN7_TIMEOUT=` counts as unset rather than `0`, which would wait forever. A connection's own key wins over the top-level one |
 | `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. A key present but `null` becomes `0`, which disables the window |
 | `rate_limit.store` | `null` stays `null`; anything else `(string)` | `null` lets the store fallback chain apply |
 | `rate_limit.cooldown` | `(int)`, falling back to `5` when the key is absent or `null` | A string such as `'9'` becomes `9`. `0` or less records no cooldown after a 503 or a 429 without `Retry-After` |
