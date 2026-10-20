@@ -50,7 +50,10 @@ such as a sandbox, is an entry in `connections`; see
 
 The `rate_limit` defaults match Cin7's limit of roughly 60 calls per minute per
 account. How the limit is enforced, and which stores share it across workers
-and servers, is in [connector](connector.md). How the retry
+and servers, is in [connector](connector.md). Redis, standalone or Cluster, is
+supported for `rate_limit.store` and for the sync's module locks (the cache store): the keys
+need no hash tag, since neither the limiter nor a lock sends more than one key to Redis in a
+command, and the package's CI runs both on Redis 8 and on a three-master Cluster. How the retry
 values are applied is in [requests](requests.md#retry-policy).
 
 ## Publishing
