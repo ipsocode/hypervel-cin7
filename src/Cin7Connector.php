@@ -74,6 +74,11 @@ final class Cin7Connector extends Connector implements HasPagination
     public const int THROTTLE_COOLDOWN = 5;
 
     /**
+     * The Cin7 Core V2 API, which `cin7.base_url` defaults to.
+     */
+    public const string BASE_URL = 'https://inventory.dearsystems.com/ExternalApi/v2/';
+
+    /**
      * @var array<string, string>
      */
     private readonly array $headers;
@@ -96,6 +101,9 @@ final class Cin7Connector extends Connector implements HasPagination
         private readonly int $rateLimitPeriod = 60,
         private readonly ?string $rateLimitStore = null,
         private readonly int $rateLimitCooldown = self::THROTTLE_COOLDOWN,
+        private readonly string $baseUrl = self::BASE_URL,
+        private readonly ?int $timeout = null,
+        private readonly ?int $connectTimeout = null,
     ) {
         $this->headers = [
             'Content-Type' => 'application/json',
@@ -139,7 +147,21 @@ final class Cin7Connector extends Connector implements HasPagination
 
     public function resolveBaseUrl(): string
     {
-        return 'https://inventory.dearsystems.com/ExternalApi/v2/';
+        return $this->baseUrl;
+    }
+
+    /**
+     * Only the timeouts the connection sets: a request option overrides the `saloon` HTTP
+     * connection's, and one left null inherits it.
+     *
+     * @return array<string, int>
+     */
+    protected function defaultOptions(): array
+    {
+        return array_filter([
+            'timeout' => $this->timeout,
+            'connect_timeout' => $this->connectTimeout,
+        ], static fn (?int $seconds): bool => $seconds !== null);
     }
 
     public function paginate(Request $request): Cin7Paginator
@@ -181,11 +203,91 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
+     * The `bankTransfer` resource.
+     */
+    public function bankTransfer(): BankTransferResource
+    {
+        return new BankTransferResource($this);
+    }
+
+    /**
+     * The `crm/…` resources.
+     */
+    public function crm(): CrmResource
+    {
+        return new CrmResource($this);
+    }
+
+    /**
      * The `customer` resource.
      */
     public function customer(): CustomerResource
     {
         return new CustomerResource($this);
+    }
+
+    /**
+     * The `custom-prices` resource.
+     */
+    public function customPrices(): CustomPricesResource
+    {
+        return new CustomPricesResource($this);
+    }
+
+    /**
+     * The `disassembly` resource.
+     */
+    public function disassembly(): DisassemblyResource
+    {
+        return new DisassemblyResource($this);
+    }
+
+    /**
+     * The `disassemblyList` resource.
+     */
+    public function disassemblyList(): DisassemblyListResource
+    {
+        return new DisassemblyListResource($this);
+    }
+
+    /**
+     * The `finishedGoods` resource.
+     */
+    public function finishedGoods(): FinishedGoodsResource
+    {
+        return new FinishedGoodsResource($this);
+    }
+
+    /**
+     * The `finishedGoodsList` resource.
+     */
+    public function finishedGoodsList(): FinishedGoodsListResource
+    {
+        return new FinishedGoodsListResource($this);
+    }
+
+    /**
+     * The `inventoryWriteOff` resource.
+     */
+    public function inventoryWriteOff(): InventoryWriteOffResource
+    {
+        return new InventoryWriteOffResource($this);
+    }
+
+    /**
+     * The `inventoryWriteOffList` resource.
+     */
+    public function inventoryWriteOffList(): InventoryWriteOffListResource
+    {
+        return new InventoryWriteOffListResource($this);
+    }
+
+    /**
+     * The `journal` resource.
+     */
+    public function journal(): JournalResource
+    {
+        return new JournalResource($this);
     }
 
     /**
@@ -221,6 +323,30 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
+     * The `productFamily` resource.
+     */
+    public function productFamily(): ProductFamilyResource
+    {
+        return new ProductFamilyResource($this);
+    }
+
+    /**
+     * The `production/…` resources.
+     */
+    public function production(): ProductionResource
+    {
+        return new ProductionResource($this);
+    }
+
+    /**
+     * The `product-suppliers` resource.
+     */
+    public function productSuppliers(): ProductSuppliersResource
+    {
+        return new ProductSuppliersResource($this);
+    }
+
+    /**
      * The `purchase` resource, the simple purchase.
      */
     public function purchase(): PurchaseResource
@@ -245,20 +371,20 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * The `productFamily` resource.
-     */
-    public function productFamily(): ProductFamilyResource
-    {
-        return new ProductFamilyResource($this);
-    }
-
-    /**
      * The `ref` grouping: `ref()->tax()`, `ref()->account()`, `ref()->paymentTerm()` and the
      * other `ref/…` resources.
      */
     public function ref(): RefResource
     {
         return new RefResource($this);
+    }
+
+    /**
+     * The `reference/…` resources, the reference books.
+     */
+    public function reference(): ReferenceResource
+    {
+        return new ReferenceResource($this);
     }
 
     /**
@@ -286,19 +412,59 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * The `bankTransfer` resource.
+     * The `stockadjustment` resource.
      */
-    public function bankTransfer(): BankTransferResource
+    public function stockAdjustment(): StockAdjustmentResource
     {
-        return new BankTransferResource($this);
+        return new StockAdjustmentResource($this);
     }
 
     /**
-     * The `journal` resource.
+     * The `stockadjustmentList` resource.
      */
-    public function journal(): JournalResource
+    public function stockAdjustmentList(): StockAdjustmentListResource
     {
-        return new JournalResource($this);
+        return new StockAdjustmentListResource($this);
+    }
+
+    /**
+     * The `stocktake` resource.
+     */
+    public function stockTake(): StockTakeResource
+    {
+        return new StockTakeResource($this);
+    }
+
+    /**
+     * The `stockTakeList` resource.
+     */
+    public function stockTakeList(): StockTakeListResource
+    {
+        return new StockTakeListResource($this);
+    }
+
+    /**
+     * The `stockTransfer` resource.
+     */
+    public function stockTransfer(): StockTransferResource
+    {
+        return new StockTransferResource($this);
+    }
+
+    /**
+     * The `stockTransferList` resource.
+     */
+    public function stockTransferList(): StockTransferListResource
+    {
+        return new StockTransferListResource($this);
+    }
+
+    /**
+     * The `supplier` resource.
+     */
+    public function supplier(): SupplierResource
+    {
+        return new SupplierResource($this);
     }
 
     /**
@@ -310,11 +476,11 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * The `supplier` resource.
+     * The `webhooks` resource.
      */
-    public function supplier(): SupplierResource
+    public function webhooks(): WebhooksResource
     {
-        return new SupplierResource($this);
+        return new WebhooksResource($this);
     }
 
     /**
@@ -363,8 +529,9 @@ final class Cin7Connector extends Connector implements HasPagination
     /**
      * Cin7 throttles with a 429 (its documented limit response) or a 503. A 429 cools down for its
      * `Retry-After`, parsed here because the trait's parser is private and answers 60 seconds for a
-     * value it cannot read; a 429 without a usable one, and every 503, for the configured cooldown, `THROTTLE_COOLDOWN` seconds by
-     * default; a cooldown of 0 or less records none for those.
+     * value it cannot read; a 429 without a usable one, and every 503, for the configured
+     * cooldown, `THROTTLE_COOLDOWN` seconds by default; a cooldown of 0 or less records none for
+     * those.
      */
     protected function resolveRateLimitCooldown(Response $response): ?int
     {
@@ -413,149 +580,5 @@ final class Cin7Connector extends Connector implements HasPagination
     private function throttleCooldown(): ?int
     {
         return $this->rateLimitCooldown > 0 ? $this->rateLimitCooldown : null;
-    }
-
-    /**
-     * The `custom-prices` resource.
-     */
-    public function customPrices(): CustomPricesResource
-    {
-        return new CustomPricesResource($this);
-    }
-
-    /**
-     * The `product-suppliers` resource.
-     */
-    public function productSuppliers(): ProductSuppliersResource
-    {
-        return new ProductSuppliersResource($this);
-    }
-
-    /**
-     * The `reference/…` resources, the reference books.
-     */
-    public function reference(): ReferenceResource
-    {
-        return new ReferenceResource($this);
-    }
-
-    /**
-     * The `stockadjustmentList` resource.
-     */
-    public function stockAdjustmentList(): StockAdjustmentListResource
-    {
-        return new StockAdjustmentListResource($this);
-    }
-
-    /**
-     * The `stockadjustment` resource.
-     */
-    public function stockAdjustment(): StockAdjustmentResource
-    {
-        return new StockAdjustmentResource($this);
-    }
-
-    /**
-     * The `stockTakeList` resource.
-     */
-    public function stockTakeList(): StockTakeListResource
-    {
-        return new StockTakeListResource($this);
-    }
-
-    /**
-     * The `stocktake` resource.
-     */
-    public function stockTake(): StockTakeResource
-    {
-        return new StockTakeResource($this);
-    }
-
-    /**
-     * The `stockTransferList` resource.
-     */
-    public function stockTransferList(): StockTransferListResource
-    {
-        return new StockTransferListResource($this);
-    }
-
-    /**
-     * The `stockTransfer` resource.
-     */
-    public function stockTransfer(): StockTransferResource
-    {
-        return new StockTransferResource($this);
-    }
-
-    /**
-     * The `inventoryWriteOffList` resource.
-     */
-    public function inventoryWriteOffList(): InventoryWriteOffListResource
-    {
-        return new InventoryWriteOffListResource($this);
-    }
-
-    /**
-     * The `inventoryWriteOff` resource.
-     */
-    public function inventoryWriteOff(): InventoryWriteOffResource
-    {
-        return new InventoryWriteOffResource($this);
-    }
-
-    /**
-     * The `disassemblyList` resource.
-     */
-    public function disassemblyList(): DisassemblyListResource
-    {
-        return new DisassemblyListResource($this);
-    }
-
-    /**
-     * The `disassembly` resource.
-     */
-    public function disassembly(): DisassemblyResource
-    {
-        return new DisassemblyResource($this);
-    }
-
-    /**
-     * The `finishedGoodsList` resource.
-     */
-    public function finishedGoodsList(): FinishedGoodsListResource
-    {
-        return new FinishedGoodsListResource($this);
-    }
-
-    /**
-     * The `finishedGoods` resource.
-     */
-    public function finishedGoods(): FinishedGoodsResource
-    {
-        return new FinishedGoodsResource($this);
-    }
-
-    /**
-     * The `crm/…` resources.
-     */
-    public function crm(): CrmResource
-    {
-        return new CrmResource($this);
-    }
-
-    /**
-     * The `webhooks` resource.
-     */
-    public function webhooks(): WebhooksResource
-    {
-        return new WebhooksResource($this);
-    }
-
-    /**
-     * The `production/…` resources.
-     */
-    public function production(): ProductionResource
-    {
-        return new ProductionResource($this);
     }
 }

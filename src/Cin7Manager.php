@@ -65,6 +65,9 @@ final class Cin7Manager
         $rateLimit = is_array($connection['rate_limit'] ?? null) ? $connection['rate_limit'] : [];
         $store = array_key_exists('store', $rateLimit) ? $rateLimit['store'] : config('cin7.rate_limit.store');
 
+        $timeout = $this->transportSetting($connection, 'timeout');
+        $connectTimeout = $this->transportSetting($connection, 'connect_timeout');
+
         return new Cin7Connector(
             (string) ($connection['account_id'] ?? ''),
             (string) ($connection['application_key'] ?? ''),
@@ -72,6 +75,27 @@ final class Cin7Manager
             (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', 60)),
             $store === null ? null : (string) $store,
             (int) ($rateLimit['cooldown'] ?? config('cin7.rate_limit.cooldown') ?? Cin7Connector::THROTTLE_COOLDOWN),
+            (string) ($this->transportSetting($connection, 'base_url') ?? Cin7Connector::BASE_URL),
+            $timeout === null ? null : (int) $timeout,
+            $connectTimeout === null ? null : (int) $connectTimeout,
         );
+    }
+
+    /**
+     * A transport key, the connection's own before the top-level one. A blank value, such as
+     * `CIN7_TIMEOUT=` in `.env`, counts as unset: cast, it would be a timeout of 0, which waits
+     * forever, or an empty base URL.
+     *
+     * @param array<mixed> $connection
+     */
+    private function transportSetting(array $connection, string $key): mixed
+    {
+        $value = $connection[$key] ?? null;
+
+        if ($value === null || $value === '') {
+            $value = config('cin7.' . $key);
+        }
+
+        return $value === '' ? null : $value;
     }
 }

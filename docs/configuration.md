@@ -12,6 +12,9 @@ those values through `config()`, never by reading the environment directly.
 |---|---|---|---|
 | `account_id` | `CIN7_ACCOUNT_ID` | none | Sent as the `api-auth-accountid` header |
 | `application_key` | `CIN7_APPLICATION_KEY` | none | Sent as the `api-auth-applicationkey` header |
+| `base_url` | `CIN7_BASE_URL` | `https://inventory.dearsystems.com/ExternalApi/v2/` | The API root, for a stub server or a staging proxy |
+| `timeout` | `CIN7_TIMEOUT` | none | Seconds to wait for a response; unset inherits the `saloon` HTTP connection's `timeout` |
+| `connect_timeout` | `CIN7_CONNECT_TIMEOUT` | none | Seconds to wait to connect; unset inherits the `saloon` HTTP connection's `connect_timeout` |
 | `default` | `CIN7_CONNECTION` | `default` | The [connection](connector.md#named-connections) that `Cin7Connector` injection and `Cin7Manager::connection()` resolve |
 | `connections` | none | `[]` | More accounts or API applications by name, each with `account_id`, `application_key` and an optional `rate_limit` block |
 | `rate_limit.max` | `CIN7_RATE_MAX` | `60` | Calls allowed per window, per API application; `0` disables the window (the throttling cooldown still applies) |
@@ -113,6 +116,8 @@ than trusting its type, so a missing or loosely typed value does not throw a
 | Value | Cast | Result |
 |---|---|---|
 | `account_id`, `application_key` | `(string)` | Unset (`null`) becomes `''`. The connector resolves, and Cin7 rejects the call instead |
+| `base_url` | `(string)`, falling back to the V2 URL when absent, `null` or `''` | A connection's own `base_url` wins over the top-level one; a blank `CIN7_BASE_URL=` counts as unset |
+| `timeout`, `connect_timeout` | `null` and `''` become `null`; anything else `(int)` | `null` sends no option, so the `saloon` connection's value applies; a blank `CIN7_TIMEOUT=` counts as unset rather than `0`, which would wait forever. A connection's own key wins over the top-level one |
 | `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. A key present but `null` becomes `0`, which disables the window |
 | `rate_limit.store` | `null` stays `null`; anything else `(string)` | `null` lets the store fallback chain apply |
 | `rate_limit.cooldown` | `(int)`, falling back to `5` when the key is absent or `null` | A string such as `'9'` becomes `9`. `0` or less records no cooldown after a 503 or a 429 without `Retry-After` |

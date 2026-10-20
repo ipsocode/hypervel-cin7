@@ -37,6 +37,14 @@ return [
         // ],
     ],
 
+    // The API root, for a stub server or a staging proxy. Unset is Cin7's V2 URL.
+    'base_url' => env('CIN7_BASE_URL', 'https://inventory.dearsystems.com/ExternalApi/v2/'),
+
+    // Seconds to wait for a response and to connect. Unset (null) inherits the `saloon` HTTP
+    // connection's timeouts, which every Saloon connector in the application shares.
+    'timeout' => env('CIN7_TIMEOUT'),
+    'connect_timeout' => env('CIN7_CONNECT_TIMEOUT'),
+
     // Local throttle for Cin7's limit of 60 calls per minute per API application.
     // Set `max` or `period` to 0 to remove the window; the throttling cooldown still applies.
     'rate_limit' => [
