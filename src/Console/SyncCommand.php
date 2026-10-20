@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Console;
 
 use Hypervel\Console\Command;
+use Hypervel\Support\Carbon;
 use InvalidArgumentException;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Sync\Module;
@@ -93,12 +94,14 @@ class SyncCommand extends Command
             ['Module', 'Rows', 'Last synced', 'Newest change in Cin7'],
             array_map(static function (Module $module) use ($accountId): array {
                 $rows = Payload::forModule($module, $accountId);
+                // PostgreSQL drops trailing zeros from fractional seconds, so spell the time out.
+                $newest = $rows->max('cin7_modified_at');
 
                 return [
                     $module->value,
                     $rows->count(),
                     (string) $rows->max('synced_at') ?: 'never',
-                    (string) $rows->max('cin7_modified_at') ?: '-',
+                    $newest === null ? '-' : Carbon::parse($newest)->format('Y-m-d H:i:s.v'),
                 ];
             }, $modules),
         );

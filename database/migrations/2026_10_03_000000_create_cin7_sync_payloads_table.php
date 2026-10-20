@@ -26,8 +26,10 @@ return new class extends Migration {
             $table->jsonb('payload');
             // Cin7's own modified time: how a pull tells a changed record from one it read again.
             $table->timestamp('cin7_modified_at', 3)->nullable();
-            // The last pull that returned the record, changed or not.
-            $table->timestamp('synced_at');
+            // The last pull that returned the record, changed or not. Every write sets it; the default
+            // is there because MySQL 5.7 rejects a NOT NULL timestamp that is not the table's first
+            // with the implicit zero default (error 1067).
+            $table->timestamp('synced_at')->useCurrent();
             // updated_at moves only when the record changed.
             $table->timestamps();
 
