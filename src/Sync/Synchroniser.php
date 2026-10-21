@@ -271,7 +271,11 @@ final class Synchroniser
         }
 
         $due = fn (): QueryBuilder => $this->pair($module, fromList: true)
-            ->where(fn (QueryBuilder $query) => $query->whereNull('d.id')->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at'));
+            ->where(fn (QueryBuilder $query) => $query->whereNull('d.id')
+                ->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at')
+                // A document read while its list row had no modified time stored none, and a
+                // comparison with NULL is never true.
+                ->orWhere(fn (QueryBuilder $query) => $query->whereNotNull('l.cin7_modified_at')->whereNull('d.cin7_modified_at')));
 
         // Rows with no modified time come first, read on their own because databases disagree on
         // where NULLs sort (PostgreSQL puts them last, SQLite and MySQL first).
