@@ -115,6 +115,15 @@ enum Module: string
     }
 
     /**
+     * Whether an incremental walk of the list sends an upper bound, `UpdatedUntil`, so the pages
+     * stay still while they are walked.
+     */
+    public function bounded(): bool
+    {
+        return $this === self::SaleList || $this === self::PurchaseList;
+    }
+
+    /**
      * The key of Cin7's modified time in a list module's records. A document takes its list
      * row's.
      */
@@ -132,7 +141,7 @@ enum Module: string
      *
      * @throws LogicException for a document module, which has no list of its own
      */
-    public function listRequest(?DateTimeInterface $since, DateTimeInterface $until): ListRequest
+    public function listRequest(?DateTimeInterface $since, ?DateTimeInterface $until): ListRequest
     {
         $list = $this->definition()['list'];
 
@@ -232,7 +241,7 @@ enum Module: string
                 'modified' => 'Updated',
                 'source' => null,
                 'data' => SaleListData::class,
-                'list' => static fn (?DateTimeInterface $since, DateTimeInterface $until) => new GetSaleList(updatedSince: $since, updatedUntil: $until),
+                'list' => static fn (?DateTimeInterface $since, ?DateTimeInterface $until) => new GetSaleList(updatedSince: $since, updatedUntil: $until),
                 'document' => null,
             ],
             self::PurchaseList => [
@@ -240,7 +249,7 @@ enum Module: string
                 'modified' => 'LastUpdatedDate',
                 'source' => null,
                 'data' => PurchaseListData::class,
-                'list' => static fn (?DateTimeInterface $since, DateTimeInterface $until) => new GetPurchaseList(updatedSince: $since, updatedUntil: $until),
+                'list' => static fn (?DateTimeInterface $since, ?DateTimeInterface $until) => new GetPurchaseList(updatedSince: $since, updatedUntil: $until),
                 'document' => null,
             ],
             self::Sale => [

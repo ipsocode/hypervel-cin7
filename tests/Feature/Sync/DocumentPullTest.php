@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Sync;
 
 use Hypervel\Saloon\Facades\Saloon;
+use Hypervel\Support\Carbon;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Sync\Module;
 use Ipsocode\Cin7\Testing\Cin7Fake;
@@ -155,6 +156,7 @@ class DocumentPullTest extends SyncTestCase
             Cin7Fake::record(['ID' => 's-1']),
             Cin7Fake::record(['ID' => 's-2']),
             Cin7Fake::list('SaleList', [$this->sale('s-1')]),
+            Cin7Fake::list('SaleList'),
         ]);
 
         $this->synchroniser()->pull(Module::SaleList);
@@ -165,6 +167,35 @@ class DocumentPullTest extends SyncTestCase
 
         $this->assertSame([0, 1], [$result->read, $result->deleted]);
         $this->assertSame(['s-1'], $this->stored(Module::Sale)->keys()->all());
-        $mock->assertSentCount(4);
+        $mock->assertSentCount(5);
+    }
+
+    public function testAFullPullKeepsARecordUpdatedWhileTheBoundedWalkRan(): void
+    {
+        $mock = Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1'), $this->sale('s-2')]),
+            Cin7Fake::record(['ID' => 's-1']),
+            Cin7Fake::record(['ID' => 's-2']),
+            // The bounded walk leaves s-2 out, as UpdatedUntil would; the follow-up walk returns it.
+            Cin7Fake::list('SaleList', [$this->sale('s-1')]),
+            Cin7Fake::list('SaleList', [$this->sale('s-2', '2026-10-03T12:00:01Z')]),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->synchroniser()->pull(Module::Sale);
+        $this->travel(1)->hours();
+        $list = $this->synchroniser()->pull(Module::SaleList, full: true);
+        $document = $this->synchroniser()->pull(Module::Sale, full: true);
+
+        $this->assertSame([2, 0], [$list->read, $list->deleted]);
+        $this->assertSame(0, $document->deleted);
+        $this->assertSame(['s-1', 's-2'], $this->stored(Module::SaleList)->keys()->all());
+        $this->assertSame(['s-1', 's-2'], $this->stored(Module::Sale)->keys()->all());
+
+        [, , , $bounded, $followUp] = $this->queries($mock);
+        $this->assertArrayHasKey('UpdatedUntil', $bounded);
+        $this->assertArrayNotHasKey('UpdatedSince', $bounded);
+        $this->assertArrayNotHasKey('UpdatedUntil', $followUp);
+        $this->assertSame(Carbon::now()->startOfSecond()->format('Y-m-d\TH:i:s.v'), $followUp['UpdatedSince']);
     }
 }
