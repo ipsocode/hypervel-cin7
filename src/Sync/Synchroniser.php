@@ -231,10 +231,30 @@ final class Synchroniser
     private function unchanged(Module $module, mixed $stored, array $item, ?string $modified): bool
     {
         if (! $module->incremental()) {
-            return json_decode((string) $stored, true) == $item;
+            return $this->canonical(json_decode((string) $stored, true)) === $this->canonical($item);
         }
 
         return $modified !== null && Module::timestamp($stored) === $modified;
+    }
+
+    /**
+     * The value with the keys of every object sorted, so a payload whose keys came back in another
+     * order (PostgreSQL's `jsonb` reorders them) compares equal under `===`, which unlike `==`
+     * does not take `null` for `""` or `"1.0"` for `"1"`.
+     */
+    private function canonical(mixed $value): mixed
+    {
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        $value = array_map($this->canonical(...), $value);
+
+        if (! array_is_list($value)) {
+            ksort($value, SORT_STRING);
+        }
+
+        return $value;
     }
 
     /**
