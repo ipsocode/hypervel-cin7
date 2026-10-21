@@ -96,7 +96,11 @@ other records point to comes before the records that point to it.
    unchanged record (the same modified time, or for a reference book the same payload) has
    only its `synced_at` moved; a full pull refreshes its payload too, without moving
    `updated_at`.
-5. A full pull that completes and read something then deletes the module's rows it did not
+5. A full pull of `saleList` or `purchaseList` that is not a first fill then walks the list once
+   more, from the pull's start with no `UpdatedUntil`, and stores what that returns. It reads
+   what changed while the bounded walk ran, which that walk left out, so step 6 keeps it. Both walks
+   must complete.
+6. A full pull that completes and read something then deletes the module's rows it did not
    see. A pull that fails deletes nothing and keeps what it wrote, but gives the rows it reached
    their last sync back, so the module's newest `synced_at` does not move and the next pull
    reaches back as far as the failed one did. One that began on an empty module is undone, so

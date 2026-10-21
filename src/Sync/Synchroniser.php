@@ -76,24 +76,35 @@ final class Synchroniser
         $previous = $this->rows($module)->max('synced_at');
         $empty = $previous === null;
         $full = $full || $empty || ! $module->incremental();
-        $request = $module->listRequest($full ? null : $this->since((string) $previous, $start), $start);
-        $paginator = $this->cin7->paginate($request)->perPageLimit(SyncConfig::limit());
+        $requests = [$module->listRequest($full ? null : $this->since((string) $previous, $start), $start)];
+
+        // The bounded walk leaves out what changed after $start, which a full pull would delete as
+        // gone. A second walk from $start with no bound reads those, so the deletion keeps them. A
+        // first fill has nothing to delete, and the next pull reads what changed during it.
+        if ($full && ! $empty && $module->bounded()) {
+            $requests[] = $module->listRequest($start, null);
+        }
+
         $read = $written = $unchanged = 0;
 
         try {
-            // Driven by hand rather than foreach, so the pause falls between calls only.
-            $paginator->rewind();
+            foreach ($requests as $request) {
+                $paginator = $this->cin7->paginate($request)->perPageLimit(SyncConfig::limit());
 
-            while ($paginator->valid()) {
-                $items = $request->mapPaginatedResponseItems($paginator->current());
-                [$changed, $same] = $this->store($module, $items, $start, $full);
-                $read += count($items);
-                $written += $changed;
-                $unchanged += $same;
-                $paginator->next();
+                // Driven by hand rather than foreach, so the pause falls between calls only.
+                $paginator->rewind();
 
-                if ($paginator->valid()) {
-                    $this->pause();
+                while ($paginator->valid()) {
+                    $items = $request->mapPaginatedResponseItems($paginator->current());
+                    [$changed, $same] = $this->store($module, $items, $start, $full);
+                    $read += count($items);
+                    $written += $changed;
+                    $unchanged += $same;
+                    $paginator->next();
+
+                    if ($paginator->valid()) {
+                        $this->pause();
+                    }
                 }
             }
         } catch (Throwable $exception) {
