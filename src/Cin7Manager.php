@@ -65,6 +65,11 @@ final class Cin7Manager
         $rateLimit = is_array($connection['rate_limit'] ?? null) ? $connection['rate_limit'] : [];
         $store = array_key_exists('store', $rateLimit) ? $rateLimit['store'] : config('cin7.rate_limit.store');
 
+        // A blank CIN7_RATE_STORE is unset, so the connector falls back to `saloon.rate_limiter.store`.
+        if ($store === '') {
+            $store = null;
+        }
+
         $timeout = $this->transportSetting($connection, 'timeout');
         $connectTimeout = $this->transportSetting($connection, 'connect_timeout');
 

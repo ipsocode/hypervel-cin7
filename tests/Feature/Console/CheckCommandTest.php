@@ -148,6 +148,19 @@ class CheckCommandTest extends TestCase
         $mock->assertNothingSent();
     }
 
+    public function testABlankStoreFallsBackToTheSaloonStore(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.store', '');
+        $this->app->get('config')->set('saloon.rate_limiter.store', 'missing');
+        $mock = Saloon::fake([]);
+
+        $this->artisan('cin7:check')
+            ->expectsOutputToContain('The limiter store [missing] failed: Rate limiter store [missing] is not defined.')
+            ->assertExitCode(1);
+
+        $mock->assertNothingSent();
+    }
+
     public function testNothingItPrintsCarriesTheCredentials(): void
     {
         $responses = [
