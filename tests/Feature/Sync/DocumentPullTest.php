@@ -80,6 +80,27 @@ class DocumentPullTest extends SyncTestCase
         $this->assertSame('VOIDED', $this->stored(Module::Sale)['s-1']->payload['Status']);
     }
 
+    public function testADocumentStoredWithoutAModifiedTimeIsReadOnceItsListRowGetsOne(): void
+    {
+        $mock = Saloon::fake([
+            Cin7Fake::list('SaleList', [['SaleID' => 's-1', 'OrderNumber' => 'SO-s-1', 'Updated' => null]]),
+            Cin7Fake::record(['ID' => 's-1']),
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-03T12:30:00Z')]),
+            Cin7Fake::record(['ID' => 's-1', 'Status' => 'VOIDED']),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->synchroniser()->pull(Module::Sale);
+        $this->travel(1)->hours();
+        $this->synchroniser()->pull(Module::SaleList);
+        $second = $this->synchroniser()->pull(Module::Sale);
+        $third = $this->synchroniser()->pull(Module::Sale);
+
+        $this->assertSame([1, 0], [$second->read, $third->read]);
+        $this->assertSame('VOIDED', $this->stored(Module::Sale)['s-1']->payload['Status']);
+        $mock->assertSentCount(4);
+    }
+
     public function testAtMostTheConfiguredNumberAreReadInARun(): void
     {
         $this->app->get('config')->set('cin7.sync.documents', 1);
