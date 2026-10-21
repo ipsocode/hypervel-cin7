@@ -381,4 +381,49 @@ class ListPullTest extends SyncTestCase
         $this->assertSame('Trade receivables', $rows['610']->payload['Name']);
         $this->assertSame('2026-10-03 13:00:00', $rows['610']->updated_at?->toDateTimeString());
     }
+
+    /**
+     * PHP's `==` takes each pair as equal, so a change like these once left `updated_at` alone.
+     */
+    #[DataProvider('looselyEqualValues')]
+    public function testAReferenceBookChangeThatLooselyEqualsTheStoredValueStillMovesUpdatedAt(mixed $stored, mixed $read): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('AccountsList', [['Code' => '200', 'Value' => $stored]]),
+            Cin7Fake::list('AccountsList', [['Code' => '200', 'Value' => $read]]),
+        ]);
+
+        $this->synchroniser()->pull(Module::Account);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::Account);
+
+        $this->assertSame([1, 0], [$result->written, $result->unchanged]);
+        $this->assertSame('2026-10-03 13:00:00', $this->stored(Module::Account)['200']->updated_at?->toDateTimeString());
+    }
+
+    /**
+     * @return iterable<string, array{mixed, mixed}>
+     */
+    public static function looselyEqualValues(): iterable
+    {
+        yield 'null and an empty string' => [null, ''];
+        yield 'zero and false' => [0, false];
+        yield 'a decimal string and an integer string' => ['1.0', '1'];
+        yield 'a padded string and an integer string' => ['001', '1'];
+    }
+
+    public function testAReferenceBookPayloadWithItsKeysInAnotherOrderIsUnchanged(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('AccountsList', [['Code' => '200', 'Name' => 'Sales', 'Tags' => [['a' => 1, 'b' => 2], ['c' => 3]]]]),
+            Cin7Fake::list('AccountsList', [['Tags' => [['b' => 2, 'a' => 1], ['c' => 3]], 'Name' => 'Sales', 'Code' => '200']]),
+        ]);
+
+        $this->synchroniser()->pull(Module::Account);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::Account);
+
+        $this->assertSame([0, 1], [$result->written, $result->unchanged]);
+        $this->assertSame('2026-10-03 12:00:00', $this->stored(Module::Account)['200']->updated_at?->toDateTimeString());
+    }
 }
