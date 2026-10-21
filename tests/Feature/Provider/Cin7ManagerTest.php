@@ -205,6 +205,20 @@ class Cin7ManagerTest extends TestCase
         $this->assertNull($this->manager()->connection('local')->resolveRateLimitStoreName());
     }
 
+    public function testABlankStoreIsUnsetAtBothLevels(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.store', '');
+        $this->useSandbox();
+        $this->app->get('config')->set('cin7.connections.local', [
+            'account_id' => 'acct-local',
+            'application_key' => 'key-local',
+            'rate_limit' => ['store' => ''],
+        ]);
+
+        $this->assertNull($this->manager()->connection('sandbox')->resolveRateLimitStoreName());
+        $this->assertNull($this->manager()->connection('local')->resolveRateLimitStoreName());
+    }
+
     public function testUnsetCredentialsAreCastRatherThanTrusted(): void
     {
         $this->app->get('config')->set('cin7.connections.blank', ['account_id' => null]);
