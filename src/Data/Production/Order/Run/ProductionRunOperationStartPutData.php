@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Production\Order\Run;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Date;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * The body of `production/order/run/operation/start` PUT: the operation to start, whether to
@@ -29,7 +29,7 @@ final class ProductionRunOperationStartPutData extends Data
         #[Uuid]
         public string $RunOperationID,
         public ?bool $WithAutoConsume = null,
-        #[DateTime]
+        #[Date]
         public ?string $ManualStartDate = null,
         #[DataCollectionOf(ProductionRunOperationComponentData::class)]
         public ?array $InputProducts = null,

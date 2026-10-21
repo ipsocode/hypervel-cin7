@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Data\Production\Order\Run;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
+use Hypervel\Data\Attributes\Validation\Date;
 use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
-use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * The body of `production/order/run/operation/complete` PUT: the operation to complete, whether to
@@ -31,7 +31,7 @@ final class ProductionRunOperationCompletePutData extends Data
         public ?bool $WithAutoConsume = null,
         public ?bool $WithoutOutput = null,
         public ?bool $AutoGenerateBatchSerialNumbers = null,
-        #[DateTime]
+        #[Date]
         public ?string $ManualEndDate = null,
         #[DataCollectionOf(ProductionRunOutputData::class)]
         public ?array $FinishedProducts = null,

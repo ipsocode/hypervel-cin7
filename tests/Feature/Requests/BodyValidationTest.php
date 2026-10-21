@@ -36,6 +36,7 @@ use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderPutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunOperationCompletePutData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunOperationStartPutData;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomPostData;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomPostData;
 use Ipsocode\Cin7\Data\Production\Resource\ResourcePutData;
@@ -105,6 +106,7 @@ use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Production\Order\PutProductionOrder;
 use Ipsocode\Cin7\Requests\Production\Order\Run\Operation\Complete\PutProductionOrderRunOperationComplete;
+use Ipsocode\Cin7\Requests\Production\Order\Run\Operation\Start\PutProductionOrderRunOperationStart;
 use Ipsocode\Cin7\Requests\Production\ProductionBom\PostProductFamilyProductionBom;
 use Ipsocode\Cin7\Requests\Production\ProductionBom\PostProductProductionBom;
 use Ipsocode\Cin7\Requests\Production\Resource\PostProductionResource;
@@ -1222,5 +1224,20 @@ class BodyValidationTest extends TestCase
         FixedAssetTypePostData::validate($body + ['Rate' => 10]);
         FixedAssetTypePostData::validate($body + ['EffectiveLife' => 2]);
         $this->addToAssertionCount(1);
+    }
+
+    /**
+     * The reference types a run operation's `ManualStartDate` and `ManualEndDate` as a Date and
+     * its examples send "2022-07-07": both bodies, built from those examples, are sent.
+     */
+    public function testARunOperationBodyTakesTheReferencesDateOnlyManualDates(): void
+    {
+        $complete = Cin7Payloads::load('production/order/run/operation/complete', 'put.request');
+        $complete['FinishedProducts'] = array_map(static fn (array $product): array => ['Received' => true] + $product, $complete['FinishedProducts']);
+
+        $this->connector()->send(new PutProductionOrderRunOperationStart(ProductionRunOperationStartPutData::from(Cin7Payloads::load('production/order/run/operation/start', 'put.request'))));
+        $this->connector()->send(new PutProductionOrderRunOperationComplete(ProductionRunOperationCompletePutData::from($complete)));
+
+        $this->mock->assertSentCount(2);
     }
 }
