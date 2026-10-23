@@ -11,12 +11,12 @@ The suite needs PHP 8.4 or 8.5 with the Swoole and Redis extensions that
 test case runs each test inside a Swoole coroutine, so a PHP without Swoole
 fails before the first assertion. No Redis *server* is involved — nothing here
 opens a Redis connection — but Composer will not resolve `hypervel/components`
-without the extension. CI runs in `ghcr.io/ipsocode/hypervel/ci:<php>-latest`,
+without the extension. CI runs in `ghcr.io/ipsocode/hypervel/ci-alpine:<php>-latest`,
 which has all of them, and is the simplest way to match it:
 
 ```sh
 docker run --rm -it -v "$PWD":/app -w /app -e OTEL_SDK_DISABLED=true \
-    ghcr.io/ipsocode/hypervel/ci:8.4-latest bash
+    ghcr.io/ipsocode/hypervel/ci-alpine:8.4-latest bash
 composer update
 ```
 

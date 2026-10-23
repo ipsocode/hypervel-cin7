@@ -211,7 +211,7 @@ enum Module: string
      *     modified: ?string,
      *     source: ?self,
      *     data: class-string<Data>,
-     *     list: null|(Closure(?DateTimeInterface, DateTimeInterface): ListRequest<covariant Data&WithResponse>),
+     *     list: null|(Closure(?DateTimeInterface, ?DateTimeInterface): ListRequest<covariant Data&WithResponse>),
      *     document: null|(Closure(string): Cin7Request<covariant Data>),
      *     find: null|(Closure(string): ListRequest<covariant Data&WithResponse>),
      * }

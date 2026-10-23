@@ -37,7 +37,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -94,7 +94,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -151,7 +151,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -207,7 +207,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -263,7 +263,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -319,7 +319,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -375,7 +375,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -430,7 +430,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -473,7 +473,7 @@ jobs:
     timeout-minutes: 10
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false

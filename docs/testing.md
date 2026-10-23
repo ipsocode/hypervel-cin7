@@ -232,7 +232,7 @@ docker run --rm -it --network cin7-db -v "$PWD":/data -w /data \
     -e OTEL_SDK_DISABLED=true \
     -e DB_HOST=cin7-mysql -e DB_PORT=3306 -e DB_DATABASE=testing \
     -e DB_USERNAME=root -e DB_PASSWORD=password \
-    ghcr.io/ipsocode/hypervel/ci:8.4-latest bin/run-database-tests.sh mysql
+    ghcr.io/ipsocode/hypervel/ci-alpine:8.4-latest bin/run-database-tests.sh mysql
 ```
 
 For MariaDB use `mariadb:<version>` with `MARIADB_ROOT_PASSWORD` and
@@ -280,7 +280,7 @@ docker run -d --rm --name cin7-redis --network cin7-redis redis:8
 docker run --rm -it --network cin7-redis -v "$PWD":/data -w /data \
     -e OTEL_SDK_DISABLED=true \
     -e REDIS_HOST=cin7-redis -e REDIS_PORT=6379 -e REDIS_DB=0 -e REDIS_TEST_SECONDARY_DB=1 \
-    ghcr.io/ipsocode/hypervel/ci:8.4-latest vendor/bin/paratest --max-processes=15 tests/Feature/Redis
+    ghcr.io/ipsocode/hypervel/ci-alpine:8.4-latest vendor/bin/paratest --max-processes=15 tests/Feature/Redis
 ```
 
 For a cluster, start three nodes with `--cluster-enabled yes`, join them with `redis-cli --cluster

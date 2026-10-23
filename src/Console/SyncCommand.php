@@ -46,14 +46,14 @@ class SyncCommand extends Command
             return self::FAILURE;
         }
 
-        if ($this->option('retry-failed')) {
-            $this->release($modules, $cin7->accountId());
-        }
-
         if ($this->option('status')) {
             $this->status($modules, $cin7->accountId());
 
             return self::SUCCESS;
+        }
+
+        if ($this->option('retry-failed')) {
+            $this->release($modules, $cin7->accountId());
         }
 
         $results = $synchroniser->pullMany($modules, (bool) $this->option('full'));
