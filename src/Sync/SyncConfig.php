@@ -134,6 +134,14 @@ final class SyncConfig
         return max(0, (int) (config('cin7.sync.documents') ?? 250));
     }
 
+    /**
+     * Failed reads after which a document is no longer tried, at least 1.
+     */
+    public static function maxFailures(): int
+    {
+        return max(1, (int) (config('cin7.sync.max_failures') ?? 3));
+    }
+
     public static function queue(): ?string
     {
         return self::name(config('cin7.sync.queue'));

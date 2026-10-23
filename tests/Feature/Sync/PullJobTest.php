@@ -59,6 +59,11 @@ class PullJobTest extends SyncTestCase
         $this->assertSame(3, $pull->tries);
     }
 
+    public function testARetryWaitsMinutes(): void
+    {
+        $this->assertSame([300, 900], new Pull([Module::Customer])->backoff());
+    }
+
     public function testItIsUniquePerAccountModulesAndKind(): void
     {
         $this->assertSame('acct-test:customer,saleList:incremental', new Pull([Module::Customer, Module::SaleList])->uniqueId());

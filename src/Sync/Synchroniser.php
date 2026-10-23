@@ -62,9 +62,11 @@ final class Synchroniser
             // Every row a pull writes carries its start, so a full pull can tell what it saw.
             $start = Carbon::now()->startOfSecond();
 
-            return $module->source() === null
+            $list = $module->source();
+
+            return $list === null
                 ? $this->pullList($module, $full, $start)
-                : $this->pullDocuments($module, $full, $start);
+                : $this->pullDocuments($module, $list, $full, $start);
         } finally {
             $lock->release();
         }
@@ -132,13 +134,16 @@ final class Synchroniser
 
     /**
      * Read the documents whose list row has none yet or changed since, oldest first, up to
-     * `sync.documents` a run. One that fails is left pending, and the rest are still read.
+     * `sync.documents` a run. One that fails is recorded on its list row and the rest are still
+     * read; it is tried again until it has failed `sync.max_failures` times. A run that read
+     * documents and wrote none says Cin7 or the credentials are failing, not the rows: the module
+     * fails, and no row is blamed.
      */
-    private function pullDocuments(Module $module, bool $full, Carbon $start): PullResult
+    private function pullDocuments(Module $module, Module $list, bool $full, Carbon $start): PullResult
     {
         $deleted = $full ? $this->deleteOrphans($module) : 0;
         $read = $written = 0;
-        $error = null;
+        $failures = [];
 
         foreach ($this->pending($module) as $row) {
             if ($read++ > 0) {
@@ -158,11 +163,37 @@ final class Synchroniser
 
                 ++$written;
             } catch (Throwable $exception) {
-                $error ??= $exception;
+                $failures[(string) $row->cin7_id] = $exception;
             }
         }
 
-        return new PullResult($module, $full, $read, $written, deleted: $deleted, error: $error);
+        if ($failures === []) {
+            return new PullResult($module, $full, $read, $written, deleted: $deleted);
+        }
+
+        if ($written === 0) {
+            return new PullResult($module, $full, $read, $written, deleted: $deleted, error: reset($failures));
+        }
+
+        $this->recordFailures($list, $failures, $start);
+
+        return new PullResult($module, $full, $read, $written, deleted: $deleted, failedDocuments: count($failures), documentError: reset($failures));
+    }
+
+    /**
+     * Count a failed read on the document's list row, which exists while the document may not.
+     *
+     * @param array<string, Throwable> $failures by Cin7 identifier
+     */
+    private function recordFailures(Module $list, array $failures, Carbon $start): void
+    {
+        foreach ($failures as $id => $exception) {
+            // On the query builder, which leaves updated_at alone.
+            $this->rows($list)->toBase()->where('cin7_id', $id)->increment('failures', 1, [
+                'failed_at' => $start->format(self::DATE),
+                'last_error' => mb_substr($exception->getMessage(), 0, 255),
+            ]);
+        }
     }
 
     /**
@@ -218,7 +249,8 @@ final class Synchroniser
             }
         }
 
-        $this->upsert($changed, ['payload', 'cin7_modified_at', 'synced_at', 'updated_at']);
+        // A record Cin7 changed is worth another try for a document that kept failing.
+        $this->upsert($changed, ['payload', 'cin7_modified_at', 'synced_at', 'updated_at', 'failures', 'failed_at', 'last_error']);
 
         if ($full) {
             $this->upsert($same, ['payload', 'synced_at']);
@@ -269,7 +301,8 @@ final class Synchroniser
     }
 
     /**
-     * The rows of a document module that are due a read, oldest list change first.
+     * The rows of a document module that are due a read, oldest list change first, leaving out
+     * those whose list row has failed `sync.max_failures` times.
      *
      * @return array<int, stdClass>
      */
@@ -282,6 +315,7 @@ final class Synchroniser
         }
 
         $due = fn (): QueryBuilder => $this->pair($module, fromList: true)
+            ->where('l.failures', '<', SyncConfig::maxFailures())
             ->where(fn (QueryBuilder $query) => $query->whereNull('d.id')
                 ->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at')
                 // A document read while its list row had no modified time stored none, and a
@@ -368,6 +402,9 @@ final class Synchroniser
             'payload' => json_encode($payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION),
             'cin7_modified_at' => $modified,
             'synced_at' => $at,
+            'failures' => 0,
+            'failed_at' => null,
+            'last_error' => null,
             'created_at' => $at,
             'updated_at' => $at,
         ];
