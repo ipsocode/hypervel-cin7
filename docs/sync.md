@@ -109,10 +109,19 @@ other records point to comes before the records that point to it.
    what changed while the bounded walk ran, which that walk left out, so step 6 keeps it. Both walks
    must complete.
 6. A full pull that completes and read something then deletes the module's rows it did not
-   see. A pull that fails deletes nothing and keeps what it wrote, but gives the rows it reached
-   their last sync back, so the module's newest `synced_at` does not move and the next pull
-   reaches back as far as the failed one did. One that began on an empty module is undone, so
-   the next pull is a full one again.
+   see. Cin7 returns every list in the order of the record's modified time, the time its
+   `ModifiedSince` and `UpdatedSince` filters compare ([Cin7 API
+   reference](https://help.core.cin7.com/hc/en-us/sections/10207284005007-Cin7-API)).
+   `customer`, `supplier` and `product` take no upper bound, so a record changed while their
+   pages are walked moves, and an unchanged record can slip from a page not yet read onto one
+   already read. So before one of their rows goes as gone, the pull asks Cin7 for it by `ID`,
+   deprecated records included, one call each, and a record still returned is stored and kept.
+   `saleList` and `purchaseList` keep their pages still with `UpdatedUntil`, and a reference
+   book is read whole, so their unseen rows go without a call. A pull that fails, a
+   confirmation included, deletes nothing and keeps what it wrote, but gives the rows it
+   reached their last sync back, so the module's newest `synced_at` does not move and the next
+   pull reaches back as far as the failed one did. One that began on an empty module is undone,
+   so the next pull is a full one again.
 
 No cursor is stored. Reading the look-back window again costs a few pages, and a record whose
 modified time has not moved is not rewritten, so a pull that was missed or failed is covered by
@@ -148,6 +157,8 @@ other documents:
 The calls a first fill costs: one per page of each list (500 records a page), plus one per
 sale and purchase, at most `sync.documents` of each per run. With the default hourly pull and
 250 documents, 6,000 sales take a day to fill.
+A full pull also costs one call per `customer`, `supplier` or `product` row it did not see,
+which is usually none.
 
 ## The schedule
 

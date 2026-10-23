@@ -124,6 +124,22 @@ enum Module: string
     }
 
     /**
+     * The request for one record of a list module by identifier, sent before a full pull deletes a
+     * row it did not see. Cin7 orders these lists by modified time and they take no upper bound,
+     * so a record that changed while the pages were walked moves, and can push an unchanged one
+     * onto a page already read. Null where the pages stay still or are read whole: a bounded
+     * list, a reference book, and a document module.
+     *
+     * @return null|ListRequest<covariant Data&WithResponse>
+     */
+    public function findRequest(string $id): ?ListRequest
+    {
+        $find = $this->definition()['find'];
+
+        return $find === null ? null : $find($id);
+    }
+
+    /**
      * The key of Cin7's modified time in a list module's records. A document takes its list
      * row's.
      */
@@ -187,6 +203,8 @@ enum Module: string
      * - `list`: builds the list request; null for a document module. A closure rather than a
      *   request, because the since and until arguments and the deprecated records differ by module.
      * - `document`: builds the request for one document; null for a list module.
+     * - `find`: builds the request for one record by identifier; null unless the list is walked
+     *   with no upper bound, in modified-time order, so a full pull confirms a row it missed.
      *
      * @return array{
      *     id: string,
@@ -195,6 +213,7 @@ enum Module: string
      *     data: class-string<Data>,
      *     list: null|(Closure(?DateTimeInterface, DateTimeInterface): ListRequest<covariant Data&WithResponse>),
      *     document: null|(Closure(string): Cin7Request<covariant Data>),
+     *     find: null|(Closure(string): ListRequest<covariant Data&WithResponse>),
      * }
      */
     private function definition(): array
@@ -218,6 +237,7 @@ enum Module: string
                 'data' => CustomerData::class,
                 'list' => static fn (?DateTimeInterface $since) => new GetCustomer(modifiedSince: $since, includeDeprecated: true),
                 'document' => null,
+                'find' => static fn (string $id) => new GetCustomer(id: $id, includeDeprecated: true),
             ],
             self::Supplier => [
                 'id' => 'ID',
@@ -226,6 +246,7 @@ enum Module: string
                 'data' => SupplierData::class,
                 'list' => static fn (?DateTimeInterface $since) => new GetSupplier(modifiedSince: $since, includeDeprecated: true),
                 'document' => null,
+                'find' => static fn (string $id) => new GetSupplier(id: $id, includeDeprecated: true),
             ],
             self::Product => [
                 'id' => 'ID',
@@ -234,6 +255,7 @@ enum Module: string
                 'data' => ProductData::class,
                 'list' => static fn (?DateTimeInterface $since) => new GetProduct(modifiedSince: $since, includeDeprecated: true),
                 'document' => null,
+                'find' => static fn (string $id) => new GetProduct(id: $id, includeDeprecated: true),
             ],
             // An upper bound keeps the pages still while they are walked.
             self::SaleList => [
@@ -243,6 +265,7 @@ enum Module: string
                 'data' => SaleListData::class,
                 'list' => static fn (?DateTimeInterface $since, ?DateTimeInterface $until) => new GetSaleList(updatedSince: $since, updatedUntil: $until),
                 'document' => null,
+                'find' => null,
             ],
             self::PurchaseList => [
                 'id' => 'ID',
@@ -251,6 +274,7 @@ enum Module: string
                 'data' => PurchaseListData::class,
                 'list' => static fn (?DateTimeInterface $since, ?DateTimeInterface $until) => new GetPurchaseList(updatedSince: $since, updatedUntil: $until),
                 'document' => null,
+                'find' => null,
             ],
             self::Sale => [
                 'id' => 'ID',
@@ -259,6 +283,7 @@ enum Module: string
                 'data' => SaleData::class,
                 'list' => null,
                 'document' => static fn (string $id) => new GetSale($id),
+                'find' => null,
             ],
             self::AdvancedPurchase => [
                 'id' => 'ID',
@@ -267,6 +292,7 @@ enum Module: string
                 'data' => AdvancedPurchaseData::class,
                 'list' => null,
                 'document' => static fn (string $id) => new GetAdvancedPurchase($id),
+                'find' => null,
             ],
         };
     }
@@ -277,11 +303,11 @@ enum Module: string
      * @param class-string<Data> $data
      * @param Closure(): ListRequest<covariant Data&WithResponse> $list
      *
-     * @return array{id: string, modified: null, source: null, data: class-string<Data>, list: Closure(): ListRequest<covariant Data&WithResponse>, document: null}
+     * @return array{id: string, modified: null, source: null, data: class-string<Data>, list: Closure(): ListRequest<covariant Data&WithResponse>, document: null, find: null}
      */
     private function reference(string $id, string $data, Closure $list): array
     {
-        return ['id' => $id, 'modified' => null, 'source' => null, 'data' => $data, 'list' => $list, 'document' => null];
+        return ['id' => $id, 'modified' => null, 'source' => null, 'data' => $data, 'list' => $list, 'document' => null, 'find' => null];
     }
 
     /**
