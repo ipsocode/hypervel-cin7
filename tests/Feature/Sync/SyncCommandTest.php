@@ -172,6 +172,27 @@ class SyncCommandTest extends SyncTestCase
         $this->artisan('cin7:sync customer --retry-failed')->doesntExpectOutputToContain('released')->assertExitCode(0);
     }
 
+    public function testStatusIgnoresRetryFailed(): void
+    {
+        $this->app->get('config')->set('cin7.sync.max_failures', 1);
+
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-01T09:00:00Z'), $this->sale('s-2', '2026-10-02T09:00:00Z')]),
+            Cin7Fake::error('Sale not found'),
+            Cin7Fake::record(['ID' => 's-2']),
+        ]);
+        $this->artisan('cin7:sync saleList sale')->assertExitCode(0);
+
+        $parked = $this->stored(Module::SaleList)->map(static fn ($row): array => [$row->failures, (string) $row->failed_at, $row->last_error])->all();
+
+        $this->artisan('cin7:sync sale --status --retry-failed')
+            ->doesntExpectOutputToContain('released')
+            ->assertExitCode(0);
+
+        $this->assertSame($parked, $this->stored(Module::SaleList)->map(static fn ($row): array => [$row->failures, (string) $row->failed_at, $row->last_error])->all());
+        $this->assertSame(1, $this->stored(Module::SaleList)->max('failures'));
+    }
+
     public function testNothingItPrintsCarriesTheCredentials(): void
     {
         Saloon::fake([Cin7Fake::list('CustomerList', [$this->customer('c-1')]), Cin7Fake::credentialsRejected()]);
