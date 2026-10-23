@@ -30,7 +30,14 @@ Every key is in [configuration](configuration.md#keys).
 | `payload` | The record as Cin7 returned it: `jsonb` on PostgreSQL, `json` on MySQL |
 | `cin7_modified_at` | Cin7's own modified time for the record, in UTC; null for a reference book |
 | `synced_at` | The last pull that returned the record, changed or not |
+| `failures` | On a list row, the times its document read failed since the row last changed; 0 otherwise |
+| `failed_at` | The last of those failures; null when none |
+| `last_error` | That failure's message, cut to 255 characters; null when none |
 | `created_at`, `updated_at` | `updated_at` moves only when the record changed |
+
+The three failure columns come from a second migration, so an application that ran the first
+gets them too. They are only ever written on a list row (`saleList`, `purchaseList`), and the
+sync does not write them yet (#135).
 
 `(account_id, module, cin7_id)` is unique, and `(account_id, module, cin7_modified_at)` and
 `(account_id, module, updated_at)` are indexed, so "changed since" is a query on `updated_at`.
