@@ -39,6 +39,16 @@ final class Pull implements ShouldQueue, ShouldBeUnique
     }
 
     /**
+     * Seconds to wait before each retry. A retry pulls every module again, so it waits minutes.
+     *
+     * @return list<int>
+     */
+    public function backoff(): array
+    {
+        return [300, 900];
+    }
+
+    /**
      * Pull the modules in order. A module that fails does not stop the others, and then fails
      * the job, so the queue tries it again.
      */
