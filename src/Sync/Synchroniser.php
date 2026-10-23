@@ -109,6 +109,28 @@ final class Synchroniser
                     }
                 }
             }
+
+            // These lists come in modified-time order with no upper bound, so a record changed
+            // during the walk moves, and can push an unchanged one onto a page already read.
+            // Before a row goes as gone, ask Cin7 for it by identifier: one still returned is
+            // stored, which gives it this pull's start, so the deletion below keeps it.
+            if ($full && $read > 0) {
+                foreach ($this->unseen($module, $start) as $id) {
+                    $request = $module->findRequest($id);
+
+                    if ($request === null) {
+                        break;
+                    }
+
+                    $this->pause();
+
+                    $items = $request->mapPaginatedResponseItems($this->cin7->send($request));
+                    [$changed, $same] = $this->store($module, $items, $start, $full);
+                    $read += count($items);
+                    $written += $changed;
+                    $unchanged += $same;
+                }
+            }
         } catch (Throwable $exception) {
             // A first fill that failed is undone, so the next pull is a full one again. Otherwise
             // the rows it reached keep what it wrote but get their last sync back, so the module's
@@ -130,6 +152,20 @@ final class Synchroniser
             : 0;
 
         return new PullResult($module, $full, $read, $written, $unchanged, $deleted);
+    }
+
+    /**
+     * The identifiers of a list module's stored rows that a pull did not reach, which a full pull
+     * deletes unless Cin7 still returns them.
+     *
+     * @return list<string>
+     */
+    private function unseen(Module $module, Carbon $start): array
+    {
+        return array_map(
+            strval(...),
+            $this->rows($module)->toBase()->where('synced_at', '<', $start)->orderBy('cin7_id')->pluck('cin7_id')->all(),
+        );
     }
 
     /**

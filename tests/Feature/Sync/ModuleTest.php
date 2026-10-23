@@ -58,13 +58,17 @@ class ModuleTest extends TestCase
      * @param class-string $data
      */
     #[DataProvider('modules')]
-    public function testWhatEachModuleReads(Module $module, string $idKey, ?string $modifiedKey, string $request, string $data, ?Module $source): void
+    public function testWhatEachModuleReads(Module $module, string $idKey, ?string $modifiedKey, string $request, string $data, ?Module $source, ?string $find = null): void
     {
         $this->assertSame($idKey, $module->idKey());
         $this->assertSame($modifiedKey, $module->modifiedKey());
         $this->assertSame($modifiedKey !== null || $source !== null, $module->incremental());
         $this->assertSame($data, $module->dataClass());
         $this->assertSame($source, $module->source());
+
+        // Only a list walked with no upper bound can be asked for one record by identifier.
+        $found = $module->findRequest('id');
+        $find === null ? $this->assertNull($found) : $this->assertInstanceOf($find, $found);
 
         $this->assertInstanceOf($request, $source === null ? $module->listRequest(null, Carbon::now()) : $module->documentRequest('id'));
 
@@ -75,7 +79,7 @@ class ModuleTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{Module, string, ?string, class-string, class-string, ?Module}>
+     * @return iterable<string, array{Module, string, ?string, class-string, class-string, ?Module, 6?: class-string}>
      */
     public static function modules(): iterable
     {
@@ -90,9 +94,9 @@ class ModuleTest extends TestCase
         yield 'ref/carrier' => [Module::Carrier, 'CarrierID', null, GetCarrier::class, CarrierData::class, null];
         yield 'ref/attributeset' => [Module::AttributeSet, 'ID', null, GetAttributeSet::class, AttributeSetData::class, null];
         yield 'ref/fixedassettype' => [Module::FixedAssetType, 'FixedAssetTypeID', null, GetFixedAssetType::class, FixedAssetTypeData::class, null];
-        yield 'customer' => [Module::Customer, 'ID', 'LastModifiedOn', GetCustomer::class, CustomerData::class, null];
-        yield 'supplier' => [Module::Supplier, 'ID', 'LastModifiedOn', GetSupplier::class, SupplierData::class, null];
-        yield 'product' => [Module::Product, 'ID', 'LastModifiedOn', GetProduct::class, ProductData::class, null];
+        yield 'customer' => [Module::Customer, 'ID', 'LastModifiedOn', GetCustomer::class, CustomerData::class, null, GetCustomer::class];
+        yield 'supplier' => [Module::Supplier, 'ID', 'LastModifiedOn', GetSupplier::class, SupplierData::class, null, GetSupplier::class];
+        yield 'product' => [Module::Product, 'ID', 'LastModifiedOn', GetProduct::class, ProductData::class, null, GetProduct::class];
         yield 'saleList' => [Module::SaleList, 'SaleID', 'Updated', GetSaleList::class, SaleListData::class, null];
         yield 'purchaseList' => [Module::PurchaseList, 'ID', 'LastUpdatedDate', GetPurchaseList::class, PurchaseListData::class, null];
         yield 'sale' => [Module::Sale, 'ID', null, GetSale::class, SaleData::class, Module::SaleList];
