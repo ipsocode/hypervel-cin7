@@ -138,11 +138,13 @@ class ListPullTest extends SyncTestCase
         $this->assertSame('2026-10-03 13:00:00', $row->synced_at->toDateTimeString());
     }
 
-    public function testAFullPullDeletesTheRowsItDidNotSee(): void
+    public function testAFullPullDeletesTheRowsItDidNotSeeAndCin7NoLongerReturns(): void
     {
-        Saloon::fake([
+        $mock = Saloon::fake([
             Cin7Fake::list('CustomerList', [$this->customer('c-1'), $this->customer('c-2')]),
             Cin7Fake::list('CustomerList', [$this->customer('c-1')]),
+            // Asked for c-2 by identifier before it goes, Cin7 returns nothing.
+            Cin7Fake::list('CustomerList'),
         ]);
 
         $this->synchroniser()->pull(Module::Customer);
@@ -151,6 +153,75 @@ class ListPullTest extends SyncTestCase
 
         $this->assertSame(1, $result->deleted);
         $this->assertSame(['c-1'], $this->stored(Module::Customer)->keys()->all());
+
+        $confirmation = $this->queries($mock)[2];
+        $this->assertSame('c-2', $confirmation['ID']);
+        $this->assertSame('true', $confirmation['IncludeDeprecated']);
+        $this->assertArrayNotHasKey('ModifiedSince', $confirmation);
+        $mock->assertSentCount(3);
+    }
+
+    /**
+     * Cin7 orders these lists by modified time and takes no upper bound, so a record changed during
+     * the walk can push an unchanged one onto a page already read. The pull never sees it, but
+     * Cin7 still returns it when asked by identifier, so it is kept.
+     *
+     * @param array<string, mixed> $record
+     */
+    #[DataProvider('unboundedListModules')]
+    public function testAFullPullKeepsARowItDidNotSeeThatCin7StillReturns(Module $module, string $listKey, array $record): void
+    {
+        $other = ['ID' => 'r-2'] + $record;
+        $mock = Saloon::fake([
+            Cin7Fake::list($listKey, [$record, $other]),
+            Cin7Fake::list($listKey, [$record]),
+            Cin7Fake::list($listKey, [$other]),
+        ]);
+
+        $this->synchroniser()->pull($module);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull($module, full: true);
+
+        $this->assertSame([2, 0, 2, 0], [$result->read, $result->written, $result->unchanged, $result->deleted]);
+
+        $rows = $this->stored($module);
+        $this->assertSame(['r-1', 'r-2'], $rows->keys()->all());
+        $this->assertSame('2026-10-03 13:00:00', $rows['r-2']->synced_at->toDateTimeString());
+        $this->assertSame('2026-10-03 12:00:00', $rows['r-2']->updated_at?->toDateTimeString());
+        $this->assertSame('r-2', $this->queries($mock)[2]['ID']);
+        Sleep::assertSequence([Sleep::usleep(1_000_000)]);
+    }
+
+    /**
+     * @return iterable<string, array{Module, string, array<string, mixed>}>
+     */
+    public static function unboundedListModules(): iterable
+    {
+        $record = ['ID' => 'r-1', 'LastModifiedOn' => '2026-10-01T10:00:00Z'];
+
+        yield 'customer' => [Module::Customer, 'CustomerList', $record];
+        yield 'supplier' => [Module::Supplier, 'SupplierList', $record];
+        yield 'product' => [Module::Product, 'Products', $record];
+    }
+
+    public function testAFullPullWhoseConfirmationFailsDeletesNothing(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('CustomerList', [$this->customer('c-1'), $this->customer('c-2')]),
+            Cin7Fake::list('CustomerList', [$this->customer('c-1')]),
+            Cin7Fake::error('Something went wrong'),
+        ]);
+
+        $this->synchroniser()->pull(Module::Customer);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::Customer, full: true);
+
+        $this->assertTrue($result->failed());
+        $this->assertSame(0, $result->deleted);
+
+        $rows = $this->stored(Module::Customer);
+        $this->assertSame(['c-1', 'c-2'], $rows->keys()->all());
+        $this->assertSame('2026-10-03 12:00:00', $rows['c-1']->synced_at->toDateTimeString());
     }
 
     public function testAFullPullThatReadsNothingDeletesNothing(): void
@@ -362,7 +433,7 @@ class ListPullTest extends SyncTestCase
      */
     public function testAReferenceBookRecordChangesWhenItsPayloadDoes(): void
     {
-        Saloon::fake([
+        $mock = Saloon::fake([
             Cin7Fake::list('AccountsList', [['Code' => '200', 'Name' => 'Sales'], ['Code' => '610', 'Name' => 'Receivables'], ['Code' => '800', 'Name' => 'Payables']]),
             Cin7Fake::list('AccountsList', [['Code' => '200', 'Name' => 'Sales'], ['Code' => '610', 'Name' => 'Trade receivables']]),
         ]);
@@ -372,6 +443,8 @@ class ListPullTest extends SyncTestCase
         $result = $this->synchroniser()->pull(Module::Account);
 
         $this->assertSame([2, 1, 1, 1], [$result->read, $result->written, $result->unchanged, $result->deleted]);
+        // A reference book is read whole, so the row it did not see goes without a call.
+        $mock->assertSentCount(2);
 
         $rows = $this->stored(Module::Account);
         $this->assertSame(['200', '610'], array_map(strval(...), $rows->keys()->all()));
@@ -380,5 +453,50 @@ class ListPullTest extends SyncTestCase
         $this->assertSame('2026-10-03 13:00:00', $rows['200']->synced_at->toDateTimeString());
         $this->assertSame('Trade receivables', $rows['610']->payload['Name']);
         $this->assertSame('2026-10-03 13:00:00', $rows['610']->updated_at?->toDateTimeString());
+    }
+
+    /**
+     * PHP's `==` takes each pair as equal, so a change like these once left `updated_at` alone.
+     */
+    #[DataProvider('looselyEqualValues')]
+    public function testAReferenceBookChangeThatLooselyEqualsTheStoredValueStillMovesUpdatedAt(mixed $stored, mixed $read): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('AccountsList', [['Code' => '200', 'Value' => $stored]]),
+            Cin7Fake::list('AccountsList', [['Code' => '200', 'Value' => $read]]),
+        ]);
+
+        $this->synchroniser()->pull(Module::Account);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::Account);
+
+        $this->assertSame([1, 0], [$result->written, $result->unchanged]);
+        $this->assertSame('2026-10-03 13:00:00', $this->stored(Module::Account)['200']->updated_at?->toDateTimeString());
+    }
+
+    /**
+     * @return iterable<string, array{mixed, mixed}>
+     */
+    public static function looselyEqualValues(): iterable
+    {
+        yield 'null and an empty string' => [null, ''];
+        yield 'zero and false' => [0, false];
+        yield 'a decimal string and an integer string' => ['1.0', '1'];
+        yield 'a padded string and an integer string' => ['001', '1'];
+    }
+
+    public function testAReferenceBookPayloadWithItsKeysInAnotherOrderIsUnchanged(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('AccountsList', [['Code' => '200', 'Name' => 'Sales', 'Tags' => [['a' => 1, 'b' => 2], ['c' => 3]]]]),
+            Cin7Fake::list('AccountsList', [['Tags' => [['b' => 2, 'a' => 1], ['c' => 3]], 'Name' => 'Sales', 'Code' => '200']]),
+        ]);
+
+        $this->synchroniser()->pull(Module::Account);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::Account);
+
+        $this->assertSame([0, 1], [$result->written, $result->unchanged]);
+        $this->assertSame('2026-10-03 12:00:00', $this->stored(Module::Account)['200']->updated_at?->toDateTimeString());
     }
 }

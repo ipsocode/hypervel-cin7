@@ -114,6 +114,10 @@ return [
         // Documents read per module per run, one call each.
         'documents' => (int) env('CIN7_SYNC_DOCUMENTS', 250),
 
+        // Times a document may fail to read before the sync stops trying it, until its list row
+        // changes or `cin7:sync <module> --retry-failed` releases it. At least 1.
+        'max_failures' => (int) env('CIN7_SYNC_MAX_FAILURES', 3),
+
         // The queue the scheduled pulls go on; null is the connection's default queue.
         'queue' => env('CIN7_SYNC_QUEUE'),
 

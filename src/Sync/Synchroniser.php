@@ -62,9 +62,11 @@ final class Synchroniser
             // Every row a pull writes carries its start, so a full pull can tell what it saw.
             $start = Carbon::now()->startOfSecond();
 
-            return $module->source() === null
+            $list = $module->source();
+
+            return $list === null
                 ? $this->pullList($module, $full, $start)
-                : $this->pullDocuments($module, $full, $start);
+                : $this->pullDocuments($module, $list, $full, $start);
         } finally {
             $lock->release();
         }
@@ -76,24 +78,57 @@ final class Synchroniser
         $previous = $this->rows($module)->max('synced_at');
         $empty = $previous === null;
         $full = $full || $empty || ! $module->incremental();
-        $request = $module->listRequest($full ? null : $this->since((string) $previous, $start), $start);
-        $paginator = $this->cin7->paginate($request)->perPageLimit(SyncConfig::limit());
+        $requests = [$module->listRequest($full ? null : $this->since((string) $previous, $start), $start)];
+
+        // The bounded walk leaves out what changed after $start, which a full pull would delete as
+        // gone. A second walk from $start with no bound reads those, so the deletion keeps them. A
+        // first fill has nothing to delete, and the next pull reads what changed during it.
+        if ($full && ! $empty && $module->bounded()) {
+            $requests[] = $module->listRequest($start, null);
+        }
+
         $read = $written = $unchanged = 0;
 
         try {
-            // Driven by hand rather than foreach, so the pause falls between calls only.
-            $paginator->rewind();
+            foreach ($requests as $request) {
+                $paginator = $this->cin7->paginate($request)->perPageLimit(SyncConfig::limit());
 
-            while ($paginator->valid()) {
-                $items = $request->mapPaginatedResponseItems($paginator->current());
-                [$changed, $same] = $this->store($module, $items, $start, $full);
-                $read += count($items);
-                $written += $changed;
-                $unchanged += $same;
-                $paginator->next();
+                // Driven by hand rather than foreach, so the pause falls between calls only.
+                $paginator->rewind();
 
-                if ($paginator->valid()) {
+                while ($paginator->valid()) {
+                    $items = $request->mapPaginatedResponseItems($paginator->current());
+                    [$changed, $same] = $this->store($module, $items, $start, $full);
+                    $read += count($items);
+                    $written += $changed;
+                    $unchanged += $same;
+                    $paginator->next();
+
+                    if ($paginator->valid()) {
+                        $this->pause();
+                    }
+                }
+            }
+
+            // These lists come in modified-time order with no upper bound, so a record changed
+            // during the walk moves, and can push an unchanged one onto a page already read.
+            // Before a row goes as gone, ask Cin7 for it by identifier: one still returned is
+            // stored, which gives it this pull's start, so the deletion below keeps it.
+            if ($full && $read > 0) {
+                foreach ($this->unseen($module, $start) as $id) {
+                    $request = $module->findRequest($id);
+
+                    if ($request === null) {
+                        break;
+                    }
+
                     $this->pause();
+
+                    $items = $request->mapPaginatedResponseItems($this->cin7->send($request));
+                    [$changed, $same] = $this->store($module, $items, $start, $full);
+                    $read += count($items);
+                    $written += $changed;
+                    $unchanged += $same;
                 }
             }
         } catch (Throwable $exception) {
@@ -120,14 +155,31 @@ final class Synchroniser
     }
 
     /**
-     * Read the documents whose list row has none yet or changed since, oldest first, up to
-     * `sync.documents` a run. One that fails is left pending, and the rest are still read.
+     * The identifiers of a list module's stored rows that a pull did not reach, which a full pull
+     * deletes unless Cin7 still returns them.
+     *
+     * @return list<string>
      */
-    private function pullDocuments(Module $module, bool $full, Carbon $start): PullResult
+    private function unseen(Module $module, Carbon $start): array
+    {
+        return array_map(
+            strval(...),
+            $this->rows($module)->toBase()->where('synced_at', '<', $start)->orderBy('cin7_id')->pluck('cin7_id')->all(),
+        );
+    }
+
+    /**
+     * Read the documents whose list row has none yet or changed since, oldest first, up to
+     * `sync.documents` a run. One that fails is recorded on its list row and the rest are still
+     * read; it is tried again until it has failed `sync.max_failures` times. A run that read
+     * documents and wrote none says Cin7 or the credentials are failing, not the rows: the module
+     * fails, and no row is blamed.
+     */
+    private function pullDocuments(Module $module, Module $list, bool $full, Carbon $start): PullResult
     {
         $deleted = $full ? $this->deleteOrphans($module) : 0;
         $read = $written = 0;
-        $error = null;
+        $failures = [];
 
         foreach ($this->pending($module) as $row) {
             if ($read++ > 0) {
@@ -147,11 +199,37 @@ final class Synchroniser
 
                 ++$written;
             } catch (Throwable $exception) {
-                $error ??= $exception;
+                $failures[(string) $row->cin7_id] = $exception;
             }
         }
 
-        return new PullResult($module, $full, $read, $written, deleted: $deleted, error: $error);
+        if ($failures === []) {
+            return new PullResult($module, $full, $read, $written, deleted: $deleted);
+        }
+
+        if ($written === 0) {
+            return new PullResult($module, $full, $read, $written, deleted: $deleted, error: reset($failures));
+        }
+
+        $this->recordFailures($list, $failures, $start);
+
+        return new PullResult($module, $full, $read, $written, deleted: $deleted, failedDocuments: count($failures), documentError: reset($failures));
+    }
+
+    /**
+     * Count a failed read on the document's list row, which exists while the document may not.
+     *
+     * @param array<string, Throwable> $failures by Cin7 identifier
+     */
+    private function recordFailures(Module $list, array $failures, Carbon $start): void
+    {
+        foreach ($failures as $id => $exception) {
+            // On the query builder, which leaves updated_at alone.
+            $this->rows($list)->toBase()->where('cin7_id', $id)->increment('failures', 1, [
+                'failed_at' => $start->format(self::DATE),
+                'last_error' => mb_substr($exception->getMessage(), 0, 255),
+            ]);
+        }
     }
 
     /**
@@ -207,7 +285,8 @@ final class Synchroniser
             }
         }
 
-        $this->upsert($changed, ['payload', 'cin7_modified_at', 'synced_at', 'updated_at']);
+        // A record Cin7 changed is worth another try for a document that kept failing.
+        $this->upsert($changed, ['payload', 'cin7_modified_at', 'synced_at', 'updated_at', 'failures', 'failed_at', 'last_error']);
 
         if ($full) {
             $this->upsert($same, ['payload', 'synced_at']);
@@ -231,14 +310,35 @@ final class Synchroniser
     private function unchanged(Module $module, mixed $stored, array $item, ?string $modified): bool
     {
         if (! $module->incremental()) {
-            return json_decode((string) $stored, true) == $item;
+            return $this->canonical(json_decode((string) $stored, true)) === $this->canonical($item);
         }
 
         return $modified !== null && Module::timestamp($stored) === $modified;
     }
 
     /**
-     * The rows of a document module that are due a read, oldest list change first.
+     * The value with the keys of every object sorted, so a payload whose keys came back in another
+     * order (PostgreSQL's `jsonb` reorders them) compares equal under `===`, which unlike `==`
+     * does not take `null` for `""` or `"1.0"` for `"1"`.
+     */
+    private function canonical(mixed $value): mixed
+    {
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        $value = array_map($this->canonical(...), $value);
+
+        if (! array_is_list($value)) {
+            ksort($value, SORT_STRING);
+        }
+
+        return $value;
+    }
+
+    /**
+     * The rows of a document module that are due a read, oldest list change first, leaving out
+     * those whose list row has failed `sync.max_failures` times.
      *
      * @return array<int, stdClass>
      */
@@ -251,7 +351,12 @@ final class Synchroniser
         }
 
         $due = fn (): QueryBuilder => $this->pair($module, fromList: true)
-            ->where(fn (QueryBuilder $query) => $query->whereNull('d.id')->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at'));
+            ->where('l.failures', '<', SyncConfig::maxFailures())
+            ->where(fn (QueryBuilder $query) => $query->whereNull('d.id')
+                ->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at')
+                // A document read while its list row had no modified time stored none, and a
+                // comparison with NULL is never true.
+                ->orWhere(fn (QueryBuilder $query) => $query->whereNotNull('l.cin7_modified_at')->whereNull('d.cin7_modified_at')));
 
         // Rows with no modified time come first, read on their own because databases disagree on
         // where NULLs sort (PostgreSQL puts them last, SQLite and MySQL first).
@@ -333,6 +438,9 @@ final class Synchroniser
             'payload' => json_encode($payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION),
             'cin7_modified_at' => $modified,
             'synced_at' => $at,
+            'failures' => 0,
+            'failed_at' => null,
+            'last_error' => null,
             'created_at' => $at,
             'updated_at' => $at,
         ];

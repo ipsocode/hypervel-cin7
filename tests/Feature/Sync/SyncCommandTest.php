@@ -116,12 +116,81 @@ class SyncCommandTest extends SyncTestCase
 
         $this->artisan('cin7:sync customer supplier --status')
             ->expectsTable(
-                ['Module', 'Rows', 'Last synced', 'Newest change in Cin7'],
-                [['customer', 2, '2026-10-03 12:00:00', '2026-10-02 08:00:00.500'], ['supplier', 0, 'never', '-']],
+                ['Module', 'Rows', 'Parked documents', 'Last synced', 'Newest change in Cin7'],
+                [['customer', 2, '-', '2026-10-03 12:00:00', '2026-10-02 08:00:00.500'], ['supplier', 0, '-', 'never', '-']],
             )
             ->assertExitCode(0);
 
         $mock->assertNothingSent();
+    }
+
+    public function testADocumentThatFailedIsShownAndTheCommandStillSucceeds(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-01T09:00:00Z'), $this->sale('s-2', '2026-10-02T09:00:00Z')]),
+            Cin7Fake::error('Sale not found'),
+            Cin7Fake::record(['ID' => 's-2']),
+        ]);
+
+        $this->artisan('cin7:sync saleList sale')
+            ->expectsOutputToContain('ok, 1 documents failed: ')
+            ->assertExitCode(0);
+    }
+
+    public function testStatusCountsTheParkedDocumentsAndRetryFailedReleasesThem(): void
+    {
+        $this->app->get('config')->set('cin7.sync.max_failures', 1);
+
+        $mock = Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-01T09:00:00Z'), $this->sale('s-2', '2026-10-02T09:00:00Z')]),
+            Cin7Fake::error('Sale not found'),
+            Cin7Fake::record(['ID' => 's-2']),
+            Cin7Fake::record(['ID' => 's-1']),
+        ]);
+        $this->artisan('cin7:sync saleList sale')->assertExitCode(0);
+
+        $this->artisan('cin7:sync sale --status')
+            ->expectsTable(
+                ['Module', 'Rows', 'Parked documents', 'Last synced', 'Newest change in Cin7'],
+                [['sale', 1, 1, '2026-10-03 12:00:00', '2026-10-02 09:00:00.000']],
+            )
+            ->assertExitCode(0);
+
+        $this->artisan('cin7:sync sale --retry-failed')
+            ->expectsOutputToContain('sale: 1 documents released.')
+            ->assertExitCode(0);
+
+        $this->assertSame(['s-1', 's-2'], $this->stored(Module::Sale)->keys()->all());
+        $this->assertSame([0, 0], $this->stored(Module::SaleList)->pluck('failures')->all());
+        $mock->assertSentCount(4);
+    }
+
+    public function testRetryFailedLeavesAListModuleAlone(): void
+    {
+        Saloon::fake([Cin7Fake::list('CustomerList', [$this->customer('c-1')])]);
+
+        $this->artisan('cin7:sync customer --retry-failed')->doesntExpectOutputToContain('released')->assertExitCode(0);
+    }
+
+    public function testStatusIgnoresRetryFailed(): void
+    {
+        $this->app->get('config')->set('cin7.sync.max_failures', 1);
+
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-01T09:00:00Z'), $this->sale('s-2', '2026-10-02T09:00:00Z')]),
+            Cin7Fake::error('Sale not found'),
+            Cin7Fake::record(['ID' => 's-2']),
+        ]);
+        $this->artisan('cin7:sync saleList sale')->assertExitCode(0);
+
+        $parked = $this->stored(Module::SaleList)->map(static fn ($row): array => [$row->failures, (string) $row->failed_at, $row->last_error])->all();
+
+        $this->artisan('cin7:sync sale --status --retry-failed')
+            ->doesntExpectOutputToContain('released')
+            ->assertExitCode(0);
+
+        $this->assertSame($parked, $this->stored(Module::SaleList)->map(static fn ($row): array => [$row->failures, (string) $row->failed_at, $row->last_error])->all());
+        $this->assertSame(1, $this->stored(Module::SaleList)->max('failures'));
     }
 
     public function testNothingItPrintsCarriesTheCredentials(): void

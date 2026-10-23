@@ -30,7 +30,15 @@ Every key is in [configuration](configuration.md#keys).
 | `payload` | The record as Cin7 returned it: `jsonb` on PostgreSQL, `json` on MySQL |
 | `cin7_modified_at` | Cin7's own modified time for the record, in UTC; null for a reference book |
 | `synced_at` | The last pull that returned the record, changed or not |
+| `failures` | On a list row, the times its document read failed since the row last changed; 0 otherwise |
+| `failed_at` | The last of those failures; null when none |
+| `last_error` | That failure's message, cut to 255 characters; null when none |
 | `created_at`, `updated_at` | `updated_at` moves only when the record changed |
+
+The three failure columns come from a second migration, so an application that ran the first
+gets them too. They are only ever written on a list row (`saleList`, `purchaseList`), by the
+pull of its document module, because the document row does not exist while its read keeps
+failing. See [a document that keeps failing](#a-document-that-keeps-failing).
 
 `(account_id, module, cin7_id)` is unique, and `(account_id, module, cin7_modified_at)` and
 `(account_id, module, updated_at)` are indexed, so "changed since" is a query on `updated_at`.
@@ -96,11 +104,24 @@ other records point to comes before the records that point to it.
    unchanged record (the same modified time, or for a reference book the same payload) has
    only its `synced_at` moved; a full pull refreshes its payload too, without moving
    `updated_at`.
-5. A full pull that completes and read something then deletes the module's rows it did not
-   see. A pull that fails deletes nothing and keeps what it wrote, but gives the rows it reached
-   their last sync back, so the module's newest `synced_at` does not move and the next pull
-   reaches back as far as the failed one did. One that began on an empty module is undone, so
-   the next pull is a full one again.
+5. A full pull of `saleList` or `purchaseList` that is not a first fill then walks the list once
+   more, from the pull's start with no `UpdatedUntil`, and stores what that returns. It reads
+   what changed while the bounded walk ran, which that walk left out, so step 6 keeps it. Both walks
+   must complete.
+6. A full pull that completes and read something then deletes the module's rows it did not
+   see. Cin7 returns every list in the order of the record's modified time, the time its
+   `ModifiedSince` and `UpdatedSince` filters compare ([Cin7 API
+   reference](https://help.core.cin7.com/hc/en-us/sections/10207284005007-Cin7-API)).
+   `customer`, `supplier` and `product` take no upper bound, so a record changed while their
+   pages are walked moves, and an unchanged record can slip from a page not yet read onto one
+   already read. So before one of their rows goes as gone, the pull asks Cin7 for it by `ID`,
+   deprecated records included, one call each, and a record still returned is stored and kept.
+   `saleList` and `purchaseList` keep their pages still with `UpdatedUntil`, and a reference
+   book is read whole, so their unseen rows go without a call. A pull that fails, a
+   confirmation included, deletes nothing and keeps what it wrote, but gives the rows it
+   reached their last sync back, so the module's newest `synced_at` does not move and the next
+   pull reaches back as far as the failed one did. One that began on an empty module is undone,
+   so the next pull is a full one again.
 
 No cursor is stored. Reading the look-back window again costs a few pages, and a record whose
 modified time has not moved is not rewritten, so a pull that was missed or failed is covered by
@@ -108,13 +129,36 @@ the next one with nothing to keep in step. The weekly full pull covers a gap lon
 
 A document module reads the rows of its list that have no document yet, or whose modified
 time is later than the document's, oldest change first, at most `sync.documents` a run; the
-rest wait for the next run. A document stores its list row's modified time. One that fails stays
-pending and the others are still read. A full pull of a document module also deletes the
+rest wait for the next run. A document stores its list row's modified time. One that fails
+stays pending and the others are still read. A full pull of a document module also deletes the
 documents whose list row is gone.
+
+### A document that keeps failing
+
+A document Cin7 rejects every time would otherwise be read first on every run, and fail the job
+and its retries with it. So a failed read is counted on the document's list row, in `failures`,
+with the time in `failed_at` and the message in `last_error`, and the pull goes on with the
+other documents:
+
+- The row is tried again on each run until it has failed `sync.max_failures` times (3 by
+  default). With the hourly pull that is three hours between the first try and the last. Then
+  the document is *parked*: it is no longer read, and the documents behind it get the run.
+- A parked document is tried again when Cin7 changes the record (the list pull zeroes the
+  counters of a row it writes as changed), or when an operator runs
+  `php artisan cin7:sync sale --retry-failed`, which zeroes them for that module and pulls it.
+- A document that fails does not fail the job: the module's result is `ok`, with the number of
+  failed documents and the first error, and `cin7:sync` exits 0. Parked ones show in the
+  `Parked documents` column of `cin7:sync --status`.
+- A run that read documents and wrote **none** fails the module, and with it the job, as before,
+  and counts against no row: that is Cin7 or the credentials failing, not the documents, and
+  counting it would park the whole backlog in an outage. A run with a single document pending
+  cannot tell the two apart, so it is treated the same way.
 
 The calls a first fill costs: one per page of each list (500 records a page), plus one per
 sale and purchase, at most `sync.documents` of each per run. With the default hourly pull and
 250 documents, 6,000 sales take a day to fill.
+A full pull also costs one call per `customer`, `supplier` or `product` row it did not see,
+which is usually none.
 
 ## The schedule
 
@@ -143,7 +187,7 @@ on one server. So the framework's own tables do the bookkeeping: a waiting pull 
 `Ipsocode\Cin7\Sync\SyncFailed` naming each module that failed; `queue:retry` runs it again.
 The job is unique per account, modules and kind, goes on `sync.queue`, and may run for
 `sync.timeout` seconds. A module that fails does not stop the others; the job fails once they
-have run.
+have run, and its retries wait 5 and then 15 minutes, because a retry pulls every module again.
 
 Running it needs the scheduler (`php artisan schedule:run`) and a queue worker whose
 `retry_after` exceeds `sync.timeout`. With the `sync` queue driver the pulls run inside the
@@ -156,6 +200,7 @@ php artisan cin7:sync                       # the modules in cin7.sync.modules
 php artisan cin7:sync ref/tax customer      # these only, in this order
 php artisan cin7:sync '*' --full            # every module, as a full pull
 php artisan cin7:sync --status              # what the table holds; pulls nothing
+php artisan cin7:sync sale --retry-failed   # try the parked documents of a module again, then pull
 ```
 
 It runs the pull in the foreground and prints, per module, the records read, written,

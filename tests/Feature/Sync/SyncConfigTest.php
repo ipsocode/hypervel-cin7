@@ -87,9 +87,9 @@ class SyncConfigTest extends TestCase
 
     public function testTheNumbersAreCastAndClamped(): void
     {
-        $this->config(['lookback' => '-5', 'limit' => '5000', 'pause_ms' => -1, 'documents' => -3, 'timeout' => 0]);
+        $this->config(['lookback' => '-5', 'limit' => '5000', 'pause_ms' => -1, 'documents' => -3, 'timeout' => 0, 'max_failures' => 0]);
 
-        $this->assertSame([0, 1000, 0, 0, 1], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout()]);
+        $this->assertSame([0, 1000, 0, 0, 1, 1], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout(), SyncConfig::maxFailures()]);
 
         $this->config(['limit' => 0]);
         $this->assertSame(1, SyncConfig::limit());
@@ -99,7 +99,7 @@ class SyncConfigTest extends TestCase
     {
         $this->app->get('config')->set('cin7.sync', ['enabled' => true]);
 
-        $this->assertSame([1440, 500, 1000, 250, 3600], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout()]);
+        $this->assertSame([1440, 500, 1000, 250, 3600, 3], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout(), SyncConfig::maxFailures()]);
     }
 
     public function testAnEmptyQueueOrConnectionIsTheDefaultOne(): void

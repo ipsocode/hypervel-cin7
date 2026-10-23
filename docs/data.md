@@ -365,6 +365,21 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 
 ## Where the reference's tables and examples disagree
 
+- **Request examples that fail their own body's validation.** `BodyValidationTest` sends every
+  `bodies` row through the validation `send()` runs, and these examples fail it on the fields
+  listed, because the model requires what the table requires and the example leaves it out:
+  - a product supplier's POST and PUT examples send a supplier option with `LocationID` and
+    `LocationName` both `null` (one is required);
+  - the operation-complete example sends three of four finished products without `Received`;
+  - the family BOM's POST example sends no `Version`, `Name` or `IsDefault`, and its POST and PUT
+    examples link an operation with `RelatedOperationID` and `RelatedOperationName` both `null`;
+  - the deal POST and PUT examples send brands, categories, tags and products without the `Type`
+    the table requires, and a POST product without `IsFamily`.
+
+  The product BOM POST example links its second operation to the first by `RelatedOperationName`
+  alone, which is valid, yet fails on `RelatedOperationID`: for a collection nested in an item
+  other than the first, the Data library resolves the `#[RequiredWithout]` sibling with the wrong
+  index. That one is a defect in `hypervel/components`, not in the example.
 - **Tax Component `Percent` and `ComponentOrder`.** The table types them `Decimal` and
   `Int`, but the examples send `"10.0000000000"` and `"1"`. `TaxComponentData` accepts
   both (`float|string`, `int|string`). The table also spells the first key
