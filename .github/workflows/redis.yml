@@ -34,7 +34,7 @@ jobs:
           --health-retries 5
 
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
@@ -83,7 +83,7 @@ jobs:
     # also exercises near-minimum behavior while redis_8 tracks current Redis 8,
     # so a Cluster-only failure may be topology-specific or version-specific.
     container:
-      image: ghcr.io/ipsocode/hypervel/ci:${{ matrix.php }}-latest
+      image: ghcr.io/ipsocode/hypervel/ci-alpine:${{ matrix.php }}-latest
 
     strategy:
       fail-fast: false
