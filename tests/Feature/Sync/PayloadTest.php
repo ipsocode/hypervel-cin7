@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Sync;
 
 use Hypervel\Saloon\Facades\Saloon;
+use Hypervel\Support\Facades\Schema;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Sync\Module;
@@ -44,5 +45,35 @@ class PayloadTest extends SyncTestCase
 
         $this->assertSame('reporting', new Payload()->getConnectionName());
         $this->assertSame('cin7_sync_payloads', new Payload()->getTable());
+    }
+
+    public function testAFailureRecordIsNullableAndCastsItsTime(): void
+    {
+        Saloon::fake([Cin7Fake::list('CustomerList', [Cin7Payloads::customerExample()['CustomerList'][0]])]);
+        $this->synchroniser()->pull(Module::Customer);
+
+        $row = Payload::forModule(Module::Customer)->sole();
+        $this->assertSame(0, $row->failures);
+        $this->assertNull($row->failed_at);
+        $this->assertNull($row->last_error);
+
+        $row->update(['failures' => 2, 'failed_at' => '2026-10-23 04:00:00', 'last_error' => 'Boom']);
+
+        $this->assertSame('2026-10-23 04:00:00', $row->refresh()->failed_at?->format('Y-m-d H:i:s'));
+        $this->assertSame(2, $row->failures);
+    }
+
+    public function testTheFailureColumnsAreDroppedOnRollback(): void
+    {
+        $migration = require __DIR__ . '/../../../database/migrations/2026_10_23_000000_add_failure_columns_to_cin7_sync_payloads_table.php';
+        $migration->down();
+
+        $this->assertFalse(Schema::hasColumn(Payload::TABLE, 'failures'));
+        $this->assertFalse(Schema::hasColumn(Payload::TABLE, 'failed_at'));
+        $this->assertFalse(Schema::hasColumn(Payload::TABLE, 'last_error'));
+
+        $migration->up();
+
+        $this->assertTrue(Schema::hasColumn(Payload::TABLE, 'failures'));
     }
 }

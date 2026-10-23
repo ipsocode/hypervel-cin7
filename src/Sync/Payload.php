@@ -67,6 +67,7 @@ final class Payload extends Model
             'payload' => 'array',
             'cin7_modified_at' => 'datetime',
             'synced_at' => 'datetime',
+            'failed_at' => 'datetime',
         ];
     }
 }
