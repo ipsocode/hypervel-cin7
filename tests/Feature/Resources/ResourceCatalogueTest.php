@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
-use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Resources\ListResource;
 use Ipsocode\Cin7\Tests\Catalogue;

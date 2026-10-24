@@ -7,7 +7,6 @@ namespace Ipsocode\Cin7\Tests\Feature\Requests;
 use Closure;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
-use Hypervel\Saloon\Enums\Method;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockClient;
 use InvalidArgumentException;
