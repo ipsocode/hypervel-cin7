@@ -46,7 +46,7 @@ first when a later phase must assert on its own requests alone.
 - **Fixtures for the typed bodies.** In the package's own suite, those examples are JSON files under
   `workbench/fixtures/`, one folder per API path: `Cin7Payloads::load('ref/tax',
   'get.response')` reads `workbench/fixtures/ref/tax/get.response.json`, and named helpers
-  such as `Cin7Payloads::taxList()` wrap the older ones. `DataCatalogueTest` asserts each
+  such as `Cin7Payloads::taxList()` wrap the older ones. The `DataCatalogueShard*Test` classes assert each
   `dto()` round-trips its fixture, so every key is modelled under its wire name. Testbench does not auto-discover
   `Hypervel\Data\DataServiceProvider`, so `testbench.yaml` lists it, as it does Saloon's.
 - **Nothing to reset.** The package keeps no static state, so there is nothing
@@ -133,8 +133,10 @@ the request object's own accessors.
 
 ### The catalogue
 
-`RequestCatalogueTest`, `ResourceCatalogueTest` and `DataCatalogueTest` run the same
-assertions over one row per request, resource method and data class. The rows live in one
+The `RequestCatalogueShard*Test`, `ResourceCatalogueShard*Test` and `DataCatalogueShard*Test`
+classes run the same assertions over one row per request, resource method and data class, and
+`RequestCatalogueTest`, `ResourceCatalogueTest` and `DataCatalogueTest` keep the tests that read
+the whole catalogue (the "nothing is left out" checks and the conventions). The rows live in one
 file per API path under `tests/Fixtures/Catalogue/`: `sale/invoice.php` holds the rows for
 `sale/invoice`, and `moneyTask.php` those of `moneyOperation`, which the package names after
 the Money Task. Each file returns its rows by kind, and
@@ -154,6 +156,11 @@ A key two files share throws, and three tests prove nothing is left out: every c
 request class has a `requests` row, every resource method that sends a request has a
 `resources` row, and every model is reached from a `dtos`, `bodies` or `required` row,
 directly or through a property at any depth.
+
+ParaTest hands a worker whole files, so the per-row tests run in four shards each, one class per
+shard (`DataCatalogueShard0Test` to `DataCatalogueShard3Test`, and the same for requests and
+resources), and no single file bounds a parallel run. A row belongs to the shard its key hashes to
+(`Catalogue::shard()`), so a new row needs nothing but its place in a fixture file.
 
 ### The test environment
 
