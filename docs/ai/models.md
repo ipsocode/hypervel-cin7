@@ -1,5 +1,8 @@
 # Building the Cin7 reference, by name
 
+Read this before building or changing a Cin7 resource, request or data class
+from the reference, with its scripts in `docs/ai/scripts/`.
+
 Every resource of the Cin7 Core V2 reference has a name, its anchor `reference/<group>/<resource>`,
 the page `https://dearinventory.docs.apiary.io/#reference/<group>/<resource>`. This page builds
 resources by that name, one at a time and never all at once, with the scripts in `docs/ai/scripts/`.
