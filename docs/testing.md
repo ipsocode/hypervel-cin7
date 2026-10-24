@@ -157,8 +157,8 @@ directly or through a property at any depth.
 
 ### The test environment
 
-The environment the suite boots into is defined in two files that must stay in
-step:
+The environment the suite boots into is defined in two files that stay in step,
+with the one exception below:
 
 | File | Applied to |
 |---|---|
@@ -182,6 +182,17 @@ extend `tests/Feature/Sync/SyncTestCase`, which turns it on with
 boots, so the provider loads the migration and registers the schedule as it
 would in an application. The case also uses `RefreshDatabase`, fakes `Sleep`
 and fixes the clock at 2026-10-03 12:00:00.
+
+Both files also set `TELESCOPE_ENABLED=false`. `hypervel/components` ships
+Telescope, discovery boots it into the Workbench application, and its deferred
+store would otherwise fail at the end of each test against the unmigrated
+`telescope_entries` table, writing stack traces to the log.
+
+`phpunit.xml` alone pins `COLUMNS=80` and `LINES=24` with `force="true"`, the one
+deliberate difference between the two files. Without them every artisan call in
+a ParaTest worker shells out to `stty` from inside the test's coroutine, where a
+lost SIGCHLD can hang the worker. The Testbench CLI already exports both, so
+`testbench.yaml` doesn't need them.
 
 The credentials, `acct-test` and `key-test`, are fake on purpose: a run that
 somehow reached `inventory.dearsystems.com` would be rejected rather than

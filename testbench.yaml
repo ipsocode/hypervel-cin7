@@ -29,6 +29,10 @@ env:
   DB_DATABASE: ":memory:"
   # The sync's module locks, in memory too: the skeleton's database store has no table here.
   CACHE_STORE: array
+  # hypervel/components ships Telescope, and discovery boots it into the Workbench app.
+  # Off, or it records every query and fails at the end of each test against a table the
+  # suite never migrates; phpunit.xml says more.
+  TELESCOPE_ENABLED: false
 
 workbench:
   # An outbound API client: nothing to authenticate, no HTTP surface to health-check.
