@@ -157,8 +157,8 @@ directly or through a property at any depth.
 
 ### The test environment
 
-The environment the suite boots into is defined in two files that must stay in
-step:
+The environment the suite boots into is defined in two files that stay in step,
+with the one exception below:
 
 | File | Applied to |
 |---|---|
@@ -176,6 +176,17 @@ The [sync](sync.md)'s table needs a database, so both files also set
 `DB_CONNECTION=sqlite` with `DB_DATABASE=:memory:`, which starts every test
 empty and keeps the suite parallel-safe, and `CACHE_STORE=array` for its module
 locks (the skeleton's `database` store has no `cache_locks` table there).
+
+Both files also set `TELESCOPE_ENABLED=false`. `hypervel/components` ships
+Telescope, discovery boots it into the Workbench application, and its deferred
+store would otherwise fail at the end of each test against the unmigrated
+`telescope_entries` table, writing stack traces to the log.
+
+`phpunit.xml` alone pins `COLUMNS=80` and `LINES=24` with `force="true"`, the one
+deliberate difference between the two files. Without them every artisan call in
+a ParaTest worker shells out to `stty` from inside the test's coroutine, where a
+lost SIGCHLD can hang the worker. The Testbench CLI already exports both, so
+`testbench.yaml` doesn't need them.
 `CIN7_SYNC` stays unset, so the sync is off as it is by default. The sync tests
 extend `tests/Feature/Sync/SyncTestCase`, which turns it on with
 `#[WithConfig('cin7.sync.enabled', true)]`: that is applied before the provider
