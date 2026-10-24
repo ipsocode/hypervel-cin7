@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\Disassembly\GetDisassembly;
 use Ipsocode\Cin7\Requests\Disassembly\PostDisassembly;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `disassembly`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `disassembly`; tests/Catalogue.php merges every file's rows by kind.
 
 $taskId = '38cddb52-9a81-4c07-9791-362936efa552';
 

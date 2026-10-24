@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of a customer, supplier or company address.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum AddressType: string
 {

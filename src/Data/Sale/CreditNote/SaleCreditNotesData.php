@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 /**
  * Sale Credit Notes, the `{SaleID, CreditNotes}` envelope every `sale/creditnote` action answers with.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleCreditNotesData extends Data implements WithResponse
 {

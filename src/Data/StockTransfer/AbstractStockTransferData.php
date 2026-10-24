@@ -24,7 +24,7 @@ use Ipsocode\Cin7\Enums\StockTransferStatus;
  * `IN TRANSIT`, or it fails validation before it is sent. The examples send `ManualJournals`,
  * always empty and in no table, so it is kept as a list of whatever the reference puts in it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractStockTransferData extends Data
 {

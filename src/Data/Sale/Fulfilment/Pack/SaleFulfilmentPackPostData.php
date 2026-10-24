@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * The body of `sale/fulfilment/pack` POST, which creates a pack or adds lines to one: the pack,
  * whose `Status` POST takes as `DRAFT` or `AUTHORISED`. The PUT body is `SaleFulfilmentPackData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentPackPostData extends AbstractSaleFulfilmentPickPackTaskData
 {

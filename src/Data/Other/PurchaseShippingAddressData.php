@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\AbstractAddressData;
  * address with neither (`null`). So both are nullable and `#[Required]`, as on `AddressData`: a
  * response may leave them out, a write body may not.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseShippingAddressData extends AbstractAddressData
 {

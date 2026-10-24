@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Enums\RecordStatus;
  * The body of `customer` POST: the Customer table with the `Status` POST requires, and no `ID`,
  * which Cin7 assigns. The PUT body is `CustomerPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomerPostData extends AbstractCustomerData
 {

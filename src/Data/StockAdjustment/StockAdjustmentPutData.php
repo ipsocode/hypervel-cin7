@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * The body of `stockadjustment` PUT: the Stock Adjustment POST/PUT table with the `TaskID` PUT
  * requires. The POST body is `StockAdjustmentPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockAdjustmentPutData extends AbstractStockAdjustmentData
 {

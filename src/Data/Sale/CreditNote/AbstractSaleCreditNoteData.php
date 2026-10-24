@@ -21,7 +21,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * constructor; the fields only one child requires stay in that child's constructor, and the
  * optional fields declared here are set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSaleCreditNoteData extends Data
 {

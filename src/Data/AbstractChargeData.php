@@ -18,7 +18,7 @@ use Hypervel\Data\Data;
  * Every one of those tables marks the five constructor fields required, so each child takes them
  * through this constructor; the optional fields are set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractChargeData extends Data
 {

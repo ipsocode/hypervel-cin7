@@ -14,10 +14,10 @@ use Ipsocode\Cin7\Enums\WebhookType;
  * The fields of the webhook table: the response of `webhooks` and the body of its POST and PUT. Each is
  * a final child that adds its `ID`, or none. Every webhook needs its `Type`, `IsActive`, `ExternalURL`
  * and `ExternalAuthorizationType`, so each child passes them to this constructor. The credentials are
- * required by the authorisation type: a user name and password for `basicauth`, a token for
+ * required by the authorization type: a user name and password for `basicauth`, a token for
  * `bearerauth`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractWebhookData extends Data
 {

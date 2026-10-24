@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractLineData;
  * the line fields of `AbstractLineData`, the sale's `AverageCost`, `BackorderQuantity` and
  * `DropShip`, and `Backorder`, which appears only in the examples.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleOrderLineData extends AbstractLineData
 {

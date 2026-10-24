@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\AbstractPurchaseStockLineData;
  * advanced purchase's stock and put away lines are `AbstractPurchaseStockLineData`'s; it adds
  * `Location` and `LocationID`, each required if the other is empty (`#[RequiredWithout]`).
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseStockLineData extends AbstractPurchaseStockLineData
 {

@@ -49,7 +49,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * What each module reads, and how a Cin7 time is stored.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class ModuleTest extends TestCase
 {

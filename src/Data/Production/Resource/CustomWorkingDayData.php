@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\DayOfWeek;
  * factory calendar. `StartTime` and `EndTime` are required when the day is not left to the
  * calendar, which a day cannot tell; the times are minutes, 0 to 1440; `Capacity` is read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomWorkingDayData extends Data
 {

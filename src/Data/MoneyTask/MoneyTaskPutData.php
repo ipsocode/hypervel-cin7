@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\MoneyTaskType;
  * The body of `moneyOperation` PUT: the Money Task table with the `TaskID` PUT requires. The POST
  * body is `MoneyTaskPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MoneyTaskPutData extends AbstractMoneyTaskData
 {

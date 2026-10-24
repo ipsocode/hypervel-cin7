@@ -11,7 +11,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
  * which PUT requires. Its example sends no `IsActive`, `AllowCoupons` or `SingleCouponCodeUsage`, so
  * they are optional. The POST body is `ProductDealPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealPutData extends AbstractProductDealData
 {

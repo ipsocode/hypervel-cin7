@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * A sale's combined payment status.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum SalePaymentStatus: string
 {

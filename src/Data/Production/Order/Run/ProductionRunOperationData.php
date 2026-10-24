@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Concerns\HasCustomFields;
  * `Status` is a string: the examples send values outside the listed ones. `Available` is in the
  * examples, not the table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationData extends Data
 {

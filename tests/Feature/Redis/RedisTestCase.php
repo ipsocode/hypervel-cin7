@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Tests\TestCase;
  * or `REDIS_CLUSTER_HOSTS_AND_PORTS` is set. The module locks and the rate limiter both use it, with
  * every key under one prefix, so the worker's database is flushed around each test.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 #[WithConfig('cin7.sync.enabled', true)]
 abstract class RedisTestCase extends TestCase

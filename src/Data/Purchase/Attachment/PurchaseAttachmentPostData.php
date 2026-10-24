@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * `Content` or as a `FileDownloadUrl` Cin7 fetches it from; a body with neither fails validation
  * before it is sent.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseAttachmentPostData extends Data
 {

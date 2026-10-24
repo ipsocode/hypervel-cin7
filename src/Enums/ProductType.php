@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * Whether a product is stocked or a service.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ProductType: string
 {

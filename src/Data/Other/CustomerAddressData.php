@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\AddressType;
  *
  * The reference's examples also carry the owner's `CustomerID` or `SupplierID` on each address.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomerAddressData extends Data
 {

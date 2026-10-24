@@ -11,9 +11,9 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 
 /**
  * Sale Fulfilment Pack, the response of every `sale/fulfilment/pack` action and the body of its
- * PUT, which replaces an unauthorised pack. The POST body is `SaleFulfilmentPackPostData`.
+ * PUT, which replaces an unauthorized pack. The POST body is `SaleFulfilmentPackPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentPackData extends AbstractSaleFulfilmentPickPackTaskData implements WithResponse
 {

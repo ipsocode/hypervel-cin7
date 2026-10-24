@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\InventoryWriteOff\PostInventoryWriteOff;
 use Ipsocode\Cin7\Requests\InventoryWriteOff\PutInventoryWriteOff;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `inventoryWriteOff`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `inventoryWriteOff`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every write-off requires, and the location a write needs.
 $fields = ['Status' => 'DRAFT', 'Account' => '404', 'Location' => 'Main Warehouse'];

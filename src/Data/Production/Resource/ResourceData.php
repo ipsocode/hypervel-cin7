@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\ResourceType;
  * response sends; `CycleDuration` is in seconds, 1 to 7776000. The bodies of POST and PUT are
  * `ResourcePostData` and `ResourcePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourceData extends AbstractResourceData implements WithResponse
 {

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Data\AbstractStockLineData;
  * Disassembly Order Line Model, a component line of a disassembly order: a product, found by
  * `ProductID` or `ProductCode`, with its `Quantity` and `Cost`. `Name` and `Unit` are read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class DisassemblyOrderLineData extends AbstractStockLineData
 {

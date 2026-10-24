@@ -69,11 +69,11 @@ CIN7_APPLICATION_KEY=
 ```
 
 Every configuration key, with its environment variable and default, is in
-[docs/configuration.md](docs/configuration.md).
+[src/docs/configuration.md](src/docs/configuration.md).
 
 ## Usage
 
-Inject `Cin7Connector` and call a [resource](docs/resources.md) accessor.
+Inject `Cin7Connector` and call a [resource](src/docs/resources.md) accessor.
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
@@ -109,38 +109,38 @@ $sandbox = app(Cin7Manager::class)->connection('sandbox');
 ```
 
 Each connection throttles on its own, as
-[docs/connector.md](docs/connector.md#named-connections) describes.
+[src/docs/connector.md](src/docs/connector.md#named-connections) describes.
 
 ### Checking the setup
 
 `php artisan cin7:check` sends one `GET me` with a connection's credentials
 (`--connection=` names one) and prints the company Cin7 answers with, or why
 the call failed, without printing either credential; see
-[docs/connector.md](docs/connector.md#checking-a-connection).
+[src/docs/connector.md](src/docs/connector.md#checking-a-connection).
 
 ## Documentation
 
-- [docs/configuration.md](docs/configuration.md) — every configuration key with
+- [src/docs/configuration.md](src/docs/configuration.md) — every configuration key with
   its environment variable and default, publishing the config, and when the
   values are read.
-- [docs/resources.md](docs/resources.md) — the accessor tree, the conventions
+- [src/docs/resources.md](src/docs/resources.md) — the accessor tree, the conventions
   every resource and request follows, and adding a new resource method.
-- [docs/requests.md](docs/requests.md) — the three request bases and the
+- [src/docs/requests.md](src/docs/requests.md) — the three request bases and the
   request lines they send, the wire protocol, the exceptions a failed call
   throws, and the bounded throttling retry.
-- [docs/data.md](docs/data.md) — the typed request and response bodies: the
+- [src/docs/data.md](src/docs/data.md) — the typed request and response bodies: the
   conventions every data class follows, the class behind each path, and the
   empty-collection rule.
-- [docs/pagination.md](docs/pagination.md) — walking every page of a listing or
+- [src/docs/pagination.md](src/docs/pagination.md) — walking every page of a listing or
   sending the pages concurrently, and how the last page is worked out from
   Cin7's list envelope.
-- [docs/connector.md](docs/connector.md) — the shared connector, its transport
+- [src/docs/connector.md](src/docs/connector.md) — the shared connector, its transport
   and timeouts, rate limiting and the choice of limiter store, the throttling
   cooldown, and checking a connection with `cin7:check`.
-- [docs/sync.md](docs/sync.md) — the optional scheduled copy of Cin7's records
+- [src/docs/sync.md](src/docs/sync.md) — the optional scheduled copy of Cin7's records
   in one local table: the modules and their order, how a pull works, the
   schedule, the `cin7:sync` command and reading the table.
-- [docs/testing.md](docs/testing.md) — faking Cin7 in the tests of an
+- [src/docs/testing.md](src/docs/testing.md) — faking Cin7 in the tests of an
   application that uses the package, with the shipped `Cin7Fake` builders for
   list envelopes and the Error Model, and how the package's own suite is built.
 
@@ -148,12 +148,12 @@ the call failed, without printing either credential; see
 
 - **No caching.** Response caching, cache-key shape and cache-hit logging
   semantics are consumer policy; `Cacheable`/`HasCaching` can be adopted later
-  once a second consumer's needs are known. The [sync](docs/sync.md), a local
+  once a second consumer's needs are known. The [sync](src/docs/sync.md), a local
   copy of Cin7's records, is a separate, opt-in table: off by default, it
   creates no table and runs no query.
 - **No mandatory DTOs.** Arrays work everywhere: a write takes an array body and
   `json()` returns the decoded array. Typed data objects are an additive layer on
-  top ([docs/data.md](docs/data.md)), shown here for a customer:
+  top ([src/docs/data.md](src/docs/data.md)), shown here for a customer:
 
   ```php
   use Ipsocode\Cin7\Data\Customer\CustomerPostData;

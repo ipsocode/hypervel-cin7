@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Enums;
  * The status of a task that completes in one step: a money task, a journal, an inventory
  * write-off.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum CompletionStatus: string
 {

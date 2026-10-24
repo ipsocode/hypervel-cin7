@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * The body of `production/order/run/operation/suspend` PUT: the operation to suspend and the
  * `SuspendReasonID`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationSuspendPutData extends Data
 {

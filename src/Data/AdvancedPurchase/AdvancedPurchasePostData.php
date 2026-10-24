@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\ProcessType;
  * `SaleType`) and `IsServiceOnly`, which the simple purchase's table does not have. The PUT body is
  * `AdvancedPurchasePutData`, and the response `AdvancedPurchaseData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePostData extends AbstractPurchaseData
 {

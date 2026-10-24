@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\AccountClass;
  * `BANK` account also needs its `Bank` and `BankAccountNumber`. `Type` is a string: the
  * reference's examples send `CURRENT` and `EXPENSE`, outside its value list.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractAccountData extends Data
 {

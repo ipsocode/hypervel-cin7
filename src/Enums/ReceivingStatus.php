@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * A purchase's combined receiving status: how much of its stock is received and put away.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ReceivingStatus: string
 {

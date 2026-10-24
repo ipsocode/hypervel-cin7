@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * and the notes `Prepayment`, where the table has `PAYMENT`, `REFUND` and `PREPAYMENT`. The bodies
  * are `SalePaymentPostData` and `SalePaymentPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SalePaymentLinePartialData extends Data implements WithResponse
 {

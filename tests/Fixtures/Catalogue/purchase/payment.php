@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Purchase\Payment\PostPurchasePayment;
 use Ipsocode\Cin7\Requests\Purchase\Payment\PutPurchasePayment;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchase/payment`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchase/payment`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

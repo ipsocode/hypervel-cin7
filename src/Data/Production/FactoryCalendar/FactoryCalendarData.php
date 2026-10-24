@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\DayOfWeek;
  * days: the week it starts on, its seven days and its special days. The bodies of POST and PUT are
  * `FactoryCalendarPostData` and `FactoryCalendarPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FactoryCalendarData extends Data implements WithResponse
 {

@@ -17,7 +17,7 @@ use ReflectionNamedType;
  * One row per resource method, from the per-path files under `tests/Fixtures/Catalogue/`,
  * asserting on the request it builds and the PendingRequest it sends.
  *
- * @see docs/resources.md
+ * @see src/docs/resources.md
  */
 class ResourceCatalogueTest extends TestCase
 {

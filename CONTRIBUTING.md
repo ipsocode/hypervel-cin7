@@ -60,7 +60,7 @@ Arguments after `--` reach PHPUnit or ParaTest, e.g.
 
 The suite is split in two, and the split is enforced rather than conventional:
 
-- **`tests/Unit`** — the page defaults and the catalogue's shard split. Every method carries `#[UnitTest]`, so
+- **`tests/Unit`** — the page defaults and the catalog's shard split. Every method carries `#[UnitTest]`, so
   the framework is never booted for it and anything reaching for the container
   fails outright.
   The line is drawn by what the code actually touches, not by how simple it
@@ -69,7 +69,7 @@ The suite is split in two, and the split is enforced rather than conventional:
 - **`tests/Feature`** — everything needing the Testbench application: the
   container binding, the config merge, and every faked send.
 
-The reasoning behind the suite's design is in [docs/testing.md](docs/testing.md).
+The reasoning behind the suite's design is in [src/docs/testing.md](src/docs/testing.md).
 
 Every send in the suite is faked through Saloon's mock client; nothing reaches
 the live Cin7 API.
@@ -112,7 +112,7 @@ php-cs-fixer and PHPStan are configured like `hypervel/components`:
 `.php-cs-fixer.dist.php` loads its rules, verbatim, from
 `.github/php-cs-fixer-rules.php`, and `phpstan.neon` carries its level. Keep
 them in step when upstream changes, so a finding here is a finding there. Some
-of the fixer's rules are risky — they change behaviour, not only formatting —
+of the fixer's rules are risky — they change behavior, not only formatting —
 so run `composer test` after `composer lint:fix`, not just before committing.
 An inline PHPStan ignore names its error and says why:
 `@phpstan-ignore <identifier> (<reason>)`.
@@ -167,10 +167,13 @@ config, the security policy, and the automated review's skill and brief in
 `.github/claude/`, which the review installs on its runner for the review only.
 Each of them but the pull request template says so in its first lines. A pull
 request may still change one; the maintainer carries the change into the shared
-copy, and the next import brings it to every package. Two parts of `.github/`
-are this package's own: `conventions.php`, the check's settings, and `review/`,
-which tells the automated review what this package is and where to look. The
-package keeps no `.claude/`: `.gitignore` leaves Claude Code's local state out.
+copy, and the next import brings it to every package. `conventions.php`, the
+check's settings, is this package's own. So is `docs/ai/`, which agents read
+and a release leaves out: `review.md` tells a review what this package is and
+where to look, `framework.md` names the Hypervel pages behind each part of
+`src/`, and `models.md`, with its `scripts/`, says how the Cin7 reference is
+built. `.gitignore` leaves Claude Code's local state in `.claude/` out, all but
+`.claude/skills/`.
 
 ## Coroutine safety
 
@@ -192,11 +195,11 @@ worker's lifetime. Every change is held to these rules:
   client. Rate-limit and cooldown keys stay scoped to the Cin7 account.
 - Hypervel APIs only, never `Illuminate\*`. Tests reach the container with
   `$app->get(...)`, never array access.
-- New behaviour comes with a test. `@codeCoverageIgnore` is not a way past the
+- New behavior comes with a test. `@codeCoverageIgnore` is not a way past the
   coverage gate.
 
 How the connector is shared, throttled and kept on the framework's transport is
-in [docs/connector.md](docs/connector.md).
+in [src/docs/connector.md](src/docs/connector.md).
 
 `phpunit.xml` registers the framework's `AfterEachTestExtension` even though
 the package declares no test-state registrar, so the day that stops being true
@@ -208,12 +211,12 @@ Fill in the pull request template and label the pull request with the type it
 ticks. There is no changelog file: each release's notes are generated from the
 titles of the pull requests it contains, grouped by those labels
 (`.github/release.yml`), so write the title for someone reading the release. A
-pull request labelled `breaking-change` makes the next release at least a minor
+pull request labeled `breaking-change` makes the next release at least a minor
 version.
 
 A change a consumer will observe, such as a rate-limit key, the retry and backoff
 policy or the shape of a request, goes in the template's *Behaviour change*
-section, with the README or docs/ update it needs in the same pull request.
+section, with the README or src/docs/ update it needs in the same pull request.
 
 Never put a real Cin7 account ID or application key in a commit, a fixture or a
 pull request description. Security problems are reported privately, as
@@ -227,7 +230,7 @@ hook on the repository, so nothing is uploaded.
 
 Run the **publish** workflow on `main` (Actions → publish → *Run workflow*).
 Leave the bump on `auto` — minor if a pull request merged since the previous
-tag is labelled `breaking-change`, patch otherwise — or pick `patch`, `minor`
+tag is labeled `breaking-change`, patch otherwise — or pick `patch`, `minor`
 or `major`, or type an exact version. *Highlights* go at the top of the notes;
 *dry run* shows the plan without tagging.
 
@@ -237,6 +240,7 @@ generated from the pull requests merged since the previous tag. A `v*` tag
 pushed by hand goes through the same suite and gets the same Release.
 
 Composer installs a release as GitHub's archive of its tag, which leaves out
-every path `.gitattributes` marks `export-ignore`: `.github/`, the tests, the
-workbench and the development configs. A new top-level file or directory ships
-unless it is added there; `git archive HEAD | tar -t` lists what would.
+every path `.gitattributes` marks `export-ignore`: `.github/`, `docs/ai/`, the
+tests, the workbench and the development configs. A new top-level file or
+directory ships unless it is added there; `git archive HEAD | tar -t` lists
+what would.

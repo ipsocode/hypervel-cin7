@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Requests\Reference\ShipZonesEnabled\GetShipZonesEnabled;
 use Ipsocode\Cin7\Requests\Reference\ShipZonesEnabled\PutShipZonesEnabled;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `reference/shipZonesEnabled`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `reference/shipZonesEnabled`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

@@ -20,7 +20,7 @@ use Ipsocode\Cin7\Concerns\HasProductFields;
  * Every one of those tables marks the seven constructor fields required, so each child takes
  * them through this constructor; the optional fields are set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractLineData extends Data
 {

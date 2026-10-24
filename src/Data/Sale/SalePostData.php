@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\ProcessType;
  * the POST-only `SaleType`. `AutoPickPackShipMode` is in the reference's POST example but in no
  * Sale table. The PUT body is `SalePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SalePostData extends AbstractSaleData
 {

@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The status of a sale order, the reference's Order Statuses.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum OrderStatus: string
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\TransactionType;
 /**
  * Transactions, one entry of `Transactions`: a movement between a debit and a credit account.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class TransactionData extends Data implements WithResponse
 {

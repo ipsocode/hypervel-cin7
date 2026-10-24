@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\StockAdjustment\PostStockAdjustment;
 use Ipsocode\Cin7\Requests\StockAdjustment\PutStockAdjustment;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `stockadjustment`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `stockadjustment`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every stock adjustment requires, and a line it can be sent with.
 $fields = ['EffectiveDate' => '2017-12-01T00:00:00', 'Status' => 'DRAFT'];

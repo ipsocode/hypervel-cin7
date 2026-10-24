@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
 /**
  * Finished Goods List, one entry of `FinishedGoods`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FinishedGoodsListData extends Data implements WithResponse
 {

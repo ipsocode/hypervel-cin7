@@ -36,7 +36,7 @@ use Workbench\App\Support\Cin7Payloads;
 /**
  * Asserts on the PendingRequest the connector built, not on the request's own accessors.
  *
- * @see docs/requests.md
+ * @see src/docs/requests.md
  */
 class RequestBuildingTest extends TestCase
 {

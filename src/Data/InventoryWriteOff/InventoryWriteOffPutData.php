@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * The body of `inventoryWriteOff` PUT: the Inventory Write-Off POST/PUT table with the `TaskID`
  * PUT requires. The POST body is `InventoryWriteOffPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class InventoryWriteOffPutData extends AbstractInventoryWriteOffData
 {

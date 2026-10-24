@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The status a disassembly POST takes.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum DisassemblyPostStatus: string
 {

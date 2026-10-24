@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\AttributeType;
  * The body of `ref/attributeset` PUT: the table with the `ID` of the set to change, which PUT
  * requires, and the first attribute required. The POST body is `AttributeSetPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AttributeSetPutData extends AbstractAttributeSetData
 {

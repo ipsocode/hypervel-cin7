@@ -26,7 +26,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * purchase's partial invoices require both, `PurchaseInvoiceData` requires `InvoiceDate` and
  * leaves `InvoiceDueDate` optional, and `AdvancedPurchaseInvoiceData` leaves both optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractPurchaseInvoiceData extends Data
 {

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
 
-// The catalogue rows for `advancedSale`, which the reference serves through `sale`: it has no
+// The catalog rows for `advancedSale`, which the reference serves through `sale`: it has no
 // requests of its own, so only the resource and its body class have rows.
 // tests/Catalogue.php merges every file's rows by kind.
 

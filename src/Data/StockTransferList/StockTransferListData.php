@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\StockTransferStatus;
 /**
  * Stock Transfer List, one entry of `StockTransferList`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTransferListData extends Data implements WithResponse
 {

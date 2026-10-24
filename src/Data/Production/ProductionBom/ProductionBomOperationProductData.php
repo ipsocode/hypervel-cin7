@@ -15,7 +15,7 @@ use Hypervel\Data\Data;
  * is required when updating; the product's name, costing method, unit and average cost are
  * read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomOperationProductData extends Data
 {

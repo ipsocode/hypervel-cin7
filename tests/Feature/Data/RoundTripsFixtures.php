@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Data;
 
 /**
- * The round-trip assertion the data catalogue tests share.
+ * The round-trip assertion the data catalog tests share.
  */
 trait RoundTripsFixtures
 {
     /**
-     * Assert a model's `toArray()` holds the fixture: every fixture key is modelled under its
+     * Assert a model's `toArray()` holds the fixture: every fixture key is modeled under its
      * wire name with an equal value, and every other key is null, the default of a field the
      * fixture left out. Absent and `null` are the same to a model.
      *

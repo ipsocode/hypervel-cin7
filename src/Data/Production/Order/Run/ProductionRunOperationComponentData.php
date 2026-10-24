@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Concerns\HasProductionProductFields;
  * reserved quantity are read-only; `ProductCost` is typed String in the table and a number in the
  * examples.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationComponentData extends Data
 {

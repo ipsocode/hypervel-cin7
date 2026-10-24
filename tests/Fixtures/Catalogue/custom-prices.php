@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\CustomPrices\PostCustomPrices;
 use Ipsocode\Cin7\Requests\CustomPrices\PutCustomPrices;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `custom-prices`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `custom-prices`; tests/Catalogue.php merges every file's rows by kind.
 
 $productId = '2fcb8c53-9183-4bd3-aefa-b8f78167e159';
 $customerId = '201a76af-9da8-4cb0-ab85-5570f36edff6';

@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * The supplier's link is `SupplierProductURL`, as the table names it; the reference's examples
  * send `URL`, which is not the wire key.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductSupplierData extends Data
 {

@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * The body of `production/order/void` POST: the `productionOrderID`, keyed with a lower-case first
  * letter as the reference writes it, and whether the void applies to its `ApplyToTasks`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderVoidPostData extends Data
 {

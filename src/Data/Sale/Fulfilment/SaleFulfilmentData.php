@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\FulfilmentStatus;
 /**
  * Sale Fulfilment Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentData extends Data
 {

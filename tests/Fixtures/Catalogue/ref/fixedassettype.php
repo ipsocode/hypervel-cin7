@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\Ref\FixedAssetType\PostFixedAssetType;
 use Ipsocode\Cin7\Requests\Ref\FixedAssetType\PutFixedAssetType;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/fixedassettype`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/fixedassettype`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every ref fixedassettype requires.
 $fields = ['Name' => 'Third FixedAssetType', 'DepreciationMethod' => 'No Depreciation', 'AveragingMethod' => 'Full Month', 'AssetAccountCode' => '710', 'AccumulatedDepreciationAccountCode' => '710'];

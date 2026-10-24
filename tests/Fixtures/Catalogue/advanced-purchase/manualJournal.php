@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\GetAdvancedPurchaseMan
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `advanced-purchase/manualJournal`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `advanced-purchase/manualJournal`; tests/Catalogue.php merges every file's rows by kind.
 
 $line = ['Reference' => 'Freight', 'Amount' => 20, 'Date' => '2018-04-23T00:00:00', 'Debit' => '715', 'Credit' => '860'];
 $lineSent = ['Reference' => 'Freight', 'Amount' => 20.0, 'Date' => '2018-04-23T00:00:00', 'Debit' => '715', 'Credit' => '860'];

@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Concerns\HasProductionProductFields;
  * has priority, or `ProductCode`. `ExpiryDate` is required for a product costed `FEBATCH` or
  * `FESN`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunPendingOutputData extends Data
 {

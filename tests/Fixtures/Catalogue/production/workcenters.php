@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Production\WorkCenters\PostProductionWorkCenters;
 use Ipsocode\Cin7\Requests\Production\WorkCenters\PutProductionWorkCenters;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `production/workcenters`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `production/workcenters`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '38cddb52-9a81-4c07-9791-362936efa552';
 

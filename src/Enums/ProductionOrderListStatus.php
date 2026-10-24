@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The status filter of the production order list.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ProductionOrderListStatus: string
 {

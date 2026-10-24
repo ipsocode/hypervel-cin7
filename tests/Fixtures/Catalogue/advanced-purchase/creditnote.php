@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\GetAdvancedPurchaseCredit
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\PostAdvancedPurchaseCreditNote;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `advanced-purchase/creditnote`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `advanced-purchase/creditnote`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every credit note POST requires; the empty-GUID `TaskID` creates a credit note.
 $fields = ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'CreditNoteNumber' => 'CR-00103/1', 'CreditNoteInvoiceNumber' => 'INV-00103/2', 'CreditNoteDate' => '2018-04-15T00:00:00', 'Status' => 'DRAFT', 'Lines' => [], 'Unstock' => []];

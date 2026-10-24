@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\DayOfWeek;
  * and for POST `WeekStart` and `FactoryCalendarDays`, one per day of the week (seven). The PUT
  * body is `FactoryCalendarPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FactoryCalendarPostData extends Data
 {

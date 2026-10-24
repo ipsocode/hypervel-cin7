@@ -12,10 +12,10 @@ use Hypervel\Data\Data;
 /**
  * Sale Fulfilment Ship Line Model as POST and PUT take it: the box is `Box` ("For POST/PUT
  * methods use `Box` as the field name"). The read-only `TrackingURL`, which the examples send, is
- * modelled, and the requests leave it out of the body. A response line is
+ * modeled, and the requests leave it out of the body. A response line is
  * `SaleFulfilmentShipLineData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentShipLinePostPutData extends Data
 {

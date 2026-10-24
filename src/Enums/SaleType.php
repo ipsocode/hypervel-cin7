@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of a sale, as the sale and sale list responses report it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum SaleType: string
 {

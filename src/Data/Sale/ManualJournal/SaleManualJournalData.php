@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * requires `SaleID` and a sale's embedded `ManualJournals` have none, so it is nullable and
  * `#[Required]`, which only a write body checks. The POST body is `SaleManualJournalPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleManualJournalData extends AbstractSaleManualJournalData implements WithResponse
 {

@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * `ProductSKU`. `BOMComponentID` is required when updating; the product's name, cost, costing
  * method and unit are read-only. `WastageQty` and `WastagePercent` stand for each other.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomComponentData extends Data
 {

@@ -27,7 +27,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * credit note with `Unstock` as an object, `{Status, Lines}`, which this class does not read: a
  * purchase's `CreditNote` is `SimplePurchaseCreditNoteData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseCreditNoteData extends AbstractPurchaseCreditNoteData implements WithResponse
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\AdjustmentRule;
  * The reference types `AdjustmentValue` as String, but its example sends a number, so it
  * accepts both.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class RoundingTableData extends Data
 {

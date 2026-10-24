@@ -17,7 +17,7 @@ use Hypervel\Data\Attributes\Validation\Max;
  * Available Values (`g`, `kg`, `cm`, `in`, …), but stay strings rather than the `WeightUnit` and
  * `DimensionUnit` enums: the sale examples send `""`, outside the list.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 trait HasProductFields
 {

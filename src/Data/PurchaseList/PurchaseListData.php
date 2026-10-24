@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractPurchaseListData;
  * Purchase List, one entry of `PurchaseList` in a `purchaseList` response. Its table is the
  * Purchase Credit Note List's, field for field, so every field is in the parent.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseListData extends AbstractPurchaseListData implements WithResponse
 {

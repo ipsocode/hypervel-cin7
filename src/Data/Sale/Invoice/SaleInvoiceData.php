@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
 /**
  * Sale Invoice Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleInvoiceData extends AbstractSaleInvoiceData
 {

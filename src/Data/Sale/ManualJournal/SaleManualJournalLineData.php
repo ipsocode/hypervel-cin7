@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Data\AbstractManualJournalLineData;
 /**
  * Sale Manual Journal Line Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleManualJournalLineData extends AbstractManualJournalLineData
 {

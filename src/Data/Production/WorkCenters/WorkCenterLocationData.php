@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\WorkCenterLocationType;
  * bin's ID with its `ParentLocationID`. `WorkCenterID` and `ParentLocationName` are in the
  * examples, not the table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WorkCenterLocationData extends Data
 {

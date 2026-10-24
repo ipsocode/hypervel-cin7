@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * The production orders a `production/order` action answers with, under `ProductionOrders`, and
  * the `Warning` a release adds.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrdersData extends Data implements WithResponse
 {

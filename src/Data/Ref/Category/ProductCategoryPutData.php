@@ -10,7 +10,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
  * The body of `ref/category` PUT: the table with the `ID` of the product category to change, which PUT requires.
  * The POST body is `ProductCategoryPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductCategoryPutData extends AbstractProductCategoryData
 {

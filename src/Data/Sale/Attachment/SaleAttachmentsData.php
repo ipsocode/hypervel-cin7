@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\Other\AttachmentLineData;
  * Sale Attachments, the `{SaleID, Lines}` envelope every `sale/attachment` action answers with.
  * The POST body is `SaleAttachmentPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleAttachmentsData extends Data implements WithResponse
 {

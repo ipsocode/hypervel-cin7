@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * Bank Transfer, the response of every `bankTransfer` action: the table with its `TaskID`. The
  * bodies of POST and PUT are `BankTransferPostData` and `BankTransferPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class BankTransferData extends AbstractBankTransferData implements WithResponse
 {

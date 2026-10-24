@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\WorkflowDueDaysType;
  * Workflow, one entry of a response of its endpoint: the table with its `ID`, which every response
  * sends. The bodies of POST and PUT are `WorkflowPostData` and `WorkflowPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WorkflowData extends AbstractWorkflowData implements WithResponse
 {

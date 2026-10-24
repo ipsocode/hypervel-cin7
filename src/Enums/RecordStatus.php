@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * Whether a customer or supplier is in use.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum RecordStatus: string
 {

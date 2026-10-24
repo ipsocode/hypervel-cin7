@@ -13,9 +13,9 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 /**
  * The runs of a production order, the answer of `production/order/run` GET and POST and of the run
  * actions: the `ProductionOrderID`, its `OrderNumber`, the `Runs` and any `Warnings`. The
- * reference documents no table for it: it is modelled from its examples.
+ * reference documents no table for it: it is modeled from its examples.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunsData extends Data implements WithResponse
 {

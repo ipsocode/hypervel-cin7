@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * Every quote needs its `Memo`, `Status` and `Lines`, so each child passes them to this
  * constructor; `Prepayments` and `AdditionalCharges` are set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSaleQuoteData extends Data
 {

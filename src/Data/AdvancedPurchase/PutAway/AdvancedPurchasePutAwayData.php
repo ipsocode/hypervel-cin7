@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `InvoicingAndReceivingNumber`, which only the `advanced-purchase` examples send, so it is
  * optional too. The POST body is `AdvancedPurchasePutAwayPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePutAwayData extends AbstractAdvancedPurchasePutAwayData
 {

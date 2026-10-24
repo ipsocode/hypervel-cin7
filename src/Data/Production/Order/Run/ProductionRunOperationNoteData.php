@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
 /**
  * ProductionRunOperationNote, a note of a run operation. `NoteID` is required when updating.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationNoteData extends Data
 {

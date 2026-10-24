@@ -15,7 +15,7 @@ use Hypervel\Data\Data;
  * location is named by `LocationID` or `LocationName`, so a write body without either fails
  * validation.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductSupplierOptionData extends Data
 {

@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 /**
  * Supplier Deposits, one entry of `SupplierDeposits`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SupplierDepositData extends Data implements WithResponse
 {

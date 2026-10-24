@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The kind of record a CRM task or workflow belongs to.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum TaskEntityType: string
 {

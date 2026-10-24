@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * is in every example, and `CreditNoteBalance` and `Payments` in the GET example with
  * `IncludePaymentInfo`, though the table omits them.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleCreditNotePartialData extends AbstractSaleCreditNoteData
 {

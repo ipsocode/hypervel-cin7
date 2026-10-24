@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Concerns\HasAdditionalAttributes;
 /**
  * Additional Attribute Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdditionalAttributeData extends Data
 {

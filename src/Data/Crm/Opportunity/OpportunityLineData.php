@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
 /**
  * Opportunity Line, one entry of an opportunity's `Lines`: a product, by `ProductID` or `ProductSku` (the examples write the key `ProductSku`, the table `ProductSKU`), its quantity, price, tax and total.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class OpportunityLineData extends Data
 {

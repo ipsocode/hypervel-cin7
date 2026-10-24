@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * The fields of the Opportunity table: the response of its endpoint and the body of its POST and PUT.
  * Each is a final child that adds its `ID`, or none. Every opportunity needs its customer name, billing address line, currency, tax rule, terms, price tier, location, customer currency, term method, sales representative and ShipToOther, so each child passes them to this constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractOpportunityData extends Data
 {

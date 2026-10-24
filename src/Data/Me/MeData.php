@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\WeightUnit;
  * ME, the `me` response: the company's name, base currency and time zone, and the settings its
  * documents follow, with its `RoundingTable`. The reference requires none of its fields.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MeData extends Data implements WithResponse
 {

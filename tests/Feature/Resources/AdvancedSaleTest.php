@@ -17,7 +17,7 @@ use Workbench\App\Support\Cin7Payloads;
 /**
  * The advanced sale has no endpoints of its own: `advancedSale()` sends the `sale` requests.
  *
- * @see docs/resources.md
+ * @see src/docs/resources.md
  */
 class AdvancedSaleTest extends TestCase
 {

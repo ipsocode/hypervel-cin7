@@ -18,7 +18,7 @@ use Hypervel\Data\Data;
  * rule, so both stay optional. `ShortDesc` is a Bool in the table, but its example is a string: a
  * description of the zone's areas, read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractShippingZoneData extends Data
 {

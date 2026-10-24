@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * How a production order's capacity is calculated.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum CapacityCalculationType: string
 {

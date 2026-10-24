@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\Purchase\Invoice\GetPurchaseInvoice;
 use Ipsocode\Cin7\Requests\Purchase\Invoice\PostPurchaseInvoice;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchase/invoice`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchase/invoice`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every invoice POST requires.
 $fields = ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'InvoiceDate' => '2017-12-14T00:00:00', 'InvoiceDueDate' => '2018-01-13T00:00:00', 'Status' => 'DRAFT', 'Lines' => []];

@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * Bill Of Material Service Model, one entry of a product's `BillOfMaterialsServices`. It needs
  * its `Quantity`, and a service named by `ComponentProductID` or `Name`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class BillOfMaterialServiceData extends Data
 {

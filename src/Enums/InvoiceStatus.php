@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Enums;
  * The status of an invoice, the reference's Invoice Statuses; also a sale's combined invoice
  * status.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum InvoiceStatus: string
 {

@@ -9,7 +9,7 @@ namespace Ipsocode\Cin7\Enums;
  * discount % or by amending its price. The product's `DiscountRule`, the name of a discount, is a
  * string.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum DiscountRule: string
 {

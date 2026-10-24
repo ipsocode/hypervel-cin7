@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * How a fixed asset type depreciates its assets.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum DepreciationMethod: string
 {

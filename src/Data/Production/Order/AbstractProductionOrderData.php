@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\CapacityCalculationType;
  * each require (the PUT example sends no `ProductID`, so it is optional there). Each is a final
  * child.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractProductionOrderData extends Data
 {

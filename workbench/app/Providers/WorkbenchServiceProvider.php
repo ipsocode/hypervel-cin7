@@ -14,7 +14,7 @@ use Workbench\App\Services\CustomerDirectory;
  *
  * Binding it here proves Cin7ServiceProvider's singleton resolves from an application's own graph.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 class WorkbenchServiceProvider extends ServiceProvider
 {

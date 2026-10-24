@@ -650,9 +650,9 @@ stages by the fulfilment's `TaskID`.
 | `sale()->fulfilment()->ship()` (Sale Fulfilment Ship) | `get(string $taskId)`, `post(array\|SaleFulfilmentShipPostData)`, `put(array\|SaleFulfilmentShipPutData)` | `SaleFulfilmentShipData`, the shipment with its `TaskID` |
 
 A POST creates a pick, pack or shipment or adds lines to it, and a PUT replaces one that is not
-authorised. `AutoPickMode: 'AUTOPICK'` in place of a `Status` picks the task automatically, and
+authorized. `AutoPickMode: 'AUTOPICK'` in place of a `Status` picks the task automatically, and
 `AddTrackingNumbers: true` lets a shipment PUT change the tracking numbers or carrier of an
-authorised shipment; the reference documents both in prose only. A shipment line names its box
+authorized shipment; the reference documents both in prose only. A shipment line names its box
 `Box` in a body and `Boxes` in a response.
 
 ```php
@@ -764,7 +764,7 @@ with the saved stock received, a `PurchaseStockData`. A stock POST needs `TaskID
 `LocationID`; a line's read-only `Name` and `Received` are left out of the body. POST only adds
 lines: duplicates in one body become one line with their quantities summed, and a line matching an
 existing one's product, location, batch and expiry date is an error. `Status` `AUTHORISED` with
-empty `Lines` authorises the stock received. Cin7 rejects the POST unless the order is
+empty `Lines` authorizes the stock received. Cin7 rejects the POST unless the order is
 `AUTHORISED` and the stock received `DRAFT` or `NOT AVAILABLE`, and, for a purchase whose
 `Approach` is `INVOICE`, the invoice `AUTHORISED`.
 
@@ -789,7 +789,7 @@ $this->cin7->purchase()->stock()->post(PurchaseStockPostData::from([
     'TaskID' => $taskId,
     'Status' => 'AUTHORISED',
     'Lines' => [],
-])); // authorises the stock received
+])); // authorizes the stock received
 ```
 
 `$cin7->purchase()->invoice()` is `purchase/invoice`, a purchase's invoice, which the reference
@@ -871,7 +871,7 @@ the reference also marks deprecated: an advanced purchase's manual journals are 
 `advanced-purchase/manualJournal`. `get($taskId)` sends `purchase/manualJournal?TaskID=…`, and
 `post()` takes a `PurchaseManualJournalPostData` as well as an array; both answer with the manual
 journal, a `PurchaseManualJournalData`. A POST needs `TaskID` and a `Status` of `DRAFT` or
-`AUTHORISED`, and can be sent even when the journal is authorised. A line's `IsSystem` is read-only
+`AUTHORISED`, and can be sent even when the journal is authorized. A line's `IsSystem` is read-only
 and never sent: a line Cin7 posted (`IsSystem` `true`) cannot be changed or deleted.
 
 ```php
@@ -1038,8 +1038,8 @@ its `dto()` is an `AdvancedPurchaseStocksData`, whose `StockReceiving` are
 well as an array; both need the `PurchaseID`, a `Status` of `DRAFT` or `AUTHORISED` and `Lines`,
 and a PUT also the `TaskID` of the task it overwrites. A POST only adds lines: without a `TaskID`,
 or with the empty GUID, it creates a new task, and with `Status` `AUTHORISED` and empty `Lines` it
-authorises the task. Both fail unless the order is authorised, the stock received is `DRAFT`,
-`NOT AVAILABLE` or `PARTIALLY RECEIVED`, and, for an `INVOICE` approach, the invoice is authorised.
+authorizes the task. Both fail unless the order is authorized, the stock received is `DRAFT`,
+`NOT AVAILABLE` or `PARTIALLY RECEIVED`, and, for an `INVOICE` approach, the invoice is authorized.
 `delete($taskId)` sends `advanced-purchase/stock?TaskID=…`; `void: true` voids the task, and
 `void: false` undoes a void; without `void` no `Void` is sent, and the reference defaults it to
 `false`. It is not available for a simple purchase.
@@ -1067,10 +1067,10 @@ so their `dto()` is an `AdvancedPurchasePutAwaysData`, whose `PutAway` are
 a `Status` of `DRAFT` or `AUTHORISED` (only `AUTHORISED` once the invoice lines match the
 receiving) and `Lines`, each with its `Location` or `LocationID`. A POST only adds lines: without a
 `TaskID`, or with the empty GUID, it creates a new task, and with `Status` `AUTHORISED` and empty
-`Lines` it authorises the task. Duplicate lines in one body become one line with their quantities
+`Lines` it authorizes the task. Duplicate lines in one body become one line with their quantities
 summed, and a line with the product, location, batch and expiry date of an existing line fails.
-It fails unless the order is authorised, the put away is `DRAFT` or `NOT AVAILABLE`, and, for an
-`INVOICE` approach, the invoice is authorised. The put away has no PUT or DELETE.
+It fails unless the order is authorized, the put away is `DRAFT` or `NOT AVAILABLE`, and, for an
+`INVOICE` approach, the invoice is authorized. The put away has no PUT or DELETE.
 
 ```php
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
@@ -1155,7 +1155,7 @@ read from a bare array. `post()` takes an `AdvancedPurchasePaymentPostData` and 
 simple purchase's: a payment POST needs `TaskID`, `Type`, `Amount`, `DatePaid`, `Account` and
 `CurrencyRate`, and takes a `DepositID` to pay from a supplier deposit; a payment PUT needs
 `TaskID`, `ID`, `DatePaid` and `CurrencyRate`, and takes no `Amount` or `Account` for a payment
-from a deposit. A payment needs an authorised invoice and a refund an authorised credit note, and
+from a deposit. A payment needs an authorized invoice and a refund an authorized credit note, and
 a prepayment cannot be changed. The reference documents the DELETE on `/purchase/payment`, so
 `delete($id)` sends `DeletePurchasePayment`, `purchase/payment?ID=…`, and answers `{Success}`;
 `deleteAllocation` works as on `$cin7->purchase()->payment()`.
@@ -1186,7 +1186,7 @@ answer with the `{PurchaseID, ManualJournals}` envelope, so the `dto()` is an
 `advanced-purchase/manualJournal?PurchaseID=…`. `post()` takes an
 `AdvancedPurchasePartialManualJournalPostData` as well as an array; it needs the `PurchaseID`, the
 journal's `TaskID` and a `Status` of `DRAFT` or `AUTHORISED`, and can be sent even when the journal
-is authorised. A line's `IsSystem` is read-only and never sent: a line Cin7 posted (`IsSystem`
+is authorized. A line's `IsSystem` is read-only and never sent: a line Cin7 posted (`IsSystem`
 `true`) cannot be changed or deleted.
 
 ```php
@@ -1243,9 +1243,9 @@ request:
    `$this->connector->send()` or `$this->connector->paginate()` (`$this->sendList()` or
    `$this->paginateList()` in a `*ListResource`).
 3. Add its `requests` and `resources` rows to the path's file under `tests/Fixtures/Catalogue/`
-   (see [the catalogue](testing.md#the-catalogue)).
+   (see [the catalog](testing.md#the-catalog)).
 4. Add the accessor, and its test in
-   [`ConnectorResourcesTest`](../tests/Feature/Resources/ConnectorResourcesTest.php),
+   [`ConnectorResourcesTest`](../../tests/Feature/Resources/ConnectorResourcesTest.php),
    only when it is new.
 5. Document the resource here and the request in [requests](requests.md).
 
@@ -1304,7 +1304,7 @@ array. A body needs its `Status`, `CompletionDate` and `Lines` (`StockTransferLi
 `From` or `FromLocation`, and the one it moves it to, by `To` or `ToLocation`; an `IN TRANSIT`
 transfer also needs its `InTransitAccount` and `DepartureDate`. `SkipOrder` skips the transfer
 order, and `CostDistributionType` (`Cost`, `Quantity`, `Weight` or `Volume`) says how additional
-journals are capitalised. Every action answers with the transfer, so `dto()` is a
+journals are capitalized. Every action answers with the transfer, so `dto()` is a
 `StockTransferData`, with its `Number`, its `Order` and `LastModifiedOn`. `delete($id, void: true)`
 voids it.
 
@@ -1398,6 +1398,7 @@ $task = $this->cin7->finishedGoods()->post(FinishedGoodsPostData::from([
     'Quantity' => 1,
     'CompletionDate' => '2018-01-03T00:00:00',
 ]))->dto(); // FinishedGoodsData
+```
 
 ## CRM
 
@@ -1420,7 +1421,7 @@ $tasks = $this->cin7->crm()->task()->get(category: 'Follow-up', startDateFrom: '
 `$cin7->webhooks()` is `webhooks`, the callbacks Cin7 sends when an event happens. `get()` lists every
 webhook, with no paging, and `post()` and `put()` take a `WebhookPostData` or `WebhookPutData` as well
 as an array; all three answer a `Webhooks` list, so `dto()` is a `list<WebhookData>`. `delete($id)`
-sends `?ID=…`. Only the registration is modelled: the payloads Cin7 sends to a callback are not.
+sends `?ID=…`. Only the registration is modeled: the payloads Cin7 sends to a callback are not.
 
 ```php
 $webhook = $this->cin7->webhooks()->post(WebhookPostData::from([

@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * ignores a field that cannot change in the current status. `ProductName` is in the example, not
  * the table. The POST body is `FinishedGoodsPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FinishedGoodsPutData extends AbstractFinishedGoodsData
 {

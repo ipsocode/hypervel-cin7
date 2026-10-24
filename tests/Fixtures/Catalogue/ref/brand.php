@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Ref\Brand\PostBrand;
 use Ipsocode\Cin7\Requests\Ref\Brand\PutBrand;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/brand`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/brand`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

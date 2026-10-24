@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Concerns\HasProductFields;
  * product, so they stay optional. Like every object with a `ProductID`, it carries the product
  * fields.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTransferLineData extends Data
 {

@@ -9,7 +9,7 @@ use Hypervel\Testbench\TestCase as BaseTestCase;
 /**
  * Base for tests of pure logic; every method carries `#[UnitTest]`, so no application boots.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 abstract class TestCase extends BaseTestCase
 {

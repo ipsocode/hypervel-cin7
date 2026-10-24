@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\Sale\ManualJournal\GetSaleManualJournal;
 use Ipsocode\Cin7\Requests\Sale\ManualJournal\PostSaleManualJournal;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/manualJournal`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/manualJournal`; tests/Catalogue.php merges every file's rows by kind.
 
 $line = ['Amount' => 2, 'Date' => '2017-11-28T00:00:00', 'Debit' => '403', 'Credit' => '433'];
 $lineSent = ['Amount' => 2.0, 'Date' => '2017-11-28T00:00:00', 'Debit' => '403', 'Credit' => '433'];

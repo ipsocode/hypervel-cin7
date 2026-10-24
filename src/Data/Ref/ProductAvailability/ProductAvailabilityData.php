@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * Product Availability, one entry of `ProductAvailabilityList`: a product's stock at one location,
  * bin and batch.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductAvailabilityData extends Data implements WithResponse
 {

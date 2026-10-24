@@ -8,7 +8,7 @@ use Ipsocode\Cin7\Data\Ref\ProductAvailability\ProductAvailabilityData;
 use Ipsocode\Cin7\Requests\Ref\ProductAvailability\GetProductAvailability;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/productavailability`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/productavailability`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

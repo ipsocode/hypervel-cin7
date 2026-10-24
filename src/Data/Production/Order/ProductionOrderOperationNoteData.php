@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * ProductionOrderOperationNote, a note of a production order operation. `NoteID` is required when
  * updating.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderOperationNoteData extends Data
 {

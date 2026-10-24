@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\ListRequest;
  * Base for the resource of a list-only endpoint such as `saleList`: the subclass declares `get()`
  * and `paginate()` with the endpoint's typed filters and hands the request to the two methods here.
  *
- * @see docs/resources.md
+ * @see src/docs/resources.md
  *
  * @extends BaseResource<Cin7Connector>
  */

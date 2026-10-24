@@ -14,10 +14,10 @@ use Hypervel\Data\Data;
  *
  * Every tax rule needs its `Name`, `Account`, `IsActive` and `TaxInclusive`, so each child passes
  * them to this constructor; the optional fields declared here are set through `from()`.
- * `TaxPercent` is read-only, but the reference's request examples send it, so it is modelled,
+ * `TaxPercent` is read-only, but the reference's request examples send it, so it is modeled,
  * and the requests leave it out of the body.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractTaxData extends Data
 {

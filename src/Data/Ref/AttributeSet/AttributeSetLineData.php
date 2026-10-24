@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Enums\AttributeType;
 /**
  * Attribute Set Line Model: one of an attribute set's ten attributes, read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AttributeSetLineData extends Data
 {

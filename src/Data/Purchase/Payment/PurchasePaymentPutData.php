@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
  * cannot change them: send the payment's own values. A prepayment cannot be changed. The POST body
  * is `PurchasePaymentPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchasePaymentPutData extends AbstractPurchasePaymentData
 {

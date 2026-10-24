@@ -21,7 +21,7 @@ use Ipsocode\Cin7\Data\Other\NewStockLineData;
  * is sent. The filters (`Tags`, `PickZones`, `StockLocators`, `Categories`, `Brands`, `Bins`) pick
  * the products Cin7 puts in `NonZeroStockOnHandProducts`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractStockTakeData extends Data
 {

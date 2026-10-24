@@ -10,7 +10,7 @@ use RecursiveIteratorIterator;
 use SplFileInfo;
 
 /**
- * The catalogue rows, one file per API path under `tests/Fixtures/Catalogue/`
+ * The catalog rows, one file per API path under `tests/Fixtures/Catalogue/`
  * (`sale/invoice.php` holds the rows for `sale/invoice`). Each file returns its rows by kind:
  *
  * - `requests`: one per request class, plus `… with data` rows for data object bodies
@@ -21,12 +21,12 @@ use SplFileInfo;
  * - `required`: the fields of a class the reference requires
  * - `omitted`: a request, the body given and the body sent without its `$omit` fields
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 final class Catalogue
 {
     /**
-     * How many shards the big catalogue test classes split their rows into, so the parallel run
+     * How many shards the big catalog test classes split their rows into, so the parallel run
      * can spread them over its workers.
      */
     public const int SHARDS = 4;

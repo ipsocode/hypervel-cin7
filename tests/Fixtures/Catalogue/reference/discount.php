@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\Reference\Discount\PostDiscount;
 use Ipsocode\Cin7\Requests\Reference\Discount\PutDiscount;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `reference/discount`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `reference/discount`; tests/Catalogue.php merges every file's rows by kind.
 
 $ruleId = 'c74ac47e-c5db-4b82-8fe0-ebdbd07a5920';
 $rule = ['Name' => 'The second one', 'IsActive' => false, 'Type' => 'Simple', 'DiscountLines' => [['MinValue' => 0, 'MaxValue' => 10, 'DiscountType' => 'MarkupPercent', 'Amount' => 50]]];

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
  * `DepositID`, which goes only with `Type` `Payment`, takes the payment from a supplier deposit.
  * The PUT body is `PurchasePaymentPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchasePaymentPostData extends AbstractPurchasePaymentData
 {

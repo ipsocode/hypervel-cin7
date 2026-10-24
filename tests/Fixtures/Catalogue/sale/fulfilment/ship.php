@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship\PostSaleFulfilmentShip;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship\PutSaleFulfilmentShip;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/fulfilment/ship`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/fulfilment/ship`; tests/Catalogue.php merges every file's rows by kind.
 
 $line = ['ShipmentDate' => '2017-11-22T00:00:00', 'Box' => 'Box 1', 'TrackingURL' => 'https://track.example/1'];
 $lineSent = ['ShipmentDate' => '2017-11-22T00:00:00', 'Box' => 'Box 1'];

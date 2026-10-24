@@ -13,7 +13,7 @@ use Workbench\App\Services\CustomerDirectory;
  *
  * It needs real credentials in the gitignored `workbench/.env`; the test ones get a 403.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 class ListCustomersCommand extends Command
 {

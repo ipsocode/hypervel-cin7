@@ -9,7 +9,7 @@ use RuntimeException;
 /**
  * One or more modules of a pull failed; the first one's error is the previous exception.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 final class SyncFailed extends RuntimeException
 {

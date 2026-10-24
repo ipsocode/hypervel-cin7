@@ -7,5 +7,6 @@ composer.lock
 /tests/.cache/
 /tests/coverage/
 
-# Claude Code's local state; the automated review's skill and brief live in .github/claude/.
-/.claude
+# Claude Code's local settings and worktrees; .claude/skills/ is tracked, for the imported skills.
+/.claude/*
+!/.claude/skills/

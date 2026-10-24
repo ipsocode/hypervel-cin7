@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\Me\Addresses\PostMeAddresses;
 use Ipsocode\Cin7\Requests\Me\Addresses\PutMeAddresses;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `me/addresses`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `me/addresses`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every address requires.
 $fields = ['Line1' => 'DEFAULT business address', 'CitySuburb' => 'DEFAULT City', 'StateProvince' => 'DEFAULT State', 'ZipPostCode' => 'DEFAULT Postcode', 'Country' => 'Russia', 'Type' => 'Business'];

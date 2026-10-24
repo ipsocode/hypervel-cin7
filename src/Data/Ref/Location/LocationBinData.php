@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * deprecated and whether it is staging. The table only says "Array (ID, Name)"; the examples carry
  * the other two.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class LocationBinData extends Data
 {

@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractChargeData;
  * the advanced purchase both carry: the charge fields of `AbstractChargeData`, a `Reference`, and
  * the line `Total`, which this table, unlike the sale ones, requires.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseAdditionalChargeData extends AbstractChargeData
 {

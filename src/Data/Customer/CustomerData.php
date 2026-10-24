@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\RecordStatus;
  * its required `ID`, the read-only `LastModifiedOn`, and `ChildCustomers`, which only responses
  * carry. The bodies of POST and PUT are `CustomerPostData` and `CustomerPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomerData extends AbstractCustomerData implements WithResponse
 {

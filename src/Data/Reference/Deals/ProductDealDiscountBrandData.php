@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * Product Deal Discount Brand, one entry of a deal discount's `DealDiscountBrands`: a brand by
  * `BrandID` or `BrandName`. The table requires `Type`, but no example sends it, so it is optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealDiscountBrandData extends Data
 {

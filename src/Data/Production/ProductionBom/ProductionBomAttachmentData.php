@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * POST response example does), so it is nullable, for the responses, and `#[Required]`, which only
  * a write body checks.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomAttachmentData extends Data
 {

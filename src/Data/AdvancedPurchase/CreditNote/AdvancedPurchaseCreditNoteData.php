@@ -25,9 +25,9 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * embed a credit note that is `NOT AVAILABLE` with a `null` one, so it is nullable, for the
  * responses, and `#[Required]`, which only a write body checks. Every example also sends
  * `CreditNoteInvoiceNumber`, which this model does not list (the Advanced purchase credit note
- * partial model requires it); it is modelled, optional, with that table's length (`#[Max(50)]`).
+ * partial model requires it); it is modeled, optional, with that table's length (`#[Max(50)]`).
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseCreditNoteData extends AbstractPurchaseCreditNoteData
 {

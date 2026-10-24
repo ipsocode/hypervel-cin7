@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractLineData;
  * line fields of `AbstractLineData`, the line `Total` the table requires, the `SupplierSKU` and a
  * `Comment`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseOrderLineData extends AbstractLineData
 {

@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Data\Customer\CustomerPutData;
  * It exists for the seam, not the coverage: it proves `Cin7ServiceProvider`'s singleton
  * resolves as a constructor dependency.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 final class CustomerDirectory
 {

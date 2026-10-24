@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\ProcessType;
  * `toArray()` adds, so it is no property to set or to get wrong. The reference has no endpoint of
  * its own for it: `advancedSale()` sends it through `sale`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedSalePostData extends AbstractSaleData
 {

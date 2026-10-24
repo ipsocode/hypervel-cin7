@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Data\AbstractPurchaseStockLineData;
  * out of the body. The `advanced-purchase` examples add the stock batch, `CardID`, which the table
  * does not list, and, as on every object with a `ProductID`, the product fields.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseStockLineData extends AbstractPurchaseStockLineData
 {

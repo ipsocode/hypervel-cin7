@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\Other\ProductPriceData;
  * The body of `custom-prices` POST and PUT: the `CustomPrices` to create or change, each a
  * `ProductPriceData`. The reference has no table of its own for it, and the two bodies are the same.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomPricesData extends Data
 {

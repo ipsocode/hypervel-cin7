@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\ResourceType;
  * `CycleDuration` and the `ResourceID`, or the `Code` when there is no ID. The POST body is
  * `ResourcePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourcePutData extends AbstractResourceData
 {

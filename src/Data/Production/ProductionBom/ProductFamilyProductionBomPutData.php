@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * `BOMID` and `OutputQuantity`, with the `ProductFamilyID` it belongs to. The PUT example sends no
  * `BufferPercent`, `Version`, `Name` or `IsDefault`, so they are optional here.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductFamilyProductionBomPutData extends AbstractProductFamilyProductionBomData
 {

@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of a production resource.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ResourceType: string
 {

@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
 /**
  * WorkCenterSupplier, a supplier of a purchasing work center, by `SupplierID` or `SupplierName`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WorkCenterSupplierData extends Data
 {

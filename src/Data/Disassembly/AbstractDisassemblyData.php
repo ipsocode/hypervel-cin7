@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * optional in each: the response requires none of them, and the POST body adds the `Quantity`,
  * `Status` and `WIPAccount` its table requires.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractDisassemblyData extends Data
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\AddressType;
  * table with its `AddressID`. The bodies of POST and PUT are `MeAddressPostData` and
  * `MeAddressPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MeAddressData extends AbstractMeAddressData implements WithResponse
 {

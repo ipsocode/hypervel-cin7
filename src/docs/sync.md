@@ -55,7 +55,7 @@ the framework's `jobs` or `failed_jobs`, and the locks are cache locks. No curso
 
 ## Modules
 
-A module is one case of [`Ipsocode\Cin7\Sync\Module`](../src/Sync/Module.php), named by its
+A module is one case of [`Ipsocode\Cin7\Sync\Module`](../Sync/Module.php), named by its
 request path. `'*'`, the default for `cin7.sync.modules`, is every module, in this order: what
 other records point to comes before the records that point to it.
 
@@ -87,7 +87,7 @@ other records point to comes before the records that point to it.
 
 ## A pull
 
-[`Synchroniser::pull()`](../src/Sync/Synchroniser.php) pulls one module:
+[`Synchroniser::pull()`](../Sync/Synchroniser.php) pulls one module:
 
 1. It takes a cache lock, `cin7:sync:<account>:<module>`, for up to `sync.timeout` seconds, and
    skips the module if another pull holds it.
@@ -181,7 +181,7 @@ A reference book cannot be an exception: it is read whole, so only the full pull
 `cin7:sync` read it, and naming one throws. A `null` time registers no entry, so an application
 that wants its own conditions sets `cron` and `full` to `null` and schedules the job itself.
 
-Each entry dispatches [`Ipsocode\Cin7\Sync\Pull`](../src/Sync/Pull.php), a queued job, and runs
+Each entry dispatches [`Ipsocode\Cin7\Sync\Pull`](../Sync/Pull.php), a queued job, and runs
 on one server. So the framework's own tables do the bookkeeping: a waiting pull is a row in
 `jobs`, and one whose three tries ran out is a row in `failed_jobs`, with
 `Ipsocode\Cin7\Sync\SyncFailed` naming each module that failed; `queue:retry` runs it again.
@@ -209,7 +209,7 @@ sync is off. It never prints the account ID or the application key.
 
 ## Reading the table
 
-[`Ipsocode\Cin7\Sync\Payload`](../src/Sync/Payload.php) is an Eloquent model on the table, with
+[`Ipsocode\Cin7\Sync\Payload`](../Sync/Payload.php) is an Eloquent model on the table, with
 `payload` cast to an array:
 
 ```php
@@ -240,4 +240,4 @@ $table->index(['module', 'order_number']);
 $table->index('payload', null, 'gin');
 ```
 
-The behavior above is pinned by the tests in [`tests/Feature/Sync/`](../tests/Feature/Sync).
+The behavior above is pinned by the tests in [`tests/Feature/Sync/`](../../tests/Feature/Sync).

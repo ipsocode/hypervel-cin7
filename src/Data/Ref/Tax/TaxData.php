@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Tax, one entry of `TaxRuleList` in every `ref/tax` response: the Tax table with its `ID`. The
  * bodies of POST and PUT are `TaxPostData` and `TaxPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class TaxData extends AbstractTaxData implements WithResponse
 {

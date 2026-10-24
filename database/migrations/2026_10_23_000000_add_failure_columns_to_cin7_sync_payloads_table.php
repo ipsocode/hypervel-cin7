@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Sync\SyncConfig;
  * Where a list row records that its document keeps failing to read. Loaded only when
  * `cin7.sync.enabled` is true.
  *
- * See docs/sync.md.
+ * See src/docs/sync.md.
  */
 return new class extends Migration {
     public function up(): void

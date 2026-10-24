@@ -21,7 +21,7 @@ use Throwable;
  * It holds only the connector, so one instance serves every coroutine; each pull's state is
  * local to the call.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 final class Synchroniser
 {

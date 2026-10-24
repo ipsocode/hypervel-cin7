@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Enums\MoneyTaskType;
  * table names the counterparty `SupplierCustomerName`, but every example returns
  * `SupplierCustomer`; that is the wire key.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractMoneyTaskData extends Data
 {

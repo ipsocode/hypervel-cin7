@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
  * deposit cannot change them: send the payment's own values. A prepayment cannot be changed. The
  * POST body is `AdvancedPurchasePaymentPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePaymentPutData extends AbstractPurchasePaymentData
 {

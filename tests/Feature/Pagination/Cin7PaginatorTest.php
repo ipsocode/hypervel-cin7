@@ -24,7 +24,7 @@ use Workbench\App\Support\Cin7Payloads;
  * `Cin7Paginator` against Cin7's `{Total, Page, <Thing>List}` envelope, as
  * `Cin7Fake::list()` models it.
  *
- * @see docs/pagination.md
+ * @see src/docs/pagination.md
  */
 class Cin7PaginatorTest extends TestCase
 {

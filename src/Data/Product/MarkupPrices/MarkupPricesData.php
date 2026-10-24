@@ -15,7 +15,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * PUT, and the body of PUT. In a PUT, a line for a tier that has none creates it, one that has
  * changes it, and one with `MarkupType::Deleted` deletes it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MarkupPricesData extends Data implements WithResponse
 {

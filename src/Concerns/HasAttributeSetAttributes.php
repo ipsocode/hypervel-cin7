@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\AttributeType;
  * name, a type and a comma-delimited list of values. `Attribute1…` is required on a write, so each
  * class takes it as a constructor argument.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 trait HasAttributeSetAttributes
 {

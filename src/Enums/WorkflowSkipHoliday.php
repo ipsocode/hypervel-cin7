@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * What a workflow step does when its due date is a holiday.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum WorkflowSkipHoliday: string
 {

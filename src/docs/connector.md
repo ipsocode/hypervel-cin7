@@ -1,6 +1,6 @@
 # The connector
 
-[`Cin7Connector`](../src/Cin7Connector.php) is the one object every Cin7 call
+[`Cin7Connector`](../Cin7Connector.php) is the one object every Cin7 call
 goes through. It names the base URL and the auth headers, sends over the
 framework's shared HTTP connection, throttles every call against one window per
 Cin7 API application, puts the application into a short cooldown when Cin7
@@ -251,7 +251,7 @@ throttling response on one application never cools down another.
 
 The cooldown sits alongside the request's own retry on 429 and 503 (see
 [retry policy](requests.md#retry-policy)): a retried attempt passes the same
-cooldown and limit check as a fresh send, so a 429's `Retry-After` is honoured
+cooldown and limit check as a fresh send, so a 429's `Retry-After` is honored
 even when it is longer than the retry delay. The two waits overlap rather than add
 up: the cooldown runs from the throttled answer, so the retry delay counts toward
 it, and one throttled attempt waits the longer of `retry.delay_ms` and the
@@ -298,5 +298,5 @@ application key's digest in the key.
 It keeps the trait's `UnitEnum|string|null` return type on purpose, so it has
 the same signature as the `HasRateLimits` method it overrides. The connector
 only ever returns a string or `null`, so PHPStan reports the `UnitEnum` arm as
-unused; [`phpstan.neon`](../phpstan.neon) ignores `return.unusedType` for
+unused; [`phpstan.neon`](../../phpstan.neon) ignores `return.unusedType` for
 `src/Cin7Connector.php` for that reason.

@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * The ones the reference marks required have no default. `Type` is `Prepayment`, `Payment` or
  * `Refund`, the spelling of the examples and notes.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SalePaymentPostData extends Data
 {

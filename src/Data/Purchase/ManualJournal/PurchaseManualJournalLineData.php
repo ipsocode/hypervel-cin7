@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Data\AbstractManualJournalLineData;
  * journal: the sale's line plus the read-only `IsSystem`, which marks a line Cin7 posted and which
  * cannot be changed or deleted.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseManualJournalLineData extends AbstractManualJournalLineData
 {

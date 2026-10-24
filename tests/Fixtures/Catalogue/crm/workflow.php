@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Crm\Workflow\PostCrmWorkflow;
 use Ipsocode\Cin7\Requests\Crm\Workflow\PutCrmWorkflow;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `crm/workflow`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `crm/workflow`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '7e1e7cdc-eb4a-45d4-ae7f-e8999bb9dd8a';
 $uri = '/ExternalApi/v2/crm/workflow';

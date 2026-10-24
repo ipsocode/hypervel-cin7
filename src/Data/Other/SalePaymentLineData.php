@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
 /**
  * Sale Payment Line Model, one prepayment, payment or refund.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SalePaymentLineData extends AbstractSalePaymentLineData
 {

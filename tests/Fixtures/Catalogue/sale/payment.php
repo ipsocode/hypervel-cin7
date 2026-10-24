@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Sale\Payment\PostSalePayment;
 use Ipsocode\Cin7\Requests\Sale\Payment\PutSalePayment;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/payment`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/payment`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

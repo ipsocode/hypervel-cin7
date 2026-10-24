@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * The body of `bankTransfer` PUT: the Bank Transfer table with the `TaskID` PUT requires. The POST
  * body is `BankTransferPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class BankTransferPutData extends AbstractBankTransferData
 {

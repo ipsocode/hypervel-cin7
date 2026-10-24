@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * ResourceUnit, one unit of a resource at a location. For a `Labor` resource its `Name` is the
  * email of a registered user.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourceUnitData extends Data
 {

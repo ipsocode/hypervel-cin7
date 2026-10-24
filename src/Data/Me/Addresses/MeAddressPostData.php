@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Enums\AddressType;
  * The body of `me/addresses` POST: the Me Address table without the `AddressID` Cin7 assigns.
  * The PUT body is `MeAddressPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MeAddressPostData extends AbstractMeAddressData
 {

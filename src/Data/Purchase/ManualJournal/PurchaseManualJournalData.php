@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `ManualJournals` embed the journal without it, so it is nullable and `#[Required]`. The POST body
  * is `PurchaseManualJournalPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseManualJournalData extends AbstractPurchaseManualJournalData implements WithResponse
 {

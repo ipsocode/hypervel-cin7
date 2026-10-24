@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * one. The table requires `Position`, but no example sends it, so it is nullable, for the
  * responses, and `#[Required]`, which only a write body checks.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderOperationLinkData extends Data
 {

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\AttributeType;
  * The body of `ref/attributeset` POST: the table without the `ID` Cin7 ignores on POST, and with
  * the first attribute required. The PUT body is `AttributeSetPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AttributeSetPostData extends AbstractAttributeSetData
 {

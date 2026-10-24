@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * examples embed an order with a `null` `Memo`, so each child declares it: the POST body requires
  * it, and the response leaves it optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractPurchaseOrderData extends Data
 {

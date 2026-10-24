@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * POST response and a location named alone say otherwise: it is `#[RequiredWithout]`
  * `LocationName`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourceCapacityData extends Data
 {

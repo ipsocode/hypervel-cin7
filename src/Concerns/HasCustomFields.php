@@ -10,7 +10,7 @@ namespace Ipsocode\Cin7\Concerns;
  * ten strings with no length (`AbstractOpportunityData` declares its own, which the reference gives
  * 256 characters).
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 trait HasCustomFields
 {

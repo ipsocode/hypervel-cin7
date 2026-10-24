@@ -16,8 +16,8 @@ use Ipsocode\Cin7\Sync\SyncConfig;
 /**
  * Registers the Cin7 connector into the Hypervel container, and the sync when it is on.
  *
- * @see docs/configuration.md
- * @see docs/sync.md
+ * @see src/docs/configuration.md
+ * @see src/docs/sync.md
  */
 class Cin7ServiceProvider extends ServiceProvider
 {

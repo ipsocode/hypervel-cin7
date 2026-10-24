@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\DiscountRuleType;
  * `DiscountLines`, so `IsActive` and `Type`, which the table requires, are optional here. The POST
  * body is `ProductDiscountRulesPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDiscountRulePutData extends AbstractProductDiscountRuleData
 {

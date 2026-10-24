@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\ResourceType;
  * `Name`, a `ResourceType` and a `CycleDuration`; `ResourceID` is ignored for POST. The PUT body
  * is `ResourcePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourcePostData extends AbstractResourceData
 {

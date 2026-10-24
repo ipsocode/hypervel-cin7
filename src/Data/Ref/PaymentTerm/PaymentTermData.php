@@ -12,7 +12,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Payment Term, one entry of `PaymentTermList` in every `ref/paymentterm` response: the table with
  * its `ID`. The bodies of POST and PUT are `PaymentTermPostData` and `PaymentTermPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PaymentTermData extends AbstractPaymentTermData implements WithResponse
 {

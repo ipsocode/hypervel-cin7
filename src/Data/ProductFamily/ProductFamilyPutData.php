@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\CostingMethod;
  * The body of `productFamily` PUT: the Product Family table with the `ID` of the family to change,
  * which PUT requires. The POST body is `ProductFamilyPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductFamilyPutData extends AbstractProductFamilyData
 {

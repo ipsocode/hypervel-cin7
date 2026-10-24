@@ -13,9 +13,9 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * with the `PurchaseID` it requires and a `Status` of `DRAFT` or `AUTHORISED` (only `AUTHORISED`
  * once the invoice lines match the receiving). Without a `TaskID`, or with the empty GUID, POST
  * creates a new put away task; it only adds lines, and a POST with `Status` `AUTHORISED` and empty
- * `Lines` authorises the task. The response is `AdvancedPurchasePutAwaysData`.
+ * `Lines` authorizes the task. The response is `AdvancedPurchasePutAwaysData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePutAwayPostData extends AbstractAdvancedPurchasePutAwayData
 {

@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * Disassembly Pick Line Model, a line of a disassembly's pick: the stock taken from the product
  * being disassembled. Every field is read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class DisassemblyPickLineData extends Data
 {

@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * A product's costing method.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum CostingMethod: string
 {

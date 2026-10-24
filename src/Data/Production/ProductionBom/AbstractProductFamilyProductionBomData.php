@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * share, optional in each. Both require an `OutputQuantity`, which the constructor takes; the
  * response adds the `BufferPercent` its table requires and the PUT the `BOMID`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractProductFamilyProductionBomData extends Data
 {

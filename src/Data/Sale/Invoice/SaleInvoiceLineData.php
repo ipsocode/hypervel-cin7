@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Data\AbstractLineData;
  * Sale Invoice Line Model, also used by credit notes: the line fields of `AbstractLineData`, the
  * line `Total` the invoice table requires, the sale's `AverageCost` and the revenue `Account`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleInvoiceLineData extends AbstractLineData
 {

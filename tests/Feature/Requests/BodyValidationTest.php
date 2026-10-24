@@ -150,7 +150,7 @@ use Workbench\App\Support\Cin7Payloads;
  * A data object body is checked against its class's rules, the reference's lengths, GUIDs and
  * dates among them, after its nulls and omitted fields are removed and before anything is sent.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 class BodyValidationTest extends TestCase
 {
@@ -842,7 +842,7 @@ class BodyValidationTest extends TestCase
     }
 
     /**
-     * A webhook's credentials follow its authorisation type: `basicauth` needs a user name and a
+     * A webhook's credentials follow its authorization type: `basicauth` needs a user name and a
      * password, `bearerauth` a token, and `noauth` none; a body without them is not sent.
      */
     public function testAWebhookNeedsTheCredentialsOfItsAuthorisationType(): void
@@ -915,7 +915,7 @@ class BodyValidationTest extends TestCase
 
     /**
      * A finished goods task needs a product and a location, each by ID or by name, and, once it
-     * is authorised, the date its work in progress began; a body without them is not sent.
+     * is authorized, the date its work in progress began; a body without them is not sent.
      */
     public function testAFinishedGoodsTaskNeedsItsProductItsLocationAndItsWipDate(): void
     {

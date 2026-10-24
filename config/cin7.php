@@ -13,7 +13,7 @@ declare(strict_types=1);
 |
 |     php artisan vendor:publish --tag=cin7-config
 |
-| See docs/configuration.md.
+| See src/docs/configuration.md.
 |
 */
 
@@ -75,7 +75,7 @@ return [
     ],
 
     // A scheduled copy of Cin7's records in one local table, off by default. Off, the package
-    // creates no table, schedules nothing and runs no query. See docs/sync.md.
+    // creates no table, schedules nothing and runs no query. See src/docs/sync.md.
     'sync' => [
         'enabled' => (bool) env('CIN7_SYNC', false),
 

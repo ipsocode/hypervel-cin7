@@ -15,7 +15,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * `{PurchaseID, CreditNotes}` envelope every action of that path answers with: the purchase's
  * credit notes. The table requires both fields.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseCreditNotesData extends Data implements WithResponse
 {

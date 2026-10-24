@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\DisassemblyStatus;
  * `OrderServiceLines`. POST takes `WORK IN PROGRESS` or `COMPLETED` as its `Status`.
  * `CompletionDate` and `OrderServiceLines` are in the examples, not the table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class DisassemblyOrderData extends Data implements WithResponse
 {
