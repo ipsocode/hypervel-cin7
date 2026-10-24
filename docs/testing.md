@@ -140,6 +140,11 @@ file per API path under `tests/Fixtures/Catalogue/`: `sale/invoice.php` holds th
 the Money Task. Each file returns its rows by kind, and
 [`Catalogue::rows()`](../tests/Catalogue.php) merges every file's rows of a kind:
 
+ParaTest hands a worker whole files, so the per-row tests run in four shards each, one class per
+shard (`DataCatalogueShard0Test` to `DataCatalogueShard3Test`, and the same for requests and
+resources), and no single file bounds a parallel run. A row belongs to the shard its key hashes to
+(`Catalogue::shard()`), so a new row needs nothing but its place in a fixture file.
+
 | Kind | A row is |
 |---|---|
 | `requests` | a request class, its arguments, and the method, path, query and body it sends; `… with data` rows send a data object body |

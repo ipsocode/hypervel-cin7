@@ -6,12 +6,10 @@ namespace Ipsocode\Cin7\Tests\Feature\Data;
 
 use Hypervel\Data\Attributes\DataCollectionOf;
 use Hypervel\Data\Data;
-use Hypervel\Data\Exceptions\CannotCreateData;
 use Hypervel\Data\Support\Validation\ValidationPath;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
-use Hypervel\Support\Arr;
 use Ipsocode\Cin7\Attributes\DateTime;
 use Ipsocode\Cin7\Data\AbstractAddressData;
 use Ipsocode\Cin7\Data\AbstractCatalogueItemData;
@@ -180,14 +178,12 @@ use Ipsocode\Cin7\Data\Supplier\SupplierData;
 use Ipsocode\Cin7\Data\Transactions\TransactionData;
 use Ipsocode\Cin7\Data\Webhooks\AbstractWebhookData;
 use Ipsocode\Cin7\Data\Webhooks\WebhookData;
-use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -206,48 +202,7 @@ use Workbench\App\Support\Cin7Payloads;
  */
 class DataCatalogueTest extends TestCase
 {
-    /**
-     * @param class-string<Cin7Request> $class
-     * @param list<mixed> $args
-     * @param array<string, mixed> $fixture
-     * @param class-string<Data> $dataClass
-     * @param string $path where the record or list sits in the fixture, empty for the whole body
-     */
-    #[DataProvider('dtoProvider')]
-    public function testTheDtoIsTheDataClassAndRoundTripsTheFixture(
-        string $class,
-        array $args,
-        array $fixture,
-        string $dataClass,
-        string $path,
-    ): void {
-        Saloon::fake([MockResponse::make($fixture)]);
-
-        $response = $this->connector()->send(new $class(...$args));
-        $dto = $response->dto();
-        $expected = $path === '' ? $fixture : Arr::get($fixture, $path);
-
-        if (array_is_list($expected)) {
-            $this->assertIsArray($dto);
-            $this->assertContainsOnlyInstancesOf($dataClass, $dto);
-            $this->assertRoundTrips($expected, array_map(static fn (Data $item): array => $item->toArray(), $dto));
-            $this->assertSame($response, $dto[0]->getResponse());
-
-            return;
-        }
-
-        $this->assertInstanceOf($dataClass, $dto);
-        $this->assertRoundTrips($expected, $dto->toArray());
-        $this->assertSame($response, $dto->getResponse());
-    }
-
-    /**
-     * @return array<string, array{string, list<mixed>, array<string, mixed>, string, string}>
-     */
-    public static function dtoProvider(): array
-    {
-        return Catalogue::rows('dtos');
-    }
+    use RoundTripsFixtures;
 
     /**
      * The reference's Sale example carries no manual journal line, so one is added here.
@@ -331,27 +286,6 @@ class DataCatalogueTest extends TestCase
     }
 
     /**
-     * The body models are not responses, so their fixtures, the reference's request examples,
-     * round-trip through the class.
-     *
-     * @param class-string<Data> $class
-     * @param array<string, mixed> $fixture
-     */
-    #[DataProvider('bodyProvider')]
-    public function testTheBodyModelsRoundTripTheirFixtures(string $class, array $fixture): void
-    {
-        $this->assertRoundTrips($fixture, $class::from($fixture)->toArray());
-    }
-
-    /**
-     * @return array<string, array{class-string<Data>, array<string, mixed>}>
-     */
-    public static function bodyProvider(): array
-    {
-        return Catalogue::rows('bodies');
-    }
-
-    /**
      * Every model is reached from a catalogue row: it is a `dto()` class or a body class, or a
      * property of one of those, at any depth. The Error Model is read from failed responses.
      */
@@ -359,9 +293,9 @@ class DataCatalogueTest extends TestCase
     {
         $queue = [
             ErrorData::class,
-            ...array_column(self::dtoProvider(), 3),
-            ...array_column(self::bodyProvider(), 0),
-            ...array_column(self::missingRequiredFieldProvider(), 0),
+            ...array_column(Catalogue::rows('dtos'), 3),
+            ...array_column(Catalogue::rows('bodies'), 0),
+            ...array_column(Catalogue::rows('missing'), 0),
             ...array_keys(Catalogue::rows('required')),
         ];
         $reached = [];
@@ -455,26 +389,6 @@ class DataCatalogueTest extends TestCase
         $body = Cin7Fake::error('Request is invalid')->body()->all();
 
         $this->assertRoundTrips($body, ErrorData::from($body)->toArray());
-    }
-
-    /**
-     * @param class-string<Data> $class
-     * @param array<string, mixed> $payload
-     */
-    #[DataProvider('missingRequiredFieldProvider')]
-    public function testAModelWithoutARequiredFieldCannotBeBuilt(string $class, array $payload): void
-    {
-        $this->expectException(CannotCreateData::class);
-
-        $class::from($payload);
-    }
-
-    /**
-     * @return array<string, array{class-string<Data>, array<string, mixed>}>
-     */
-    public static function missingRequiredFieldProvider(): array
-    {
-        return Catalogue::rows('missing');
     }
 
     /**
@@ -641,33 +555,6 @@ class DataCatalogueTest extends TestCase
     {
         foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class, PurchaseAttachmentsData::class, AdvancedPurchaseStocksData::class, PurchaseInvoiceData::class, PurchaseCreditNoteData::class, AdvancedPurchaseManualJournalsData::class, AdvancedPurchaseInvoicesData::class, AdvancedPurchasePutAwaysData::class, AdvancedPurchasePaymentData::class, AdvancedPurchaseCreditNotesData::class, PurchaseData::class, AdvancedPurchaseData::class, AccountData::class, BankAccountData::class, FixedAssetTypeData::class, PaymentTermData::class, JournalData::class, TransactionData::class, BankTransferData::class, MarkupPricesData::class, ProductFamilyData::class, BrandData::class, StockAdjustmentData::class, StockAdjustmentListData::class, StockTakeData::class, StockTakeListData::class, StockTransferData::class, StockTransferListData::class, StockTransferOrderData::class, InventoryWriteOffData::class, InventoryWriteOffListData::class, LocationData::class, CarrierData::class, TemplateData::class, CustomerDefaultTemplateData::class, ProductSuppliersData::class, ShippingZoneData::class, ShipZonesEnabledData::class, ProductDiscountRuleData::class, ProductDealData::class, LeadData::class, OpportunityData::class, TaskData::class, TaskCategoryData::class, WorkflowData::class, WebhookData::class, DisassemblyData::class, DisassemblyListData::class, DisassemblyOrderData::class, FinishedGoodsData::class, FinishedGoodsListData::class, FinishedGoodsOrderData::class, FinishedGoodsPickData::class, FactoryCalendarData::class, ProductionOrderAttachmentData::class, ProductionOrderAttachmentsData::class, ProductionOrderMessageData::class, ProductionOrderReferenceData::class, ProductionOrdersData::class, ProductionRunData::class, ProductionRunUndoData::class, ProductionRunsData::class, ProductionOrderListData::class, ProductFamilyProductionBomsData::class, ProductProductionBomsData::class, ResourceData::class, ResourcesData::class, SuspendReasonData::class, WorkCenterData::class, WorkCentersData::class] as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
-        }
-    }
-
-    /**
-     * Assert a model's `toArray()` holds the fixture: every fixture key is modelled under its
-     * wire name with an equal value, and every other key is null, the default of a field the
-     * fixture left out. Absent and `null` are the same to a model.
-     *
-     * @param array<array-key, mixed> $expected
-     * @param array<array-key, mixed> $actual
-     */
-    private function assertRoundTrips(array $expected, array $actual, string $path = ''): void
-    {
-        foreach ($expected as $key => $value) {
-            $at = $path === '' ? (string) $key : $path . '.' . $key;
-
-            $this->assertArrayHasKey($key, $actual, $at);
-
-            if (is_array($value) && is_array($actual[$key])) {
-                $this->assertRoundTrips($value, $actual[$key], $at);
-            } else {
-                $this->assertEquals($value, $actual[$key], $at);
-            }
-        }
-
-        foreach (array_diff_key($actual, $expected) as $key => $value) {
-            $this->assertNull($value, $path === '' ? (string) $key : $path . '.' . $key);
         }
     }
 
