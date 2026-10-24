@@ -19,8 +19,9 @@ available, else in `vendor/hypervel/components/src/docs/`.
 | `Console/` | artisan.md › Writing Commands; artisan.md › Defining Input Expectations |
 | `Testing/Cin7Fake.php` | saloon.md › Faking Responses |
 
-## Every package
+## Default References
 
 - packages.md › Package Discovery
 - packages.md › Service Providers
 - packages.md › Test State Cleanup
+- coroutines.md
