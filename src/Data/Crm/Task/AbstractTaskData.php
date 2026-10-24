@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\TaskEntityType;
  * The fields of the Task table: the response of its endpoint and the body of its POST and PUT.
  * Each is a final child that adds its `ID`, or none. Every task needs its name, dates, entity type and id, and status, so each child passes them to this constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractTaskData extends Data
 {

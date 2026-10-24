@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Data\AbstractStockLineData;
  * required for a service product, which the line cannot tell, so they stay optional. `TotalCost` is
  * read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class InventoryWriteOffLineData extends AbstractStockLineData
 {

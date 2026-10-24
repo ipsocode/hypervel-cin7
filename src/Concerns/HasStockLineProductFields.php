@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\CostingMethod;
  * top of `HasProductFields`: `Image`, `Barcode`, `StockLocator`, `Unit` and `CostingMethod`. All
  * are read-only, and "available for stock take".
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 trait HasStockLineProductFields
 {

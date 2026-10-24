@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * its required `ID` and `LastModifiedOn`, the date Cin7 stamps on a change. The bodies of POST
  * and PUT are `SupplierPostData` and `SupplierPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SupplierData extends AbstractSupplierData implements WithResponse
 {

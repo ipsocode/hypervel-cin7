@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\StockTakeStatus;
  * filters (`Tags`, `PickZones`, `StockLocators`, `Categories`, `Brands`, `Bins`) are comma
  * delimited strings here, where the stock take has lists.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTakeListData extends Data implements WithResponse
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\WorkflowDueDaysType;
  * The fields of the Workflow table: the response of its endpoint and the body of its POST and PUT.
  * Each is a final child that adds its `ID`, or none. Every workflow needs its name, entity type and due days type, so each child passes them to this constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractWorkflowData extends Data
 {

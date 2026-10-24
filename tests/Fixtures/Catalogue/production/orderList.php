@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Enums\ProductionOrderListStatus;
 use Ipsocode\Cin7\Requests\Production\OrderList\GetProductionOrderList;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `production/orderList`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `production/orderList`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '38cddb52-9a81-4c07-9791-362936efa552';
 

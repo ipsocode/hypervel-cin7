@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * `AUTHORISED`, and leaves the totals, which POST does not require, optional. The response is
  * `AdvancedPurchaseInvoicesData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePartialInvoicePostData extends AbstractPurchaseInvoiceData
 {

@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * The resources a `production/resource` POST answers with, under `Resources`; the rows of
  * `production/resourceList` sit under the same key.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourcesData extends Data implements WithResponse
 {

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * Sale Invoice Partial Model, one entry of `Invoices` in the `sale/invoice` responses. The fields
  * the reference marks required have no default.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleInvoicePartialData extends AbstractSaleInvoiceData
 {

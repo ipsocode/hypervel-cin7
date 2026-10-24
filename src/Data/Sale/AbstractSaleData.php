@@ -21,7 +21,7 @@ use Ipsocode\Cin7\Data\Other\AddressData;
  * the optional fields declared here are set through `from()`. It also needs a customer: `Customer`
  * or `CustomerID`, so a write body without either fails validation before it is sent.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSaleData extends Data
 {

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 /**
  * Sale Fulfilment Pick Pack Model, a fulfilment's `Pick` or `Pack`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentPickPackData extends Data
 {

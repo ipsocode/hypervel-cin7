@@ -15,8 +15,8 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\Payment\PutAdvancedPurchasePayment;
 use Ipsocode\Cin7\Requests\Purchase\Payment\DeletePurchasePayment;
 
 /**
- * `advanced-purchase/payment`, an advanced purchase's payments. A payment needs an authorised
- * invoice, and a refund an authorised credit note. The reference documents its DELETE on
+ * `advanced-purchase/payment`, an advanced purchase's payments. A payment needs an authorized
+ * invoice, and a refund an authorized credit note. The reference documents its DELETE on
  * `purchase/payment`, so `delete()` sends `DeletePurchasePayment`.
  *
  * @extends BaseResource<Cin7Connector>

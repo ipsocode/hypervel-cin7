@@ -33,7 +33,7 @@ use Workbench\App\Support\Cin7Payloads;
  * One row per concrete request class, from the per-path files under `tests/Fixtures/Catalogue/`,
  * plus the folder/path and verb/name conventions every class in `src/Requests/` is held to.
  *
- * @see docs/requests.md
+ * @see src/docs/requests.md
  */
 class RequestCatalogueTest extends TestCase
 {

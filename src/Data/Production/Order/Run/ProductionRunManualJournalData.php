@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * ProductionRunManualJournal, a manual journal of a run. `JournalID` is required when updating;
  * `OperationName` is read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunManualJournalData extends Data
 {

@@ -15,7 +15,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * envelope every action of the path answers with: the purchase's invoices, each an
  * `AdvancedPurchasePartialInvoiceData`. The table requires both fields.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseInvoicesData extends Data implements WithResponse
 {

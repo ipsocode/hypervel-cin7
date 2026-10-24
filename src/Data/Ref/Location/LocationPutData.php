@@ -10,7 +10,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
  * The body of `ref/location` PUT: the table with the `ID` of the location to change, which PUT
  * requires. The POST body is `LocationPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class LocationPutData extends AbstractLocationData
 {

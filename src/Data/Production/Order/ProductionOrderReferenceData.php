@@ -14,7 +14,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * reasons a production order can use. The reference documents no model for them: each is a list of
  * what the example shows.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderReferenceData extends Data implements WithResponse
 {

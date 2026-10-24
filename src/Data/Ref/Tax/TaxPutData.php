@@ -11,7 +11,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
  * The body of `ref/tax` PUT: the Tax table with the `ID` of the tax rule to change, which PUT
  * requires. The POST body is `TaxPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class TaxPutData extends AbstractTaxData
 {

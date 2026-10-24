@@ -10,7 +10,7 @@ use Hypervel\Data\Data;
  * Journal Line Model: the debit and credit accounts of a journal and the amount moved between
  * them, in the journal's currency and in the base currency.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class JournalLineData extends Data
 {

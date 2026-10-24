@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Concerns\HasStockLineProductFields;
  * responses only: nothing in it is required, and the write bodies send `NewStockLineData`.
  * Like every object with a `ProductID`, it carries the product fields, and the stock take's.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ExistingStockLineData extends Data
 {

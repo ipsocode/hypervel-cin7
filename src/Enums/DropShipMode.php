@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * Whether a product is drop-shipped.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum DropShipMode: string
 {

@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Enums;
  * A unit of weight, the `WeightUnits` of the reference's Dimension Unit Available Values. The
  * values are the abbreviations Cin7 sends; the cases are named after the units the table names.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum WeightUnit: string
 {

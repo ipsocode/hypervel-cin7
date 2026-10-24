@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
 /**
  * Sale Fulfilment Ship Line Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentShipLineData extends Data
 {

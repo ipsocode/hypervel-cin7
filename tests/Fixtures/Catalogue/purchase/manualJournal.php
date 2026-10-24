@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\Purchase\ManualJournal\GetPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\Purchase\ManualJournal\PostPurchaseManualJournal;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchase/manualJournal`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchase/manualJournal`; tests/Catalogue.php merges every file's rows by kind.
 
 $line = ['Reference' => 'Rounding', 'Amount' => 2, 'Date' => '2017-12-06T00:00:00', 'Debit' => '720', 'Credit' => '404'];
 $lineSent = ['Reference' => 'Rounding', 'Amount' => 2.0, 'Date' => '2017-12-06T00:00:00', 'Debit' => '720', 'Credit' => '404'];

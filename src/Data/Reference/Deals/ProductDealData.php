@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * its `ID`, `Name`, `IsActive`, `AllowCoupons` and `SingleCouponCodeUsage`. The bodies of POST and
  * PUT are `ProductDealPostData` and `ProductDealPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealData extends AbstractProductDealData implements WithResponse
 {

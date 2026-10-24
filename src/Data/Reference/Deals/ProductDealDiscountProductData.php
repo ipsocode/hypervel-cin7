@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * by `ProductID` or `ProductSKU`. The table requires `IsFamily` and `Type`, but the examples send a
  * product with neither, so both are optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealDiscountProductData extends Data
 {

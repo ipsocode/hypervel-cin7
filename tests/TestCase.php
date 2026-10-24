@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Requests\Customer\GetCustomer;
  * Base for tests that boot the Testbench application, whose environment comes only from
  * phpunit.xml's `<env>`.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 abstract class TestCase extends BaseTestCase
 {

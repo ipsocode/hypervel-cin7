@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * consume its components, a `ManualStartDate` and the `InputProducts`, components by `ProductID`
  * or `ProductCode`, with the batch and quantity used.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationStartPutData extends Data
 {

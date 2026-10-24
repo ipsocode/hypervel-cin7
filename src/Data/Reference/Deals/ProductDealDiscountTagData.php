@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * Product Deal Discount Tag, one entry of a deal discount's `DealDiscountTags`: a product tag by
  * `TagName`. The table requires `Type`, but no example sends it, so it is optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealDiscountTagData extends Data
 {

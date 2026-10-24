@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractAddressData;
  * Sale Shipping Address Model. Its table requires `Line1` and `Country`, so this constructor
  * takes them; the optional fields are set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleShippingAddressData extends AbstractAddressData
 {

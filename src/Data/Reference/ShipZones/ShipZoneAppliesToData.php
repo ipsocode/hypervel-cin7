@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * range the zone covers, and the `ShippingRate` there. The table requires the `ID`, but the POST
  * example sends none for an area it adds, so it stays optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ShipZoneAppliesToData extends Data
 {

@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Concerns\HasProductFields;
 /**
  * Inventory Movement Line Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class InventoryMovementLineData extends Data
 {

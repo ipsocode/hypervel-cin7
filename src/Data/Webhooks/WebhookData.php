@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\WebhookType;
  * Webhook, one entry of `Webhooks` in every response of `webhooks`: the table with its `ID`. The
  * bodies of POST and PUT are `WebhookPostData` and `WebhookPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WebhookData extends AbstractWebhookData implements WithResponse
 {

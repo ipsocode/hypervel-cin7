@@ -10,7 +10,7 @@ use Hypervel\Data\Data;
 /**
  * IDName Model, an `ID` and a `Name`: a category, brand or bin a stock take filters its products by.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class IdNameData extends Data
 {

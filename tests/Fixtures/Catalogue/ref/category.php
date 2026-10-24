@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Ref\Category\PostCategory;
 use Ipsocode\Cin7\Requests\Ref\Category\PutCategory;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/category`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/category`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

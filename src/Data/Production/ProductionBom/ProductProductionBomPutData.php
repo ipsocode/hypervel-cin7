@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * `OutputQuantity` and `Version`, with the `ProductID` it belongs to. The PUT example sends no
  * `BufferPercent`, `Name` or `IsDefault`, so they are optional here.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductProductionBomPutData extends Data
 {

@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\StockTakeStatus;
  * Changing `Status` from `DRAFT` to `IN PROGRESS` fills `NonZeroStockOnHandProducts` with the
  * filtered products that have stock. The POST body is `StockTakePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTakePutData extends AbstractStockTakeData
 {

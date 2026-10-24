@@ -16,7 +16,7 @@ use Hypervel\Data\Data;
  * Both tables require the fulfilment's `TaskID`, so each child passes it to this constructor;
  * `Lines` is set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSaleFulfilmentPickPackTaskData extends Data
 {

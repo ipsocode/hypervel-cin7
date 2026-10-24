@@ -9,7 +9,7 @@ namespace Ipsocode\Cin7\Data\Reference\Deals;
  * table requires `IsActive`, `AllowCoupons` and `SingleCouponCodeUsage`, but the POST example sends
  * none of them, so they are optional. The PUT body is `ProductDealPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealPostData extends AbstractProductDealData
 {

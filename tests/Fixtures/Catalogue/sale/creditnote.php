@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/creditnote`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/creditnote`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

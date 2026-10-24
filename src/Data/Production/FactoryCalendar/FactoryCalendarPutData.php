@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\DayOfWeek;
  * `Year`; a `FactoryCalendarSpecialDays` sent empty deletes the special days. The POST body is
  * `FactoryCalendarPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FactoryCalendarPutData extends Data
 {

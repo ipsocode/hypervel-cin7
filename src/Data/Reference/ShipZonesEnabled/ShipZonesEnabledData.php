@@ -12,7 +12,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Whether shipping zones are enabled: the response of `reference/shipZonesEnabled` GET and PUT, and
  * the body of its PUT. The reference has no table for it, only the examples.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ShipZonesEnabledData extends Data implements WithResponse
 {

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\FinishedGoods\Pick\GetFinishedGoodsPick;
 use Ipsocode\Cin7\Requests\FinishedGoods\Pick\PostFinishedGoodsPick;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `finishedGoods/pick`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `finishedGoods/pick`; tests/Catalogue.php merges every file's rows by kind.
 
 $taskId = 'dcede9f5-58ba-4236-81fe-b3d43890b2dc';
 

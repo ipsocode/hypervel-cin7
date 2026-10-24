@@ -12,10 +12,10 @@ use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
  * fields available for POST, without the PUT-only `ID`. The ones the reference marks required have
  * no default. `Type` is `Prepayment`, `Payment` or `Refund`, the spelling of the examples and
  * notes; `DepositID`, which goes only with `Type` `Payment`, takes the payment from a supplier
- * deposit. A payment needs an authorised invoice, and a refund an authorised credit note. The PUT
+ * deposit. A payment needs an authorized invoice, and a refund an authorized credit note. The PUT
  * body is `AdvancedPurchasePaymentPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePaymentPostData extends AbstractPurchasePaymentData
 {

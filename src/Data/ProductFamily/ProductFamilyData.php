@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\CostingMethod;
  * and `CountryOfOriginCode`. The bodies of POST and PUT are `ProductFamilyPostData` and
  * `ProductFamilyPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductFamilyData extends AbstractProductFamilyData implements WithResponse
 {

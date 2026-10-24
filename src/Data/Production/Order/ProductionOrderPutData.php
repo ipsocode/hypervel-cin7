@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * requires the `ProductionOrderID` and `LocationID`. The table requires the `ProductID` too, but
  * the PUT example sends none, so it is optional here. The POST body is `ProductionOrderPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderPutData extends AbstractProductionOrderData
 {

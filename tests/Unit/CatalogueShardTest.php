@@ -9,9 +9,9 @@ use Ipsocode\Cin7\Tests\Catalogue;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
- * The shards the big catalogue test classes run split each kind's rows with none lost or repeated.
+ * The shards the big catalog test classes run split each kind's rows with none lost or repeated.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 class CatalogueShardTest extends TestCase
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
 /**
  * Stock Adjustment List, one entry of `StockAdjustmentList`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockAdjustmentListData extends Data implements WithResponse
 {

@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\ResourceCostCalculationType;
  * ProductionBOMResource, a resource of a BOM operation. `BOMResourceID` is required when updating;
  * `ResourceName`, `ResourceCode`, `Cost` and `CycleTime` are read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomResourceData extends Data
 {

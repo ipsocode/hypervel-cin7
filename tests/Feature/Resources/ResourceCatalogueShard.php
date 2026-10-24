@@ -14,11 +14,11 @@ use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
- * The rows of one shard of the `resources` catalogue kind. ParaTest hands a worker whole files,
+ * The rows of one shard of the `resources` catalog kind. ParaTest hands a worker whole files,
  * so the rows are spread over the `ResourceCatalogueShard*Test` classes instead of sitting in one
  * file that bounds the parallel run; the shards together hold every row once.
  *
- * @see docs/resources.md
+ * @see src/docs/resources.md
  */
 abstract class ResourceCatalogueShard extends TestCase
 {

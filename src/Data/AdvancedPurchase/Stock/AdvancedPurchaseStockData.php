@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * examples send, so it is optional too. The bodies of POST and PUT are
  * `AdvancedPurchaseStockPostData` and `AdvancedPurchaseStockPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseStockData extends AbstractAdvancedPurchaseStockData
 {

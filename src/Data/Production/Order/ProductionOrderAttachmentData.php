@@ -12,10 +12,10 @@ use Ipsocode\Cin7\Attributes\DateTime;
 
 /**
  * A production order attachment, the body and response of `production/order/attachment` POST and
- * the `OrderAttachments` of its GET. The reference documents no table for it: it is modelled from
+ * the `OrderAttachments` of its GET. The reference documents no table for it: it is modeled from
  * its examples.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderAttachmentData extends Data implements WithResponse
 {

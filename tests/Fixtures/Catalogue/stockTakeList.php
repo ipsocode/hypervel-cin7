@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Enums\StockTakeStatus;
 use Ipsocode\Cin7\Requests\StockTakeList\GetStockTakeList;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `stockTakeList`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `stockTakeList`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Sync\Synchroniser;
  * Runs a pull in the foreground, for a first fill or a repair by hand; the schedule queues
  * the same pull as a job.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class SyncCommand extends Command
 {

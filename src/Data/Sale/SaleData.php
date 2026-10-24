@@ -29,7 +29,7 @@ use Ipsocode\Cin7\Enums\TaxCalculation;
 /**
  * Sale, the response of `sale` GET, POST, PUT and DELETE.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleData extends AbstractSaleData implements WithResponse
 {

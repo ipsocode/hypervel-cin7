@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\LeadStatus;
  * The fields of the Lead table: the response of its endpoint and the body of its POST and PUT.
  * Each is a final child that adds its `ID`, or none. Every lead needs its status, name, currency, payment term, price tier, sales representative, tax rule, close chance and close date, so each child passes them to this constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractLeadData extends Data
 {

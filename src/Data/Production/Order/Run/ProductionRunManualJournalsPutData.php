@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
 /**
  * The body of `production/order/run/manualJournal` PUT: the `RunID` and its `ManualJournals`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunManualJournalsPutData extends Data
 {

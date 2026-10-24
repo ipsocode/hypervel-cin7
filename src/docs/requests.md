@@ -2,7 +2,7 @@
 
 Every call to Cin7 is a request class in `Ipsocode\Cin7\Requests`, one per API
 action, grouped under a [resource](resources.md) such as `CustomerResource`.
-Every request extends [`Cin7Request`](../src/Requests/Cin7Request.php), which sets the bounded
+Every request extends [`Cin7Request`](../Requests/Cin7Request.php), which sets the bounded
 retry policy for Cin7's throttling responses (429 and 503) and maps query values to the strings
 Cin7 expects. Lists and write bodies have a base of their own; a read or delete of one record
 extends `Cin7Request` itself.
@@ -11,9 +11,9 @@ extends `Cin7Request` itself.
 
 | Base | Verb | Constructor | Request line |
 |---|---|---|---|
-| [`ListRequest`](../src/Requests/ListRequest.php) | GET | `(?int $page = null, ?int $limit = null)`, then the list's filters | `GET <path>?<filters>&page=1&limit=100` |
-| [`Cin7Request`](../src/Requests/Cin7Request.php) | GET or DELETE of one record | the identifier, then the other parameters | `<verb> <path>?<identifier key>=<id>&<parameters>` |
-| [`WriteRequest`](../src/Requests/WriteRequest.php) | POST or PUT | `(array\|Data $body = [])` | `<verb> <path>`, an array body as JSON verbatim, a data object as described in [data](data.md#write-bodies) |
+| [`ListRequest`](../Requests/ListRequest.php) | GET | `(?int $page = null, ?int $limit = null)`, then the list's filters | `GET <path>?<filters>&page=1&limit=100` |
+| [`Cin7Request`](../Requests/Cin7Request.php) | GET or DELETE of one record | the identifier, then the other parameters | `<verb> <path>?<identifier key>=<id>&<parameters>` |
+| [`WriteRequest`](../Requests/WriteRequest.php) | POST or PUT | `(array\|Data $body = [])` | `<verb> <path>`, an array body as JSON verbatim, a data object as described in [data](data.md#write-bodies) |
 
 A subclass declares its verb as a property default and its path through `resolveEndpoint()`. A
 `ListRequest` also declares the envelope key its items sit under (`protected string $listKey`),
@@ -610,7 +610,7 @@ data object's body is also stripped of nulls and validated after the omission; s
 ## Page defaults
 
 Cin7 expects `page` and `limit` on every list read, so `ListRequest` always
-sends them. [`PageDefaults::apply()`](../src/PageDefaults.php):
+sends them. [`PageDefaults::apply()`](../PageDefaults.php):
 
 - Sets `page` to `PageDefaults::PAGE` (`1`) and `limit` to
   `PageDefaults::LIMIT` (`100`) only when the caller has not. Caller values

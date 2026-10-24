@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Enums;
  * The status of a task stage, the reference's Quote Statuses: a quote, a pick, a pack, a credit
  * note, a manual journal and the purchase stages.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum TaskStatus: string
 {

@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * notes, resources, links and products. `OperationID` is required when updating; the work center's
  * co-man procurement type and `ComponentLocationID` are read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderOperationData extends Data
 {

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\LeadStatus;
  * The body of PUT: the table with the `ID` of the record to change, which PUT requires. The POST
  * body is `LeadPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class LeadPutData extends AbstractLeadData
 {

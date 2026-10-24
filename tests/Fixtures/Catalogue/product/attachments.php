@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\Product\Attachments\GetProductAttachments;
 use Ipsocode\Cin7\Requests\Product\Attachments\PostProductAttachments;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `product/attachments`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `product/attachments`; tests/Catalogue.php merges every file's rows by kind.
 
 $url = ['ProductID' => '76755c09-60de-483c-a63b-18fd12c2d932', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'];
 

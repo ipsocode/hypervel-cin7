@@ -21,7 +21,7 @@ use Ipsocode\Cin7\Concerns\HasStockLineProductFields;
  * product, so they stay optional. Like every object with a `ProductID`, it carries the product
  * fields, and the stock take's.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class NewStockLineData extends Data
 {

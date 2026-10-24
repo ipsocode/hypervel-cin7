@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * A list module's pull: the window it asks for, what it writes, and what a failure leaves.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class ListPullTest extends SyncTestCase
 {

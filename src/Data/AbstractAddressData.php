@@ -16,7 +16,7 @@ use Hypervel\Data\Data;
  * `#[Required]`, which only a write body checks. `AddressData` and `SaleShippingAddressData` also
  * declare the optional `ID`, which the Purchase Shipping Address Model does not list.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractAddressData extends Data
 {

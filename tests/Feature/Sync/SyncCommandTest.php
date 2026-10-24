@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Testing\Cin7Fake;
 /**
  * `cin7:sync`, the pull in the foreground. Off, it refuses: see ServiceProviderTest.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class SyncCommandTest extends SyncTestCase
 {

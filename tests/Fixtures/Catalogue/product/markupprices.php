@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\Product\MarkupPrices\GetProductMarkupPrices;
 use Ipsocode\Cin7\Requests\Product\MarkupPrices\PutProductMarkupPrices;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `product/markupprices`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `product/markupprices`; tests/Catalogue.php merges every file's rows by kind.
 
 $productId = '7c8795c2-1a6b-4318-ba72-291f61444906';
 $body = ['ProductID' => $productId, 'MarkupPrices' => [

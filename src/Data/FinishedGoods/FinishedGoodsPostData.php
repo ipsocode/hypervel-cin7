@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
  * `AUTHORISED`, `IN PROGRESS` or `COMPLETED`. `Status` is one of the first four values.
  * `ProductName` is in the example, not the table. The PUT body is `FinishedGoodsPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FinishedGoodsPostData extends AbstractFinishedGoodsData
 {

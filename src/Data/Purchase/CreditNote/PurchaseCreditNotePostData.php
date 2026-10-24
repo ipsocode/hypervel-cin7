@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `DRAFT` or `AUTHORISED`, and the totals, which POST does not require. The response is
  * `PurchaseCreditNoteData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseCreditNotePostData extends AbstractPurchaseCreditNoteData
 {

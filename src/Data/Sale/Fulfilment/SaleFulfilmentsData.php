@@ -14,7 +14,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Sale Fulfilment, the `{SaleID, Fulfilments}` envelope every `sale/fulfilment` action answers
  * with, and the body of its POST, which needs only the `SaleID` to start a new fulfilment.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentsData extends Data implements WithResponse
 {

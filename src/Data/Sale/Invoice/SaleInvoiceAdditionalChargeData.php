@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Data\AbstractChargeData;
  * Sale Invoice Additional Charge Model, also used by credit notes: the charge fields of
  * `AbstractChargeData`, the line `Total`, a `Comment` and the revenue `Account`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleInvoiceAdditionalChargeData extends AbstractChargeData
 {

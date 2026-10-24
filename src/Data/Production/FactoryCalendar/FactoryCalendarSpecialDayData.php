@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * FactoryCalendarSpecialDay, a date of the calendar's year that differs from its week. `Capacity`
  * is read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FactoryCalendarSpecialDayData extends Data
 {

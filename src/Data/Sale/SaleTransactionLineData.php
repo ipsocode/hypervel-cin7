@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
 /**
  * Sale Transaction Line Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleTransactionLineData extends Data
 {

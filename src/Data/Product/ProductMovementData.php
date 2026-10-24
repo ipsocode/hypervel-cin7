@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  *
  * The reference's table types `BatchSN` as `Decimal`, but its example has a string, and a batch or serial number is not a quantity, so it is a nullable string.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductMovementData extends Data
 {

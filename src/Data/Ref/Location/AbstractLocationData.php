@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * Each is a final child that adds its `ID`, or none. Every location needs its `Name`, so each child
  * passes it to this constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractLocationData extends Data
 {

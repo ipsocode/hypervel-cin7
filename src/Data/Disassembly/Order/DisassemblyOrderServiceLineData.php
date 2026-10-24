@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * Disassembly Order Service Line Model, a service line of a disassembly order: a service product,
  * found by `ProductID` or `Name`, with its expense `Account` and `Amount`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class DisassemblyOrderServiceLineData extends Data
 {

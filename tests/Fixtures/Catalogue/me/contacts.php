@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\Me\Contacts\PostMeContacts;
 use Ipsocode\Cin7\Requests\Me\Contacts\PutMeContacts;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `me/contacts`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `me/contacts`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * Sale List, one entry of `SaleList` in a `saleList` response. `SaleInvoicesTotalAmount` and
  * `CombinedPaymentTotal` appear only in the examples.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleListData extends AbstractSaleListData implements WithResponse
 {

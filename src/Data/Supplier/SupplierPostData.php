@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Data\Supplier;
  * The body of `supplier` POST: the Supplier table without the `ID` Cin7 assigns. The PUT body is
  * `SupplierPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SupplierPostData extends AbstractSupplierData
 {

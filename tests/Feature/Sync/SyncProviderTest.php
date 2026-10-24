@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Sync\Pull;
  * What the provider wires when the sync is on: the migration, the merged config and the
  * schedule. Off, the default, is in ServiceProviderTest.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class SyncProviderTest extends SyncTestCase
 {

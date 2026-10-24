@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\GetAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `advanced-purchase/put-away`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `advanced-purchase/put-away`; tests/Catalogue.php merges every file's rows by kind.
 
 // One line, and as a POST sends it: the line's own `Location` first, then
 // `AbstractPurchaseStockLineData`'s fields, `Date` and `Quantity` last.

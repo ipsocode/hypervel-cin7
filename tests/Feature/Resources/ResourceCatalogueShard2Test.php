@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 /**
- * Shard 2 of the resource catalogue rows.
+ * Shard 2 of the resource catalog rows.
  */
 class ResourceCatalogueShard2Test extends ResourceCatalogueShard
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Ref\Tax\PostTax;
 use Ipsocode\Cin7\Requests\Ref\Tax\PutTax;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/tax`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/tax`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every tax rule requires.
 $fields = ['Name' => 'VAT', 'Account' => '820', 'IsActive' => true, 'TaxInclusive' => false];

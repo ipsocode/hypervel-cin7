@@ -18,7 +18,7 @@ use Throwable;
  * Proves a connection's credentials and limiter store with one `GET me`, the cheapest call Cin7
  * authenticates. It prints neither credential.
  *
- * @see docs/connector.md
+ * @see src/docs/connector.md
  */
 class CheckCommand extends Command
 {

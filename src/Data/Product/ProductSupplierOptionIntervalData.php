@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\DeliveryMethod;
  * the table's notes say, an `Interval` delivery needs its `IntervalDays` and `IntervalStartDate`,
  * and a `Fixed` one each `Is…` day, so a write body without them fails validation.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductSupplierOptionIntervalData extends Data
 {

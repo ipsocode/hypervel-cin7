@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Enums\StockTakeStatus;
  * The body of `stocktake` POST: the Stock Take table without the `TaskID` and `StocktakeNumber`
  * Cin7 assigns. `Status` is required on PUT only. The PUT body is `StockTakePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTakePostData extends AbstractStockTakeData
 {

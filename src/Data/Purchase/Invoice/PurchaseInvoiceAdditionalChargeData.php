@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractChargeData;
  * advanced purchase's invoices and credit notes: the charge fields of `AbstractChargeData`, a
  * `Reference`, an optional `Total` and the `Account` the table requires.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseInvoiceAdditionalChargeData extends AbstractChargeData
 {

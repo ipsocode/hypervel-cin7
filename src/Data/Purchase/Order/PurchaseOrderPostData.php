@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `AUTHORISED`, and the optional totals `TotalBeforeTax`, `Tax` and `Total`, which Cin7 computes
  * from the lines. The response is `PurchaseOrderData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseOrderPostData extends AbstractPurchaseOrderData
 {

@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `CreditNoteInvoiceNumber` and `CreditNoteDate` the table requires. The POST body is
  * `AdvancedPurchasePartialCreditNotePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePartialCreditNoteData extends AbstractPurchaseCreditNoteData
 {

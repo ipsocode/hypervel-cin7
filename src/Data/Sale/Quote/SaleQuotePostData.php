@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * totals `TotalBeforeTax`, `Tax` and `Total`, which Cin7 computes from the lines. The response is
  * `SaleQuoteData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleQuotePostData extends AbstractSaleQuoteData
 {

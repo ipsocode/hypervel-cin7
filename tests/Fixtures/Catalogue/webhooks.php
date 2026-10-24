@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Webhooks\PostWebhooks;
 use Ipsocode\Cin7\Requests\Webhooks\PutWebhooks;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `webhooks`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `webhooks`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '1cf8cb83-bf39-494b-87f9-1252b684d6d5';
 $uri = '/ExternalApi/v2/webhooks';

@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  *
  * Both tables require the `Status` and `Lines`, so each child passes them to this constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractAdvancedPurchaseStockData extends Data
 {

@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 /**
  * Customer Credits, one entry of `CustomerCredits`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomerCreditData extends Data implements WithResponse
 {

@@ -29,7 +29,7 @@ use Ipsocode\Cin7\Enums\TaxCalculation;
  * purchase also needs a supplier: `Supplier` or `SupplierID`, so a write body without either fails
  * validation before it is sent.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractPurchaseData extends Data
 {

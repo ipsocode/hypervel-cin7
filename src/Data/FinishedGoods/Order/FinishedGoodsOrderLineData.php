@@ -15,7 +15,7 @@ use Hypervel\Data\Data;
  * read-only, `ExpenseAccount` and `TotalCost` are required for a service product, and
  * `WastagePercent` and `WastageQuantity` are mutually exclusive.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FinishedGoodsOrderLineData extends Data
 {

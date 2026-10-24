@@ -18,7 +18,7 @@ use Workbench\App\Support\Cin7Payloads;
 /**
  * Proves the connector binding resolves as a constructor dependency of an application service.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 class CustomerDirectoryTest extends TestCase
 {

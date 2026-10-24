@@ -61,7 +61,7 @@ use Throwable;
  * and suppliers, then products, then the sale and purchase lists, each before the documents read
  * from it. A new case keeps that order.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 enum Module: string
 {

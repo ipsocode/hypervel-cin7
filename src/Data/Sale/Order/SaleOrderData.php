@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Enums\OrderStatus;
  *
  * `AutoPickPackShipMode` is documented only in prose, as a POST option.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleOrderData extends Data implements WithResponse
 {

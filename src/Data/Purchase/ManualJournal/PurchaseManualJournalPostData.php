@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * with the `TaskID` it requires and a `Status` of `DRAFT` or `AUTHORISED`. The response is
  * `PurchaseManualJournalData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseManualJournalPostData extends AbstractPurchaseManualJournalData
 {

@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * category by `CategoryID` or `CategoryName`. The table has no `CategoryID`, but the examples send
  * it; and it requires `Type`, which no example sends, so it is optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealDiscountCategoryData extends Data
 {

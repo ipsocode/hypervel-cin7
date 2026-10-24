@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * The body of `production/order/undo` POST: the `productionOrderID`, keyed with a lower-case first
  * letter as the reference writes it, and whether the undo applies to its `ApplyToTasks`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderUndoPostData extends Data
 {

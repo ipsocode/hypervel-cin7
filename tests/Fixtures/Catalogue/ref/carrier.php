@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Ref\Carrier\PostCarrier;
 use Ipsocode\Cin7\Requests\Ref\Carrier\PutCarrier;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/carrier`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/carrier`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '8a5697fa-4c0b-46a5-a5bf-1864cb76623f';
 $uri = '/ExternalApi/v2/ref/carrier';

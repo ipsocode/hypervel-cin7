@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Enums;
  * A day of the week: a factory calendar's week start and the day of its days and of a resource's
  * working days.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum DayOfWeek: string
 {

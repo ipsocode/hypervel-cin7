@@ -20,7 +20,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * set through `from()`. The table's heading says "Money Task List", copied from the list. Cin7
  * works out `CurrencyConversionRate` itself, so it is read-only, and no write example sends it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractBankTransferData extends Data
 {

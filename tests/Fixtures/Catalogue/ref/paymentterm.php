@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\Ref\PaymentTerm\PostPaymentTerm;
 use Ipsocode\Cin7\Requests\Ref\PaymentTerm\PutPaymentTerm;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/paymentterm`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/paymentterm`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every ref paymentterm requires.
 $fields = ['Name' => '5 days since end of month'];

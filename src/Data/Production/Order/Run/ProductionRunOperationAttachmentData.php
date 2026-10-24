@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * when it is created. `AttachmentID` is required when updating; `Date` and `ContentType` are
  * read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationAttachmentData extends Data
 {

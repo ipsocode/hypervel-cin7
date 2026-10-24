@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The event a webhook listens for.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum WebhookType: string
 {

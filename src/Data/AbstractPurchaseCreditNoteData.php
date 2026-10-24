@@ -27,7 +27,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `advanced-purchase` examples embed a credit note with a `null` one, so each child declares it:
  * `AdvancedPurchaseCreditNoteData` leaves it optional, and the others require it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractPurchaseCreditNoteData extends Data
 {

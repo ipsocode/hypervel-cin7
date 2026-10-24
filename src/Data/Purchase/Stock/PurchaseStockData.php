@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * purchase's `StockReceived` embeds the stock without it, so it is nullable and `#[Required]`. The
  * POST body is `PurchaseStockPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseStockData extends AbstractPurchaseStockData implements WithResponse
 {

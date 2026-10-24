@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
  * folder of the path it is named for, though the advanced purchase's invoices and credit notes are
  * what embed it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchasePaymentLineData extends AbstractSalePaymentLineData
 {

@@ -8,10 +8,10 @@ use Hypervel\Data\Attributes\Validation\Uuid;
 use Hypervel\Data\Data;
 
 /**
- * The body of `production/order/authorise` POST: the `productionOrderID` to authorise, keyed with
+ * The body of `production/order/authorise` POST: the `productionOrderID` to authorize, keyed with
  * a lower-case first letter as the reference writes it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderAuthorisePostData extends Data
 {

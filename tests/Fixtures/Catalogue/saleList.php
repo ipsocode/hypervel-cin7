@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Enums\SaleStatus;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `saleList`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `saleList`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

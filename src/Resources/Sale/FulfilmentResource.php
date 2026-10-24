@@ -33,7 +33,7 @@ final class FulfilmentResource extends BaseResource
     }
 
     /**
-     * Start a new fulfilment of a sale whose order is authorised.
+     * Start a new fulfilment of a sale whose order is authorized.
      *
      * @param array<string, mixed>|SaleFulfilmentsData $body
      */

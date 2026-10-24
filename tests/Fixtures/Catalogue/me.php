@@ -8,7 +8,7 @@ use Ipsocode\Cin7\Data\Me\MeData;
 use Ipsocode\Cin7\Requests\Me\GetMe;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `me`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `me`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

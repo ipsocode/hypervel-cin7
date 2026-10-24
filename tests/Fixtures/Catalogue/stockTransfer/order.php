@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\StockTransfer\Order\GetStockTransferOrder;
 use Ipsocode\Cin7\Requests\StockTransfer\Order\PostStockTransferOrder;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `stockTransfer/order`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `stockTransfer/order`; tests/Catalogue.php merges every file's rows by kind.
 
 $taskId = '76a1294b-cea1-4a67-bde7-97363a9cd718';
 $fields = ['TaskID' => $taskId, 'Status' => 'AUTHORISED', 'Lines' => [['SKU' => 'GB3-White', 'TransferQuantity' => 1]]];

@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * The body of `production/order/release` POST: the `productionOrderID` to release and its
  * `releaseDate`, keyed with lower-case first letters as the reference writes them.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderReleasePostData extends Data
 {

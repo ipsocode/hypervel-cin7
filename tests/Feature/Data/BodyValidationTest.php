@@ -21,9 +21,9 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * The rows in `expectedFailures()` are the examples that fail it, each on exactly the fields
  * listed, with an index in a path written as `*`: the model requires what the reference's table
  * requires, and the example leaves it out (see "Where the reference's tables and examples
- * disagree" in `docs/data.md`).
+ * disagree" in `src/docs/data.md`).
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 class BodyValidationTest extends TestCase
 {

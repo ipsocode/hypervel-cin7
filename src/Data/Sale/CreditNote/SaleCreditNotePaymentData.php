@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
  * The reference names no model for it, so it follows the example: a Sale Payment Line plus the
  * order, invoice and credit note numbers, `Type` and `CreditID`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleCreditNotePaymentData extends AbstractSalePaymentLineData
 {

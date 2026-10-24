@@ -16,7 +16,7 @@ use ReflectionNamedType;
  * fresh on each call so the connector singleton stays coroutine-safe. The accessor tree is walked
  * from the connector by reflection, so a new accessor is covered when it is added.
  *
- * @see docs/resources.md
+ * @see src/docs/resources.md
  */
 class ConnectorResourcesTest extends TestCase
 {

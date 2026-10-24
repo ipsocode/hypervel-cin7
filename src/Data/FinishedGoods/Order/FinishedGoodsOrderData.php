@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
  * Finished Goods Order, the body and response of `finishedGoods/order`: the order's `OrderLines`.
  * POST takes `DRAFT` or `AUTHORISED` as its `Status`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FinishedGoodsOrderData extends Data implements WithResponse
 {

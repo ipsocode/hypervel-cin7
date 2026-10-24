@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Reference\Deals\PostDeals;
 use Ipsocode\Cin7\Requests\Reference\Deals\PutDeals;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `reference/deals`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `reference/deals`; tests/Catalogue.php merges every file's rows by kind.
 
 $dealId = '8b89117b-e73c-4ccd-9bbc-8e7c95bfaa6c';
 $discount = ['DiscountType' => 'FreeShipping', 'IsOrderLevel' => true, 'DiscountName' => 'Free shiping'];

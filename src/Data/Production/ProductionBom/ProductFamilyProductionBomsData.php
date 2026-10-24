@@ -14,7 +14,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * The production BOMs of a product family, the response of every `production/productionBOM` action
  * on a family: its `ProductFamilyID` and `ProductionBOMs`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductFamilyProductionBomsData extends Data implements WithResponse
 {

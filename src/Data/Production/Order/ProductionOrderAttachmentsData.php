@@ -13,9 +13,9 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 /**
  * The attachments of a production order, the answer of `production/order/attachment` GET: those of
  * the order, of its operations and of their resources. The reference documents no table for it: it
- * is modelled from its example.
+ * is modeled from its example.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderAttachmentsData extends Data implements WithResponse
 {

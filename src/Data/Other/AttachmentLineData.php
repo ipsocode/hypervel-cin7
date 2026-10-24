@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Attachment Line Model, shared by the sale, money task, journal and product families. The
  * attachment endpoints answer a bare list of these, so `dto()` keeps the response on each.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AttachmentLineData extends Data implements WithResponse
 {

@@ -20,7 +20,7 @@ use Ipsocode\Cin7\Enums\DisassemblyStatus;
  * service lines, its transactions and any `Errors` raised while a POST ran. `CompletionDate` is in
  * the examples, not the table. The POST body is `DisassemblyPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class DisassemblyData extends AbstractDisassemblyData implements WithResponse
 {

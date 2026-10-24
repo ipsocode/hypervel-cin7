@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Testing\Cin7Fake;
  * A document module's pull: which list rows it reads a document for, how many, and what a
  * failure or a vanished list row leaves.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class DocumentPullTest extends SyncTestCase
 {

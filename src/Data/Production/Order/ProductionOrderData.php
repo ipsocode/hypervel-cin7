@@ -16,10 +16,10 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * which every response sends. `OrderStatus` and `Status` are strings: the examples send `AUTHORISED`, `ACTIVE`
  * and others outside the listed values. The documented keys `ProductionOrderOperations`,
  * `ProductionRuns` and `ProductionOrderDeliveryTo` are `Operations`, and `Deliveries` in the
- * examples; both are modelled, and the runs and deliveries are lists of whatever the reference
+ * examples; both are modeled, and the runs and deliveries are lists of whatever the reference
  * puts in them. `StartUpdate`, `Operations` and `Deliveries` are in the examples, not the table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderData extends AbstractProductionOrderData
 {

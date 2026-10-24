@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Enums;
  * How a rounding table row adjusts a rounded price. The values are the letters Cin7 sends; the
  * cases are named after the rules the notes give them.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum AdjustmentRule: string
 {

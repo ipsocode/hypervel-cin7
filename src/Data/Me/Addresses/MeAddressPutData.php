@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\AddressType;
  * The body of `me/addresses` PUT: the Me Address table with the `AddressID` of the address to
  * change, which PUT requires. The POST body is `MeAddressPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MeAddressPutData extends AbstractMeAddressData
 {

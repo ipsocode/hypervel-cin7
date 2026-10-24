@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\Sale\Quote\GetSaleQuote;
 use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/quote`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/quote`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every quote POST requires.
 $fields = ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'DRAFT', 'Lines' => []];

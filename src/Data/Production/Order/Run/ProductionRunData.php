@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Concerns\HasCustomFields;
  * manual journals and traceability. `Number`, `Status` and the dates are read-only. `Status` is a
  * string: the examples send `OPERATIONS COMPLETED`, outside the listed values.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunData extends Data implements WithResponse
 {

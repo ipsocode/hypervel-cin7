@@ -412,7 +412,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   Received, which adds the purchase's `TaskID`. `PurchaseStockData` carries the union, with `TaskID`
   nullable and `#[Required]`, as the embedded stock has none. The POST body is
   `PurchaseStockPostData`: it requires `TaskID`, and limits `Status` to `DRAFT` and `AUTHORISED`
-  ("For POST only"). `Lines` is required, and `[]` passes, which is how a POST authorises the stock
+  ("For POST only"). `Lines` is required, and `[]` passes, which is how a POST authorizes the stock
   received.
 - **Purchase stock line.** Its `ProductID` and `SKU` are a bare `Yes*`, with no condition, unlike
   the priced lines' (see below), so `PurchaseStockLineData` leaves both optional, as the supplier's
@@ -420,13 +420,13 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   (`#[RequiredWithout]`). `Name` and `Received` are read-only, and the POST example sends both, so
   the class models them and `PostPurchaseStock` leaves them out of the body. The POST response's
   `CardID` (the stock batch) is not the one its request sent; the table does not mark it read-only,
-  so it is modelled and sent.
+  so it is modeled and sent.
 - **Purchase charge `Total`.** The Purchase Additional Charge Model requires the charge's `Total`,
   which the sale and purchase invoice charge tables leave optional; `AbstractChargeData` no longer
   declares it, `PurchaseAdditionalChargeData` requires it, and the sale charge classes keep it
   optional.
 - **Sale POST/PUT.** The POST example sends `AutoPickPackShipMode`, which no Sale table
-  lists; it is modelled on `SalePostData`. The example also sends `"SkipQuote": "false"`,
+  lists; it is modeled on `SalePostData`. The example also sends `"SkipQuote": "false"`,
   `"TaxInclusive": "false"` and `"CurrencyRate": "1"` as strings; the properties are `bool`
   and `float`, following the tables.
 - **Purchase POST/PUT.** The Purchase POST/PUT Attributes require `Approach` and `Location`, `ID`
@@ -548,7 +548,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Credit note payments.** The payments of a `sale/creditnote` GET with `IncludePaymentInfo`
   carry `SaleOrderNumber`, `InvoiceNumber`, `CreditNoteNumber`, `Type` and `CreditID` besides
   the Sale Payment Line Model's fields, and no model names them; they are
-  `SaleCreditNotePaymentData`, modelled on the example.
+  `SaleCreditNotePaymentData`, modeled on the example.
 - **Partial models and the models embedded in a Sale.** A Sale's `Invoices` carry `Payments`
   and the totals and `Paid`, and its `CreditNotes` carry `Refunds` and the totals; the Partial
   tables and every `sale/invoice` and `sale/creditnote` example have none of them, so the
@@ -587,7 +587,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   it optional.
 - **Purchase payment `Type` on PUT.** The PUT example sends `"Type": "Payment"`, which the table
   makes POST-only. `PutPurchasePayment` leaves `Type` and `DepositID` out of the body, as
-  `PostPurchasePayment` leaves out `ID`, and the catalogue round-trips the PUT example through
+  `PostPurchasePayment` leaves out `ID`, and the catalog round-trips the PUT example through
   `PurchasePaymentPutData` without its `Type`.
 - **Purchase payment `DateCreated`.** The table does not mark it read-only, but it is the date Cin7
   stamps on the payment record: the POST response's `DateCreated` is not the one its request sent.
@@ -699,7 +699,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `Payment` and `Refund`. As on `purchase/payment`, the PUT example sends the POST-only `Type` and
   both write examples the `DateCreated` Cin7 stamps, so `PostAdvancedPurchasePayment` leaves out
   `ID` and `DateCreated`, `PutAdvancedPurchasePayment` leaves out `Type`, `DepositID` and
-  `DateCreated`, and the catalogue round-trips the PUT example through
+  `DateCreated`, and the catalog round-trips the PUT example through
   `AdvancedPurchasePaymentPutData` without its `Type`. Every response example adds the advanced
   purchase's `PurchaseID`, which the table does not list; `AdvancedPurchasePaymentData` models it as
   an optional GUID. The GET's `PurchaseID`, `OrderNumber`, `InvoiceNumber` and `CreditNoteNumber`
@@ -721,8 +721,8 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `AbstractPurchaseInvoiceData` takes only `Status` and `Lines`, as the purchase order classes each
   declare their `Memo`; each declares `InvoiceDate` too, which the advanced purchase's embedded
   invoice leaves optional (see below). The four `purchase` examples also send the invoice's
-  number under the misspelt `InvocieNumber`, where `purchase/invoice` sends `InvoiceNumber`; as with
-  the money task's `SupplierCustomer`, the wire key is modelled, so `PurchaseInvoiceData` takes an
+  number under the misspelled `InvocieNumber`, where `purchase/invoice` sends `InvoiceNumber`; as with
+  the money task's `SupplierCustomer`, the wire key is modeled, so `PurchaseInvoiceData` takes an
   optional `InvocieNumber` beside the model's `InvoiceNumber`. One class reads both the
   `purchase/invoice` invoice and a purchase's `Invoice`, as the model name is one.
 - **Purchase Credit Note.** The reference documents the model twice: the Purchase Credit Note
@@ -837,7 +837,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   `SaleFulfilmentPickPackData` stays the embedded model. Only POST limits `Status` to `DRAFT`
   and `AUTHORISED`, so the pack's PUT body is `SaleFulfilmentPackData` itself.
 - **Autopick.** The pick's POST and PUT notes say a body of `TaskID` and `AutoPickMode`
-  (`AUTOPICK`) picks the task and authorises it. The table requires `Status`, so the pick bodies
+  (`AUTOPICK`) picks the task and authorizes it. The table requires `Status`, so the pick bodies
   require it unless `AutoPickMode` is given (`#[RequiredWithout('AutoPickMode')]`), and model
   `AutoPickMode` as a string.
 - **Fulfilment ship.** The Sale Fulfilment Ship Model a fulfilment embeds and the Sale Fulfilment
@@ -848,7 +848,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   which the requests leave out. `AddTrackingNumbers`, in the PUT notes only, is on
   `SaleFulfilmentShipPutData`.
 - **`IncludeProductInfo`.** It adds "all used products in additional array" to a fulfilment,
-  pick or pack response; no example shows the array, so it is not modelled, and `json()` still
+  pick or pack response; no example shows the array, so it is not modeled, and `json()` still
   has it.
 - **Sale Credit Note List.** Its table is the Sale List's, field for field, so `SaleListData` and
   `SaleCreditNoteListData` share `AbstractSaleListData`. The credit note list's example sends
@@ -906,7 +906,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Units of weight and length.** The Dimension Unit Available Values give each unit an
   abbreviation and a name. The abbreviation is the wire value, as the `me` example's `g` and `cm`
   show, so `MeData`'s `DefaultWeightUnits` and `DefaultDimensionsUnits` are `WeightUnit` and
-  `DimensionUnit`, whose cases take the names, spelt correctly: the table's `ounces`, `miligramm`
+  `DimensionUnit`, whose cases take the names, spelled correctly: the table's `ounces`, `miligramm`
   and `kilogramm` are `Ounce`, `Milligram` and `Kilogram`. The product's `WeightUnits` and
   `DimensionsUnits`, and the lines' (`HasProductFields`), were built before these enums and stay
   strings; the sale examples send `""` for a line's units, outside the list.
@@ -942,7 +942,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   and `#[RequiredWithout]` the other, so a write body sets at least one. `AssetAccountCode` is typed
   `Decimal`, but the examples send `"710"` and the other account code is a `String`, so it is a
   string. `DepreciationExpenseAccountCode` and its read-only `DepreciationExpenseAccountName` appear
-  only in the examples, and are modelled.
+  only in the examples, and are modeled.
 - **Fixed Asset Type and Payment Term value lists.** `DepreciationMethod`, `AveragingMethod` and
   the payment term's `Method` are the enums `DepreciationMethod`, `AveragingMethod` and
   `PaymentTermMethod`.
@@ -976,7 +976,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
   are the product's enums, `PriceTier1` to `PriceTier10` are ten wire keys, and the read-only
   `Option1Values` to `Option3Values`, `LastModifiedOn`, `Attachments` and `CountryOfOriginCode` are on
   `ProductFamilyData` alone. The table's `Products` line says a product's `SKU` and `Name` are
-  "ignored in POST and PUT", yet the examples send them, so they are modelled and the requests leave
+  "ignored in POST and PUT", yet the examples send them, so they are modeled and the requests leave
   them out of the body (`Products.*.SKU` and `Products.*.Name`). A PUT adds or updates the products
   it lists and never deletes one. `Option1Name` is required, the one option every family has.
 - **Attribute Set.** The table writes `Attribute#Name`, `Attribute#Type` and `Attribute#Values` for
@@ -989,7 +989,7 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 - **Product family attachments.** The same as the product's: the family's key is `FamilyID`, and the
   POST table marks `Content` required without the `Content`-or-`FileDownloadUrl` rule the product's
   has, which the examples and the notes both give, so it is `#[RequiredWithout]` here too.
-- **Product Availability `Sku`.** The GET parameter is spelt `Sku`, not `SKU`, and the field is
+- **Product Availability `Sku`.** The GET parameter is spelled `Sku`, not `SKU`, and the field is
   `SKU`; each is sent as the reference spells it. Every field is optional.
 - **Examples that are not valid JSON** are fixed when they become a fixture in
   `Cin7Payloads`, not copied verbatim. The `supplier` POST example ends in a trailing comma,
@@ -1241,7 +1241,7 @@ PUT bodies are the same, so one class serves both:
   reference, and the other writes `{Success}`: they have no data class.
 - **Examples.** The custom prices examples need no correction. The product suppliers POST and PUT
   examples send `DeliveryMethod` as `"interval"` and `"fixed"`, where the table says `'Fixed'` and
-  `'Interval'`: the fixtures capitalise them.
+  `'Interval'`: the fixtures capitalize them.
 `reference/shipZones` has a class per verb, because the table's required fields cannot all hold for
 every verb. Each class requires:
 
@@ -1470,7 +1470,7 @@ Advanced Purchase Stock Model, with a class per verb because `PurchaseID`, `Task
 | `AdvancedPurchaseStockPutData` | `src/Data/AdvancedPurchase/Stock/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID`, `TaskID` |
 | `AdvancedPurchaseStockLineData` | `src/Data/AdvancedPurchase/Stock/` | `Date`, `Quantity` |
 
-A required `Lines` may be empty: a POST with `Status` `AUTHORISED` and empty `Lines` authorises
+A required `Lines` may be empty: a POST with `Status` `AUTHORISED` and empty `Lines` authorizes
 the task. The reference's examples need no correction; the fixtures are the six of them,
 unchanged.
 
@@ -1486,7 +1486,7 @@ Advanced Purchase Put Away Model, with a response class and a POST class because
 | `AdvancedPurchasePutAwayPostData` | `src/Data/AdvancedPurchase/PutAway/` | `Status` (`DRAFT` or `AUTHORISED`), `Lines`, `PurchaseID` |
 | `AdvancedPurchasePutAwayLineData` | `src/Data/AdvancedPurchase/PutAway/` | `Date`, `Quantity`; and `Location` or `LocationID` on a write body (`#[RequiredWithout]`) |
 
-A required `Lines` may be empty: a POST with `Status` `AUTHORISED` and empty `Lines` authorises
+A required `Lines` may be empty: a POST with `Status` `AUTHORISED` and empty `Lines` authorizes
 the task. The reference's examples need no correction; the fixtures are the three of them,
 unchanged.
 
@@ -1534,7 +1534,7 @@ Each class requires what its `purchase/payment` twin does:
 | `AdvancedPurchasePaymentPutData` | `src/Data/AdvancedPurchase/Payment/` | `TaskID`, `DatePaid`, `CurrencyRate`, `Amount`, `Account`, `ID` |
 
 The response adds the `PurchaseID` every example carries, as an optional GUID. A payment needs an
-authorised invoice, and a refund an authorised credit note. The reference's examples need no
+authorized invoice, and a refund an authorized credit note. The reference's examples need no
 correction; the fixtures are the five of them, unchanged.
 
 `advanced-purchase/manualJournal` follows the Available field for Purchase Manual Journal table and
@@ -1666,7 +1666,7 @@ and its response. Each class requires:
 - **`Location`** is typed Decimal in the POST table, copied from the field above it: it is the
   location's name, a string.
 - **`CompletionDate`** is in the examples of the disassembly (response and POST) and of the order, in
-  no table, so it is modelled on `DisassemblyData`, `DisassemblyPostData` and `DisassemblyOrderData`.
+  no table, so it is modeled on `DisassemblyData`, `DisassemblyPostData` and `DisassemblyOrderData`.
   The order's examples also send `OrderServiceLines`, which its table omits.
   `DisassemblyPostData` models `ProductName`, which the POST example sends and its table omits.
 - **Read-only fields** (`Name`, `Unit`) are on the order lines, and the order examples send them, so
@@ -1743,7 +1743,7 @@ Each PUT class also requires `ID`, and so do the response classes `OpportunityDa
 - **Task category and workflow GET.** Their section's URI says `/crm/task`, copied from the Task
   section; the requests follow the heading, `crm/taskcategory` and `crm/workflow`. Neither has a GET
   response example in the blueprint's parser, so the fixtures are read from the blueprint by hand.
-- **`EnityType`.** `crm/workflowstart` keeps the reference's misspelt query key.
+- **`EnityType`.** `crm/workflowstart` keeps the reference's misspelled query key.
 
 ## Webhooks
 
@@ -1814,18 +1814,18 @@ that follow hold for all of them.
   `ProductionRunsData` (`Runs`, `Warnings`), `ResourcesData`, `WorkCentersData` (`Workcenters`, with a
   PUT's `WarningMessage`), `ProductionOrderMessageData` (the `Message` of an undo or void),
   `ProductionOrderAttachmentData` and `ProductionOrderAttachmentsData`, `ProductionOrderReferenceData`
-  and `ProductionRunUndoData`. They are modelled from their examples, and `dto()` is the envelope.
+  and `ProductionRunUndoData`. They are modeled from their examples, and `dto()` is the envelope.
   The reference documents no model for the reference data's accounts, locations, paths, work centers
   and suspend reasons, a production order's runs and deliveries, an order's resource attachments, a
   run's warnings or a suspend reason's work center IDs, so each is a `list<mixed>`.
 - **Example keys outside the tables.** The examples send `Operations` and `Deliveries` where the
   ProductionOrder table says `ProductionOrderOperations` and `ProductionOrderDeliveryTo`; both are
-  modelled. They also send a production order's `StartUpdate`, a BOM's `ProductID`, `CreatedDate`,
+  modeled. They also send a production order's `StartUpdate`, a BOM's `ProductID`, `CreatedDate`,
   `CreatedBy` and `DeliveryTo`, an operation's `CycleTimeString`, `IsTracing`, `TotalCost` and (empty)
   `VariationComponents`, a production order component's `IsAlternative`, a run resource's and
   component's `Available`, an order list item's `TotalCount`, a work center location's
   `WorkCenterID` and `ParentLocationName`, and a BOM operation product's `ProductFamilyID`. Each is
-  modelled, optional, on the class that sends it.
+  modeled, optional, on the class that sends it.
 - **The family BOM.** `production/productionBOM` is documented twice, and the family's BOM takes the
   product BOM's fields with its own operation, `ProductFamilyProductionBomOperationData`, so it has
   its own BOM class, `ProductFamilyProductionBomData`, whose `Version`, `Name` and `IsDefault` are

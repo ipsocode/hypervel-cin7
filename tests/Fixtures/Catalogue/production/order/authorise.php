@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Data\Production\Order\ProductionOrdersData;
 use Ipsocode\Cin7\Requests\Production\Order\Authorise\PostProductionOrderAuthorise;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `production/order/authorise`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `production/order/authorise`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '38cddb52-9a81-4c07-9791-362936efa552';
 

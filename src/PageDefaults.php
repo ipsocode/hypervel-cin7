@@ -10,7 +10,7 @@ use InvalidArgumentException;
  * The `page`/`limit` defaults and bounds for list query strings, never keyed reads, deletes or
  * write bodies.
  *
- * @see docs/requests.md
+ * @see src/docs/requests.md
  */
 final class PageDefaults
 {

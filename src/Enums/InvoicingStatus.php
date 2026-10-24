@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * A purchase's combined invoice status: how much of it is invoiced, and whether it is credited.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum InvoicingStatus: string
 {

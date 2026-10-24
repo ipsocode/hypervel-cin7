@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
 /**
  * Sale Invoices, the `{SaleID, Invoices}` envelope every `sale/invoice` action answers with.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleInvoicesData extends Data implements WithResponse
 {

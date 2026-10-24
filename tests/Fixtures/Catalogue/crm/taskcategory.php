@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\Crm\TaskCategory\PostCrmTaskCategory;
 use Ipsocode\Cin7\Requests\Crm\TaskCategory\PutCrmTaskCategory;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `crm/taskcategory`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `crm/taskcategory`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '7e1e7cdc-eb4a-45d4-ae7f-e8999bb9dd8a';
 $uri = '/ExternalApi/v2/crm/taskcategory';

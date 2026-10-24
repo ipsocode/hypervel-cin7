@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * product family by `ProductFamilyID` or `ProductFamilySKU`. `BOMVariationComponentID` is required
  * when updating; the family's name, costing method and unit are read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomVariationComponentData extends Data
 {

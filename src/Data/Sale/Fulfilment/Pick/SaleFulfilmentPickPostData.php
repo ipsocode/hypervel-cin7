@@ -12,10 +12,10 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 /**
  * The body of `sale/fulfilment/pick` POST: the pick, whose `Status` POST takes as `DRAFT` or
  * `AUTHORISED`. Sending `AutoPickMode` (`AUTOPICK`) instead of a `Status` picks the task
- * automatically and authorises it, which the reference documents in prose only. The PUT body is
+ * automatically and authorizes it, which the reference documents in prose only. The PUT body is
  * `SaleFulfilmentPickPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentPickPostData extends AbstractSaleFulfilmentPickPackTaskData
 {

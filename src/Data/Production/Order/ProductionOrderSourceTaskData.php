@@ -10,7 +10,7 @@ use Hypervel\Data\Data;
 /**
  * ProductionOrderSourceTask, a sale task that produced the production order: read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderSourceTaskData extends Data
 {

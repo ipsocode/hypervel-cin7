@@ -14,7 +14,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * applies to. PUT adds a reason when `SuspendReasonID` is empty and changes it otherwise; `Reason`
  * is for a new one.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SuspendReasonData extends Data implements WithResponse
 {

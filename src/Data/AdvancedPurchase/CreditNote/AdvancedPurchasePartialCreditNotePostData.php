@@ -21,7 +21,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * empty GUID as `TaskID` to create a credit note. The response is
  * `AdvancedPurchaseCreditNotesData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePartialCreditNotePostData extends AbstractPurchaseCreditNoteData
 {

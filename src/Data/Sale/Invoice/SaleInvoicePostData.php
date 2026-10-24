@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * required have no default; an empty-GUID `TaskID` creates a new invoice. The PUT body is
  * `SaleInvoicePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleInvoicePostData extends AbstractSaleInvoiceData
 {

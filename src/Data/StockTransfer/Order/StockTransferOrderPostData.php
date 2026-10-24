@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\StockTransferOrderStatus;
  * The body of `stockTransfer/order` POST: the Stock Transfer Order table, which requires the
  * `TaskID` of the transfer, the `Status` and the `Lines`. The response is `StockTransferOrderData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTransferOrderPostData extends Data
 {

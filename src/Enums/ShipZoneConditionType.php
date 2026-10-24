@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * What a ship zone condition's range is measured in.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ShipZoneConditionType: string
 {

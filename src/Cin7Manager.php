@@ -13,8 +13,8 @@ use InvalidArgumentException;
  * serves every coroutine in a worker. Building reads config and does no I/O, so two coroutines
  * cannot interleave inside it, and the connectors are immutable, so sharing them is safe.
  *
- * @see docs/connector.md
- * @see docs/configuration.md
+ * @see src/docs/connector.md
+ * @see src/docs/configuration.md
  */
 final class Cin7Manager
 {

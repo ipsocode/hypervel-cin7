@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\PaymentTermMethod;
  * Every payment term needs its `Name`, so each child passes it to this constructor. Cin7 defaults
  * `IsActive` to `true` and `IsDefault` to `false` on POST.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractPaymentTermData extends Data
 {

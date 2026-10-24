@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 use Ipsocode\Cin7\Requests\PurchaseList\GetPurchaseList;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchaseList`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchaseList`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

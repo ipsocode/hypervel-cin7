@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Testing\Cin7Fake;
 /**
  * The queued job the schedule dispatches.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class PullJobTest extends SyncTestCase
 {

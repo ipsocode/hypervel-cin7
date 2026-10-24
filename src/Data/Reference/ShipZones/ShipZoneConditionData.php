@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\ShipZoneConditionType;
  * table requires the `ZoneConditionID`, but the examples send none for a condition they add, so it
  * stays optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ShipZoneConditionData extends Data
 {

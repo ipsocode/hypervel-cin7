@@ -13,7 +13,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
  * are optional here: a partial update leaves them as they are. The POST body is
  * `ShippingZonePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ShippingZonePutData extends AbstractShippingZoneData
 {

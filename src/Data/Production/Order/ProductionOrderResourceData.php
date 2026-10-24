@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\ResourceCostCalculationType;
  * or `ResourceCode`. `OrderResourceID` is required when updating; the resource's name and costs
  * are read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderResourceData extends Data
 {

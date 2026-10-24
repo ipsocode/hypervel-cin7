@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
 /**
  * ProductionBOMNote, a note of a BOM operation. `NoteID` is required when updating.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomNoteData extends Data
 {

@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * requires every field but the `ShortDesc`, the tax rule and the lists. The bodies of POST and PUT
  * are `ShippingZonePostData` and `ShippingZonePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ShippingZoneData extends AbstractShippingZoneData implements WithResponse
 {

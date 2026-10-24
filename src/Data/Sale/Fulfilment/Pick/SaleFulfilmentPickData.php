@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * Sale Fulfilment Pick, the response of every `sale/fulfilment/pick` action. The bodies of POST
  * and PUT are `SaleFulfilmentPickPostData` and `SaleFulfilmentPickPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentPickData extends AbstractSaleFulfilmentPickPackTaskData implements WithResponse
 {

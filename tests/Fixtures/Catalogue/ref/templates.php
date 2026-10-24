@@ -8,7 +8,7 @@ use Ipsocode\Cin7\Data\Ref\Templates\TemplateData;
 use Ipsocode\Cin7\Requests\Ref\Templates\GetTemplates;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/templates`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/templates`; tests/Catalogue.php merges every file's rows by kind.
 
 $uri = '/ExternalApi/v2/ref/templates';
 

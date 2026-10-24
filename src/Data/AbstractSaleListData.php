@@ -27,7 +27,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * Both tables require the fields this constructor takes; the optional fields declared here are
  * set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSaleListData extends Data
 {

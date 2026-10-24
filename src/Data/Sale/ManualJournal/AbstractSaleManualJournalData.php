@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * Every manual journal needs its `Status`, so each child passes it to this constructor; `Lines` is
  * set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSaleManualJournalData extends Data
 {

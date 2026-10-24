@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * ProductionOrderOperationProduct, a read-only input, output or finished product of a production
  * order operation; only its deletion is allowed.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderOperationProductData extends Data
 {

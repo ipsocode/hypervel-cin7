@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * or `ProductSKU`. `OrderComponentID` is required when updating; the product's name, availability,
  * costs, unit and type are read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderComponentData extends Data
 {

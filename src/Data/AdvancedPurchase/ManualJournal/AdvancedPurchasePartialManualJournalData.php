@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `Lines` are the purchase's `PurchaseManualJournalLineData`. The POST body is
  * `AdvancedPurchasePartialManualJournalPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePartialManualJournalData extends AbstractPurchaseManualJournalData
 {

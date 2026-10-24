@@ -12,7 +12,7 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
  * Lists keep Cin7's `Total`, `Page` and `<Thing>List` envelope and failures keep its Error Model,
  * so a test asserts on the keys the real API sends. Pass the responses to `Saloon::fake()`.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 final class Cin7Fake
 {

@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * ProductionRunOperationResourceCost, the cost of a resource's service product in a run operation:
  * required `RunCostID`, `ProductID` and `Cost`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationResourceCostData extends Data
 {

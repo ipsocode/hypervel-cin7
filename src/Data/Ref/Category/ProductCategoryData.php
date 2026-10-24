@@ -12,7 +12,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Product category, one entry of `CategoryList` in a `ref/category` list and the response of its POST and PUT: the table with
  * its `ID`. The bodies of POST and PUT are `ProductCategoryPostData` and `ProductCategoryPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductCategoryData extends AbstractProductCategoryData implements WithResponse
 {

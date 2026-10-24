@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\DepreciationMethod;
  * table with its `FixedAssetTypeID` and the read-only names of the linked accounts. The bodies of
  * POST and PUT are `FixedAssetTypePostData` and `FixedAssetTypePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FixedAssetTypeData extends AbstractFixedAssetTypeData implements WithResponse
 {

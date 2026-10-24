@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Enums;
  * How the `sale` GET returns the country of an address: as its name (`Regular`, Cin7's default)
  * or as a country code (`Code2` or `Code`; the reference does not say which codes).
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum CountryFormat: string
 {

@@ -17,7 +17,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * The reference types `InitialBalance` as String, but its example sends a number, so it takes
  * either.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class BankAccountData extends Data implements WithResponse
 {

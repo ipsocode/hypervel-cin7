@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\Journal\PostJournal;
 use Ipsocode\Cin7\Requests\Journal\PutJournal;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `journal`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `journal`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every journal requires.
 $fields = ['Status' => 'DRAFT', 'Currency' => 'USD', 'CurrencyConversionRate' => 50.0, 'EffectiveDate' => '2018-01-20T00:00:00'];

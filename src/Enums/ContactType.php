@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of a company contact, one of `me/contacts`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ContactType: string
 {

@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * The reference's table names the last two keys `TaxRule` and `Account`, but every example
  * sends `TaxRuleName` and `AccountCode`; those are the wire keys.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MoneyTaskLineData extends Data
 {

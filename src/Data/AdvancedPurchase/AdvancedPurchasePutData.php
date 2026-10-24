@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Data\AbstractPurchaseData;
  * PUT example sends none (the purchase keeps the one it has), so it is optional here. The POST body
  * is `AdvancedPurchasePostData`, and the response `AdvancedPurchaseData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePutData extends AbstractPurchaseData
 {

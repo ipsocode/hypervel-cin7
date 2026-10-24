@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * One case per behavior callers rely on.
  *
- * @see docs/requests.md
+ * @see src/docs/requests.md
  */
 class PageDefaultsTest extends TestCase
 {

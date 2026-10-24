@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\Purchase\Order\GetPurchaseOrder;
 use Ipsocode\Cin7\Requests\Purchase\Order\PostPurchaseOrder;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchase/order`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchase/order`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every order POST requires.
 $fields = ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'Memo' => '', 'Status' => 'DRAFT', 'Lines' => []];

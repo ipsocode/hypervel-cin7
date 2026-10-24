@@ -9,7 +9,7 @@ use Throwable;
 /**
  * What one pull of one module did.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 final readonly class PullResult
 {

@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * The fields of the Task Category table: the response of its endpoint and the body of its POST and PUT.
  * Each is a final child that adds its `ID`, or none. Every category needs its `Name`, so each child passes it to this constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractTaskCategoryData extends Data
 {

@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * `RelatedOperationID` or `RelatedOperationName`, one of which a write body needs; `RelationType`
  * is `1`. `ID` is required when updating.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomOperationLinkData extends Data
 {

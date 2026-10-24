@@ -198,7 +198,7 @@ use Workbench\App\Support\Cin7Payloads;
  * One row per request with a response body, from the per-path files under
  * `tests/Fixtures/Catalogue/`, plus the conventions every class in `src/Data/` is held to.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 class DataCatalogueTest extends TestCase
 {
@@ -286,7 +286,7 @@ class DataCatalogueTest extends TestCase
     }
 
     /**
-     * Every model is reached from a catalogue row: it is a `dto()` class or a body class, or a
+     * Every model is reached from a catalog row: it is a `dto()` class or a body class, or a
      * property of one of those, at any depth. The Error Model is read from failed responses.
      */
     public function testEveryDataClassIsReachedFromACatalogueRow(): void

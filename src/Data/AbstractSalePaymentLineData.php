@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * Model with the purchase's `PurchaseID` and `TaskID`. A field declared here is set through
  * `from()`, not the child's constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSalePaymentLineData extends Data
 {

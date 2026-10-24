@@ -22,9 +22,9 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * The model requires `InvoiceDate` and `InvoiceDueDate`, but the `advanced-purchase` POST, PUT and
  * DELETE examples embed an invoice that is `NOT AVAILABLE` with both `null`, so both are nullable,
  * for the responses, and `#[Required]`, which only a write body checks. Those examples also send
- * `InvoicingAndReceivingNumber`, which the model does not list; it is modelled, optional.
+ * `InvoicingAndReceivingNumber`, which the model does not list; it is modeled, optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseInvoiceData extends AbstractPurchaseInvoiceData
 {

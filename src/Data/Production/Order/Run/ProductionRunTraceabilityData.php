@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * ProductionRunTraceability, which used component batch went into which produced batch.
  * `TraceabilityID` is required when updating.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunTraceabilityData extends Data
 {

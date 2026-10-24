@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\WorkflowSkipHoliday;
 /**
  * Workflow Step, one entry of a workflow's `Steps`: a task to create, with its name and what to do on a holiday. The table's `ID` is in responses only, so it is optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WorkflowStepData extends Data
 {

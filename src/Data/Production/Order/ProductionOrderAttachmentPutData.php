@@ -10,7 +10,7 @@ use Hypervel\Data\Data;
 /**
  * The body of `production/order/attachment` PUT: the `AttachmentID` and whether it `IsProcessed`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderAttachmentPutData extends Data
 {

@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\ContactType;
  * Every contact needs its `Name`, so each child passes it to this constructor; the optional
  * fields declared here are set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractMeContactData extends Data
 {

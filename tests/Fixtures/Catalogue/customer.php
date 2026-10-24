@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\Customer\PostCustomer;
 use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `customer`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `customer`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every customer requires.
 $fields = ['Name' => 'ACME', 'Currency' => 'GBP', 'PaymentTerm' => '30 days', 'AccountReceivable' => '610', 'RevenueAccount' => '200', 'TaxRule' => 'Tax Exempt'];

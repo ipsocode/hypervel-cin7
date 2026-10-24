@@ -8,7 +8,7 @@ use Ipsocode\Cin7\Data\Ref\Account\Bank\BankAccountData;
 use Ipsocode\Cin7\Requests\Ref\Account\Bank\GetAccountBank;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/account/bank`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/account/bank`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

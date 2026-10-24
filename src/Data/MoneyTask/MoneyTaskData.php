@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\MoneyTaskType;
  * `TaskID`, which only PUT requires. The bodies of POST and PUT are `MoneyTaskPostData` and
  * `MoneyTaskPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MoneyTaskData extends AbstractMoneyTaskData implements WithResponse
 {

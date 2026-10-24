@@ -24,7 +24,7 @@ use Ipsocode\Cin7\Enums\RecordStatus;
  * `Addresses` and `Contacts` are the Supplier Address and Contact Models, which the customer
  * shares.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSupplierData extends Data
 {

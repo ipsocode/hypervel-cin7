@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pick\PostSaleFulfilmentPick;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pick\PutSaleFulfilmentPick;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/fulfilment/pick`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/fulfilment/pick`; tests/Catalogue.php merges every file's rows by kind.
 
 $line = ['SKU' => 'Bread', 'Quantity' => 1, 'Location' => 'Main Warehouse'];
 $lineSent = ['SKU' => 'Bread', 'Quantity' => 1.0, 'Location' => 'Main Warehouse'];

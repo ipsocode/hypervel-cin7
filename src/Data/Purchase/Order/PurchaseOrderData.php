@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * AVAILABLE` or `VOIDED` with a `null` `Memo`, so it is nullable and `#[Required]` too. The POST
  * body is `PurchaseOrderPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseOrderData extends AbstractPurchaseOrderData implements WithResponse
 {

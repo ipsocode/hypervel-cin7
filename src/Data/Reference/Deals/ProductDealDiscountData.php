@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\DiscountRuleType;
  * `DiscountName`, and the brands, categories, tags and products it applies to. `DiscountType` is the
  * rule's type. The table lists `BuyMore` twice; it is one field.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealDiscountData extends Data
 {

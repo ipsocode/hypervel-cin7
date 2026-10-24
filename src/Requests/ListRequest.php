@@ -15,7 +15,7 @@ use Ipsocode\Cin7\PageDefaults;
 /**
  * Lists an endpoint's records.
  *
- * @see docs/requests.md
+ * @see src/docs/requests.md
  *
  * @template TItem of Data&WithResponse
  * @extends Cin7Request<list<TItem>>

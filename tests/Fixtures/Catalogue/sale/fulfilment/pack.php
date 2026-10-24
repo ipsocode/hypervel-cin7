@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PostSaleFulfilmentPack;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack\PutSaleFulfilmentPack;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/fulfilment/pack`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/fulfilment/pack`; tests/Catalogue.php merges every file's rows by kind.
 
 $line = ['SKU' => 'Bread', 'Quantity' => 1, 'Location' => 'Main Warehouse', 'Box' => 'Box 1'];
 $lineSent = ['SKU' => 'Bread', 'Quantity' => 1.0, 'Location' => 'Main Warehouse', 'Box' => 'Box 1'];

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\ProductionRunCoManTaskType;
 /**
  * ProductionRunOperationCoManTask, a read-only task started by a co-manufacturing operation.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationCoManTaskData extends Data
 {

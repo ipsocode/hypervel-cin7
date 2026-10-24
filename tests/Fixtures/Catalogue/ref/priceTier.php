@@ -8,7 +8,7 @@ use Ipsocode\Cin7\Data\Ref\PriceTier\PriceTierData;
 use Ipsocode\Cin7\Requests\Ref\PriceTier\GetPriceTier;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/priceTier`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/priceTier`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

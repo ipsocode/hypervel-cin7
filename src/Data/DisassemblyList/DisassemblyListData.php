@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\DisassemblyStatus;
 /**
  * Disassembly List, one entry of `Disassemblies`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class DisassemblyListData extends Data implements WithResponse
 {

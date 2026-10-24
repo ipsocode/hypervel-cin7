@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseMa
 
 /**
  * `advanced-purchase/manualJournal`, an advanced purchase's manual journals. A POST can be sent
- * even when the journal is authorised; a line Cin7 posted (`IsSystem` `true`) cannot be changed or
+ * even when the journal is authorized; a line Cin7 posted (`IsSystem` `true`) cannot be changed or
  * deleted.
  *
  * @extends BaseResource<Cin7Connector>

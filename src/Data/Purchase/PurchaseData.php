@@ -24,15 +24,15 @@ use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
  * Available Fields for Purchase, the response of `purchase` GET, POST, PUT and DELETE: a simple
  * purchase with its order, stock received, invoice, credit note and manual journal. `Status` is a
  * string, as on the purchase lists, whose examples send a status the Available Purchase Statuses
- * lack. `OrderDate` is in every example and in no Purchase table; it is modelled as the purchase
+ * lack. `OrderDate` is in every example and in no Purchase table; it is modeled as the purchase
  * lists' `OrderDate`.
  *
  * The invoice is `purchase/invoice`'s `PurchaseInvoiceData`, which reads the `null`
- * `InvoiceDueDate` and the misspelt `InvocieNumber` the examples embed. The examples embed the
+ * `InvoiceDueDate` and the misspelled `InvocieNumber` the examples embed. The examples embed the
  * credit note in a shape of its own (`Unstock` as `{Status, Lines}`), so it is
  * `SimplePurchaseCreditNoteData`, not the `purchase/creditnote` class.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseData extends AbstractPurchaseData implements WithResponse
 {

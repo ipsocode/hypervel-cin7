@@ -10,7 +10,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
  * The body of `ref/carrier` PUT: the table with the `CarrierID` of the carrier to change, which PUT
  * requires. The POST body is `CarrierPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CarrierPutData extends AbstractCarrierData
 {

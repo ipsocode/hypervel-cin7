@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Data\AbstractPurchaseStockLineData;
  * them out of the body. Like every object with a `ProductID`, it carries the product fields, which
  * the `advanced-purchase` examples send.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePutAwayLineData extends AbstractPurchaseStockLineData
 {

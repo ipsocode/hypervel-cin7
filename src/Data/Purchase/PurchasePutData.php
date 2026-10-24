@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractPurchaseData;
  * The body of `purchase` PUT: the Purchase POST/PUT Attributes with the `ID` PUT requires. The
  * POST body is `PurchasePostData`, and the response `PurchaseData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchasePutData extends AbstractPurchaseData
 {

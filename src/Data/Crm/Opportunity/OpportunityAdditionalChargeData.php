@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * description, with its quantity, amount, tax and total. The table requires the `ID`, but a charge
  * being added to an opportunity has none yet, so it stays optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class OpportunityAdditionalChargeData extends Data
 {

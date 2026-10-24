@@ -12,7 +12,7 @@ use Hypervel\Data\Attributes\Validation\Max;
  * row, `AdditionalAttribute#`, with no length; the Product table and the Additional Attribute
  * Model give each 256 characters, and that limit applies to all of them.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 trait HasAdditionalAttributes
 {

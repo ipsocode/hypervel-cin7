@@ -12,7 +12,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Price Tier, one entry of `PriceTiers`: a tier's code, 1 to 10, and its name. A product's
  * `PriceTiers` is a different thing, a map of these names to prices.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PriceTierData extends Data implements WithResponse
 {

@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * How a fixed asset type averages depreciation over a period.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum AveragingMethod: string
 {

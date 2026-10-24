@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * out the `InvoiceDate` and `InvoiceDueDate` the table requires, so they are optional here. An
  * empty collection deletes the existing records, so set one only to delete on purpose.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleInvoicePutData extends AbstractSaleInvoiceData
 {

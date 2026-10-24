@@ -25,7 +25,7 @@ use Ipsocode\Cin7\Concerns\HasProductFields;
  * and `LocationID` itself: the Purchase Stock and Advanced Purchase Put Away Line Models require
  * one of them, and the Advanced Purchase Stock Line Model neither.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractPurchaseStockLineData extends Data
 {

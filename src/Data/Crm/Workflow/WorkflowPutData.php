@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\WorkflowDueDaysType;
  * The body of PUT: the table with the `ID` of the record to change, which PUT requires. The POST
  * body is `WorkflowPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WorkflowPutData extends AbstractWorkflowData
 {

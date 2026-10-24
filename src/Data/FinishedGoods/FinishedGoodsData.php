@@ -20,7 +20,7 @@ use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
  * lines, its transactions and any `Errors` raised while a POST ran. The bodies of POST and PUT are
  * `FinishedGoodsPostData` and `FinishedGoodsPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FinishedGoodsData extends AbstractFinishedGoodsData implements WithResponse
 {

@@ -10,7 +10,7 @@ namespace Workbench\App\Support;
  *
  * The list envelopes and the Error Model are `Ipsocode\Cin7\Testing\Cin7Fake`'s, which ships.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 final class Cin7Payloads
 {

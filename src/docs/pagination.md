@@ -2,7 +2,7 @@
 
 A [`ListRequest`](requests.md#the-bases) is the only paginatable
 request. `Cin7Connector` implements Saloon's `HasPagination`, and its
-`paginate()` returns a [`Cin7Paginator`](../src/Pagination/Cin7Paginator.php)
+`paginate()` returns a [`Cin7Paginator`](../Pagination/Cin7Paginator.php)
 that reads Cin7's list envelope and works out the last page from it, so a
 listing can walk every page or send them all at once through the framework's
 coroutine pool. A resource's own `paginate()` method, such as
@@ -136,4 +136,4 @@ request declares `HasRequestPagination`, so `Cin7Paginator` is the only
 paginator the connector needs.
 
 The behavior above is pinned by
-[`Cin7PaginatorTest`](../tests/Feature/Pagination/Cin7PaginatorTest.php).
+[`Cin7PaginatorTest`](../../tests/Feature/Pagination/Cin7PaginatorTest.php).

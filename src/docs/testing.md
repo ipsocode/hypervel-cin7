@@ -6,7 +6,7 @@ own suite is put together: what is a Unit test and what is a Feature test,
 where the test environment comes from, why the rate-limit tests call the
 connector's hooks directly, and what the Workbench application is for. The
 commands that run the suite and the CI checks are in
-[CONTRIBUTING.md](../CONTRIBUTING.md).
+[CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## Testing an application that uses the package
 
@@ -47,7 +47,7 @@ first when a later phase must assert on its own requests alone.
   `workbench/fixtures/`, one folder per API path: `Cin7Payloads::load('ref/tax',
   'get.response')` reads `workbench/fixtures/ref/tax/get.response.json`, and named helpers
   such as `Cin7Payloads::taxList()` wrap the older ones. The `DataCatalogueShard*Test` classes assert each
-  `dto()` round-trips its fixture, so every key is modelled under its wire name. Testbench does not auto-discover
+  `dto()` round-trips its fixture, so every key is modeled under its wire name. Testbench does not auto-discover
   `Hypervel\Data\DataServiceProvider`, so `testbench.yaml` lists it, as it does Saloon's.
 - **Nothing to reset.** The package keeps no static state, so there is nothing
   to register for the framework's between-test reset. The mock client lives on
@@ -117,7 +117,7 @@ or the container fails outright. The line follows what the code touches, not
 how simple it looks: the request classes read `config('cin7.retry.*')` in their
 constructor, so their tests are Feature tests.
 
-Feature tests extend [`tests/TestCase.php`](../tests/TestCase.php), which
+Feature tests extend [`tests/TestCase.php`](../../tests/TestCase.php), which
 provides `connector()` (the connector as the container resolves it, built from
 config) and `pendingRequestFor()` (a `PendingRequest` assembled the way Saloon
 assembles one, for the rate-limit hooks, defaulting to a `GetCustomer`
@@ -131,16 +131,16 @@ live Cin7 API. The request tests assert on the `PendingRequest` the connector
 built (headers, URL, query and body as they would have gone out) rather than on
 the request object's own accessors.
 
-### The catalogue
+### The catalog
 
 The `RequestCatalogueShard*Test`, `ResourceCatalogueShard*Test` and `DataCatalogueShard*Test`
 classes run the same assertions over one row per request, resource method and data class, and
 `RequestCatalogueTest`, `ResourceCatalogueTest` and `DataCatalogueTest` keep the tests that read
-the whole catalogue (the "nothing is left out" checks and the conventions). The rows live in one
+the whole catalog (the "nothing is left out" checks and the conventions). The rows live in one
 file per API path under `tests/Fixtures/Catalogue/`: `sale/invoice.php` holds the rows for
 `sale/invoice`, and `moneyTask.php` those of `moneyOperation`, which the package names after
 the Money Task. Each file returns its rows by kind, and
-[`Catalogue::rows()`](../tests/Catalogue.php) merges every file's rows of a kind:
+[`Catalogue::rows()`](../../tests/Catalogue.php) merges every file's rows of a kind:
 
 | Kind | A row is |
 |---|---|
@@ -169,8 +169,8 @@ with the one exception below:
 
 | File | Applied to |
 |---|---|
-| [`testbench.yaml`](../testbench.yaml), `env` | the Testbench CLI: `composer test`, `vendor/bin/testbench` |
-| [`phpunit.xml`](../phpunit.xml), `<php><env>` | PHPUnit test methods, which Testbench's `env` block does not reach |
+| [`testbench.yaml`](../../testbench.yaml), `env` | the Testbench CLI: `composer test`, `vendor/bin/testbench` |
+| [`phpunit.xml`](../../phpunit.xml), `<php><env>` | PHPUnit test methods, which Testbench's `env` block does not reach |
 
 Both spell out every `CIN7_*` variable except `CIN7_RATE_STORE`, so
 `config/cin7.php`'s `env()` calls are under test, not only its defaults.
@@ -309,7 +309,7 @@ create`, set `REDIS_CLUSTER_HOSTS_AND_PORTS` to their `host:port` list instead o
 
 Saloon enforces rate limits only when no fake matched, and records cooldowns
 only for responses that came off the wire, so a faked send exercises neither.
-[`RateLimitTest`](../tests/Feature/Connector/RateLimitTest.php) therefore calls
+[`RateLimitTest`](../../tests/Feature/Connector/RateLimitTest.php) therefore calls
 the `HasRateLimits` accessors directly, with a `PendingRequest` from
 `pendingRequestFor()`:
 
@@ -334,7 +334,7 @@ limiter reads and the loop ends:
 
 ### Retry tests
 
-[`RetryTest`](../tests/Feature/Connector/RetryTest.php) calls `Sleep::fake()` in
+[`RetryTest`](../../tests/Feature/Connector/RetryTest.php) calls `Sleep::fake()` in
 `setUp()` and `Sleep::fake(false)` in `tearDown()`. The real policy waits five
 seconds between attempts; faked, the waits take no time and become assertable:
 
@@ -359,9 +359,9 @@ the seam a consuming application has:
 
 | Piece | Purpose |
 |---|---|
-| [`CustomerDirectory`](../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's default connector resolves as a dependency of an application's own service, not only through `$app->make()`. |
-| [`Cin7Payloads`](../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies. `load($path, $name)` reads the V2 reference's examples from `workbench/fixtures/<api path>/<verb>.<request\|response>.json`, and named helpers wrap them: `sale()` (the Sale example, keyed by `ID`), `saleList()`, `saleInvoices()`, `saleInvoicePost()`, `salePayments()` and the rest, plus `customer()`, one record for a list's items. The list envelopes and the Error Model are not here: they are `Cin7Fake`'s, which ships (above), so the suite fakes with what an application does and the coverage gate covers it. |
-| [`cin7:customers`](../workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for listing live customers by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
+| [`CustomerDirectory`](../../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's default connector resolves as a dependency of an application's own service, not only through `$app->make()`. |
+| [`Cin7Payloads`](../../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies. `load($path, $name)` reads the V2 reference's examples from `workbench/fixtures/<api path>/<verb>.<request\|response>.json`, and named helpers wrap them: `sale()` (the Sale example, keyed by `ID`), `saleList()`, `saleInvoices()`, `saleInvoicePost()`, `salePayments()` and the rest, plus `customer()`, one record for a list's items. The list envelopes and the Error Model are not here: they are `Cin7Fake`'s, which ships (above), so the suite fakes with what an application does and the coverage gate covers it. |
+| [`cin7:customers`](../../workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for listing live customers by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
 
 To prove credentials, use the package's own `cin7:check`
 (`vendor/bin/testbench cin7:check`), which ships, sends only `GET me` and

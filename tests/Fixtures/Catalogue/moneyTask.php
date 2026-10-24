@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\MoneyTask\PostMoneyTask;
 use Ipsocode\Cin7\Requests\MoneyTask\PutMoneyTask;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `moneyOperation`, the Money Task resource; tests/Catalogue.php merges every
+// The catalog rows for `moneyOperation`, the Money Task resource; tests/Catalogue.php merges every
 // file's rows by kind.
 
 // The fields every money task requires, and every money task line.

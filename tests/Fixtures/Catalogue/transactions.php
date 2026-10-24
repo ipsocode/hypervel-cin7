@@ -8,7 +8,7 @@ use Ipsocode\Cin7\Data\Transactions\TransactionData;
 use Ipsocode\Cin7\Requests\Transactions\GetTransactions;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `transactions`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `transactions`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

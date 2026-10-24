@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PutSaleInvoice;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/invoice`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/invoice`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

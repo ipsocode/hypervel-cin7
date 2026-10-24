@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\Product\ProductSupplierData;
  * POST and PUT, which are the same. The reference has no table of its own for it: each is a
  * `ProductSupplierData`, which here names its product by `ProductID` or `ProductSKU`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductSuppliersData extends Data implements WithResponse
 {

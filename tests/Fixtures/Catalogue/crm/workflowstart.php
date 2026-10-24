@@ -7,7 +7,7 @@ use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Enums\TaskEntityType;
 use Ipsocode\Cin7\Requests\Crm\WorkflowStart\PostCrmWorkflowStart;
 
-// The catalogue rows for `crm/workflowstart`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `crm/workflowstart`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '66364c4f-0480-4db0-8848-d224fffd543a';
 $entity = 'f0b0be7b-0c9b-441c-8c0c-fe0b40697f3f';

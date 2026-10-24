@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * The body of `sale/manualJournal` POST: the Sale Manual Journal table with the `SaleID` it
  * requires and a `Status` of `DRAFT` or `AUTHORISED`. The response is `SaleManualJournalData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleManualJournalPostData extends AbstractSaleManualJournalData
 {

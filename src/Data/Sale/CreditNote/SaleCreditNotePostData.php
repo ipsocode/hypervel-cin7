@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * Sale Credit Note POST Model, the body of `sale/creditnote` POST. The fields the reference marks
  * required have no default; an empty-GUID `TaskID` creates a new credit note.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleCreditNotePostData extends AbstractSaleCreditNoteData
 {

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Data\AbstractLineData;
  * Sale Quote Line Model: the line fields of `AbstractLineData`, the `AverageCost` and `Comment`
  * the quote table alone requires, and the line `Total`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleQuoteLineData extends AbstractLineData
 {

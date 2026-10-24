@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Ref\Account\PostAccount;
 use Ipsocode\Cin7\Requests\Ref\Account\PutAccount;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/account`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/account`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every account requires.
 $fields = ['Code' => '001', 'Name' => 'Accounts Payable test', 'Type' => 'CURRLIAB', 'Status' => 'ACTIVE'];
