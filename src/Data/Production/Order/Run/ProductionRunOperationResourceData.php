@@ -15,7 +15,7 @@ use Hypervel\Data\Data;
  * copied from the field above it: it is a code, a string. `Available` is in the examples, not the
  * table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationResourceData extends Data
 {

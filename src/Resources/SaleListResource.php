@@ -31,7 +31,7 @@ final class SaleListResource extends ListResource
      * @param null|DateTimeInterface|string $updatedSince only sales changed after this time
      * @param null|DateTimeInterface|string $updatedUntil only sales changed before this time
      * @param null|DateTimeInterface|string $shipBy only sales to ship by this date whose shipment
-     *                                              is not authorised
+     *                                              is not authorized
      * @param null|TaskStatus $quoteStatus only sales with this quote status
      * @param null|OrderStatus $orderStatus only sales with this order status
      * @param null|PickingStatus $combinedPickStatus only sales with this combined pick status
@@ -41,7 +41,7 @@ final class SaleListResource extends ListResource
      * @param null|TaskStatus $creditNoteStatus only sales with this credit note status
      * @param null|string $externalId only sales with this external ID
      * @param null|SaleStatus $status only sales with this status
-     * @param null|bool $readyForShipping only sales whose pack is authorised and shipment is not
+     * @param null|bool $readyForShipping only sales whose pack is authorized and shipment is not
      * @param null|string $orderLocationId only sales ordered from this location
      */
     public function get(
@@ -97,7 +97,7 @@ final class SaleListResource extends ListResource
      * @param null|DateTimeInterface|string $updatedSince only sales changed after this time
      * @param null|DateTimeInterface|string $updatedUntil only sales changed before this time
      * @param null|DateTimeInterface|string $shipBy only sales to ship by this date whose shipment
-     *                                              is not authorised
+     *                                              is not authorized
      * @param null|TaskStatus $quoteStatus only sales with this quote status
      * @param null|OrderStatus $orderStatus only sales with this order status
      * @param null|PickingStatus $combinedPickStatus only sales with this combined pick status
@@ -107,7 +107,7 @@ final class SaleListResource extends ListResource
      * @param null|TaskStatus $creditNoteStatus only sales with this credit note status
      * @param null|string $externalId only sales with this external ID
      * @param null|SaleStatus $status only sales with this status
-     * @param null|bool $readyForShipping only sales whose pack is authorised and shipment is not
+     * @param null|bool $readyForShipping only sales whose pack is authorized and shipment is not
      * @param null|string $orderLocationId only sales ordered from this location
      */
     public function paginate(

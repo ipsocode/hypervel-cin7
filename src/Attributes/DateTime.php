@@ -13,7 +13,7 @@ use Hypervel\Data\Support\Validation\ValidationPath;
  * optional `Z`, as the reference's Date Format section and examples write it. An offset is
  * rejected, since Cin7 reads every date as UTC.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 final class DateTime extends CustomValidationAttribute

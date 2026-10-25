@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Concerns\HasProductionProductFields;
  * sends it, but the operation-complete request example leaves it out of three of its four finished
  * products, so it is nullable and `#[Required]`, which only a write body checks.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOutputData extends Data
 {

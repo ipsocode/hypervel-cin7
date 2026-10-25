@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\DiscountLineType;
  * `MaxValue` + 0.0001. `OrderExceeds` is required when `DiscountType` is `FreeShipping`. The table
  * requires the `ID`, but the POST example sends none for a line it adds, so it is optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class DiscountLineData extends Data
 {

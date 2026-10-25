@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Enums;
 
 /**
- * How Cin7 authorises itself to a webhook's callback URL.
+ * How Cin7 authorizes itself to a webhook's callback URL.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum WebhookAuthorizationType: string
 {

@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\StockTransferOrderStatus;
  * transfer embeds carries none, so it is nullable and `#[Required]`, which only a write body
  * checks. The body of the POST is `StockTransferOrderPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTransferOrderData extends Data implements WithResponse
 {

@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\GetAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\PostAdvancedPurchaseInvoice;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `advanced-purchase/invoice`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `advanced-purchase/invoice`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every advanced purchase invoice POST requires.
 $fields = ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'CombineAdditionalCharges' => false, 'InvoiceDate' => '2018-04-23T00:00:00', 'InvoiceDueDate' => '2018-05-23T00:00:00', 'Status' => 'DRAFT', 'Lines' => []];

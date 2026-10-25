@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Concerns\HasCustomFields;
  * product, the location and `WIPDate` are redeclared on the POST body, which carries their rules.
  * `Bin` is typed Decimal in the tables, copied from the field above it: it is the bin's name.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractFinishedGoodsData extends Data
 {

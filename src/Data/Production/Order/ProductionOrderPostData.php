@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * `RequiredByDate` for `FromRequiredBackward`. `BOMVersion` and `IsIgnoreLeadTime` are in the
  * example, not the table. The PUT body is `ProductionOrderPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderPostData extends AbstractProductionOrderData
 {

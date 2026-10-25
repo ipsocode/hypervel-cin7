@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
 /**
  * Inventory Write-Off List, one entry of `InventoryWriteOffs`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class InventoryWriteOffListData extends Data implements WithResponse
 {

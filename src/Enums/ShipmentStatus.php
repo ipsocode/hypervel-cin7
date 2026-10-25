@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The status of a fulfilment's ship stage.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ShipmentStatus: string
 {

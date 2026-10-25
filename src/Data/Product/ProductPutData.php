@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\ProductStatus;
  * The body of `product` PUT: the Product table with the `ID` PUT requires, and no `Type`, which
  * is read-only for PUT. The POST body is `ProductPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductPutData extends AbstractProductData
 {

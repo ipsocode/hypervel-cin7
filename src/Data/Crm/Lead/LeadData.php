@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\LeadStatus;
  * response examples leave out, so it is nullable and `#[Required]`, which only a write body checks.
  * The bodies of POST and PUT are `LeadPostData` and `LeadPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class LeadData extends AbstractLeadData implements WithResponse
 {

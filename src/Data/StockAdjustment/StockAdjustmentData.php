@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * stock) and the transactions they created. The bodies of POST and PUT are
  * `StockAdjustmentPostData` and `StockAdjustmentPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockAdjustmentData extends AbstractStockAdjustmentData implements WithResponse
 {

@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The kind of task a transaction belongs to.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum TransactionType: string
 {

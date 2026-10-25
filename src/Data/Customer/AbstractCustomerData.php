@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Data\Other\ProductPriceData;
  * `AdditionalAttribute1` to `AdditionalAttribute10`. The table types `TaxNumber` as `Int`, but
  * every example has a string or `null`, so it is a nullable string.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractCustomerData extends Data
 {

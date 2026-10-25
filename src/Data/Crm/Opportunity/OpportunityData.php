@@ -12,7 +12,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Opportunity, one entry of a response of its endpoint: the table with its `ID`, which every
  * response sends. The bodies of POST and PUT are `OpportunityPostData` and `OpportunityPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class OpportunityData extends AbstractOpportunityData implements WithResponse
 {

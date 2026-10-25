@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Requests\Purchase\PostPurchase;
 use Ipsocode\Cin7\Requests\Purchase\PutPurchase;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchase`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchase`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every purchase write requires, and a supplier.
 $fields = ['Supplier' => 'ABPA', 'Approach' => 'INVOICE', 'Location' => 'Main Warehouse'];

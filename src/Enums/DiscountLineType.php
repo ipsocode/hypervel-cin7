@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * What a discount line does to the price.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum DiscountLineType: string
 {

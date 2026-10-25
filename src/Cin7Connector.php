@@ -62,7 +62,7 @@ use UnitEnum;
  * It holds only readonly values, all set in the constructor, so one singleton per worker is
  * shared across coroutines.
  *
- * @see docs/connector.md
+ * @see src/docs/connector.md
  */
 final class Cin7Connector extends Connector implements HasPagination
 {

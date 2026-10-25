@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\StockTransferStatus;
  * auto-generated `Number`, its `Order` and `LastModifiedOn`. The bodies of POST and PUT are
  * `StockTransferPostData` and `StockTransferPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTransferData extends AbstractStockTransferData implements WithResponse
 {

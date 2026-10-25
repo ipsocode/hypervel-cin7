@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Enums\ShipmentStatus;
  * or `AUTHORISED`, so each child passes them to this constructor. A line names its box `Box`, not
  * `Boxes` as a response does.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSaleFulfilmentShipTaskData extends Data
 {

@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * The body of `stockadjustment` POST: the Stock Adjustment POST/PUT table without the `TaskID`
  * Cin7 assigns. A POST takes `DRAFT` or `COMPLETED`. The PUT body is `StockAdjustmentPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockAdjustmentPostData extends AbstractStockAdjustmentData
 {

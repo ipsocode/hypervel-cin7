@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
 /**
  * Transaction Stock Line Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class TransactionStockLineData extends Data
 {

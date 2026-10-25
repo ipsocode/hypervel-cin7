@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\Ref\AttributeSet\PostAttributeSet;
 use Ipsocode\Cin7\Requests\Ref\AttributeSet\PutAttributeSet;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/attributeset`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/attributeset`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every attribute set requires on a write: its name and its first attribute.
 $first = ['Attribute1Name' => 'Colour', 'Attribute1Type' => 'List', 'Attribute1Values' => 'Red, Blue'];

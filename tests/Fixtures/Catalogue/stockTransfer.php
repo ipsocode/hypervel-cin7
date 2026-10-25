@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Requests\StockTransfer\PostStockTransfer;
 use Ipsocode\Cin7\Requests\StockTransfer\PutStockTransfer;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `stockTransfer`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `stockTransfer`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every stock transfer requires, the locations a write needs, and a line to send.
 $fields = ['Status' => 'DRAFT', 'CompletionDate' => '2017-12-19T00:00:00', 'Lines' => [['SKU' => 'Bread', 'TransferQuantity' => 100]]];

@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\Other\AttachmentLineData;
  * Purchase Attachments, the `{TaskID, Lines}` envelope every `purchase/attachment` action answers
  * with; `TaskID` is the purchase's ID. The POST body is `PurchaseAttachmentPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseAttachmentsData extends Data implements WithResponse
 {

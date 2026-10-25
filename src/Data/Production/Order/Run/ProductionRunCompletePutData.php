@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * The body of `production/order/run/complete` PUT: the run to complete and its `FinishedProducts`,
  * as received.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunCompletePutData extends Data
 {

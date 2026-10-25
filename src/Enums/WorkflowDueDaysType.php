@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * What a workflow step's days are counted from.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum WorkflowDueDaysType: string
 {

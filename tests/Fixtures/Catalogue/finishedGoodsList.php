@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
 use Ipsocode\Cin7\Requests\FinishedGoodsList\GetFinishedGoodsList;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `finishedGoodsList`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `finishedGoodsList`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

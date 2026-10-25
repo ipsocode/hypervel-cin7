@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Sync\SyncConfig;
 /*
  * The table the sync writes every Cin7 record to. Loaded only when `cin7.sync.enabled` is true.
  *
- * See docs/sync.md.
+ * See src/docs/sync.md.
  */
 return new class extends Migration {
     public function up(): void

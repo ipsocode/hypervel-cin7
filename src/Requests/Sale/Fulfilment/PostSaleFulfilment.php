@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
  * `POST sale/fulfilment`, body is a `SaleFulfilmentsData` with the `SaleID` of a sale whose order
- * is authorised; it starts a new fulfilment, and the response is the sale's fulfilments.
+ * is authorized; it starts a new fulfilment, and the response is the sale's fulfilments.
  *
  * @extends WriteRequest<SaleFulfilmentsData>
  */

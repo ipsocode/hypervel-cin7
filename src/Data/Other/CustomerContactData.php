@@ -15,7 +15,7 @@ use Hypervel\Data\Data;
  * The reference's examples also carry `JobTitle` and the owner's `CustomerID` or `SupplierID` on
  * each contact.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomerContactData extends Data
 {

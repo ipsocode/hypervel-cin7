@@ -14,7 +14,7 @@ use Hypervel\Data\Data;
  * consume its components, to complete it `WithoutOutput` and to `AutoGenerateBatchSerialNumbers`,
  * a `ManualEndDate` and its `FinishedProducts`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationCompletePutData extends Data
 {

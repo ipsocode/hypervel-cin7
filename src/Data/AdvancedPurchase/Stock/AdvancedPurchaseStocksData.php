@@ -15,7 +15,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * `advanced-purchase/stock` action answers with: the purchase's stock receiving tasks. No table
  * documents it, only the examples, so `StockReceiving` is optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseStocksData extends Data implements WithResponse
 {

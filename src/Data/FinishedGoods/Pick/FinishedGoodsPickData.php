@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
  * the accounts and dates it is completed with. POST takes `AUTHORISED`, `IN PROGRESS` or
  * `COMPLETED` as its `Status`; the `CompletionDate` is required.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FinishedGoodsPickData extends Data implements WithResponse
 {

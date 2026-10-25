@@ -20,7 +20,7 @@ use Workbench\App\Support\Cin7Payloads;
  * A body carrying Cin7's Error Model, `{ErrorCode, Exception}`, fails the request whatever its
  * status, so `json()` and `dto()` never see it.
  *
- * @see docs/requests.md
+ * @see src/docs/requests.md
  */
 class ErrorModelTest extends TestCase
 {

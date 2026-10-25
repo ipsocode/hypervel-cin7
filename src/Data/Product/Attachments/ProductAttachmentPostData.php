@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * product, given as base64 `Content` or as a `FileDownloadUrl` Cin7 fetches it from; a body with
  * neither fails validation before it is sent. `IsDefault` makes an image the default one.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductAttachmentPostData extends Data
 {

@@ -15,7 +15,7 @@ use Hypervel\Data\Data;
  * Every deal needs its `Name`, so each child passes it to this constructor; the optional fields
  * declared here are set through `from()`. `CouponCodes` is a string, as the table says.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractProductDealData extends Data
 {

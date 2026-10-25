@@ -20,7 +20,7 @@ use Ipsocode\Cin7\Support\Jitter;
 /**
  * Base for every Cin7 request: sets the throttling retry policy.
  *
- * @see docs/requests.md
+ * @see src/docs/requests.md
  *
  * @template TDto
  * @extends Request<TDto>

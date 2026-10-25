@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\DayOfWeek;
  * FactoryCalendarDay, one day of a factory calendar's week. `StartTime`, `EndTime` and the break
  * times are minutes, 0 to 1440; `Capacity` is read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FactoryCalendarDayData extends Data
 {

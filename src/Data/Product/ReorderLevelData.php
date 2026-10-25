@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * Reorder Level Model, one entry of a product's `ReorderLevels`. It needs its `PickZones`, and a
  * location named by `LocationID` or `LocationName`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ReorderLevelData extends Data
 {

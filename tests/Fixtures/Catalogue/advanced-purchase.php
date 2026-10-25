@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\PostAdvancedPurchase;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAdvancedPurchase;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `advanced-purchase`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `advanced-purchase`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every advanced purchase POST requires, and a supplier.
 $fields = ['Supplier' => 'ABPA', 'Approach' => 'STOCK', 'Location' => 'Main Warehouse'];

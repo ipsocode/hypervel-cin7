@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\ResourceType;
  * the constructor takes; each is a final child that adds the `Name`, `ResourceID` and `Code` rules
  * its verb has.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractResourceData extends Data
 {

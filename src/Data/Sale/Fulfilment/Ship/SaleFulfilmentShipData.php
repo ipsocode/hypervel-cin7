@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Enums\ShipmentStatus;
  * `#[Required]`, which only a write body checks. The bodies of POST and PUT are
  * `SaleFulfilmentShipPostData` and `SaleFulfilmentShipPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentShipData extends Data implements WithResponse
 {

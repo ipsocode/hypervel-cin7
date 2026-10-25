@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\Sale\Fulfilment\GetSaleFulfilment;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\PostSaleFulfilment;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/fulfilment`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/fulfilment`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

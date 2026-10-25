@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Data\AbstractPurchaseListData;
  * List's, field for field, but lists two more types, `Purchase Credit Note` and `Credit Note`,
  * which `PurchaseType` has; so every field is in the parent.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseCreditNoteListData extends AbstractPurchaseListData implements WithResponse
 {

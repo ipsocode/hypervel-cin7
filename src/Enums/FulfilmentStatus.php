@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The status of a sale's fulfilment.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum FulfilmentStatus: string
 {

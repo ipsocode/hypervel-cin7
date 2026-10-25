@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 /**
- * `PUT sale/fulfilment/pack`, body is a `SaleFulfilmentPackData`, which replaces an unauthorised
+ * `PUT sale/fulfilment/pack`, body is a `SaleFulfilmentPackData`, which replaces an unauthorized
  * pack; the response is the saved pack.
  *
  * @extends WriteRequest<SaleFulfilmentPackData>

@@ -14,7 +14,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * with its `Type`, `Name` and the email subject and BCC address it carries. The reference has no POST
  * or PUT, and requires none of the fields.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class TemplateData extends Data implements WithResponse
 {

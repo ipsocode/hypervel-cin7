@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * leaves optional for POST. The response is `AdvancedPurchaseStocksData`; the POST body is
  * `AdvancedPurchaseStockPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseStockPutData extends AbstractAdvancedPurchaseStockData
 {

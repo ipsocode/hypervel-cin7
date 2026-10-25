@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\AttributeType;
  * `ID`, its first attribute and its read-only `Attributes`. The bodies of POST and PUT are
  * `AttributeSetPostData` and `AttributeSetPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AttributeSetData extends AbstractAttributeSetData implements WithResponse
 {

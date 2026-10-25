@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Requests\Supplier\PostSupplier;
 use Ipsocode\Cin7\Requests\Supplier\PutSupplier;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `supplier`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `supplier`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every supplier requires.
 $fields = ['Name' => 'Bayside Club', 'Currency' => 'AUD', 'PaymentTerm' => '30 days', 'AccountPayable' => '800', 'TaxRule' => 'BAS Excluded'];

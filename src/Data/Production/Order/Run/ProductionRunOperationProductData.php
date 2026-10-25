@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
 /**
  * ProductionRunOperationProduct, a read-only input, output or finished product of a run operation.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationProductData extends Data
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\ProductFamily\PostProductFamily;
 use Ipsocode\Cin7\Requests\ProductFamily\PutProductFamily;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `productFamily`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `productFamily`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every product family requires, and a product line with the fields Cin7 ignores.
 $fields = ['SKU' => 'Test', 'Name' => 'Test', 'Category' => 'Other', 'CostingMethod' => 'FIFO', 'DefaultLocation' => 'Main Warehouse', 'UOM' => 'Item', 'Option1Name' => 'Test 1'];

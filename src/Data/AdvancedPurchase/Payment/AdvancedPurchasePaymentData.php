@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
  * optional here, as is the examples' `PurchaseID`. The examples spell `Type` `Payment` and
  * `Refund` where the table has `PAYMENT`, `REFUND` and `PREPAYMENT`, so it is a string.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePaymentData extends AbstractPurchasePaymentData implements WithResponse
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Concerns\HasProductFields;
 /**
  * Sale Fulfilment Pick Pack Line Model. `Box` and `WarrantyRegistrationNumber` are for packing; the `Restock…` keys are for credit notes.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentPickPackLineData extends Data
 {

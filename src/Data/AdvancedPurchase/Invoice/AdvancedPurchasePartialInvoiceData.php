@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * `InvoiceDueDate` the table requires. Its lines and additional charges are the Purchase Invoice
  * Line and Additional Charge Models. The POST body is `AdvancedPurchasePartialInvoicePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePartialInvoiceData extends AbstractPurchaseInvoiceData
 {

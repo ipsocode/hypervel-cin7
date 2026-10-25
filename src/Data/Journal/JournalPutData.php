@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * The body of `journal` PUT: the Journal table with the `TaskID` of the journal to change, which
  * PUT requires. The POST body is `JournalPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class JournalPutData extends AbstractJournalData
 {

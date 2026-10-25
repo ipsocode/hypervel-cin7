@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\Purchase\CreditNote\GetPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\Purchase\CreditNote\PostPurchaseCreditNote;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchase/creditnote`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchase/creditnote`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every credit note POST requires.
 $fields = ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => false, 'CreditNoteNumber' => 'tr12', 'CreditNoteDate' => '2017-12-21T00:00:00', 'Status' => 'DRAFT', 'Lines' => [], 'Unstock' => []];

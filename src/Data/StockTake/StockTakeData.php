@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\StockTakeStatus;
  * auto-generated `StocktakeNumber` and the `Transactions` its stock changes created. The bodies of
  * POST and PUT are `StockTakePostData` and `StockTakePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTakeData extends AbstractStockTakeData implements WithResponse
 {

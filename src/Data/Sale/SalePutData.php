@@ -10,7 +10,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
  * The body of `sale` PUT: the Sale POST/PUT Attributes with the `ID` PUT requires, without the
  * POST-only `SaleType` and `AutoPickPackShipMode`. The POST body is `SalePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SalePutData extends AbstractSaleData
 {

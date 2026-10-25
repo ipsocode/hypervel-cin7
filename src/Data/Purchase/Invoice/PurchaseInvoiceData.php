@@ -22,11 +22,11 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * `InvoiceTotalTaxAmount` and the model's `Payments` and `Paid` are optional, as only one of the
  * two has them. Both require `InvoiceDueDate`, but the `purchase` examples embed an invoice that is
  * `DRAFT` or `VOIDED` with a `null` one, so it is nullable and `#[Required]` too. Those examples
- * send the number as `InvocieNumber`, misspelt, where `purchase/invoice` sends `InvoiceNumber`;
+ * send the number as `InvocieNumber`, misspelled, where `purchase/invoice` sends `InvoiceNumber`;
  * that is the wire key, so the class takes it beside `InvoiceNumber`. The POST body is
  * `PurchaseInvoicePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseInvoiceData extends AbstractPurchaseInvoiceData implements WithResponse
 {

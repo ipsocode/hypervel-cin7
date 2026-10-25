@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of an attribute of an attribute set.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum AttributeType: string
 {

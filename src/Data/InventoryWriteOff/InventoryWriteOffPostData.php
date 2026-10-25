@@ -9,7 +9,7 @@ namespace Ipsocode\Cin7\Data\InventoryWriteOff;
  * `TaskID` Cin7 assigns. A POST takes `DRAFT` or `COMPLETED`. The PUT body is
  * `InventoryWriteOffPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class InventoryWriteOffPostData extends AbstractInventoryWriteOffData
 {

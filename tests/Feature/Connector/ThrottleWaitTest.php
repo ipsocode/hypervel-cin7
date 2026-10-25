@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Tests\TestCase;
  * their sum. A sleep moves the frozen clock the limiter reads, so the elapsed time is the total
  * wait.
  *
- * @see docs/connector.md
+ * @see src/docs/connector.md
  */
 class ThrottleWaitTest extends TestCase
 {

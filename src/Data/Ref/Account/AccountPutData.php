@@ -9,7 +9,7 @@ namespace Ipsocode\Cin7\Data\Ref\Account;
  * without `SystemAccount` and `SystemAccountCode`, which are read-only for PUT. `Code` names the
  * account to change. The POST body is `AccountPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AccountPutData extends AbstractAccountData
 {

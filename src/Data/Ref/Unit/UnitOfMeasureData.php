@@ -12,7 +12,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Unit of measure, one entry of `UnitList` in a `ref/unit` list and the response of its POST and PUT: the table with
  * its `ID`. The bodies of POST and PUT are `UnitOfMeasurePostData` and `UnitOfMeasurePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class UnitOfMeasureData extends AbstractUnitOfMeasureData implements WithResponse
 {

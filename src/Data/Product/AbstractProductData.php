@@ -29,7 +29,7 @@ use Ipsocode\Cin7\Enums\ProductStatus;
  * `AdditionalAttribute10` are ten wire keys.
  * The fields it shares with a product family are in `AbstractCatalogueItemData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractProductData extends AbstractCatalogueItemData
 {

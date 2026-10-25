@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\StockTake\PostStockTake;
 use Ipsocode\Cin7\Requests\StockTake\PutStockTake;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `stocktake`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `stocktake`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every stock take requires.
 $fields = ['EffectiveDate' => '2018-04-27T00:00:00', 'Account' => '403', 'Location' => 'Main Warehouse'];

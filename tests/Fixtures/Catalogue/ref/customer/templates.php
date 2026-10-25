@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Requests\Ref\Customer\Templates\GetCustomerTemplates;
 use Ipsocode\Cin7\Requests\Ref\Customer\Templates\PostCustomerTemplates;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/customer/templates`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/customer/templates`; tests/Catalogue.php merges every file's rows by kind.
 
 $customer = 'd7392f64-4d48-424c-8dfa-36f8895162ff';
 $template = '344eaab7-c7f5-4b1e-a7b6-d29ebf6cf7b6';

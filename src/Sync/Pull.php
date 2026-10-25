@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Cin7Connector;
  * A scheduled pull of one or more modules, as a queued job: a waiting pull is a row in the
  * queue, and one whose tries ran out is a failed job, with the error.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 final class Pull implements ShouldQueue, ShouldBeUnique
 {

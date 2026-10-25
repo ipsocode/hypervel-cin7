@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * Whether the company calculates tax on each row's total or on the document's total.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum TaxCalculationMethod: string
 {

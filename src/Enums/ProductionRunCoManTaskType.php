@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of task a co-manufacturing operation starts.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ProductionRunCoManTaskType: string
 {

@@ -13,9 +13,9 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `ManualJournals`, keyed by the `TaskID` of the purchase invoice task it belongs to. It requires
  * `TaskID` and `Status`, as the Advanced purchase manual journal partial model does; its `Lines`
  * are the purchase's `PurchaseManualJournalLineData`. The `advanced-purchase` examples also send
- * `InvoicingAndReceivingNumber`, which the model does not list; it is modelled, optional.
+ * `InvoicingAndReceivingNumber`, which the model does not list; it is modeled, optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseManualJournalData extends AbstractPurchaseManualJournalData
 {

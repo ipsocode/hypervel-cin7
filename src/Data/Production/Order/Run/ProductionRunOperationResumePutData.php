@@ -10,7 +10,7 @@ use Hypervel\Data\Data;
 /**
  * The body of `production/order/run/operation/resume` PUT: the operation to resume.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationResumePutData extends Data
 {

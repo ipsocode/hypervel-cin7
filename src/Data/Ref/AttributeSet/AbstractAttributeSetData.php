@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Concerns\HasAttributeSetAttributes;
  * response leaves them optional. The reference writes the other nine as `Attribute#Name`,
  * `Attribute#Type` and `Attribute#Values`, for # from 1 to 10.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractAttributeSetData extends Data
 {

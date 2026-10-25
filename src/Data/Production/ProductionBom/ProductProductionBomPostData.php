@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * The body of `production/productionBOM` POST for a product: its `ProductID` and `ProductionBOMs`,
  * and `SetParentHasProductionBom`, in the example, not the table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductProductionBomPostData extends Data
 {

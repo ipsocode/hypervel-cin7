@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\StockTransferStatus;
  * The body of `stockTransfer` PUT: the Stock Transfer table with the `TaskID` PUT requires. The
  * POST body is `StockTransferPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTransferPutData extends AbstractStockTransferData
 {

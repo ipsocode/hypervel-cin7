@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * The body of `reference/discount` POST: the `DiscountRules` to create, each a
  * `ProductDiscountRulePostData`. The PUT body is one bare rule, `ProductDiscountRulePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDiscountRulesPostData extends Data
 {

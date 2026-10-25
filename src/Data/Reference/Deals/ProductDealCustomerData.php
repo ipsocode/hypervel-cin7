@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * `CustomerName`, and the `ID` of the link. The table writes all three as "Yes*", so none is
  * required.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealCustomerData extends Data
 {

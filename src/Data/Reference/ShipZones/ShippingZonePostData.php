@@ -9,7 +9,7 @@ namespace Ipsocode\Cin7\Data\Reference\ShipZones;
  * assigns. The table requires `DefaultShippingCost`, but the POST example sends none, so it stays
  * optional. The PUT body is `ShippingZonePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ShippingZonePostData extends AbstractShippingZoneData
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Requests;
 
 /**
- * Shard 1 of the request catalogue rows.
+ * Shard 1 of the request catalog rows.
  */
 class RequestCatalogueShard1Test extends RequestCatalogueShard
 {

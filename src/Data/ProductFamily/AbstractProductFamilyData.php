@@ -21,7 +21,7 @@ use Ipsocode\Cin7\Enums\CostingMethod;
  * so the requests leave them out of the body.
  * The fields it shares with a product are in `AbstractCatalogueItemData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractProductFamilyData extends AbstractCatalogueItemData
 {

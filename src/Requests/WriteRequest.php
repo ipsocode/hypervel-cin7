@@ -24,7 +24,7 @@ use Hypervel\Saloon\Traits\Body\HasJsonBody;
  * available for the other method; they are left out of the body. A path is dot-separated, and
  * `*` stands for every item of a list, e.g. `ProductPrices.*.ProductName`.
  *
- * @see docs/requests.md
+ * @see src/docs/requests.md
  *
  * @template TDto
  * @extends Cin7Request<TDto>

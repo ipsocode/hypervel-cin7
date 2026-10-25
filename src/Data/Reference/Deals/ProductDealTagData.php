@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * Product Deal Customer Tag, one entry of a deal's `DealCustomerTags`: a customer tag by `TagName`,
  * and the `ID` of the link.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDealTagData extends Data
 {

@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\DisassemblyPostStatus;
  * `Location`. `ProductName` and `CompletionDate` are in the example, not the table. The response
  * is `DisassemblyData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class DisassemblyPostData extends AbstractDisassemblyData
 {

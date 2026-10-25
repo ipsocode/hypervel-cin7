@@ -25,7 +25,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * set through `from()`. `Status` is a string, since the credit note list's example sends a status
  * the Available Purchase Statuses do not list.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractPurchaseListData extends Data
 {

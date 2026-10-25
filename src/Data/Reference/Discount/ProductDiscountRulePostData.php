@@ -10,7 +10,7 @@ use Ipsocode\Cin7\Enums\DiscountRuleType;
  * One rule of the body of `reference/discount` POST: the Product Discount Rule table without the `ID`
  * Cin7 assigns. The body itself is `ProductDiscountRulesPostData`, a list of them.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDiscountRulePostData extends AbstractProductDiscountRuleData
 {

@@ -16,7 +16,7 @@ use Hypervel\Data\Data;
  * `ProductSKU` and either `CustomerID` or `CustomerName`, wherever it is nested: a write body
  * with a price missing either pair fails validation before it is sent.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductPriceData extends Data
 {

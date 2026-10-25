@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\DropShipMode;
  * fields in its own constructor, because their order is part of each class's signature and
  * `SKU`, `UOM`, `Brand` and `DefaultLocation` differ in length between the two tables.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractCatalogueItemData extends Data
 {

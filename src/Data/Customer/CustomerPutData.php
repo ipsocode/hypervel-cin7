@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\RecordStatus;
  * The body of `customer` PUT: the Customer table with the `ID` of the customer to change. The
  * POST body is `CustomerPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomerPutData extends AbstractCustomerData
 {

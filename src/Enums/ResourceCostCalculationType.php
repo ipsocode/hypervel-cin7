@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * How a production resource's cost is calculated.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ResourceCostCalculationType: string
 {

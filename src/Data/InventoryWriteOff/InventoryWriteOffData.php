@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * `Errors` of a POST or PUT that created the task despite them. The bodies of POST and PUT are
  * `InventoryWriteOffPostData` and `InventoryWriteOffPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class InventoryWriteOffData extends AbstractInventoryWriteOffData implements WithResponse
 {

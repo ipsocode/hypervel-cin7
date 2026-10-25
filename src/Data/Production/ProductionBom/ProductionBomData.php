@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * in the examples. `ProductID`, `CreatedDate`, `CreatedBy` and `DeliveryTo` are in the examples,
  * not the table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomData extends Data
 {

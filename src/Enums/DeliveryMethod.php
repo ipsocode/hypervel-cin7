@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * How a product supplier option's supply interval repeats.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum DeliveryMethod: string
 {

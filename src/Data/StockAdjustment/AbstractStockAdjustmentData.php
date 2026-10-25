@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * constructor; the optional fields declared here are set through `from()`. `StocktakeNumber` is
  * auto-generated, but the POST and PUT examples send it, so the bodies take it too.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractStockAdjustmentData extends Data
 {

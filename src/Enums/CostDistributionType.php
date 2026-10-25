@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Enums;
 
 /**
- * How a stock transfer's additional journals are capitalised across its lines.
+ * How a stock transfer's additional journals are capitalized across its lines.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum CostDistributionType: string
 {

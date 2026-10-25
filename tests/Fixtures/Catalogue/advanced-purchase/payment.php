@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\Payment\PutAdvancedPurchasePayment;
 use Ipsocode\Cin7\Requests\Purchase\Payment\DeletePurchasePayment;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `advanced-purchase/payment`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `advanced-purchase/payment`; tests/Catalogue.php merges every file's rows by kind.
 // Its DELETE is documented on `purchase/payment`: the resource sends DeletePurchasePayment, whose
 // request row is in purchase/payment.php.
 

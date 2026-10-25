@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * two and a sale's embedded `Quote` has neither, so both are nullable and `#[Required]`, which only
  * a write body checks. The POST body is `SaleQuotePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleQuoteData extends AbstractSaleQuoteData implements WithResponse
 {

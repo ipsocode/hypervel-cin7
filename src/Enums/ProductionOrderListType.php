@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of record a production order list item is: a production order or one of its runs.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum ProductionOrderListType: string
 {

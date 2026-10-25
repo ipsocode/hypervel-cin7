@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * ResourceCost, the cost of a resource: a service `ProductID`, an expense `AccountCode` and a
  * `PriceTier` (1 to 10). `ResourceCostID`, `ProductName` and the costs are read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourceCostData extends Data
 {

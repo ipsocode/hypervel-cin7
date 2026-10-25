@@ -8,10 +8,10 @@ use Ipsocode\Cin7\Sync\Module;
 use Ipsocode\Cin7\Tests\TestCase;
 
 /**
- * The sync modules, in the order of `Module::cases()`, as `config/cin7.php` and `docs/sync.md`
- * list them by hand.
+ * The sync modules, in the order of `Module::cases()`, as `config/cin7.php` and
+ * `src/docs/sync.md` list them by hand.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class ModuleDocsTest extends TestCase
 {
@@ -39,7 +39,7 @@ class ModuleDocsTest extends TestCase
         $listed = [];
         $identifiers = [];
 
-        foreach (explode("\n", $this->read('docs/sync.md')) as $line) {
+        foreach (explode("\n", $this->read('src/docs/sync.md')) as $line) {
             if (preg_match('/^\|\s*\d+\s*\|(.+?)\|\s*`([^`]+)`\s*\|/', $line, $row) !== 1) {
                 continue;
             }
@@ -52,10 +52,10 @@ class ModuleDocsTest extends TestCase
             }
         }
 
-        $this->assertSame($this->values(), $listed, 'docs/sync.md lists the modules in a different order than Module::cases().');
+        $this->assertSame($this->values(), $listed, 'src/docs/sync.md lists the modules in a different order than Module::cases().');
 
         foreach (Module::cases() as $module) {
-            $this->assertSame($module->idKey(), $identifiers[$module->value], "docs/sync.md names a different identifier for {$module->value} than Module::idKey().");
+            $this->assertSame($module->idKey(), $identifiers[$module->value], "src/docs/sync.md names a different identifier for {$module->value} than Module::idKey().");
         }
     }
 

@@ -20,7 +20,7 @@ use Ipsocode\Cin7\Enums\DepreciationMethod;
  * and the examples send the other as `null`, so each is nullable and `#[RequiredWithout]` the
  * other: a write body sets one. `DepreciationExpenseAccountCode` appears only in the examples.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractFixedAssetTypeData extends Data
 {

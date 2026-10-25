@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * validation before it is sent. The table types `Location` as a Decimal, copied from the field
  * above it: it is the location's name.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractInventoryWriteOffData extends Data
 {

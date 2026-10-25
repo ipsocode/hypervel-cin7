@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Concerns\HasProductFields;
  * product, found by `ProductID` or `SKU`. `QuantityOnHand` and `QuantityAvailable` are read-only.
  * Like every object with a `ProductID`, it carries the product fields.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class StockTransferOrderLineData extends Data
 {

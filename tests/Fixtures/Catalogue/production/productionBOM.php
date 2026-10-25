@@ -32,7 +32,7 @@ use Ipsocode\Cin7\Requests\Production\ProductionBom\PutProductFamilyProductionBo
 use Ipsocode\Cin7\Requests\Production\ProductionBom\PutProductProductionBom;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `production/productionBOM`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `production/productionBOM`; tests/Catalogue.php merges every file's rows by kind.
 
 $id = '38cddb52-9a81-4c07-9791-362936efa552';
 

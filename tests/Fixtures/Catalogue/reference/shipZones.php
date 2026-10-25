@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\Reference\ShipZones\PostShipZones;
 use Ipsocode\Cin7\Requests\Reference\ShipZones\PutShipZones;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `reference/shipZones`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `reference/shipZones`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every ship zone POST requires, and a zone to change.
 $fields = ['Name' => 'Zone', 'IsRestZone' => false, 'PricesInclTax' => false, 'Negative' => false];

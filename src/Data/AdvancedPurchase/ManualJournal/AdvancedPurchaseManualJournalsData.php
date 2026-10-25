@@ -16,7 +16,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * journals, each an `AdvancedPurchasePartialManualJournalData`. The table requires both fields. The
  * POST body is `AdvancedPurchasePartialManualJournalPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseManualJournalsData extends Data implements WithResponse
 {

@@ -10,7 +10,7 @@ use Hypervel\Data\Attributes\Validation\Uuid;
  * The body of `ref/unit` PUT: the table with the `ID` of the unit of measure to change, which PUT requires.
  * The POST body is `UnitOfMeasurePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class UnitOfMeasurePutData extends AbstractUnitOfMeasureData
 {

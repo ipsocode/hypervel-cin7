@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PutAdvancedPurchaseStock;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `advanced-purchase/stock`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `advanced-purchase/stock`; tests/Catalogue.php merges every file's rows by kind.
 
 // One line, and as a write sends it: `AbstractPurchaseStockLineData`'s fields, `Date` and
 // `Quantity` last.

@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * for the sale, given as base64 `Content` or as a `FileDownloadUrl` Cin7 fetches it from; a body
  * with neither fails validation before it is sent.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleAttachmentPostData extends Data
 {

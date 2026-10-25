@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\InvoiceStatus;
  * of `DRAFT` or `AUTHORISED`, and the totals, which POST does not require. The response is
  * `PurchaseInvoiceData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseInvoicePostData extends AbstractPurchaseInvoiceData
 {

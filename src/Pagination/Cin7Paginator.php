@@ -15,7 +15,7 @@ use Ipsocode\Cin7\PageDefaults;
  * Cin7 never echoes the limit back, so the last page comes from `Total` over the limit sent.
  * An envelope with no `Total` (`ref/customer/credits`) ends on a page shorter than that limit.
  *
- * @see docs/pagination.md
+ * @see src/docs/pagination.md
  */
 class Cin7Paginator extends PagedPaginator
 {

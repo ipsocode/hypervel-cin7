@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\Ref\Unit\PostUnit;
 use Ipsocode\Cin7\Requests\Ref\Unit\PutUnit;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/unit`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/unit`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

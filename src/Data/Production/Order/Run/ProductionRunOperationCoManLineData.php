@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Concerns\HasProductionProductFields;
 /**
  * ProductionRunOperationCoManLine, a read-only output line of a co-manufacturing operation.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionRunOperationCoManLineData extends Data
 {

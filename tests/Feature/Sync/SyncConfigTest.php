@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Tests\TestCase;
 /**
  * `cin7.sync.*` is cast and clamped as it is read, never trusted.
  *
- * @see docs/configuration.md
+ * @see src/docs/configuration.md
  */
 class SyncConfigTest extends TestCase
 {

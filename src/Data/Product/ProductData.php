@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Enums\ProductType;
  * `ID` and `Type` and the read-only `AverageCost`, `LastModifiedOn` and `BOMType`. The bodies of
  * POST and PUT are `ProductPostData` and `ProductPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductData extends AbstractProductData implements WithResponse
 {

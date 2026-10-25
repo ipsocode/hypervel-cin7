@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * Only `ID` is required: `Amount` and `Account` are not available when the payment is taken from
  * a credit, and `CreditID` (only with `Type` `Payment`) takes it from one.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SalePaymentPutData extends Data
 {

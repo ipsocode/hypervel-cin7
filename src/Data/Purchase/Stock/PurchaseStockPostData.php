@@ -11,10 +11,10 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 /**
  * The body of `purchase/stock` POST: the Available Fields for Purchase Stock Received table with
  * the `TaskID` it requires and a `Status` of `DRAFT` or `AUTHORISED`. POST adds only new lines;
- * empty `Lines` with `AUTHORISED` authorise the stock received. The response is
+ * empty `Lines` with `AUTHORISED` authorize the stock received. The response is
  * `PurchaseStockData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseStockPostData extends AbstractPurchaseStockData
 {

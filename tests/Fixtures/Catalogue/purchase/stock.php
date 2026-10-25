@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\Purchase\Stock\GetPurchaseStock;
 use Ipsocode\Cin7\Requests\Purchase\Stock\PostPurchaseStock;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchase/stock`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchase/stock`; tests/Catalogue.php merges every file's rows by kind.
 
 // One line as a response has it, with the read-only `Name` and `Received`, and as a POST sends it:
 // the line's own `Location` first, then `AbstractPurchaseStockLineData`'s fields, `Date` and

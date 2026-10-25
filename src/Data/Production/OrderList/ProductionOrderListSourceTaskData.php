@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * ProductionOrderListSourceTask, a sale task that produced the production order: `SourceTaskType`
  * is `0` for a simple task and `1` for a master.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderListSourceTaskData extends Data
 {

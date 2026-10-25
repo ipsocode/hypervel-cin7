@@ -12,7 +12,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Carrier, one entry of `CarrierList`: the table with its `CarrierID`. The bodies of POST and PUT
  * are `CarrierPostData` and `CarrierPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CarrierData extends AbstractCarrierData implements WithResponse
 {

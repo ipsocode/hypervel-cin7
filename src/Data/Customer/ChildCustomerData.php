@@ -10,7 +10,7 @@ use Hypervel\Data\Data;
 /**
  * Child Customer Model, one entry of a customer's `ChildCustomers` (responses only).
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ChildCustomerData extends Data
 {

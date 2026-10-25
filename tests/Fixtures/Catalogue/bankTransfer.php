@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Requests\BankTransfer\PostBankTransfer;
 use Ipsocode\Cin7\Requests\BankTransfer\PutBankTransfer;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `bankTransfer`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `bankTransfer`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every bank transfer requires.
 $fields = ['Status' => 'DRAFT', 'FromAccount' => '198489', 'ToAccount' => '713', 'FromAmount' => 3.0, 'ToAmount' => 6.0, 'Date' => '2018-01-17T00:00:00'];

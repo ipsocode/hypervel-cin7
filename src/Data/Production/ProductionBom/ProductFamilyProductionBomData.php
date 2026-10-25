@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * `ExternalApi = 4`, …), numbers in the examples. `ProductID`, `CreatedDate`, `CreatedBy` and
  * `DeliveryTo` are in the examples, not the table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductFamilyProductionBomData extends AbstractProductFamilyProductionBomData
 {

@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\SystemAccountCode;
  * its read-only `DisplayName`, `OldCode`, `BankAccountId` and `Currency`. The bodies of POST and
  * PUT are `AccountPostData` and `AccountPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AccountData extends AbstractAccountData implements WithResponse
 {

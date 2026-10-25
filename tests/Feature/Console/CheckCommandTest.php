@@ -23,7 +23,7 @@ use Workbench\App\Support\Cin7Payloads;
 /**
  * `cin7:check`, one `GET me` that proves a connection's credentials and limiter store.
  *
- * @see docs/connector.md
+ * @see src/docs/connector.md
  */
 class CheckCommandTest extends TestCase
 {

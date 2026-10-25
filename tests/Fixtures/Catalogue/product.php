@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `product`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `product`; tests/Catalogue.php merges every file's rows by kind.
 
 // The fields every product requires.
 $fields = ['SKU' => 'Bread', 'Name' => 'Baked Bread', 'Category' => 'Other', 'CostingMethod' => 'FIFO', 'UOM' => 'Item', 'Status' => 'Active'];

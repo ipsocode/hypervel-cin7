@@ -11,7 +11,7 @@ use Hypervel\Data\Data;
  * The body of `ref/customer/templates` POST: the `CustomerTemplates` to set, each a
  * `CustomerDefaultTemplateData`. The reference has no table of its own for it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomerDefaultTemplatesPostData extends Data
 {

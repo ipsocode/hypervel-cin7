@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `PurchaseCreditNoteData`, which keeps the tables' rules. It requires the `CreditNoteNumber`
  * (`""` before there is one), `Status`, `Lines` and `Unstock` every example sends.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SimplePurchaseCreditNoteData extends Data
 {

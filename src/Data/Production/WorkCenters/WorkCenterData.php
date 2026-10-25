@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\CoManProcurementType;
  * checks, and `WorkCenterSuppliers` for a purchasing one that is not co-man, which the documented
  * notes leave to the caller.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WorkCenterData extends Data implements WithResponse
 {

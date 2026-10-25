@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Tests\TestCase;
 /**
  * The builders an application fakes Cin7 with: each one's envelope, status and headers.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 class Cin7FakeTest extends TestCase
 {

@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Enums;
  * The system account an account in the chart of accounts stands for, by name; `SystemAccountCode`
  * names the same account by its code.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum SystemAccount: string
 {

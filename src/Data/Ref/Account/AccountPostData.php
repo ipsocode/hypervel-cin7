@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\SystemAccountCode;
  * the `SystemAccount` and `SystemAccountCode` a PUT cannot change. Either names the system
  * account; both, if given, must name the same one. The PUT body is `AccountPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AccountPostData extends AbstractAccountData
 {

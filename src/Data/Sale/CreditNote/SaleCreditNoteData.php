@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
 /**
  * Sale Credit Note Model.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleCreditNoteData extends AbstractSaleCreditNoteData
 {

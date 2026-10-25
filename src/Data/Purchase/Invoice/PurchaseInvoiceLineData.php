@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Data\AbstractLineData;
  * invoices and credit notes: the line fields of `AbstractLineData`, and the `Account` and line
  * `Total` the table requires.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseInvoiceLineData extends AbstractLineData
 {

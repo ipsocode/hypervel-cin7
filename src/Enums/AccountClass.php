@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The class of an account in the chart of accounts.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum AccountClass: string
 {

@@ -13,7 +13,7 @@ use Hypervel\Data\Data;
  * The reference types `Percent` as Decimal and `ComponentOrder` as Int, but its examples
  * send both as strings, and `Compound` appears only in the examples.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class TaxComponentData extends Data
 {

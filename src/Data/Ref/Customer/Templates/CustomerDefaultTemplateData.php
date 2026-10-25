@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * Customer Default Template, one entry of `CustomerTemplates`: the template a customer uses by
  * default. The table writes both ids as "Yes*": needed in a body's list, which is every use.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class CustomerDefaultTemplateData extends Data implements WithResponse
 {

@@ -38,7 +38,7 @@ use Ipsocode\Cin7\Enums\ReceivingStatus;
  * `ReceivingStatus`, `InvoicingStatus` and `PurchasePaymentStatus`, and `Type` their
  * `PurchaseType`, which has this table's three values.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchaseData extends AbstractPurchaseData implements WithResponse
 {

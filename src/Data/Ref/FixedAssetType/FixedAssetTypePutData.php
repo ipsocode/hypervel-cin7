@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\DepreciationMethod;
  * The body of `ref/fixedassettype` PUT: the table with the `FixedAssetTypeID` of the type to
  * change, which PUT requires. The POST body is `FixedAssetTypePostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class FixedAssetTypePutData extends AbstractFixedAssetTypeData
 {

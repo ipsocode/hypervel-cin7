@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * The answer of `production/order/undo` and `production/order/void`: a `Message` and the
  * `ProductionOrderID`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderMessageData extends Data implements WithResponse
 {

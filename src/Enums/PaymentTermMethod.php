@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * How a payment term counts its duration.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum PaymentTermMethod: string
 {

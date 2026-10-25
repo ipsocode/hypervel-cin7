@@ -8,7 +8,7 @@ namespace Ipsocode\Cin7\Data\Ref\Tax;
  * The body of `ref/tax` POST: the Tax table without the `ID` Cin7 assigns. The PUT body is
  * `TaxPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class TaxPostData extends AbstractTaxData
 {

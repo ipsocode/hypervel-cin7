@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of a product discount rule.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum DiscountRuleType: string
 {

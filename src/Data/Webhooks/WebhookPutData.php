@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Enums\WebhookType;
  * The body of `webhooks` PUT: the table with the `ID` of the webhook to change, which PUT requires.
  * The POST body is `WebhookPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WebhookPutData extends AbstractWebhookData
 {

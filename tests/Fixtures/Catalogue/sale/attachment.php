@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\Sale\Attachment\GetSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/attachment`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/attachment`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

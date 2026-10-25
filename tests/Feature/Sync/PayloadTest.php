@@ -16,7 +16,7 @@ use Workbench\App\Support\Cin7Payloads;
 /**
  * Reading the table back.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 class PayloadTest extends SyncTestCase
 {

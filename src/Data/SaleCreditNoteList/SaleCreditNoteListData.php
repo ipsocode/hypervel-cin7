@@ -26,7 +26,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * `#[Required]` as the table requires it, which only a write body checks. `RestockStatus` appears
  * only in the example.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleCreditNoteListData extends AbstractSaleListData implements WithResponse
 {

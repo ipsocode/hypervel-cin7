@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * names: `ProductID`, `ProductCode`, `ProductName`, `Unit`, `BatchSN` and `ExpiryDate`, which the
  * four tables document alike and which every response may leave out.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 trait HasProductionProductFields
 {

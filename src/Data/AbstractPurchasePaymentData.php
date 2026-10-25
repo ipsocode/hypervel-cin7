@@ -19,9 +19,9 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * `from()`. The PUT example sends `Amount` and `Account`, so the PUT bodies require them too,
  * although the reference says a payment taken from a deposit cannot change them. `DateCreated` is
  * the date Cin7 stamps on the payment record, but the reference's request examples send it, so it
- * is modelled, and the requests leave it out of the body.
+ * is modeled, and the requests leave it out of the body.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractPurchasePaymentData extends Data
 {

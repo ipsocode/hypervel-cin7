@@ -19,7 +19,7 @@ use Ipsocode\Cin7\Enums\ProductionOrderListType;
  * ProductionOrderListItem, one entry of `ProductionOrderListItems`: a production order or one of
  * its runs, by `Type`. `TotalCount` is in the example, not the table.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionOrderListData extends Data implements WithResponse
 {

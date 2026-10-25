@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Cin7Connector;
  * @property null|Carbon $created_at
  * @property null|Carbon $updated_at
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 final class Payload extends Model
 {

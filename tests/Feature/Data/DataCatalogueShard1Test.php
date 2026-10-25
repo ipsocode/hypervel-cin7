@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Data;
 
 /**
- * Shard 1 of the data catalogue rows.
+ * Shard 1 of the data catalog rows.
  */
 class DataCatalogueShard1Test extends DataCatalogueShard
 {

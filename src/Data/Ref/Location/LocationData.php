@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * PUT: the table with its `ID`. The bodies of POST and PUT are `LocationPostData` and
  * `LocationPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class LocationData extends AbstractLocationData implements WithResponse
 {

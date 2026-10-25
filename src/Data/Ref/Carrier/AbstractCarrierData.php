@@ -12,7 +12,7 @@ use Hypervel\Data\Data;
  * Each is a final child that adds its `CarrierID`, or none. Every carrier needs its `Description`,
  * so each child passes it to this constructor.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractCarrierData extends Data
 {

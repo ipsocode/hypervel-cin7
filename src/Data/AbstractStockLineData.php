@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * requires a `Quantity`, which the constructor takes; each is a final child that adds the `Unit`,
  * `Cost` and account fields its own table has.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractStockLineData extends Data
 {

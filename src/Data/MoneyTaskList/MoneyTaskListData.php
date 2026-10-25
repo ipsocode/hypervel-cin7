@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\MoneyTaskType;
 /**
  * Money Task List, one entry of `MoneyTasks`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MoneyTaskListData extends Data implements WithResponse
 {

@@ -14,7 +14,7 @@ use Ipsocode\Cin7\Enums\DiscountRuleType;
  * table, which requires its `ID`, `Name`, `IsActive` and `Type`. The bodies of POST and PUT are
  * `ProductDiscountRulesPostData` and `ProductDiscountRulePutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductDiscountRuleData extends AbstractProductDiscountRuleData implements WithResponse
 {

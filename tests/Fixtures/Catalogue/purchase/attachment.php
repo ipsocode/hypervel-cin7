@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\Purchase\Attachment\GetPurchaseAttachment;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `purchase/attachment`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `purchase/attachment`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

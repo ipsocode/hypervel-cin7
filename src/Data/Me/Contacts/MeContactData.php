@@ -15,7 +15,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * The reference's PUT response example also carries `CRMID` and `ReferenceCount`, which no table
  * lists.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MeContactData extends AbstractMeContactData implements WithResponse
 {

@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Data\AbstractAddressData;
  * even after a POST that sent them. So both are nullable, for the responses, and `#[Required]`,
  * which only a write body checks: a POST or PUT still sends both.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AddressData extends AbstractAddressData
 {

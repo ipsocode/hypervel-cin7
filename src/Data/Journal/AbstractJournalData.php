@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * each child passes them to this constructor; the optional fields declared here are set through
  * `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractJournalData extends Data
 {

@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Enums\CompletionStatus;
  * `TaskID`, its read-only `JournalNumber` and its `Attachments`. The bodies of POST and PUT are
  * `JournalPostData` and `JournalPutData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class JournalData extends AbstractJournalData implements WithResponse
 {

@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Concerns\HasProductFields;
  * read-only, so the write requests leave them out of the body. Like every object with a
  * `ProductID`, it carries the product fields.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseUnStockLineData extends Data
 {

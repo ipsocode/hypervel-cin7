@@ -15,7 +15,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * `advanced-purchase/put-away` action answers with: the purchase's put away tasks. No table
  * documents it, only the examples, so `PutAway` is optional.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class AdvancedPurchasePutAwaysData extends Data implements WithResponse
 {

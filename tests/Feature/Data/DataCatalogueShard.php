@@ -15,11 +15,11 @@ use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
- * The rows of one shard of the `dtos`, `bodies` and `missing` catalogue kinds. ParaTest hands
+ * The rows of one shard of the `dtos`, `bodies` and `missing` catalog kinds. ParaTest hands
  * a worker whole files, so the rows are spread over the `DataCatalogueShard*Test` classes
  * instead of sitting in one file that bounds the parallel run; the shards together hold every row once.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class DataCatalogueShard extends TestCase
 {

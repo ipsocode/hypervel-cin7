@@ -16,7 +16,7 @@ use Hypervel\Data\Data;
  * (PUT needs just `SaleID` and `TaskID`) stay in their constructors, and the optional fields
  * declared here are set through `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractSaleInvoiceData extends Data
 {

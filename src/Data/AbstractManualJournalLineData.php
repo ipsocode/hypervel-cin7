@@ -13,7 +13,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * required, so each child takes them through this constructor; `Reference` is set through
  * `from()`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 abstract class AbstractManualJournalLineData extends Data
 {

@@ -8,7 +8,7 @@ use Ipsocode\Cin7\Data\Ref\Supplier\Deposits\SupplierDepositData;
 use Ipsocode\Cin7\Requests\Ref\Supplier\Deposits\GetSupplierDeposits;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/supplier/deposits`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/supplier/deposits`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

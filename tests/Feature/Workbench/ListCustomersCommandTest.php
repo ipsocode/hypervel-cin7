@@ -13,7 +13,7 @@ use Workbench\App\Support\Cin7Payloads;
  * `cin7:customers` is the only place the console kernel resolves a Workbench service, so
  * these tests prove testbench.yaml's `workbench.discovers.commands` is wired.
  *
- * @see docs/testing.md
+ * @see src/docs/testing.md
  */
 class ListCustomersCommandTest extends TestCase
 {

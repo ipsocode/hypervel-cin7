@@ -7,12 +7,12 @@ namespace Ipsocode\Cin7\Data\Sale\Fulfilment\Ship;
 use Ipsocode\Cin7\Enums\ShipmentStatus;
 
 /**
- * The body of `sale/fulfilment/ship` PUT, which replaces an unauthorised shipment and lists every
+ * The body of `sale/fulfilment/ship` PUT, which replaces an unauthorized shipment and lists every
  * packed box. `AddTrackingNumbers` (`true`) lets it change the tracking numbers or carrier of an
- * authorised shipment, which the reference documents in prose only. The POST body is
+ * authorized shipment, which the reference documents in prose only. The POST body is
  * `SaleFulfilmentShipPostData`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleFulfilmentShipPutData extends AbstractSaleFulfilmentShipTaskData
 {

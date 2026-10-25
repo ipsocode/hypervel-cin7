@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Requests\ProductSuppliers\PostProductSuppliers;
 use Ipsocode\Cin7\Requests\ProductSuppliers\PutProductSuppliers;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `product-suppliers`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `product-suppliers`; tests/Catalogue.php merges every file's rows by kind.
 
 $productId = '2fcb8c53-9183-4bd3-aefa-b8f78167e159';
 $supplierId = '33a22f89-c8a2-43e1-8b4a-f677b39f521b';

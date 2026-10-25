@@ -13,7 +13,7 @@ use Hypervel\Saloon\Traits\Responses\HasResponse;
  * The work centers `production/workcenters` answers with, under `Workcenters` (lower-case c), and
  * the `WarningMessage` a PUT adds; also the body of its POST and PUT.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class WorkCentersData extends Data implements WithResponse
 {

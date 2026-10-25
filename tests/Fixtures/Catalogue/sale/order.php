@@ -9,7 +9,7 @@ use Ipsocode\Cin7\Requests\Sale\Order\GetSaleOrder;
 use Ipsocode\Cin7\Requests\Sale\Order\PostSaleOrder;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale/order`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale/order`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

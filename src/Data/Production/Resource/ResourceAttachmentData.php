@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
  * other attachment's response leaves its content `null`, so it is nullable, for the responses, and
  * `#[Required]`, which only a write body checks.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourceAttachmentData extends Data
 {

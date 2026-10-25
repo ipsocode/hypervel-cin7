@@ -29,7 +29,7 @@ use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `sale`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `sale`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

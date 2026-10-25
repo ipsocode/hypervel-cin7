@@ -8,7 +8,7 @@ use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 use Workbench\App\Support\Cin7Payloads;
 
-// The catalogue rows for `ref/customer/credits`; tests/Catalogue.php merges every file's rows by kind.
+// The catalog rows for `ref/customer/credits`; tests/Catalogue.php merges every file's rows by kind.
 
 return [
     'requests' => [

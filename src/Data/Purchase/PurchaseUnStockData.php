@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\TaskStatus;
  * Model is the stock received's. No table documents it: the tables type `Unstock` as the list of
  * lines alone.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class PurchaseUnStockData extends Data
 {

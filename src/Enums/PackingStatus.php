@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * A sale's combined pack status, over all its fulfilments.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum PackingStatus: string
 {

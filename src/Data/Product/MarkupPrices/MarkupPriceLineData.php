@@ -15,7 +15,7 @@ use Ipsocode\Cin7\Enums\UsePriceType;
  * Markup Price Line Model: the markup of one price tier. A tier with `MarkupType::Deleted` has no
  * start price or value; any other needs both.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class MarkupPriceLineData extends Data
 {

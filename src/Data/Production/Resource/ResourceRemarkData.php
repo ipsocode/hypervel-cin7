@@ -12,7 +12,7 @@ use Ipsocode\Cin7\Attributes\DateTime;
 /**
  * ResourceRemark, a remark on a resource. `RemarkID` and `CreatedDate` are read-only.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ResourceRemarkData extends Data
 {

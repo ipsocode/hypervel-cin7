@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of a money task.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum MoneyTaskType: string
 {

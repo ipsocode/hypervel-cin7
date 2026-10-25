@@ -11,7 +11,7 @@ use Ipsocode\Cin7\PageDefaults;
  * Reads `cin7.sync.*` each time it is asked, casting and clamping rather than trusting the type,
  * as the provider does for the connector's settings.
  *
- * @see docs/sync.md
+ * @see src/docs/sync.md
  */
 final class SyncConfig
 {

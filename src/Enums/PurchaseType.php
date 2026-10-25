@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Enums;
 /**
  * The type of a purchase, as the purchase list and purchase credit note list report it.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 enum PurchaseType: string
 {

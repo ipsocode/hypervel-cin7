@@ -18,7 +18,7 @@ use Hypervel\Data\Data;
  * `CycleTimeString`, `IsTracing` and `TotalCost` are in the examples, not the table, and so is the
  * product BOM's empty `VariationComponents`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class ProductionBomOperationData extends Data
 {

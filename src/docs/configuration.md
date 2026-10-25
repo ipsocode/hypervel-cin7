@@ -110,7 +110,7 @@ whole.
 
 ## Casts and fallbacks
 
-[`Cin7ServiceProvider`](../src/Cin7ServiceProvider.php) casts each value rather
+[`Cin7ServiceProvider`](../Cin7ServiceProvider.php) casts each value rather
 than trusting its type, so a missing or loosely typed value does not throw a
 `TypeError` when the container resolves the connector:
 
@@ -128,14 +128,14 @@ than trusting its type, so a missing or loosely typed value does not throw a
 `connections` entry, and not `default`, throws an `InvalidArgumentException`
 naming it, as does an entry that is not an array.
 
-[`Cin7Request`](../src/Requests/Cin7Request.php) applies the retry values with
+[`Cin7Request`](../Requests/Cin7Request.php) applies the retry values with
 its own fallbacks: a `null` or absent `retry.times` or `retry.delay_ms` falls
 back to `4` and `5000`, and the results are clamped to at least one attempt and
 at least `0` ms. A `null` or absent `retry.backoff`, `retry.max_delay_ms` or
 `retry.jitter_ms` falls back to `1`, `0` and `0`; the backoff is clamped to at
 least `1`, the other two to at least `0`. See [requests](requests.md#retry-policy).
 
-[`SyncConfig`](../src/Sync/SyncConfig.php) reads `sync.*` the same way: an absent or `null`
+[`SyncConfig`](../Sync/SyncConfig.php) reads `sync.*` the same way: an absent or `null`
 number falls back to its default, and each is clamped (`limit` to 1–1000, `timeout` to at
 least 1, the others to at least 0). A blank `cron`, `full` or exception time schedules nothing,
 an empty `queue` or `connection` is the default one, and an unknown module name, or a reference

@@ -11,7 +11,7 @@ use Ipsocode\Cin7\Data\AbstractChargeData;
  * Sale Additional Charge Model: the charge fields of `AbstractChargeData`, the line `Total` and a
  * `Comment`.
  *
- * @see docs/data.md
+ * @see src/docs/data.md
  */
 final class SaleAdditionalChargeData extends AbstractChargeData
 {
