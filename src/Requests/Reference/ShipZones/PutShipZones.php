@@ -23,6 +23,9 @@ final class PutShipZones extends WriteRequest
         return 'reference/shipZones';
     }
 
+    /**
+     * @param Response<ShippingZoneData> $response
+     */
     public function createDtoFromResponse(Response $response): ShippingZoneData
     {
         return ShippingZoneData::from($response->json('ShipZones.0'))->setResponse($response);

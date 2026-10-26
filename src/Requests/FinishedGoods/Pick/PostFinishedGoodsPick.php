@@ -23,6 +23,9 @@ final class PostFinishedGoodsPick extends WriteRequest
         return 'finishedGoods/pick';
     }
 
+    /**
+     * @param Response<FinishedGoodsPickData> $response
+     */
     public function createDtoFromResponse(Response $response): FinishedGoodsPickData
     {
         return FinishedGoodsPickData::from($response->json())->setResponse($response);

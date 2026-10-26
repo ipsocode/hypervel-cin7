@@ -39,6 +39,9 @@ final class GetPurchaseStock extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<PurchaseStockData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseStockData
     {
         return PurchaseStockData::from($response->json())->setResponse($response);

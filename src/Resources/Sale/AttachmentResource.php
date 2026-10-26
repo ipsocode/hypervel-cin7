@@ -8,6 +8,7 @@ use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentPostData;
+use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentsData;
 use Ipsocode\Cin7\Requests\Sale\Attachment\DeleteSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\Attachment\GetSaleAttachment;
 use Ipsocode\Cin7\Requests\Sale\Attachment\PostSaleAttachment;
@@ -21,6 +22,8 @@ final class AttachmentResource extends BaseResource
 {
     /**
      * A sale's attachments.
+     *
+     * @return Response<SaleAttachmentsData>
      */
     public function get(string $saleId): Response
     {
@@ -31,6 +34,7 @@ final class AttachmentResource extends BaseResource
      * Attach a file to a sale, as base64 `Content` or a `FileDownloadUrl`.
      *
      * @param array<string, mixed>|SaleAttachmentPostData $body
+     * @return Response<SaleAttachmentsData>
      */
     public function post(array|SaleAttachmentPostData $body): Response
     {
@@ -39,6 +43,8 @@ final class AttachmentResource extends BaseResource
 
     /**
      * Delete one attachment.
+     *
+     * @return Response<SaleAttachmentsData>
      */
     public function delete(string $id): Response
     {

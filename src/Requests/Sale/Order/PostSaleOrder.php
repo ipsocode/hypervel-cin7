@@ -29,6 +29,9 @@ final class PostSaleOrder extends WriteRequest
         return 'sale/order';
     }
 
+    /**
+     * @param Response<SaleOrderData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleOrderData
     {
         return SaleOrderData::from($response->json())->setResponse($response);

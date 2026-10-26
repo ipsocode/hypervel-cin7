@@ -24,6 +24,9 @@ final class PutMoneyTask extends WriteRequest
         return 'moneyOperation';
     }
 
+    /**
+     * @param Response<MoneyTaskData> $response
+     */
     public function createDtoFromResponse(Response $response): MoneyTaskData
     {
         return MoneyTaskData::from($response->json())->setResponse($response);

@@ -26,6 +26,9 @@ final class PostAdvancedPurchaseInvoice extends WriteRequest
         return 'advanced-purchase/invoice';
     }
 
+    /**
+     * @param Response<AdvancedPurchaseInvoicesData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchaseInvoicesData
     {
         return AdvancedPurchaseInvoicesData::from($response->json())->setResponse($response);

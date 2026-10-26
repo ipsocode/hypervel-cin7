@@ -23,6 +23,9 @@ final class PostSaleCreditNote extends WriteRequest
         return 'sale/creditnote';
     }
 
+    /**
+     * @param Response<SaleCreditNotesData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleCreditNotesData
     {
         return SaleCreditNotesData::from($response->json())->setResponse($response);

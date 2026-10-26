@@ -9,6 +9,7 @@ use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentPutData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentsData;
 use Ipsocode\Cin7\Requests\Production\Order\Attachment\DeleteProductionOrderAttachment;
 use Ipsocode\Cin7\Requests\Production\Order\Attachment\GetProductionOrderAttachment;
 use Ipsocode\Cin7\Requests\Production\Order\Attachment\PostProductionOrderAttachment;
@@ -24,6 +25,7 @@ final class AttachmentResource extends BaseResource
     /**
      * @param array<string, mixed>|ProductionOrderAttachmentData $body
      * @param string $productionOrderId the production order
+     * @return Response<ProductionOrderAttachmentData>
      */
     public function post(array|ProductionOrderAttachmentData $body, string $productionOrderId): Response
     {
@@ -32,6 +34,7 @@ final class AttachmentResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionOrderAttachmentPutData $body
+     * @return Response<ProductionOrderAttachmentData>
      */
     public function put(array|ProductionOrderAttachmentPutData $body): Response
     {
@@ -40,6 +43,8 @@ final class AttachmentResource extends BaseResource
 
     /**
      * Deletes an attachment; the response is not documented.
+     *
+     * @return Response<null>
      */
     public function delete(string $productionOrderAttachmentId): Response
     {
@@ -50,6 +55,7 @@ final class AttachmentResource extends BaseResource
      * The attachments of a production order, its operations and their resources.
      *
      * @param null|bool $returnAttachmentsContent return the attachments' content
+     * @return Response<ProductionOrderAttachmentsData>
      */
     public function get(string $productionOrderId, ?bool $returnAttachmentsContent = null): Response
     {

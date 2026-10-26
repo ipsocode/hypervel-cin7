@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\StockTransfer\StockTransferData;
 use Ipsocode\Cin7\Data\StockTransfer\StockTransferPostData;
 use Ipsocode\Cin7\Data\StockTransfer\StockTransferPutData;
 use Ipsocode\Cin7\Requests\StockTransfer\DeleteStockTransfer;
@@ -24,6 +25,8 @@ final class StockTransferResource extends BaseResource
 {
     /**
      * One stock transfer, with its lines and its order.
+     *
+     * @return Response<StockTransferData>
      */
     public function get(string $taskId): Response
     {
@@ -32,6 +35,7 @@ final class StockTransferResource extends BaseResource
 
     /**
      * @param array<string, mixed>|StockTransferPostData $body
+     * @return Response<StockTransferData>
      */
     public function post(array|StockTransferPostData $body): Response
     {
@@ -40,6 +44,7 @@ final class StockTransferResource extends BaseResource
 
     /**
      * @param array<string, mixed>|StockTransferPutData $body
+     * @return Response<StockTransferData>
      */
     public function put(array|StockTransferPutData $body): Response
     {
@@ -50,6 +55,7 @@ final class StockTransferResource extends BaseResource
      * Void the stock transfer (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<StockTransferData>
      */
     public function delete(string $id, ?bool $void = null): Response
     {

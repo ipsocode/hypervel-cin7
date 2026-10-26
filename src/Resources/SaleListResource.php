@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Resources;
 
 use DateTimeInterface;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\SaleList\SaleListData;
 use Ipsocode\Cin7\Enums\OrderStatus;
 use Ipsocode\Cin7\Enums\PackingStatus;
 use Ipsocode\Cin7\Enums\PickingStatus;
@@ -43,6 +44,7 @@ final class SaleListResource extends ListResource
      * @param null|SaleStatus $status only sales with this status
      * @param null|bool $readyForShipping only sales whose pack is authorized and shipment is not
      * @param null|string $orderLocationId only sales ordered from this location
+     * @return Response<list<SaleListData>>
      */
     public function get(
         ?int $page = null,

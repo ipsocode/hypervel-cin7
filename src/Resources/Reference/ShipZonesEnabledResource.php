@@ -20,6 +20,8 @@ final class ShipZonesEnabledResource extends BaseResource
 {
     /**
      * Whether shipping zones are enabled.
+     *
+     * @return Response<ShipZonesEnabledData>
      */
     public function get(): Response
     {
@@ -30,6 +32,7 @@ final class ShipZonesEnabledResource extends BaseResource
      * Enable or disable shipping zones.
      *
      * @param array<string, mixed>|ShipZonesEnabledData $body
+     * @return Response<ShipZonesEnabledData>
      */
     public function put(array|ShipZonesEnabledData $body): Response
     {

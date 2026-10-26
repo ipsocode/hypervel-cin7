@@ -30,6 +30,9 @@ final class PutCustomer extends WriteRequest
         return 'customer';
     }
 
+    /**
+     * @param Response<CustomerData> $response
+     */
     public function createDtoFromResponse(Response $response): CustomerData
     {
         return CustomerData::from($response->json('CustomerList.0'))->setResponse($response);

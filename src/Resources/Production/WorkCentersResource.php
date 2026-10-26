@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Production;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCenterData;
 use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCentersData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Production\WorkCenters\DeleteProductionWorkCenters;
@@ -27,6 +28,7 @@ final class WorkCentersResource extends BaseResource
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $name only those whose name or code starts with this
+     * @return Response<list<WorkCenterData>>
      */
     public function get(
         ?int $page = null,
@@ -60,6 +62,7 @@ final class WorkCentersResource extends BaseResource
 
     /**
      * @param array<string, mixed>|WorkCentersData $body
+     * @return Response<WorkCentersData>
      */
     public function post(array|WorkCentersData $body): Response
     {
@@ -68,6 +71,7 @@ final class WorkCentersResource extends BaseResource
 
     /**
      * @param array<string, mixed>|WorkCentersData $body
+     * @return Response<WorkCentersData>
      */
     public function put(array|WorkCentersData $body): Response
     {
@@ -76,6 +80,8 @@ final class WorkCentersResource extends BaseResource
 
     /**
      * Deletes a work center; the response is not documented.
+     *
+     * @return Response<null>
      */
     public function delete(string $workCenterId): Response
     {

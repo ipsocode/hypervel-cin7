@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxPostData;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -30,6 +31,7 @@ final class TaxResource extends BaseResource
      * @param null|bool $isTaxForSale only tax rules for sales
      * @param null|bool $isTaxForPurchase only tax rules for purchases
      * @param null|string $account only tax rules linked to this account code
+     * @return Response<list<TaxData>>
      */
     public function get(
         ?int $page = null,
@@ -88,6 +90,7 @@ final class TaxResource extends BaseResource
 
     /**
      * @param array<string, mixed>|TaxPostData $body
+     * @return Response<TaxData>
      */
     public function post(array|TaxPostData $body): Response
     {
@@ -96,6 +99,7 @@ final class TaxResource extends BaseResource
 
     /**
      * @param array<string, mixed>|TaxPutData $body
+     * @return Response<TaxData>
      */
     public function put(array|TaxPutData $body): Response
     {

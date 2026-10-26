@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypeData;
 use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypePostData;
 use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypePutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class FixedAssetTypeResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $fixedAssetTypeId only the fixed asset type with this ID
      * @param null|string $name only fixed asset types whose name starts with this
+     * @return Response<list<FixedAssetTypeData>>
      */
     public function get(
         ?int $page = null,
@@ -56,6 +58,7 @@ final class FixedAssetTypeResource extends BaseResource
 
     /**
      * @param array<string, mixed>|FixedAssetTypePostData $body
+     * @return Response<FixedAssetTypeData>
      */
     public function post(array|FixedAssetTypePostData $body): Response
     {
@@ -64,6 +67,7 @@ final class FixedAssetTypeResource extends BaseResource
 
     /**
      * @param array<string, mixed>|FixedAssetTypePutData $body
+     * @return Response<FixedAssetTypeData>
      */
     public function put(array|FixedAssetTypePutData $body): Response
     {

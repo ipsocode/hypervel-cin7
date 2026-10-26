@@ -23,6 +23,9 @@ final class PostStockTake extends WriteRequest
         return 'stocktake';
     }
 
+    /**
+     * @param Response<StockTakeData> $response
+     */
     public function createDtoFromResponse(Response $response): StockTakeData
     {
         return StockTakeData::from($response->json())->setResponse($response);

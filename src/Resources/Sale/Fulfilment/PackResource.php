@@ -24,6 +24,7 @@ final class PackResource extends BaseResource
      * A fulfilment's pack.
      *
      * @param null|bool $includeProductInfo add the products the lines use
+     * @return Response<SaleFulfilmentPackData>
      */
     public function get(string $taskId, ?bool $includeProductInfo = null): Response
     {
@@ -32,6 +33,7 @@ final class PackResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleFulfilmentPackPostData $body
+     * @return Response<SaleFulfilmentPackData>
      */
     public function post(array|SaleFulfilmentPackPostData $body): Response
     {
@@ -40,6 +42,7 @@ final class PackResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleFulfilmentPackData $body
+     * @return Response<SaleFulfilmentPackData>
      */
     public function put(array|SaleFulfilmentPackData $body): Response
     {

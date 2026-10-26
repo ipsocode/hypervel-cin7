@@ -24,6 +24,9 @@ final class PostDisassemblyOrder extends WriteRequest
         return 'disassembly/order';
     }
 
+    /**
+     * @param Response<DisassemblyOrderData> $response
+     */
     public function createDtoFromResponse(Response $response): DisassemblyOrderData
     {
         return DisassemblyOrderData::from($response->json())->setResponse($response);

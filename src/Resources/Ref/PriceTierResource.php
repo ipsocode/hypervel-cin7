@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\PriceTier\PriceTierData;
 use Ipsocode\Cin7\Requests\Ref\PriceTier\GetPriceTier;
 
 /**
@@ -18,6 +19,8 @@ final class PriceTierResource extends BaseResource
 {
     /**
      * The account's price tiers, by code and name.
+     *
+     * @return Response<list<PriceTierData>>
      */
     public function get(): Response
     {

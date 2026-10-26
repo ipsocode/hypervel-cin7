@@ -8,6 +8,7 @@ use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentPostData;
+use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentsData;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\DeletePurchaseAttachment;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\GetPurchaseAttachment;
 use Ipsocode\Cin7\Requests\Purchase\Attachment\PostPurchaseAttachment;
@@ -21,6 +22,8 @@ final class AttachmentResource extends BaseResource
 {
     /**
      * A purchase's attachments, by its `TaskID`.
+     *
+     * @return Response<PurchaseAttachmentsData>
      */
     public function get(string $taskId): Response
     {
@@ -31,6 +34,7 @@ final class AttachmentResource extends BaseResource
      * Attach a file to a purchase, as base64 `Content` or a `FileDownloadUrl`.
      *
      * @param array<string, mixed>|PurchaseAttachmentPostData $body
+     * @return Response<PurchaseAttachmentsData>
      */
     public function post(array|PurchaseAttachmentPostData $body): Response
     {
@@ -39,6 +43,8 @@ final class AttachmentResource extends BaseResource
 
     /**
      * Delete one attachment.
+     *
+     * @return Response<PurchaseAttachmentsData>
      */
     public function delete(string $id): Response
     {

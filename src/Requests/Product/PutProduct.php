@@ -57,6 +57,9 @@ final class PutProduct extends WriteRequest
         return 'product';
     }
 
+    /**
+     * @param Response<ProductData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductData
     {
         return ProductData::from($response->json('Products.0'))->setResponse($response);

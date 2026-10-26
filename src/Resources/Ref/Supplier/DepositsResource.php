@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref\Supplier;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Supplier\Deposits\SupplierDepositData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Ref\Supplier\Deposits\GetSupplierDeposits;
 
@@ -22,6 +23,7 @@ final class DepositsResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $supplierId only this supplier's deposits
      * @param null|bool $showUsedDeposits include the deposits already used
+     * @return Response<list<SupplierDepositData>>
      */
     public function get(
         ?int $page = null,

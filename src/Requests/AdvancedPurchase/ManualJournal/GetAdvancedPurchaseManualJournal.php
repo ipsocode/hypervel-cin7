@@ -39,6 +39,9 @@ final class GetAdvancedPurchaseManualJournal extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<AdvancedPurchaseManualJournalsData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchaseManualJournalsData
     {
         return AdvancedPurchaseManualJournalsData::from($response->json())->setResponse($response);

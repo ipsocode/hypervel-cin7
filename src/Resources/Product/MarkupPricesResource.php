@@ -20,6 +20,8 @@ final class MarkupPricesResource extends BaseResource
 {
     /**
      * A product's markup prices, one line for each of the ten price tiers.
+     *
+     * @return Response<MarkupPricesData>
      */
     public function get(string $productId): Response
     {
@@ -30,6 +32,7 @@ final class MarkupPricesResource extends BaseResource
      * Create, change or delete (with `MarkupType` `D`) a product's markup lines.
      *
      * @param array<string, mixed>|MarkupPricesData $body
+     * @return Response<MarkupPricesData>
      */
     public function put(array|MarkupPricesData $body): Response
     {

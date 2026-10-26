@@ -41,6 +41,9 @@ final class GetProductionOrderRun extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<ProductionRunsData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionRunsData
     {
         return ProductionRunsData::from($response->json())->setResponse($response);

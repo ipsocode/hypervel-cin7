@@ -9,6 +9,7 @@ use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStockPutData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStocksData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\DeleteAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\GetAdvancedPurchaseStock;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Stock\PostAdvancedPurchaseStock;
@@ -25,6 +26,8 @@ final class StockResource extends BaseResource
 {
     /**
      * An advanced purchase's stock receiving tasks, by its `PurchaseID`.
+     *
+     * @return Response<AdvancedPurchaseStocksData>
      */
     public function get(
         string $purchaseId,
@@ -34,6 +37,7 @@ final class StockResource extends BaseResource
 
     /**
      * @param AdvancedPurchaseStockPostData|array<string, mixed> $body
+     * @return Response<AdvancedPurchaseStocksData>
      */
     public function post(array|AdvancedPurchaseStockPostData $body): Response
     {
@@ -42,6 +46,7 @@ final class StockResource extends BaseResource
 
     /**
      * @param AdvancedPurchaseStockPutData|array<string, mixed> $body
+     * @return Response<AdvancedPurchaseStocksData>
      */
     public function put(array|AdvancedPurchaseStockPutData $body): Response
     {
@@ -53,6 +58,7 @@ final class StockResource extends BaseResource
      * applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<AdvancedPurchaseStocksData>
      */
     public function delete(
         string $taskId,

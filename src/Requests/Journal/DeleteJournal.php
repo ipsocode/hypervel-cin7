@@ -42,6 +42,9 @@ final class DeleteJournal extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<JournalData> $response
+     */
     public function createDtoFromResponse(Response $response): JournalData
     {
         return JournalData::from($response->json('Journals.0'))->setResponse($response);

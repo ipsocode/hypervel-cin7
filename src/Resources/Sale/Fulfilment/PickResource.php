@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Sale\Fulfilment;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickPostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickPutData;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Pick\GetSaleFulfilmentPick;
@@ -24,6 +25,7 @@ final class PickResource extends BaseResource
      * A fulfilment's pick.
      *
      * @param null|bool $includeProductInfo add the products the lines use
+     * @return Response<SaleFulfilmentPickData>
      */
     public function get(string $taskId, ?bool $includeProductInfo = null): Response
     {
@@ -32,6 +34,7 @@ final class PickResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleFulfilmentPickPostData $body
+     * @return Response<SaleFulfilmentPickData>
      */
     public function post(array|SaleFulfilmentPickPostData $body): Response
     {
@@ -40,6 +43,7 @@ final class PickResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleFulfilmentPickPutData $body
+     * @return Response<SaleFulfilmentPickData>
      */
     public function put(array|SaleFulfilmentPickPutData $body): Response
     {

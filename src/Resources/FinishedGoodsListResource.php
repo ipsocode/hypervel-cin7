@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources;
 
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\FinishedGoodsList\FinishedGoodsListData;
 use Ipsocode\Cin7\Enums\FinishedGoodsStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\FinishedGoodsList\GetFinishedGoodsList;
@@ -22,6 +23,7 @@ final class FinishedGoodsListResource extends ListResource
      * @param null|FinishedGoodsStatus $status only finished goods with this status
      * @param null|string $search only finished goods with this text in the assembly number, location, status, name, product code, batch or notes
      * @param null|string $saleId only finished goods related to this sale
+     * @return Response<list<FinishedGoodsListData>>
      */
     public function get(
         ?int $page = null,

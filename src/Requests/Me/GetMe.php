@@ -23,6 +23,9 @@ final class GetMe extends Cin7Request
         return 'me';
     }
 
+    /**
+     * @param Response<MeData> $response
+     */
     public function createDtoFromResponse(Response $response): MeData
     {
         return MeData::from($response->json())->setResponse($response);

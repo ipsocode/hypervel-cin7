@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\PaymentTerm\PaymentTermData;
 use Ipsocode\Cin7\Data\Ref\PaymentTerm\PaymentTermPostData;
 use Ipsocode\Cin7\Data\Ref\PaymentTerm\PaymentTermPutData;
 use Ipsocode\Cin7\Enums\PaymentTermMethod;
@@ -33,6 +34,7 @@ final class PaymentTermResource extends BaseResource
      * @param null|PaymentTermMethod $method only payment terms with this method
      * @param null|bool $isActive only active payment terms
      * @param null|bool $isDefault only the default payment term
+     * @return Response<list<PaymentTermData>>
      */
     public function get(
         ?int $page = null,
@@ -70,6 +72,7 @@ final class PaymentTermResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PaymentTermPostData $body
+     * @return Response<PaymentTermData>
      */
     public function post(array|PaymentTermPostData $body): Response
     {
@@ -78,6 +81,7 @@ final class PaymentTermResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PaymentTermPutData $body
+     * @return Response<PaymentTermData>
      */
     public function put(array|PaymentTermPutData $body): Response
     {
@@ -86,6 +90,8 @@ final class PaymentTermResource extends BaseResource
 
     /**
      * Delete the payment term with this ID.
+     *
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

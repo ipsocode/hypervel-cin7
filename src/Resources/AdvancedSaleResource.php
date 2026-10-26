@@ -8,6 +8,7 @@ use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\AdvancedSale\AdvancedSalePostData;
+use Ipsocode\Cin7\Data\Sale\SaleData;
 use Ipsocode\Cin7\Data\Sale\SalePutData;
 use Ipsocode\Cin7\Enums\CountryFormat;
 use Ipsocode\Cin7\Requests\Sale\DeleteSale;
@@ -43,6 +44,7 @@ final class AdvancedSaleResource extends BaseResource
      * @param null|bool $includeTransactions include the related transactions
      * @param null|CountryFormat $countryFormat return each address's country as its name or as a
      *                                          country code
+     * @return Response<SaleData>
      */
     public function get(
         string $id,
@@ -65,6 +67,7 @@ final class AdvancedSaleResource extends BaseResource
      * itself.
      *
      * @param AdvancedSalePostData|array<string, mixed> $body
+     * @return Response<SaleData>
      */
     public function post(array|AdvancedSalePostData $body): Response
     {
@@ -73,6 +76,7 @@ final class AdvancedSaleResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SalePutData $body
+     * @return Response<SaleData>
      */
     public function put(array|SalePutData $body): Response
     {
@@ -83,6 +87,7 @@ final class AdvancedSaleResource extends BaseResource
      * Void the sale (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<SaleData>
      */
     public function delete(
         string $id,

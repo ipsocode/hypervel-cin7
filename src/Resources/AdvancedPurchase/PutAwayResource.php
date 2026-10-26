@@ -8,6 +8,7 @@ use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwayPostData;
+use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwaysData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\GetAdvancedPurchasePutAway;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway\PostAdvancedPurchasePutAway;
 
@@ -20,6 +21,8 @@ final class PutAwayResource extends BaseResource
 {
     /**
      * An advanced purchase's put away tasks, by its `PurchaseID`.
+     *
+     * @return Response<AdvancedPurchasePutAwaysData>
      */
     public function get(
         string $purchaseId,
@@ -29,6 +32,7 @@ final class PutAwayResource extends BaseResource
 
     /**
      * @param AdvancedPurchasePutAwayPostData|array<string, mixed> $body
+     * @return Response<AdvancedPurchasePutAwaysData>
      */
     public function post(array|AdvancedPurchasePutAwayPostData $body): Response
     {

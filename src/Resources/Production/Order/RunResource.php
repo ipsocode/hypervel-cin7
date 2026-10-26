@@ -11,6 +11,7 @@ use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunCompletePutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunManualJournalsPutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunPostData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunUndoData;
 use Ipsocode\Cin7\Requests\Production\Order\Run\Complete\PutProductionOrderRunComplete;
 use Ipsocode\Cin7\Requests\Production\Order\Run\GetProductionOrderRun;
@@ -30,6 +31,7 @@ final class RunResource extends BaseResource
 {
     /**
      * @param array<string, mixed>|ProductionRunPostData $body
+     * @return Response<ProductionRunsData>
      */
     public function post(array|ProductionRunPostData $body): Response
     {
@@ -40,6 +42,7 @@ final class RunResource extends BaseResource
      * The runs of a production order.
      *
      * @param null|bool $includeAttachmentContent return the attachments' content
+     * @return Response<ProductionRunsData>
      */
     public function get(string $productionOrderId, ?bool $includeAttachmentContent = null): Response
     {
@@ -50,6 +53,7 @@ final class RunResource extends BaseResource
      * @param array<string, mixed>|ProductionRunData $body
      * @param string $productionOrderId the production order
      * @param bool $increaseOrderQuantity increase the order's quantity if the runs' quantities add up to more
+     * @return Response<ProductionRunData>
      */
     public function put(array|ProductionRunData $body, string $productionOrderId, bool $increaseOrderQuantity): Response
     {
@@ -58,6 +62,7 @@ final class RunResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionRunCompletePutData $body
+     * @return Response<ProductionRunsData>
      */
     public function complete(array|ProductionRunCompletePutData $body): Response
     {
@@ -66,6 +71,7 @@ final class RunResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionRunUndoData $body
+     * @return Response<ProductionRunUndoData>
      */
     public function undo(array|ProductionRunUndoData $body): Response
     {
@@ -74,6 +80,7 @@ final class RunResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionRunUndoData $body
+     * @return Response<ProductionRunUndoData>
      */
     public function void(array|ProductionRunUndoData $body): Response
     {
@@ -83,6 +90,7 @@ final class RunResource extends BaseResource
     /**
      * @param array<string, mixed>|ProductionRunManualJournalsPutData $body
      * @param string $productionOrderId the production order
+     * @return Response<ProductionRunsData>
      */
     public function manualJournal(array|ProductionRunManualJournalsPutData $body, string $productionOrderId): Response
     {

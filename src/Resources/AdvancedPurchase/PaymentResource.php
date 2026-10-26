@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\AdvancedPurchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Payment\AdvancedPurchasePaymentData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Payment\AdvancedPurchasePaymentPostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Payment\AdvancedPurchasePaymentPutData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Payment\GetAdvancedPurchasePayment;
@@ -31,6 +32,7 @@ final class PaymentResource extends BaseResource
      * @param null|string $orderNumber the purchase order's number
      * @param null|string $invoiceNumber the invoice's number
      * @param null|string $creditNoteNumber the credit note's number
+     * @return Response<list<AdvancedPurchasePaymentData>>
      */
     public function get(
         ?string $purchaseId = null,
@@ -43,6 +45,7 @@ final class PaymentResource extends BaseResource
 
     /**
      * @param AdvancedPurchasePaymentPostData|array<string, mixed> $body
+     * @return Response<AdvancedPurchasePaymentData>
      */
     public function post(array|AdvancedPurchasePaymentPostData $body): Response
     {
@@ -51,6 +54,7 @@ final class PaymentResource extends BaseResource
 
     /**
      * @param AdvancedPurchasePaymentPutData|array<string, mixed> $body
+     * @return Response<AdvancedPurchasePaymentData>
      */
     public function put(array|AdvancedPurchasePaymentPutData $body): Response
     {
@@ -63,6 +67,7 @@ final class PaymentResource extends BaseResource
      *
      * @param null|bool $deleteAllocation delete the allocated payments too (true, the default Cin7
      *                                    applies) or keep them (false)
+     * @return Response<null>
      */
     public function delete(
         string $id,

@@ -23,6 +23,9 @@ final class GetShipZonesEnabled extends Cin7Request
         return 'reference/shipZonesEnabled';
     }
 
+    /**
+     * @param Response<ShipZonesEnabledData> $response
+     */
     public function createDtoFromResponse(Response $response): ShipZonesEnabledData
     {
         return ShipZonesEnabledData::from($response->json())->setResponse($response);

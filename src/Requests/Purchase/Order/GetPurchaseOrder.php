@@ -41,6 +41,9 @@ final class GetPurchaseOrder extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<PurchaseOrderData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseOrderData
     {
         return PurchaseOrderData::from($response->json())->setResponse($response);

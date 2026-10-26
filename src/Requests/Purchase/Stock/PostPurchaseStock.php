@@ -31,6 +31,9 @@ final class PostPurchaseStock extends WriteRequest
         return 'purchase/stock';
     }
 
+    /**
+     * @param Response<PurchaseStockData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseStockData
     {
         return PurchaseStockData::from($response->json())->setResponse($response);

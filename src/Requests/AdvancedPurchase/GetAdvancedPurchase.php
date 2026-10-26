@@ -43,6 +43,9 @@ final class GetAdvancedPurchase extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<AdvancedPurchaseData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchaseData
     {
         return AdvancedPurchaseData::from($response->json())->setResponse($response);

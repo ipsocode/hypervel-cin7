@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\ProductAvailability\ProductAvailabilityData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Ref\ProductAvailability\GetProductAvailability;
 
@@ -28,6 +29,7 @@ final class ProductAvailabilityResource extends BaseResource
      * @param null|string $location only the stock at this location name
      * @param null|string $batch only the stock of this batch or serial number
      * @param null|string $category only products in this product category name
+     * @return Response<list<ProductAvailabilityData>>
      */
     public function get(
         ?int $page = null,

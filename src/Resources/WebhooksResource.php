@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Webhooks\WebhookData;
 use Ipsocode\Cin7\Data\Webhooks\WebhookPostData;
 use Ipsocode\Cin7\Data\Webhooks\WebhookPutData;
 use Ipsocode\Cin7\Requests\Webhooks\DeleteWebhooks;
@@ -23,6 +24,8 @@ final class WebhooksResource extends BaseResource
 {
     /**
      * Every webhook; the reference has no paging.
+     *
+     * @return Response<list<WebhookData>>
      */
     public function get(): Response
     {
@@ -31,6 +34,7 @@ final class WebhooksResource extends BaseResource
 
     /**
      * @param array<string, mixed>|WebhookPostData $body
+     * @return Response<list<WebhookData>>
      */
     public function post(array|WebhookPostData $body): Response
     {
@@ -39,6 +43,7 @@ final class WebhooksResource extends BaseResource
 
     /**
      * @param array<string, mixed>|WebhookPutData $body
+     * @return Response<list<WebhookData>>
      */
     public function put(array|WebhookPutData $body): Response
     {
@@ -47,6 +52,8 @@ final class WebhooksResource extends BaseResource
 
     /**
      * Delete the webhook with this ID.
+     *
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

@@ -23,6 +23,9 @@ final class PutDeals extends WriteRequest
         return 'reference/deals';
     }
 
+    /**
+     * @param Response<ProductDealData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductDealData
     {
         return ProductDealData::from($response->json('Deals.0'))->setResponse($response);

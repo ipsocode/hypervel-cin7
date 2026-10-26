@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\AdvancedPurchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchaseCreditNotesData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchasePartialCreditNotePostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\DeleteAdvancedPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote\GetAdvancedPurchaseCreditNote;
@@ -23,6 +24,7 @@ final class CreditNoteResource extends BaseResource
      * An advanced purchase's credit notes, by its `PurchaseID`.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @return Response<AdvancedPurchaseCreditNotesData>
      */
     public function get(
         string $purchaseId,
@@ -33,6 +35,7 @@ final class CreditNoteResource extends BaseResource
 
     /**
      * @param AdvancedPurchasePartialCreditNotePostData|array<string, mixed> $body
+     * @return Response<AdvancedPurchaseCreditNotesData>
      */
     public function post(array|AdvancedPurchasePartialCreditNotePostData $body): Response
     {
@@ -41,6 +44,8 @@ final class CreditNoteResource extends BaseResource
 
     /**
      * Void the credit note.
+     *
+     * @return Response<AdvancedPurchaseCreditNotesData>
      */
     public function delete(
         string $taskId,

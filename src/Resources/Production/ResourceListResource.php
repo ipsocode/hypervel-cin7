@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources\Production;
 
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\Production\Resource\ResourceData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Production\ResourceList\GetProductionResourceList;
 use Ipsocode\Cin7\Resources\ListResource;
@@ -21,6 +22,7 @@ final class ResourceListResource extends ListResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $name only those whose name or code starts with this
      * @param null|bool $onlyActive only active resources (the default Cin7 applies is true)
+     * @return Response<list<ResourceData>>
      */
     public function get(
         ?int $page = null,

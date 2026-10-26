@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\FinishedGoods\FinishedGoodsData;
 use Ipsocode\Cin7\Data\FinishedGoods\FinishedGoodsPostData;
 use Ipsocode\Cin7\Data\FinishedGoods\FinishedGoodsPutData;
 use Ipsocode\Cin7\Requests\FinishedGoods\DeleteFinishedGoods;
@@ -25,6 +26,8 @@ final class FinishedGoodsResource extends BaseResource
 {
     /**
      * One finished goods task, with its lines.
+     *
+     * @return Response<FinishedGoodsData>
      */
     public function get(string $taskId): Response
     {
@@ -33,6 +36,7 @@ final class FinishedGoodsResource extends BaseResource
 
     /**
      * @param array<string, mixed>|FinishedGoodsPostData $body
+     * @return Response<FinishedGoodsData>
      */
     public function post(array|FinishedGoodsPostData $body): Response
     {
@@ -41,6 +45,7 @@ final class FinishedGoodsResource extends BaseResource
 
     /**
      * @param array<string, mixed>|FinishedGoodsPutData $body
+     * @return Response<FinishedGoodsData>
      */
     public function put(array|FinishedGoodsPutData $body): Response
     {
@@ -51,6 +56,7 @@ final class FinishedGoodsResource extends BaseResource
      * Void the task (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<FinishedGoodsData>
      */
     public function delete(string $id, ?bool $void = null): Response
     {

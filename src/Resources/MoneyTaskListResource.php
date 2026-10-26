@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources;
 
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Enums\MoneyTaskType;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -24,6 +25,7 @@ final class MoneyTaskListResource extends ListResource
      * @param null|string $search only money tasks with this text in the supplier or customer name,
      *                            reference, bank account code, memo, total or a custom field
      * @param null|MoneyTaskType $taskType only money tasks of this type
+     * @return Response<list<MoneyTaskListData>>
      */
     public function get(
         ?int $page = null,

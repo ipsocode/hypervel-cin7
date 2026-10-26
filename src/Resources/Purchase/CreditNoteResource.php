@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Purchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNoteData;
 use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNotePostData;
 use Ipsocode\Cin7\Requests\Purchase\CreditNote\GetPurchaseCreditNote;
 use Ipsocode\Cin7\Requests\Purchase\CreditNote\PostPurchaseCreditNote;
@@ -24,6 +25,7 @@ final class CreditNoteResource extends BaseResource
      * A purchase's credit note, by the purchase's `TaskID`.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @return Response<PurchaseCreditNoteData>
      */
     public function get(
         string $taskId,
@@ -34,6 +36,7 @@ final class CreditNoteResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchaseCreditNotePostData $body
+     * @return Response<PurchaseCreditNoteData>
      */
     public function post(array|PurchaseCreditNotePostData $body): Response
     {

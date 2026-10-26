@@ -23,6 +23,9 @@ final class PostLocation extends WriteRequest
         return 'ref/location';
     }
 
+    /**
+     * @param Response<LocationData> $response
+     */
     public function createDtoFromResponse(Response $response): LocationData
     {
         return LocationData::from($response->json())->setResponse($response);

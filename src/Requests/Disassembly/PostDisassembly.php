@@ -23,6 +23,9 @@ final class PostDisassembly extends WriteRequest
         return 'disassembly';
     }
 
+    /**
+     * @param Response<DisassemblyData> $response
+     */
     public function createDtoFromResponse(Response $response): DisassemblyData
     {
         return DisassemblyData::from($response->json())->setResponse($response);

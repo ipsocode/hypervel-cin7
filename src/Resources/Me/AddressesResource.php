@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Me;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Me\Addresses\MeAddressData;
 use Ipsocode\Cin7\Data\Me\Addresses\MeAddressPostData;
 use Ipsocode\Cin7\Data\Me\Addresses\MeAddressPutData;
 use Ipsocode\Cin7\Enums\AddressType;
@@ -34,6 +35,7 @@ final class AddressesResource extends BaseResource
      * @param null|string $country only addresses in this country
      * @param null|string $stateProvince only addresses in this state or province
      * @param null|string $citySuburb only addresses in this city or suburb
+     * @return Response<list<MeAddressData>>
      */
     public function get(
         ?int $page = null,
@@ -92,6 +94,7 @@ final class AddressesResource extends BaseResource
 
     /**
      * @param array<string, mixed>|MeAddressPostData $body
+     * @return Response<MeAddressData>
      */
     public function post(array|MeAddressPostData $body): Response
     {
@@ -100,6 +103,7 @@ final class AddressesResource extends BaseResource
 
     /**
      * @param array<string, mixed>|MeAddressPutData $body
+     * @return Response<MeAddressData>
      */
     public function put(array|MeAddressPutData $body): Response
     {
@@ -108,6 +112,8 @@ final class AddressesResource extends BaseResource
 
     /**
      * Delete one of the company's addresses.
+     *
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {
