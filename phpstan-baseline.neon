@@ -3209,3 +3209,9 @@ parameters:
 			identifier: missingType.generics
 			count: 1
 			path: src/Resources/WebhooksResource.php
+
+		-
+			message: '#^Method Ipsocode\\Cin7\\Sync\\Synchroniser\:\:unseen\(\) should return list\<string\> but returns array\<string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Sync/Synchroniser.php
