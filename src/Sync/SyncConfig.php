@@ -135,11 +135,12 @@ final class SyncConfig
     }
 
     /**
-     * Failed reads after which a document is no longer tried, at least 1.
+     * Return the failed reads after which a document is no longer tried, from 1 to the largest a `smallint`
+     * column holds on every database.
      */
     public static function maxFailures(): int
     {
-        return max(1, (int) (config('cin7.sync.max_failures') ?? 3));
+        return min(32767, max(1, (int) (config('cin7.sync.max_failures') ?? 3)));
     }
 
     public static function queue(): ?string

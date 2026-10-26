@@ -8,6 +8,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Support\Carbon;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Sync\Module;
+use Ipsocode\Cin7\Sync\Payload;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 
 /**
@@ -175,6 +176,20 @@ class DocumentPullTest extends SyncTestCase
         $this->assertEquals($updated, $lists['s-1']->updated_at);
     }
 
+    public function testAFailedReadOfARowWithNoModifiedTimeIsCounted(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [['SaleID' => 's-1', 'OrderNumber' => 'SO-s-1', 'Updated' => null], $this->sale('s-2')]),
+            Cin7Fake::error('Sale not found'),
+            Cin7Fake::record(['ID' => 's-2']),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->synchroniser()->pull(Module::Sale);
+
+        $this->assertSame([1, 0], $this->stored(Module::SaleList)->map(static fn (Payload $row): int => $row->failures)->values()->all());
+    }
+
     public function testADocumentIsNotReadOnceItHasFailedTheConfiguredNumberOfTimes(): void
     {
         $this->app->get('config')->set('cin7.sync.max_failures', 2);
@@ -331,5 +346,22 @@ class DocumentPullTest extends SyncTestCase
         $this->assertArrayNotHasKey('UpdatedSince', $bounded);
         $this->assertArrayNotHasKey('UpdatedUntil', $followUp);
         $this->assertSame(Carbon::now()->startOfSecond()->format('Y-m-d\TH:i:s.v'), $followUp['UpdatedSince']);
+    }
+
+    public function testAFullPullWhoseBoundedWalkReadNothingDeletesNothing(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1'), $this->sale('s-2')]),
+            // The bounded walk answers with nothing; the follow-up walk returns what changed since.
+            Cin7Fake::list('SaleList'),
+            Cin7Fake::list('SaleList', [$this->sale('s-2', '2026-10-03T12:00:01Z')]),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::SaleList, full: true);
+
+        $this->assertSame([1, 0], [$result->read, $result->deleted]);
+        $this->assertSame(['s-1', 's-2'], $this->stored(Module::SaleList)->keys()->all());
     }
 }

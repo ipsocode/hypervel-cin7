@@ -105,10 +105,10 @@ other records point to comes before the records that point to it.
    only its `synced_at` moved; a full pull refreshes its payload too, without moving
    `updated_at`.
 5. A full pull of `saleList` or `purchaseList` that is not a first fill then walks the list once
-   more, from the pull's start with no `UpdatedUntil`, and stores what that returns. It reads
+   more, after the same pause, from the pull's start with no `UpdatedUntil`, and stores what that returns. It reads
    what changed while the bounded walk ran, which that walk left out, so step 6 keeps it. Both walks
    must complete.
-6. A full pull that completes and read something then deletes the module's rows it did not
+6. A full pull that completes, and whose first walk read something, then deletes the module's rows it did not
    see. Cin7 returns every list in the order of the record's modified time, the time its
    `ModifiedSince` and `UpdatedSince` filters compare ([Cin7 API
    reference](https://help.core.cin7.com/hc/en-us/sections/10207284005007-Cin7-API)).

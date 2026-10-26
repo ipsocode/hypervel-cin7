@@ -87,10 +87,14 @@ final class Synchroniser
             $requests[] = $module->listRequest($start, null);
         }
 
-        $read = $written = $unchanged = 0;
+        $read = $written = $unchanged = $walked = 0;
 
         try {
-            foreach ($requests as $request) {
+            foreach ($requests as $index => $request) {
+                if ($index > 0) {
+                    $this->pause();
+                }
+
                 $paginator = $this->cin7->paginate($request)->perPageLimit(SyncConfig::limit());
 
                 // Driven by hand rather than foreach, so the pause falls between calls only.
@@ -102,6 +106,11 @@ final class Synchroniser
                     $read += count($items);
                     $written += $changed;
                     $unchanged += $same;
+
+                    if ($index === 0) {
+                        $walked += count($items);
+                    }
+
                     $paginator->next();
 
                     if ($paginator->valid()) {
@@ -114,17 +123,13 @@ final class Synchroniser
             // during the walk moves, and can push an unchanged one onto a page already read.
             // Before a row goes as gone, ask Cin7 for it by identifier: one still returned is
             // stored, which gives it this pull's start, so the deletion below keeps it.
-            if ($full && $read > 0) {
+            if ($full && $walked > 0 && $module->confirms()) {
                 foreach ($this->unseen($module, $start) as $id) {
-                    $request = $module->findRequest($id);
-
-                    if ($request === null) {
-                        break;
-                    }
+                    $find = $module->findRequest($id);
 
                     $this->pause();
 
-                    $items = $request->mapPaginatedResponseItems($this->cin7->send($request));
+                    $items = $find->mapPaginatedResponseItems($this->cin7->send($find));
                     [$changed, $same] = $this->store($module, $items, $start, $full);
                     $read += count($items);
                     $written += $changed;
@@ -146,8 +151,8 @@ final class Synchroniser
             return new PullResult($module, $full, $read, $written, $unchanged, error: $exception);
         }
 
-        // Only a complete full pull that read something can say what Cin7 no longer returns.
-        $deleted = $full && $read > 0
+        // Only a complete full pull whose first walk read something can say what Cin7 no longer returns.
+        $deleted = $full && $walked > 0
             ? (int) $this->rows($module)->where('synced_at', '<', $start)->delete()
             : 0;
 
@@ -155,7 +160,7 @@ final class Synchroniser
     }
 
     /**
-     * The identifiers of a list module's stored rows that a pull did not reach, which a full pull
+     * Return the identifiers of a list module's stored rows that a pull did not reach, which a full pull
      * deletes unless Cin7 still returns them.
      *
      * @return list<string>
@@ -179,7 +184,7 @@ final class Synchroniser
     {
         $deleted = $full ? $this->deleteOrphans($module) : 0;
         $read = $written = 0;
-        $failures = [];
+        $failures = $versions = [];
 
         foreach ($this->pending($module) as $row) {
             if ($read++ > 0) {
@@ -200,6 +205,7 @@ final class Synchroniser
                 ++$written;
             } catch (Throwable $exception) {
                 $failures[(string) $row->cin7_id] = $exception;
+                $versions[(string) $row->cin7_id] = $row->cin7_modified_at;
             }
         }
 
@@ -211,21 +217,29 @@ final class Synchroniser
             return new PullResult($module, $full, $read, $written, deleted: $deleted, error: reset($failures));
         }
 
-        $this->recordFailures($list, $failures, $start);
+        $this->recordFailures($list, $failures, $versions, $start);
 
         return new PullResult($module, $full, $read, $written, deleted: $deleted, failedDocuments: count($failures), documentError: reset($failures));
     }
 
     /**
-     * Count a failed read on the document's list row, which exists while the document may not.
+     * Count a failed read on the document's list row, which exists while the document may not. A
+     * row that changed since it was read is a new version, which the failure does not count against.
      *
      * @param array<string, Throwable> $failures by Cin7 identifier
+     * @param array<string, null|string> $versions the list row's modified time as it was read, by Cin7 identifier
      */
-    private function recordFailures(Module $list, array $failures, Carbon $start): void
+    private function recordFailures(Module $list, array $failures, array $versions, Carbon $start): void
     {
         foreach ($failures as $id => $exception) {
             // On the query builder, which leaves updated_at alone.
-            $this->rows($list)->toBase()->where('cin7_id', $id)->increment('failures', 1, [
+            $query = $this->rows($list)->toBase()->where('cin7_id', (string) $id);
+
+            $versions[$id] === null
+                ? $query->whereNull('cin7_modified_at')
+                : $query->where('cin7_modified_at', $versions[$id]);
+
+            $query->increment('failures', 1, [
                 'failed_at' => $start->format(self::DATE),
                 'last_error' => mb_substr($exception->getMessage(), 0, 255),
             ]);
@@ -317,7 +331,7 @@ final class Synchroniser
     }
 
     /**
-     * The value with the keys of every object sorted, so a payload whose keys came back in another
+     * Return the value with the keys of every object sorted, so a payload whose keys came back in another
      * order (PostgreSQL's `jsonb` reorders them) compares equal under `===`, which unlike `==`
      * does not take `null` for `""` or `"1.0"` for `"1"`.
      */
@@ -356,7 +370,7 @@ final class Synchroniser
                 ->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at')
                 // A document read while its list row had no modified time stored none, and a
                 // comparison with NULL is never true.
-                ->orWhere(fn (QueryBuilder $query) => $query->whereNotNull('l.cin7_modified_at')->whereNull('d.cin7_modified_at')));
+                ->orWhere(fn (QueryBuilder $query): QueryBuilder => $query->whereNotNull('l.cin7_modified_at')->whereNull('d.cin7_modified_at')));
 
         // Rows with no modified time come first, read on their own because databases disagree on
         // where NULLs sort (PostgreSQL puts them last, SQLite and MySQL first).

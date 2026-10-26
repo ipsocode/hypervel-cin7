@@ -35,7 +35,7 @@ those values through `config()`, never by reading the environment directly.
 | `sync.limit` | `CIN7_SYNC_LIMIT` | `500` | Records a page, 1 to 1000 |
 | `sync.pause_ms` | `CIN7_SYNC_PAUSE_MS` | `1000` | Milliseconds between the sync's own calls |
 | `sync.documents` | `CIN7_SYNC_DOCUMENTS` | `250` | Sale and purchase documents read per module per run |
-| `sync.max_failures` | `CIN7_SYNC_MAX_FAILURES` | `3` | Times a document may fail to read before the sync [stops trying it](sync.md#a-document-that-keeps-failing); at least `1` |
+| `sync.max_failures` | `CIN7_SYNC_MAX_FAILURES` | `3` | Times a document may fail to read before the sync [stops trying it](sync.md#a-document-that-keeps-failing); from `1` to `32767` |
 | `sync.queue` | `CIN7_SYNC_QUEUE` | none | The queue the scheduled pulls go on |
 | `sync.timeout` | `CIN7_SYNC_TIMEOUT` | `3600` | Seconds a queued pull, and its module lock, may last |
 | `sync.connection` | `CIN7_SYNC_CONNECTION` | none | The database connection the table lives on |
@@ -120,9 +120,9 @@ than trusting its type, so a missing or loosely typed value does not throw a
 | `base_url` | `(string)`, falling back to the V2 URL when absent, `null` or `''` | A connection's own `base_url` wins over the top-level one; a blank `CIN7_BASE_URL=` counts as unset |
 | `timeout`, `connect_timeout` | `null` and `''` become `null`; anything else `(int)` | `null` sends no option, so the `saloon` connection's value applies; a blank `CIN7_TIMEOUT=` counts as unset rather than `0`, which would wait forever. A connection's own key wins over the top-level one |
 | `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. A key present but `null` becomes `0`, which disables the window |
-| `rate_limit.store` | `null` stays `null`; anything else `(string)` | `null` lets the store fallback chain apply |
+| `rate_limit.store` | `null` and `''` become `null`; anything else `(string)` | `null` lets the store fallback chain apply; a blank `CIN7_RATE_STORE=` counts as unset |
 | `rate_limit.cooldown` | `(int)`, falling back to `5` when the key is absent or `null` | A string such as `'9'` becomes `9`. `0` or less records no cooldown after a 503 or a 429 without `Retry-After` |
-| `connections.<name>.rate_limit.*` | the same casts | A key the connection leaves out is the top-level one, `store` included. A key present but `null` is not left out: `max` and `period` become `0`, and `store` stays `null`; a `null` `cooldown` is left out |
+| `connections.<name>.rate_limit.*` | the same casts | A key the connection leaves out is the top-level one, `store` included, and so is a blank `store`. A key present but `null` is not left out: `max` and `period` become `0`, and `store` stays `null`; a `null` `cooldown` is left out |
 
 `Cin7Manager` applies these when it builds a connection. A name with no
 `connections` entry, and not `default`, throws an `InvalidArgumentException`
@@ -136,7 +136,7 @@ at least `0` ms. A `null` or absent `retry.backoff`, `retry.max_delay_ms` or
 least `1`, the other two to at least `0`. See [requests](requests.md#retry-policy).
 
 [`SyncConfig`](../Sync/SyncConfig.php) reads `sync.*` the same way: an absent or `null`
-number falls back to its default, and each is clamped (`limit` to 1–1000, `timeout` to at
-least 1, the others to at least 0). A blank `cron`, `full` or exception time schedules nothing,
+number falls back to its default, and each is clamped (`limit` to 1–1000, `timeout` and
+`max_failures` to at least 1, the latter also to at most 32767, the others to at least 0). A blank `cron`, `full` or exception time schedules nothing,
 an empty `queue` or `connection` is the default one, and an unknown module name, or a reference
 book among the exceptions, throws an `InvalidArgumentException` rather than being skipped.
