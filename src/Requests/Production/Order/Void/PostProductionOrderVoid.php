@@ -24,6 +24,9 @@ final class PostProductionOrderVoid extends WriteRequest
         return 'production/order/void';
     }
 
+    /**
+     * @param Response<ProductionOrderMessageData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionOrderMessageData
     {
         return ProductionOrderMessageData::from($response->json())->setResponse($response);

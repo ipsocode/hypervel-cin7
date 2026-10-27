@@ -30,6 +30,9 @@ final class PutPurchasePayment extends WriteRequest
         return 'purchase/payment';
     }
 
+    /**
+     * @param Response<PurchasePaymentData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchasePaymentData
     {
         return PurchasePaymentData::from($response->json())->setResponse($response);

@@ -44,6 +44,9 @@ final class GetSaleQuote extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<SaleQuoteData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleQuoteData
     {
         return SaleQuoteData::from($response->json())->setResponse($response);

@@ -43,6 +43,9 @@ final class GetSaleInvoice extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<SaleInvoicesData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleInvoicesData
     {
         return SaleInvoicesData::from($response->json())->setResponse($response);

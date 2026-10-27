@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\ProductFamily;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Other\AttachmentLineData;
 use Ipsocode\Cin7\Data\ProductFamily\Attachments\ProductFamilyAttachmentPostData;
 use Ipsocode\Cin7\Requests\ProductFamily\Attachments\DeleteProductFamilyAttachments;
 use Ipsocode\Cin7\Requests\ProductFamily\Attachments\GetProductFamilyAttachments;
@@ -21,6 +22,8 @@ final class AttachmentsResource extends BaseResource
 {
     /**
      * A product family's attachments.
+     *
+     * @return Response<list<AttachmentLineData>>
      */
     public function get(string $familyId): Response
     {
@@ -31,6 +34,7 @@ final class AttachmentsResource extends BaseResource
      * Attach a file to a product family, as base64 `Content` or a `FileDownloadUrl`.
      *
      * @param array<string, mixed>|ProductFamilyAttachmentPostData $body
+     * @return Response<list<AttachmentLineData>>
      */
     public function post(array|ProductFamilyAttachmentPostData $body): Response
     {
@@ -39,6 +43,8 @@ final class AttachmentsResource extends BaseResource
 
     /**
      * Delete one attachment.
+     *
+     * @return Response<list<AttachmentLineData>>
      */
     public function delete(string $id): Response
     {

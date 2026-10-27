@@ -40,6 +40,9 @@ final class GetPurchaseAttachment extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<PurchaseAttachmentsData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseAttachmentsData
     {
         return PurchaseAttachmentsData::from($response->json())->setResponse($response);

@@ -24,6 +24,9 @@ final class PostProductionWorkCenters extends WriteRequest
         return 'production/workcenters';
     }
 
+    /**
+     * @param Response<WorkCentersData> $response
+     */
     public function createDtoFromResponse(Response $response): WorkCentersData
     {
         return WorkCentersData::from($response->json())->setResponse($response);

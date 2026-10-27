@@ -23,6 +23,9 @@ final class PostStockAdjustment extends WriteRequest
         return 'stockadjustment';
     }
 
+    /**
+     * @param Response<StockAdjustmentData> $response
+     */
     public function createDtoFromResponse(Response $response): StockAdjustmentData
     {
         return StockAdjustmentData::from($response->json())->setResponse($response);

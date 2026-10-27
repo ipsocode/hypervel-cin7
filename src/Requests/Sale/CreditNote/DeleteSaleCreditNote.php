@@ -41,6 +41,9 @@ final class DeleteSaleCreditNote extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<SaleCreditNotesData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleCreditNotesData
     {
         return SaleCreditNotesData::from($response->json())->setResponse($response);

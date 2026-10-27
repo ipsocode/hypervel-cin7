@@ -23,6 +23,9 @@ final class PostSaleInvoice extends WriteRequest
         return 'sale/invoice';
     }
 
+    /**
+     * @param Response<SaleInvoicesData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleInvoicesData
     {
         return SaleInvoicesData::from($response->json())->setResponse($response);

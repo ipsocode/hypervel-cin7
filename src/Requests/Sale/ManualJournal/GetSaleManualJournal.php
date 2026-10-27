@@ -39,6 +39,9 @@ final class GetSaleManualJournal extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<SaleManualJournalData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleManualJournalData
     {
         return SaleManualJournalData::from($response->json())->setResponse($response);

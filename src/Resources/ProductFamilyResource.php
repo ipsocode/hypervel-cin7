@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\ProductFamily\ProductFamilyData;
 use Ipsocode\Cin7\Data\ProductFamily\ProductFamilyPostData;
 use Ipsocode\Cin7\Data\ProductFamily\ProductFamilyPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -32,6 +33,7 @@ final class ProductFamilyResource extends BaseResource
      * @param null|string $name only families whose name contains this
      * @param null|string $sku only families whose SKU contains this
      * @param null|DateTimeInterface|string $modifiedSince only families changed since this time (UTC)
+     * @return Response<list<ProductFamilyData>>
      */
     public function get(
         ?int $page = null,
@@ -66,6 +68,7 @@ final class ProductFamilyResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductFamilyPostData $body
+     * @return Response<ProductFamilyData>
      */
     public function post(array|ProductFamilyPostData $body): Response
     {
@@ -76,6 +79,7 @@ final class ProductFamilyResource extends BaseResource
      * Change a family; the products it lists are added or updated, and none is ever deleted.
      *
      * @param array<string, mixed>|ProductFamilyPutData $body
+     * @return Response<ProductFamilyData>
      */
     public function put(array|ProductFamilyPutData $body): Response
     {

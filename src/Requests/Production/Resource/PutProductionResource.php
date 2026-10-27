@@ -23,6 +23,9 @@ final class PutProductionResource extends WriteRequest
         return 'production/resource';
     }
 
+    /**
+     * @param Response<ResourceData> $response
+     */
     public function createDtoFromResponse(Response $response): ResourceData
     {
         return ResourceData::from($response->json())->setResponse($response);

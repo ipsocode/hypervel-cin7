@@ -164,7 +164,7 @@ final class Synchroniser
     {
         return array_map(
             strval(...),
-            $this->rows($module)->toBase()->where('synced_at', '<', $start)->orderBy('cin7_id')->pluck('cin7_id')->all(),
+            array_values($this->rows($module)->toBase()->where('synced_at', '<', $start)->orderBy('cin7_id')->pluck('cin7_id')->all()),
         );
     }
 

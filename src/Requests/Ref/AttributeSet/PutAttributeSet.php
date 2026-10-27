@@ -24,6 +24,9 @@ final class PutAttributeSet extends WriteRequest
         return 'ref/attributeset';
     }
 
+    /**
+     * @param Response<AttributeSetData> $response
+     */
     public function createDtoFromResponse(Response $response): AttributeSetData
     {
         return AttributeSetData::from($response->json())->setResponse($response);

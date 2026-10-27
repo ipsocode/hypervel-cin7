@@ -39,6 +39,9 @@ final class GetProductionFactoryCalendar extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<FactoryCalendarData> $response
+     */
     public function createDtoFromResponse(Response $response): FactoryCalendarData
     {
         return FactoryCalendarData::from($response->json())->setResponse($response);

@@ -24,6 +24,7 @@ final class PostCrmWorkflow extends WriteRequest
     }
 
     /**
+     * @param Response<list<WorkflowData>> $response
      * @return list<WorkflowData>
      */
     public function createDtoFromResponse(Response $response): array

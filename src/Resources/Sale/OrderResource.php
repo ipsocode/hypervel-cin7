@@ -21,6 +21,7 @@ final class OrderResource extends BaseResource
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
      * @param null|bool $includeProductInfo add the products the lines use
+     * @return Response<SaleOrderData>
      */
     public function get(
         string $saleId,
@@ -36,6 +37,7 @@ final class OrderResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleOrderData $body
+     * @return Response<SaleOrderData>
      */
     public function post(array|SaleOrderData $body): Response
     {

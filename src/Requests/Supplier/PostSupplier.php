@@ -29,6 +29,9 @@ final class PostSupplier extends WriteRequest
         return 'supplier';
     }
 
+    /**
+     * @param Response<SupplierData> $response
+     */
     public function createDtoFromResponse(Response $response): SupplierData
     {
         return SupplierData::from($response->json('SupplierList.0'))->setResponse($response);

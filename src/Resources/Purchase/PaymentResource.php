@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Purchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Purchase\Payment\PurchasePaymentData;
 use Ipsocode\Cin7\Data\Purchase\Payment\PurchasePaymentPostData;
 use Ipsocode\Cin7\Data\Purchase\Payment\PurchasePaymentPutData;
 use Ipsocode\Cin7\Requests\Purchase\Payment\DeletePurchasePayment;
@@ -24,6 +25,8 @@ final class PaymentResource extends BaseResource
 {
     /**
      * A purchase's payments, by its `TaskID`.
+     *
+     * @return Response<list<PurchasePaymentData>>
      */
     public function get(
         string $taskId,
@@ -33,6 +36,7 @@ final class PaymentResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchasePaymentPostData $body
+     * @return Response<PurchasePaymentData>
      */
     public function post(array|PurchasePaymentPostData $body): Response
     {
@@ -41,6 +45,7 @@ final class PaymentResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchasePaymentPutData $body
+     * @return Response<PurchasePaymentData>
      */
     public function put(array|PurchasePaymentPutData $body): Response
     {
@@ -52,6 +57,7 @@ final class PaymentResource extends BaseResource
      *
      * @param null|bool $deleteAllocation delete the allocated payments too (true, the default Cin7
      *                                    applies) or keep them (false)
+     * @return Response<null>
      */
     public function delete(
         string $id,

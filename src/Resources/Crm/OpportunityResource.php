@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Crm\Opportunity\OpportunityData;
 use Ipsocode\Cin7\Data\Crm\Opportunity\OpportunityPostData;
 use Ipsocode\Cin7\Data\Crm\Opportunity\OpportunityPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -29,6 +30,7 @@ final class OpportunityResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $id only the opportunity with this ID
      * @param null|DateTimeInterface|string $modifiedSince only records modified since this time
+     * @return Response<list<OpportunityData>>
      */
     public function get(
         ?int $page = null,
@@ -67,6 +69,7 @@ final class OpportunityResource extends BaseResource
 
     /**
      * @param array<string, mixed>|OpportunityPostData $body
+     * @return Response<list<OpportunityData>>
      */
     public function post(array|OpportunityPostData $body): Response
     {
@@ -75,6 +78,7 @@ final class OpportunityResource extends BaseResource
 
     /**
      * @param array<string, mixed>|OpportunityPutData $body
+     * @return Response<list<OpportunityData>>
      */
     public function put(array|OpportunityPutData $body): Response
     {

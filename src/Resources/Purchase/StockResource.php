@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Purchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockPostData;
 use Ipsocode\Cin7\Requests\Purchase\Stock\GetPurchaseStock;
 use Ipsocode\Cin7\Requests\Purchase\Stock\PostPurchaseStock;
@@ -22,6 +23,8 @@ final class StockResource extends BaseResource
 {
     /**
      * A purchase's stock received, by its `TaskID`.
+     *
+     * @return Response<PurchaseStockData>
      */
     public function get(
         string $taskId,
@@ -31,6 +34,7 @@ final class StockResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchaseStockPostData $body
+     * @return Response<PurchaseStockData>
      */
     public function post(array|PurchaseStockPostData $body): Response
     {

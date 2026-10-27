@@ -39,6 +39,9 @@ final class GetStockTake extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<StockTakeData> $response
+     */
     public function createDtoFromResponse(Response $response): StockTakeData
     {
         return StockTakeData::from($response->json())->setResponse($response);

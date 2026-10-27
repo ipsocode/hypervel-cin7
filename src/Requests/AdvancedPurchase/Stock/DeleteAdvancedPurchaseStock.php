@@ -43,6 +43,9 @@ final class DeleteAdvancedPurchaseStock extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<AdvancedPurchaseStocksData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchaseStocksData
     {
         return AdvancedPurchaseStocksData::from($response->json())->setResponse($response);

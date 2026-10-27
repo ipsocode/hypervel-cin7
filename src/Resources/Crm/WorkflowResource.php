@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Crm;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Crm\Workflow\WorkflowData;
 use Ipsocode\Cin7\Data\Crm\Workflow\WorkflowPostData;
 use Ipsocode\Cin7\Data\Crm\Workflow\WorkflowPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class WorkflowResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $id only the workflow with this ID
      * @param null|string $name only workflows whose name starts with this
+     * @return Response<list<WorkflowData>>
      */
     public function get(
         ?int $page = null,
@@ -66,6 +68,7 @@ final class WorkflowResource extends BaseResource
 
     /**
      * @param array<string, mixed>|WorkflowPostData $body
+     * @return Response<list<WorkflowData>>
      */
     public function post(array|WorkflowPostData $body): Response
     {
@@ -74,6 +77,7 @@ final class WorkflowResource extends BaseResource
 
     /**
      * @param array<string, mixed>|WorkflowPutData $body
+     * @return Response<list<WorkflowData>>
      */
     public function put(array|WorkflowPutData $body): Response
     {

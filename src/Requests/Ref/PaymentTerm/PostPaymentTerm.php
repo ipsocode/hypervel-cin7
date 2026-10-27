@@ -24,6 +24,9 @@ final class PostPaymentTerm extends WriteRequest
         return 'ref/paymentterm';
     }
 
+    /**
+     * @param Response<PaymentTermData> $response
+     */
     public function createDtoFromResponse(Response $response): PaymentTermData
     {
         return PaymentTermData::from($response->json('PaymentTermList.0'))->setResponse($response);

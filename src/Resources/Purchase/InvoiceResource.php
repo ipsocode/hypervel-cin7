@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Purchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceData;
 use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoicePostData;
 use Ipsocode\Cin7\Requests\Purchase\Invoice\GetPurchaseInvoice;
 use Ipsocode\Cin7\Requests\Purchase\Invoice\PostPurchaseInvoice;
@@ -23,6 +24,7 @@ final class InvoiceResource extends BaseResource
      * A purchase's invoice, by the purchase's `TaskID`.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @return Response<PurchaseInvoiceData>
      */
     public function get(
         string $taskId,
@@ -33,6 +35,7 @@ final class InvoiceResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchaseInvoicePostData $body
+     * @return Response<PurchaseInvoiceData>
      */
     public function post(array|PurchaseInvoicePostData $body): Response
     {

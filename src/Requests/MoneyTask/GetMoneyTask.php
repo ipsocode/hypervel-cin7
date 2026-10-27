@@ -40,6 +40,9 @@ final class GetMoneyTask extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<MoneyTaskData> $response
+     */
     public function createDtoFromResponse(Response $response): MoneyTaskData
     {
         return MoneyTaskData::from($response->json())->setResponse($response);

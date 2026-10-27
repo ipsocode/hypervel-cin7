@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Account\AccountData;
 use Ipsocode\Cin7\Data\Ref\Account\AccountPostData;
 use Ipsocode\Cin7\Data\Ref\Account\AccountPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -32,6 +33,7 @@ final class AccountResource extends BaseResource
      * @param null|string $name only accounts whose name starts with this
      * @param null|string $type only accounts of this type
      * @param null|string $status only accounts with this status
+     * @return Response<list<AccountData>>
      */
     public function get(
         ?int $page = null,
@@ -66,6 +68,7 @@ final class AccountResource extends BaseResource
 
     /**
      * @param AccountPostData|array<string, mixed> $body
+     * @return Response<AccountData>
      */
     public function post(array|AccountPostData $body): Response
     {
@@ -74,6 +77,7 @@ final class AccountResource extends BaseResource
 
     /**
      * @param AccountPutData|array<string, mixed> $body
+     * @return Response<AccountData>
      */
     public function put(array|AccountPutData $body): Response
     {
@@ -82,6 +86,8 @@ final class AccountResource extends BaseResource
 
     /**
      * Delete the account with this code.
+     *
+     * @return Response<null>
      */
     public function delete(string $code): Response
     {

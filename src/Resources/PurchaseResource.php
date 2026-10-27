@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Purchase\PurchaseData;
 use Ipsocode\Cin7\Data\Purchase\PurchasePostData;
 use Ipsocode\Cin7\Data\Purchase\PurchasePutData;
 use Ipsocode\Cin7\Requests\Purchase\DeletePurchase;
@@ -41,6 +42,7 @@ final class PurchaseResource extends BaseResource
      * One purchase, with its order, stock received, invoice, credit note and manual journal.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @return Response<PurchaseData>
      */
     public function get(
         string $id,
@@ -51,6 +53,7 @@ final class PurchaseResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchasePostData $body
+     * @return Response<PurchaseData>
      */
     public function post(array|PurchasePostData $body): Response
     {
@@ -59,6 +62,7 @@ final class PurchaseResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchasePutData $body
+     * @return Response<PurchaseData>
      */
     public function put(array|PurchasePutData $body): Response
     {
@@ -69,6 +73,7 @@ final class PurchaseResource extends BaseResource
      * Void the purchase (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<PurchaseData>
      */
     public function delete(
         string $id,

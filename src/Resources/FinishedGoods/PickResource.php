@@ -20,6 +20,8 @@ final class PickResource extends BaseResource
 {
     /**
      * A finished goods task's pick.
+     *
+     * @return Response<FinishedGoodsPickData>
      */
     public function get(string $taskId): Response
     {
@@ -28,6 +30,7 @@ final class PickResource extends BaseResource
 
     /**
      * @param array<string, mixed>|FinishedGoodsPickData $body
+     * @return Response<FinishedGoodsPickData>
      */
     public function post(array|FinishedGoodsPickData $body): Response
     {

@@ -23,6 +23,9 @@ final class PostBrand extends WriteRequest
         return 'ref/brand';
     }
 
+    /**
+     * @param Response<BrandData> $response
+     */
     public function createDtoFromResponse(Response $response): BrandData
     {
         return BrandData::from($response->json())->setResponse($response);

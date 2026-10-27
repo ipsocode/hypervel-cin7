@@ -23,6 +23,9 @@ final class PutStockTransfer extends WriteRequest
         return 'stockTransfer';
     }
 
+    /**
+     * @param Response<StockTransferData> $response
+     */
     public function createDtoFromResponse(Response $response): StockTransferData
     {
         return StockTransferData::from($response->json())->setResponse($response);

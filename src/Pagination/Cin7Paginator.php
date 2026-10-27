@@ -16,6 +16,8 @@ use Ipsocode\Cin7\PageDefaults;
  * An envelope with no `Total` (`ref/customer/credits`) ends on a page shorter than that limit.
  *
  * @see src/docs/pagination.md
+ *
+ * @extends PagedPaginator<mixed>
  */
 class Cin7Paginator extends PagedPaginator
 {
@@ -72,6 +74,8 @@ class Cin7Paginator extends PagedPaginator
 
     /**
      * The limit sent on the wire: a caller can set `limit` without calling perPageLimit().
+     *
+     * @param Response<mixed> $response
      */
     private function sentLimit(Response $response): int
     {
@@ -80,6 +84,8 @@ class Cin7Paginator extends PagedPaginator
 
     /**
      * The page number Cin7 says it served, falling back to the one requested.
+     *
+     * @param Response<mixed> $response
      */
     private function servedPageNumber(Response $response): int
     {

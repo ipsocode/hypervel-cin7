@@ -24,6 +24,9 @@ final class PutProductionOrderRunVoid extends WriteRequest
         return 'production/order/run/void';
     }
 
+    /**
+     * @param Response<ProductionRunUndoData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionRunUndoData
     {
         return ProductionRunUndoData::from($response->json())->setResponse($response);

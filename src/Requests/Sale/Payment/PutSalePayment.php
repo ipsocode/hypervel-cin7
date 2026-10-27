@@ -29,6 +29,9 @@ final class PutSalePayment extends WriteRequest
         return 'sale/payment';
     }
 
+    /**
+     * @param Response<SalePaymentLinePartialData> $response
+     */
     public function createDtoFromResponse(Response $response): SalePaymentLinePartialData
     {
         return SalePaymentLinePartialData::from($response->json())->setResponse($response);

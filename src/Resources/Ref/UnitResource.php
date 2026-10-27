@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Unit\UnitOfMeasureData;
 use Ipsocode\Cin7\Data\Ref\Unit\UnitOfMeasurePostData;
 use Ipsocode\Cin7\Data\Ref\Unit\UnitOfMeasurePutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class UnitResource extends BaseResource
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $name only units of measure whose name starts with this
+     * @return Response<list<UnitOfMeasureData>>
      */
     public function get(?int $page = null, ?int $limit = null, ?string $name = null): Response
     {
@@ -48,6 +50,7 @@ final class UnitResource extends BaseResource
 
     /**
      * @param array<string, mixed>|UnitOfMeasurePostData $body
+     * @return Response<UnitOfMeasureData>
      */
     public function post(array|UnitOfMeasurePostData $body): Response
     {
@@ -56,6 +59,7 @@ final class UnitResource extends BaseResource
 
     /**
      * @param array<string, mixed>|UnitOfMeasurePutData $body
+     * @return Response<UnitOfMeasureData>
      */
     public function put(array|UnitOfMeasurePutData $body): Response
     {
@@ -64,6 +68,8 @@ final class UnitResource extends BaseResource
 
     /**
      * Delete the unit of measure with this ID.
+     *
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

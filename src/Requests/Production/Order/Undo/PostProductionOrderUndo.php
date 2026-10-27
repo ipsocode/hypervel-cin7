@@ -24,6 +24,9 @@ final class PostProductionOrderUndo extends WriteRequest
         return 'production/order/undo';
     }
 
+    /**
+     * @param Response<ProductionOrderMessageData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionOrderMessageData
     {
         return ProductionOrderMessageData::from($response->json())->setResponse($response);

@@ -23,6 +23,9 @@ final class PostInventoryWriteOff extends WriteRequest
         return 'inventoryWriteOff';
     }
 
+    /**
+     * @param Response<InventoryWriteOffData> $response
+     */
     public function createDtoFromResponse(Response $response): InventoryWriteOffData
     {
         return InventoryWriteOffData::from($response->json())->setResponse($response);

@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Sale\Fulfilment;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipPostData;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipPutData;
 use Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship\GetSaleFulfilmentShip;
@@ -22,6 +23,8 @@ final class ShipResource extends BaseResource
 {
     /**
      * A fulfilment's shipment.
+     *
+     * @return Response<SaleFulfilmentShipData>
      */
     public function get(string $taskId): Response
     {
@@ -30,6 +33,7 @@ final class ShipResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleFulfilmentShipPostData $body
+     * @return Response<SaleFulfilmentShipData>
      */
     public function post(array|SaleFulfilmentShipPostData $body): Response
     {
@@ -38,6 +42,7 @@ final class ShipResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleFulfilmentShipPutData $body
+     * @return Response<SaleFulfilmentShipData>
      */
     public function put(array|SaleFulfilmentShipPutData $body): Response
     {

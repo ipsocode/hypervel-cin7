@@ -39,6 +39,9 @@ final class GetDisassemblyOrder extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<DisassemblyOrderData> $response
+     */
     public function createDtoFromResponse(Response $response): DisassemblyOrderData
     {
         return DisassemblyOrderData::from($response->json())->setResponse($response);

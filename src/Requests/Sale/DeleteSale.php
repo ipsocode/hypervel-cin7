@@ -41,6 +41,9 @@ final class DeleteSale extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<SaleData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleData
     {
         return SaleData::from($response->json())->setResponse($response);

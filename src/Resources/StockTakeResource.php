@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\StockTake\StockTakeData;
 use Ipsocode\Cin7\Data\StockTake\StockTakePostData;
 use Ipsocode\Cin7\Data\StockTake\StockTakePutData;
 use Ipsocode\Cin7\Requests\StockTake\DeleteStockTake;
@@ -23,6 +24,8 @@ final class StockTakeResource extends BaseResource
 {
     /**
      * One stock take, with its filters, the products it counts and the transactions it created.
+     *
+     * @return Response<StockTakeData>
      */
     public function get(string $taskId): Response
     {
@@ -31,6 +34,7 @@ final class StockTakeResource extends BaseResource
 
     /**
      * @param array<string, mixed>|StockTakePostData $body
+     * @return Response<StockTakeData>
      */
     public function post(array|StockTakePostData $body): Response
     {
@@ -39,6 +43,7 @@ final class StockTakeResource extends BaseResource
 
     /**
      * @param array<string, mixed>|StockTakePutData $body
+     * @return Response<StockTakeData>
      */
     public function put(array|StockTakePutData $body): Response
     {
@@ -49,6 +54,7 @@ final class StockTakeResource extends BaseResource
      * Void the stock take (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<StockTakeData>
      */
     public function delete(string $id, ?bool $void = null): Response
     {

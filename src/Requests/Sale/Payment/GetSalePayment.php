@@ -40,6 +40,7 @@ final class GetSalePayment extends Cin7Request
     }
 
     /**
+     * @param Response<list<SalePaymentLinePartialData>> $response
      * @return list<SalePaymentLinePartialData>
      */
     public function createDtoFromResponse(Response $response): array

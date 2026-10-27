@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\AdvancedPurchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchaseManualJournalsData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchasePartialManualJournalPostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\GetAdvancedPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal\PostAdvancedPurchaseManualJournal;
@@ -22,6 +23,8 @@ final class ManualJournalResource extends BaseResource
 {
     /**
      * An advanced purchase's manual journals, by its `PurchaseID`.
+     *
+     * @return Response<AdvancedPurchaseManualJournalsData>
      */
     public function get(string $purchaseId): Response
     {
@@ -30,6 +33,7 @@ final class ManualJournalResource extends BaseResource
 
     /**
      * @param AdvancedPurchasePartialManualJournalPostData|array<string, mixed> $body
+     * @return Response<AdvancedPurchaseManualJournalsData>
      */
     public function post(array|AdvancedPurchasePartialManualJournalPostData $body): Response
     {

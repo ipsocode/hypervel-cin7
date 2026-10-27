@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Sale;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
 use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalPostData;
 use Ipsocode\Cin7\Requests\Sale\ManualJournal\GetSaleManualJournal;
 use Ipsocode\Cin7\Requests\Sale\ManualJournal\PostSaleManualJournal;
@@ -20,6 +21,8 @@ final class ManualJournalResource extends BaseResource
 {
     /**
      * A sale's manual journal.
+     *
+     * @return Response<SaleManualJournalData>
      */
     public function get(string $saleId): Response
     {
@@ -28,6 +31,7 @@ final class ManualJournalResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleManualJournalPostData $body
+     * @return Response<SaleManualJournalData>
      */
     public function post(array|SaleManualJournalPostData $body): Response
     {

@@ -8,6 +8,7 @@ use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePostData;
+use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\DeleteSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\PostSaleCreditNote;
@@ -23,6 +24,7 @@ final class CreditNoteResource extends BaseResource
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
      * @param null|bool $includeProductInfo add the products the lines use
      * @param null|bool $includePaymentInfo add each credit note's payments and balance
+     * @return Response<SaleCreditNotesData>
      */
     public function get(
         string $saleId,
@@ -40,6 +42,7 @@ final class CreditNoteResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleCreditNotePostData $body
+     * @return Response<SaleCreditNotesData>
      */
     public function post(array|SaleCreditNotePostData $body): Response
     {
@@ -50,6 +53,7 @@ final class CreditNoteResource extends BaseResource
      * Void the credit note (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<SaleCreditNotesData>
      */
     public function delete(
         string $taskId,

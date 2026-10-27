@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Purchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderData;
 use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderPostData;
 use Ipsocode\Cin7\Requests\Purchase\Order\GetPurchaseOrder;
 use Ipsocode\Cin7\Requests\Purchase\Order\PostPurchaseOrder;
@@ -22,6 +23,7 @@ final class OrderResource extends BaseResource
      * A purchase's order, by its `TaskID`.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @return Response<PurchaseOrderData>
      */
     public function get(
         string $taskId,
@@ -32,6 +34,7 @@ final class OrderResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchaseOrderPostData $body
+     * @return Response<PurchaseOrderData>
      */
     public function post(array|PurchaseOrderPostData $body): Response
     {

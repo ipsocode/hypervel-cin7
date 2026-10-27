@@ -25,6 +25,7 @@ final class WorkflowStartResource extends BaseResource
      * @param string $entityId the ID of the record
      * @param null|string $id the ID of the workflow
      * @param null|string $name the name of the workflow
+     * @return Response<null>
      */
     public function post(
         DateTimeInterface|string $startDate,

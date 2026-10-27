@@ -24,6 +24,9 @@ final class PutProductionOrderAttachment extends WriteRequest
         return 'production/order/attachment';
     }
 
+    /**
+     * @param Response<ProductionOrderAttachmentData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionOrderAttachmentData
     {
         return ProductionOrderAttachmentData::from($response->json())->setResponse($response);

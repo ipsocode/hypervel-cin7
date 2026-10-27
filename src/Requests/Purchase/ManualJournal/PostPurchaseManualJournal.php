@@ -30,6 +30,9 @@ final class PostPurchaseManualJournal extends WriteRequest
         return 'purchase/manualJournal';
     }
 
+    /**
+     * @param Response<PurchaseManualJournalData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseManualJournalData
     {
         return PurchaseManualJournalData::from($response->json())->setResponse($response);

@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Disassembly\DisassemblyData;
 use Ipsocode\Cin7\Data\Disassembly\DisassemblyPostData;
 use Ipsocode\Cin7\Requests\Disassembly\DeleteDisassembly;
 use Ipsocode\Cin7\Requests\Disassembly\GetDisassembly;
@@ -22,6 +23,8 @@ final class DisassemblyResource extends BaseResource
 {
     /**
      * One disassembly, with its lines.
+     *
+     * @return Response<DisassemblyData>
      */
     public function get(string $taskId): Response
     {
@@ -30,6 +33,7 @@ final class DisassemblyResource extends BaseResource
 
     /**
      * @param array<string, mixed>|DisassemblyPostData $body
+     * @return Response<DisassemblyData>
      */
     public function post(array|DisassemblyPostData $body): Response
     {
@@ -40,6 +44,7 @@ final class DisassemblyResource extends BaseResource
      * Void the disassembly (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<DisassemblyData>
      */
     public function delete(string $id, ?bool $void = null): Response
     {

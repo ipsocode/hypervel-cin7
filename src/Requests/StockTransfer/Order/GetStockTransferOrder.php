@@ -39,6 +39,9 @@ final class GetStockTransferOrder extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<StockTransferOrderData> $response
+     */
     public function createDtoFromResponse(Response $response): StockTransferOrderData
     {
         return StockTransferOrderData::from($response->json())->setResponse($response);

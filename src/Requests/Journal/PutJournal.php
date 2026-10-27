@@ -24,6 +24,9 @@ final class PutJournal extends WriteRequest
         return 'journal';
     }
 
+    /**
+     * @param Response<JournalData> $response
+     */
     public function createDtoFromResponse(Response $response): JournalData
     {
         return JournalData::from($response->json('Journals.0'))->setResponse($response);

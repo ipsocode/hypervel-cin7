@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Carrier\CarrierData;
 use Ipsocode\Cin7\Data\Ref\Carrier\CarrierPostData;
 use Ipsocode\Cin7\Data\Ref\Carrier\CarrierPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -29,6 +30,7 @@ final class CarrierResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $carrierId only the carrier with this CarrierID
      * @param null|string $description only carriers whose description starts with this
+     * @return Response<list<CarrierData>>
      */
     public function get(
         ?int $page = null,
@@ -67,6 +69,7 @@ final class CarrierResource extends BaseResource
 
     /**
      * @param array<string, mixed>|CarrierPostData $body
+     * @return Response<list<CarrierData>>
      */
     public function post(array|CarrierPostData $body): Response
     {
@@ -75,6 +78,7 @@ final class CarrierResource extends BaseResource
 
     /**
      * @param array<string, mixed>|CarrierPutData $body
+     * @return Response<list<CarrierData>>
      */
     public function put(array|CarrierPutData $body): Response
     {
@@ -85,6 +89,7 @@ final class CarrierResource extends BaseResource
      * Delete a carrier.
      *
      * @param string $id the ID of the carrier
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

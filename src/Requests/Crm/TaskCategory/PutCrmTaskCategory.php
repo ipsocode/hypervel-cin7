@@ -24,6 +24,7 @@ final class PutCrmTaskCategory extends WriteRequest
     }
 
     /**
+     * @param Response<list<TaskCategoryData>> $response
      * @return list<TaskCategoryData>
      */
     public function createDtoFromResponse(Response $response): array

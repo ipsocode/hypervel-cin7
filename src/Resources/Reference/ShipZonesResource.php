@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Reference;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Reference\ShipZones\ShippingZoneData;
 use Ipsocode\Cin7\Data\Reference\ShipZones\ShippingZonePostData;
 use Ipsocode\Cin7\Data\Reference\ShipZones\ShippingZonePutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -29,6 +30,7 @@ final class ShipZonesResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $id only the ship zone with this ID
      * @param null|string $search only ship zones with this text in their name
+     * @return Response<list<ShippingZoneData>>
      */
     public function get(
         ?int $page = null,
@@ -57,6 +59,7 @@ final class ShipZonesResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ShippingZonePostData $body
+     * @return Response<ShippingZoneData>
      */
     public function post(array|ShippingZonePostData $body): Response
     {
@@ -65,6 +68,7 @@ final class ShipZonesResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ShippingZonePutData $body
+     * @return Response<ShippingZoneData>
      */
     public function put(array|ShippingZonePutData $body): Response
     {
@@ -73,6 +77,8 @@ final class ShipZonesResource extends BaseResource
 
     /**
      * Delete a ship zone.
+     *
+     * @return Response<null>
      */
     public function delete(string $shipZoneId): Response
     {

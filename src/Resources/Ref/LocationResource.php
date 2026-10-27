@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Location\LocationData;
 use Ipsocode\Cin7\Data\Ref\Location\LocationPostData;
 use Ipsocode\Cin7\Data\Ref\Location\LocationPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -30,6 +31,7 @@ final class LocationResource extends BaseResource
      * @param null|string $id only the location with this ID
      * @param null|bool $deprecated only deprecated locations
      * @param null|string $name only locations whose name starts with this
+     * @return Response<list<LocationData>>
      */
     public function get(
         ?int $page = null,
@@ -73,6 +75,7 @@ final class LocationResource extends BaseResource
 
     /**
      * @param array<string, mixed>|LocationPostData $body
+     * @return Response<LocationData>
      */
     public function post(array|LocationPostData $body): Response
     {
@@ -81,6 +84,7 @@ final class LocationResource extends BaseResource
 
     /**
      * @param array<string, mixed>|LocationPutData $body
+     * @return Response<LocationData>
      */
     public function put(array|LocationPutData $body): Response
     {
@@ -91,6 +95,7 @@ final class LocationResource extends BaseResource
      * Delete a location.
      *
      * @param string $id the ID of the location
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

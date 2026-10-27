@@ -24,6 +24,9 @@ final class PostPurchaseAttachment extends WriteRequest
         return 'purchase/attachment';
     }
 
+    /**
+     * @param Response<PurchaseAttachmentsData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseAttachmentsData
     {
         return PurchaseAttachmentsData::from($response->json())->setResponse($response);

@@ -20,6 +20,8 @@ final class OrderResource extends BaseResource
 {
     /**
      * A finished goods task's order.
+     *
+     * @return Response<FinishedGoodsOrderData>
      */
     public function get(string $taskId): Response
     {
@@ -28,6 +30,7 @@ final class OrderResource extends BaseResource
 
     /**
      * @param array<string, mixed>|FinishedGoodsOrderData $body
+     * @return Response<FinishedGoodsOrderData>
      */
     public function post(array|FinishedGoodsOrderData $body): Response
     {
