@@ -39,6 +39,9 @@ final class GetInventoryWriteOff extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<InventoryWriteOffData> $response
+     */
     public function createDtoFromResponse(Response $response): InventoryWriteOffData
     {
         return InventoryWriteOffData::from($response->json())->setResponse($response);

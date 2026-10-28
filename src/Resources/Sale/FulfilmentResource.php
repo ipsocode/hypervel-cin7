@@ -26,6 +26,7 @@ final class FulfilmentResource extends BaseResource
      * A sale's fulfilments.
      *
      * @param null|bool $includeProductInfo add the products the lines use
+     * @return Response<SaleFulfilmentsData>
      */
     public function get(string $saleId, ?bool $includeProductInfo = null): Response
     {
@@ -36,6 +37,7 @@ final class FulfilmentResource extends BaseResource
      * Start a new fulfilment of a sale whose order is authorized.
      *
      * @param array<string, mixed>|SaleFulfilmentsData $body
+     * @return Response<SaleFulfilmentsData>
      */
     public function post(array|SaleFulfilmentsData $body): Response
     {
@@ -46,6 +48,7 @@ final class FulfilmentResource extends BaseResource
      * Void the fulfilment (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<SaleFulfilmentsData>
      */
     public function delete(string $taskId, ?bool $void = null): Response
     {

@@ -63,6 +63,9 @@ use UnitEnum;
  * shared across coroutines.
  *
  * @see src/docs/connector.md
+ *
+ * @extends Connector<mixed>
+ * @implements HasPagination<mixed>
  */
 final class Cin7Connector extends Connector implements HasPagination
 {
@@ -172,6 +175,8 @@ final class Cin7Connector extends Connector implements HasPagination
     /**
      * Fail a response whose body is Cin7's Error Model, `{ErrorCode, Exception}` or a list
      * starting with one, whatever its status; anything else is left to the status code.
+     *
+     * @param Response<mixed> $response
      */
     public function hasRequestFailed(Response $response): ?bool
     {
@@ -494,6 +499,7 @@ final class Cin7Connector extends Connector implements HasPagination
     /**
      * Throttle every call against one window per Cin7 API application.
      *
+     * @param PendingRequest<mixed> $pendingRequest
      * @return list<AdmissionPolicy>
      */
     protected function resolveRateLimits(PendingRequest $pendingRequest): array
@@ -520,6 +526,8 @@ final class Cin7Connector extends Connector implements HasPagination
 
     /**
      * Keyed like the window, so throttling on one Cin7 application never cools down another.
+     *
+     * @param PendingRequest<mixed> $pendingRequest
      */
     protected function resolveRateLimitCooldownKey(PendingRequest $pendingRequest): string
     {
@@ -532,6 +540,8 @@ final class Cin7Connector extends Connector implements HasPagination
      * value it cannot read; a 429 without a usable one, and every 503, for the configured
      * cooldown, `THROTTLE_COOLDOWN` seconds by default; a cooldown of 0 or less records none for
      * those.
+     *
+     * @param Response<mixed> $response
      */
     protected function resolveRateLimitCooldown(Response $response): ?int
     {
@@ -546,6 +556,8 @@ final class Cin7Connector extends Connector implements HasPagination
      * The cooldown a 429 names in `Retry-After`: a count of seconds or an HTTP date. A date
      * already past names none to wait for, so it records no cooldown; a missing, malformed or
      * oversized value falls back to the configured cooldown.
+     *
+     * @param Response<mixed> $response
      */
     private function retryAfter(Response $response): ?int
     {

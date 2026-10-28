@@ -1,7 +1,4 @@
 # Level 7, one step beyond the level hypervel/components runs on its own source.
-includes:
-    - phpstan-baseline.neon
-
 parameters:
     level: 7
 

@@ -24,6 +24,9 @@ final class PostFixedAssetType extends WriteRequest
         return 'ref/fixedassettype';
     }
 
+    /**
+     * @param Response<FixedAssetTypeData> $response
+     */
     public function createDtoFromResponse(Response $response): FixedAssetTypeData
     {
         return FixedAssetTypeData::from($response->json('FixedAssetTypeList.0'))->setResponse($response);

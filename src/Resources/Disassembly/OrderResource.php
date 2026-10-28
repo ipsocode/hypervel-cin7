@@ -20,6 +20,8 @@ final class OrderResource extends BaseResource
 {
     /**
      * A disassembly's order.
+     *
+     * @return Response<DisassemblyOrderData>
      */
     public function get(string $taskId): Response
     {
@@ -28,6 +30,7 @@ final class OrderResource extends BaseResource
 
     /**
      * @param array<string, mixed>|DisassemblyOrderData $body
+     * @return Response<DisassemblyOrderData>
      */
     public function post(array|DisassemblyOrderData $body): Response
     {

@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Me;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Me\Contacts\MeContactData;
 use Ipsocode\Cin7\Data\Me\Contacts\MeContactPostData;
 use Ipsocode\Cin7\Data\Me\Contacts\MeContactPutData;
 use Ipsocode\Cin7\Enums\ContactType;
@@ -35,6 +36,7 @@ final class ContactsResource extends BaseResource
      * @param null|string $phone only contacts with this phone number
      * @param null|string $fax only contacts with this fax number
      * @param null|string $email only contacts with this e-mail address
+     * @return Response<list<MeContactData>>
      */
     public function get(
         ?int $page = null,
@@ -98,6 +100,7 @@ final class ContactsResource extends BaseResource
 
     /**
      * @param array<string, mixed>|MeContactPostData $body
+     * @return Response<MeContactData>
      */
     public function post(array|MeContactPostData $body): Response
     {
@@ -106,6 +109,7 @@ final class ContactsResource extends BaseResource
 
     /**
      * @param array<string, mixed>|MeContactPutData $body
+     * @return Response<MeContactData>
      */
     public function put(array|MeContactPutData $body): Response
     {
@@ -114,6 +118,8 @@ final class ContactsResource extends BaseResource
 
     /**
      * Delete one of the company's contacts.
+     *
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

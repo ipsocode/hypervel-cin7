@@ -24,6 +24,9 @@ final class PostSaleFulfilmentPick extends WriteRequest
         return 'sale/fulfilment/pick';
     }
 
+    /**
+     * @param Response<SaleFulfilmentPickData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleFulfilmentPickData
     {
         return SaleFulfilmentPickData::from($response->json())->setResponse($response);

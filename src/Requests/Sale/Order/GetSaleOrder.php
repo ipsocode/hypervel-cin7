@@ -43,6 +43,9 @@ final class GetSaleOrder extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<SaleOrderData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleOrderData
     {
         return SaleOrderData::from($response->json())->setResponse($response);

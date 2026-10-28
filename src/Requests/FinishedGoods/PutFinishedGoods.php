@@ -24,6 +24,9 @@ final class PutFinishedGoods extends WriteRequest
         return 'finishedGoods';
     }
 
+    /**
+     * @param Response<FinishedGoodsData> $response
+     */
     public function createDtoFromResponse(Response $response): FinishedGoodsData
     {
         return FinishedGoodsData::from($response->json())->setResponse($response);

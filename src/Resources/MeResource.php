@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Me\MeData;
 use Ipsocode\Cin7\Requests\Me\GetMe;
 use Ipsocode\Cin7\Resources\Me\AddressesResource;
 use Ipsocode\Cin7\Resources\Me\ContactsResource;
@@ -21,6 +22,8 @@ final class MeResource extends BaseResource
 {
     /**
      * The company's name, base currency and time zone, and the settings its documents follow.
+     *
+     * @return Response<MeData>
      */
     public function get(): Response
     {

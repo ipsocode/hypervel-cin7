@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\Customer\CustomerPostData;
 use Ipsocode\Cin7\Data\Customer\CustomerPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -32,6 +33,7 @@ final class CustomerResource extends BaseResource
      * @param null|bool $includeProductPrices include each customer's product prices
      * @param null|string $contactFilter only customers with a contact whose name starts with, or
      *                                   whose email is, this
+     * @return Response<list<CustomerData>>
      */
     public function get(
         ?int $page = null,
@@ -91,6 +93,7 @@ final class CustomerResource extends BaseResource
 
     /**
      * @param array<string, mixed>|CustomerPostData $body
+     * @return Response<CustomerData>
      */
     public function post(array|CustomerPostData $body): Response
     {
@@ -99,6 +102,7 @@ final class CustomerResource extends BaseResource
 
     /**
      * @param array<string, mixed>|CustomerPutData $body
+     * @return Response<CustomerData>
      */
     public function put(array|CustomerPutData $body): Response
     {

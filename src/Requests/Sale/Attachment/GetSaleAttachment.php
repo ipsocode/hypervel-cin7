@@ -39,6 +39,9 @@ final class GetSaleAttachment extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<SaleAttachmentsData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleAttachmentsData
     {
         return SaleAttachmentsData::from($response->json())->setResponse($response);

@@ -42,6 +42,7 @@ final class DeleteProductFamilyAttachments extends Cin7Request
     }
 
     /**
+     * @param Response<list<AttachmentLineData>> $response
      * @return list<AttachmentLineData>
      */
     public function createDtoFromResponse(Response $response): array

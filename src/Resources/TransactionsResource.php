@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Transactions\TransactionData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Transactions\GetTransactions;
 
@@ -26,6 +27,7 @@ final class TransactionsResource extends BaseResource
      * @param null|DateTimeInterface|string $fromDate only transactions with an effective date after this
      * @param null|DateTimeInterface|string $toDate only transactions with an effective date before this
      * @param null|string $account only transactions with this debit or credit account code
+     * @return Response<list<TransactionData>>
      */
     public function get(
         ?int $page = null,

@@ -23,6 +23,9 @@ final class PostDiscount extends WriteRequest
         return 'reference/discount';
     }
 
+    /**
+     * @param Response<ProductDiscountRuleData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductDiscountRuleData
     {
         return ProductDiscountRuleData::from($response->json('DiscountRules.0'))->setResponse($response);

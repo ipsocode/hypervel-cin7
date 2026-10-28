@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources;
 
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\DisassemblyList\DisassemblyListData;
 use Ipsocode\Cin7\Enums\DisassemblyStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\DisassemblyList\GetDisassemblyList;
@@ -21,6 +22,7 @@ final class DisassemblyListResource extends ListResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|DisassemblyStatus $status only disassemblies with this status
      * @param null|string $search only disassemblies with this text in the disassembly number, location, status, name or product code
+     * @return Response<list<DisassemblyListData>>
      */
     public function get(
         ?int $page = null,

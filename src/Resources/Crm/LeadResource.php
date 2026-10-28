@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Crm\Lead\LeadData;
 use Ipsocode\Cin7\Data\Crm\Lead\LeadPostData;
 use Ipsocode\Cin7\Data\Crm\Lead\LeadPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -30,6 +31,7 @@ final class LeadResource extends BaseResource
      * @param null|string $id only the lead with this ID
      * @param null|string $name only leads whose name starts with this
      * @param null|DateTimeInterface|string $modifiedSince only records modified since this time
+     * @return Response<list<LeadData>>
      */
     public function get(
         ?int $page = null,
@@ -73,6 +75,7 @@ final class LeadResource extends BaseResource
 
     /**
      * @param array<string, mixed>|LeadPostData $body
+     * @return Response<list<LeadData>>
      */
     public function post(array|LeadPostData $body): Response
     {
@@ -81,6 +84,7 @@ final class LeadResource extends BaseResource
 
     /**
      * @param array<string, mixed>|LeadPutData $body
+     * @return Response<list<LeadData>>
      */
     public function put(array|LeadPutData $body): Response
     {

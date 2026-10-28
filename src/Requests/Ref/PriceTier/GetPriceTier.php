@@ -25,6 +25,7 @@ final class GetPriceTier extends Cin7Request
     }
 
     /**
+     * @param Response<list<PriceTierData>> $response
      * @return list<PriceTierData>
      */
     public function createDtoFromResponse(Response $response): array

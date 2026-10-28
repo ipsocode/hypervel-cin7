@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Sale;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuotePostData;
 use Ipsocode\Cin7\Requests\Sale\Quote\GetSaleQuote;
 use Ipsocode\Cin7\Requests\Sale\Quote\PostSaleQuote;
@@ -23,6 +24,7 @@ final class QuoteResource extends BaseResource
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
      * @param null|bool $includeProductInfo add the products the lines use
+     * @return Response<SaleQuoteData>
      */
     public function get(
         string $saleId,
@@ -34,6 +36,7 @@ final class QuoteResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleQuotePostData $body
+     * @return Response<SaleQuoteData>
      */
     public function post(array|SaleQuotePostData $body): Response
     {

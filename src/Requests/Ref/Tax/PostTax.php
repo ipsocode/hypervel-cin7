@@ -29,6 +29,9 @@ final class PostTax extends WriteRequest
         return 'ref/tax';
     }
 
+    /**
+     * @param Response<TaxData> $response
+     */
     public function createDtoFromResponse(Response $response): TaxData
     {
         return TaxData::from($response->json('TaxRuleList.0'))->setResponse($response);

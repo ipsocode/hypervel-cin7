@@ -25,6 +25,7 @@ final class CustomPricesResource extends BaseResource
      * Create customer specific prices for products.
      *
      * @param array<string, mixed>|CustomPricesData $body
+     * @return Response<null>
      */
     public function post(array|CustomPricesData $body): Response
     {
@@ -35,6 +36,7 @@ final class CustomPricesResource extends BaseResource
      * Change customer specific prices for products.
      *
      * @param array<string, mixed>|CustomPricesData $body
+     * @return Response<null>
      */
     public function put(array|CustomPricesData $body): Response
     {
@@ -43,6 +45,8 @@ final class CustomPricesResource extends BaseResource
 
     /**
      * Delete a customer's custom price for a product.
+     *
+     * @return Response<null>
      */
     public function delete(string $productId, string $customerId): Response
     {

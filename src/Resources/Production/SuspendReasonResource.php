@@ -25,6 +25,7 @@ final class SuspendReasonResource extends BaseResource
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $workCenterId only reasons of this work center
+     * @return Response<list<SuspendReasonData>>
      */
     public function get(
         ?int $page = null,
@@ -58,6 +59,7 @@ final class SuspendReasonResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SuspendReasonData $body
+     * @return Response<SuspendReasonData>
      */
     public function put(array|SuspendReasonData $body): Response
     {

@@ -88,6 +88,7 @@ abstract class Cin7Request extends Request
      * @template TItem of Data&WithResponse
      *
      * @param class-string<TItem> $class
+     * @param Response<mixed> $response
      * @param array<array-key, mixed> $items
      * @return list<TItem>
      */

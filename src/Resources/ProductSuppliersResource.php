@@ -23,6 +23,8 @@ final class ProductSuppliersResource extends BaseResource
 {
     /**
      * A product's suppliers.
+     *
+     * @return Response<ProductSuppliersData>
      */
     public function get(string $productId): Response
     {
@@ -31,6 +33,7 @@ final class ProductSuppliersResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductSuppliersData $body
+     * @return Response<null>
      */
     public function post(array|ProductSuppliersData $body): Response
     {
@@ -39,6 +42,7 @@ final class ProductSuppliersResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductSuppliersData $body
+     * @return Response<null>
      */
     public function put(array|ProductSuppliersData $body): Response
     {
@@ -47,6 +51,8 @@ final class ProductSuppliersResource extends BaseResource
 
     /**
      * Delete a product's supplier.
+     *
+     * @return Response<null>
      */
     public function delete(string $productId, string $supplierId): Response
     {

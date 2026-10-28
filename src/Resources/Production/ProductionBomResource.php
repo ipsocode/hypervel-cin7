@@ -9,8 +9,10 @@ use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomPostData;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomPutData;
+use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomsData;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomPostData;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomPutData;
+use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomsData;
 use Ipsocode\Cin7\Requests\Production\ProductionBom\DeleteProductFamilyProductionBom;
 use Ipsocode\Cin7\Requests\Production\ProductionBom\DeleteProductProductionBom;
 use Ipsocode\Cin7\Requests\Production\ProductionBom\GetProductFamilyProductionBom;
@@ -31,6 +33,7 @@ final class ProductionBomResource extends BaseResource
      * The production BOMs of a product.
      *
      * @param null|bool $returnAttachmentsContent return the attachments' content
+     * @return Response<ProductProductionBomsData>
      */
     public function getProduct(string $productId, ?bool $returnAttachmentsContent = null): Response
     {
@@ -39,6 +42,7 @@ final class ProductionBomResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductProductionBomPostData $body
+     * @return Response<ProductProductionBomsData>
      */
     public function postProduct(array|ProductProductionBomPostData $body): Response
     {
@@ -47,6 +51,7 @@ final class ProductionBomResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductProductionBomPutData $body
+     * @return Response<ProductProductionBomsData>
      */
     public function putProduct(array|ProductProductionBomPutData $body): Response
     {
@@ -55,6 +60,8 @@ final class ProductionBomResource extends BaseResource
 
     /**
      * Deletes a production BOM of a product; the response is not documented.
+     *
+     * @return Response<null>
      */
     public function deleteProduct(string $productId, string $bomId): Response
     {
@@ -65,6 +72,7 @@ final class ProductionBomResource extends BaseResource
      * The production BOMs of a product family.
      *
      * @param null|bool $returnAttachmentsContent return the attachments' content
+     * @return Response<ProductFamilyProductionBomsData>
      */
     public function getProductFamily(string $productFamilyId, ?bool $returnAttachmentsContent = null): Response
     {
@@ -73,6 +81,7 @@ final class ProductionBomResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductFamilyProductionBomPostData $body
+     * @return Response<ProductFamilyProductionBomsData>
      */
     public function postProductFamily(array|ProductFamilyProductionBomPostData $body): Response
     {
@@ -81,6 +90,7 @@ final class ProductionBomResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductFamilyProductionBomPutData $body
+     * @return Response<ProductFamilyProductionBomsData>
      */
     public function putProductFamily(array|ProductFamilyProductionBomPutData $body): Response
     {
@@ -89,6 +99,8 @@ final class ProductionBomResource extends BaseResource
 
     /**
      * Deletes a production BOM of a product family; the response is not documented.
+     *
+     * @return Response<null>
      */
     public function deleteProductFamily(string $productFamilyId, string $bomId): Response
     {

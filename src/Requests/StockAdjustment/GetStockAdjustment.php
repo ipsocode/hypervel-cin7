@@ -39,6 +39,9 @@ final class GetStockAdjustment extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<StockAdjustmentData> $response
+     */
     public function createDtoFromResponse(Response $response): StockAdjustmentData
     {
         return StockAdjustmentData::from($response->json())->setResponse($response);

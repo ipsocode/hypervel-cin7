@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\BankTransfer\BankTransferData;
 use Ipsocode\Cin7\Data\BankTransfer\BankTransferPostData;
 use Ipsocode\Cin7\Data\BankTransfer\BankTransferPutData;
 use Ipsocode\Cin7\Requests\BankTransfer\DeleteBankTransfer;
@@ -24,6 +25,8 @@ final class BankTransferResource extends BaseResource
 {
     /**
      * One bank transfer.
+     *
+     * @return Response<BankTransferData>
      */
     public function get(string $taskId): Response
     {
@@ -32,6 +35,7 @@ final class BankTransferResource extends BaseResource
 
     /**
      * @param array<string, mixed>|BankTransferPostData $body
+     * @return Response<BankTransferData>
      */
     public function post(array|BankTransferPostData $body): Response
     {
@@ -40,6 +44,7 @@ final class BankTransferResource extends BaseResource
 
     /**
      * @param array<string, mixed>|BankTransferPutData $body
+     * @return Response<BankTransferData>
      */
     public function put(array|BankTransferPutData $body): Response
     {
@@ -50,6 +55,7 @@ final class BankTransferResource extends BaseResource
      * Void the bank transfer (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<BankTransferData>
      */
     public function delete(string $id, ?bool $void = null): Response
     {

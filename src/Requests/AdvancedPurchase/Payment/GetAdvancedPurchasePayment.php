@@ -48,6 +48,7 @@ final class GetAdvancedPurchasePayment extends Cin7Request
     }
 
     /**
+     * @param Response<list<AdvancedPurchasePaymentData>> $response
      * @return list<AdvancedPurchasePaymentData>
      */
     public function createDtoFromResponse(Response $response): array

@@ -24,6 +24,9 @@ final class PostAccount extends WriteRequest
         return 'ref/account';
     }
 
+    /**
+     * @param Response<AccountData> $response
+     */
     public function createDtoFromResponse(Response $response): AccountData
     {
         return AccountData::from($response->json('AccountsList.0'))->setResponse($response);

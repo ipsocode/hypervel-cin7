@@ -42,6 +42,7 @@ final class DeleteCustomerTemplates extends Cin7Request
     }
 
     /**
+     * @param Response<list<CustomerDefaultTemplateData>> $response
      * @return list<CustomerDefaultTemplateData>
      */
     public function createDtoFromResponse(Response $response): array

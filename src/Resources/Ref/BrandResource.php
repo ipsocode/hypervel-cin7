@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Brand\BrandData;
 use Ipsocode\Cin7\Data\Ref\Brand\BrandPostData;
 use Ipsocode\Cin7\Data\Ref\Brand\BrandPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class BrandResource extends BaseResource
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $name only brands whose name starts with this
+     * @return Response<list<BrandData>>
      */
     public function get(?int $page = null, ?int $limit = null, ?string $name = null): Response
     {
@@ -48,6 +50,7 @@ final class BrandResource extends BaseResource
 
     /**
      * @param array<string, mixed>|BrandPostData $body
+     * @return Response<BrandData>
      */
     public function post(array|BrandPostData $body): Response
     {
@@ -56,6 +59,7 @@ final class BrandResource extends BaseResource
 
     /**
      * @param array<string, mixed>|BrandPutData $body
+     * @return Response<BrandData>
      */
     public function put(array|BrandPutData $body): Response
     {
@@ -64,6 +68,8 @@ final class BrandResource extends BaseResource
 
     /**
      * Delete the brand with this ID.
+     *
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

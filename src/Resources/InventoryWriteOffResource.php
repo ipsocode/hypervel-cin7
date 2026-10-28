@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPostData;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffPutData;
 use Ipsocode\Cin7\Requests\InventoryWriteOff\DeleteInventoryWriteOff;
@@ -23,6 +24,8 @@ final class InventoryWriteOffResource extends BaseResource
 {
     /**
      * One inventory write-off, with its lines and the transactions it created.
+     *
+     * @return Response<InventoryWriteOffData>
      */
     public function get(string $taskId): Response
     {
@@ -31,6 +34,7 @@ final class InventoryWriteOffResource extends BaseResource
 
     /**
      * @param array<string, mixed>|InventoryWriteOffPostData $body
+     * @return Response<InventoryWriteOffData>
      */
     public function post(array|InventoryWriteOffPostData $body): Response
     {
@@ -39,6 +43,7 @@ final class InventoryWriteOffResource extends BaseResource
 
     /**
      * @param array<string, mixed>|InventoryWriteOffPutData $body
+     * @return Response<InventoryWriteOffData>
      */
     public function put(array|InventoryWriteOffPutData $body): Response
     {
@@ -49,6 +54,7 @@ final class InventoryWriteOffResource extends BaseResource
      * Void the inventory write-off (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<InventoryWriteOffData>
      */
     public function delete(string $id, ?bool $void = null): Response
     {

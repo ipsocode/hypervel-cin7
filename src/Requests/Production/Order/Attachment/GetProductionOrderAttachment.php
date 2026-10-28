@@ -42,6 +42,9 @@ final class GetProductionOrderAttachment extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<ProductionOrderAttachmentsData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionOrderAttachmentsData
     {
         return ProductionOrderAttachmentsData::from($response->json())->setResponse($response);

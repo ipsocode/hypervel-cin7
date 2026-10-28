@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Resources;
 
 use DateTimeInterface;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\SaleCreditNoteList\SaleCreditNoteListData;
 use Ipsocode\Cin7\Enums\SaleStatus;
 use Ipsocode\Cin7\Enums\TaskStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class SaleCreditNoteListResource extends ListResource
      * @param null|DateTimeInterface|string $updatedUntil only sales changed before this time
      * @param null|TaskStatus $creditNoteStatus only sales with this credit note status
      * @param null|SaleStatus $status only sales with this status
+     * @return Response<list<SaleCreditNoteListData>>
      */
     public function get(
         ?int $page = null,

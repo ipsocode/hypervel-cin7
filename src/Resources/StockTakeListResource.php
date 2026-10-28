@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources;
 
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\StockTakeList\StockTakeListData;
 use Ipsocode\Cin7\Enums\StockTakeStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\StockTakeList\GetStockTakeList;
@@ -20,6 +21,7 @@ final class StockTakeListResource extends ListResource
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
      * @param null|StockTakeStatus $status only stock takes with this status
+     * @return Response<list<StockTakeListData>>
      */
     public function get(
         ?int $page = null,

@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref\Account;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Account\Bank\BankAccountData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Ref\Account\Bank\GetAccountBank;
 
@@ -25,6 +26,7 @@ final class BankResource extends BaseResource
      * @param null|string $id only the bank account with this ID
      * @param null|string $name only bank accounts whose name starts with this
      * @param null|string $bank only bank accounts with this bank
+     * @return Response<list<BankAccountData>>
      */
     public function get(
         ?int $page = null,

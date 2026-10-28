@@ -24,6 +24,9 @@ final class PostProductionOrderRelease extends WriteRequest
         return 'production/order/release';
     }
 
+    /**
+     * @param Response<ProductionOrdersData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionOrdersData
     {
         return ProductionOrdersData::from($response->json())->setResponse($response);

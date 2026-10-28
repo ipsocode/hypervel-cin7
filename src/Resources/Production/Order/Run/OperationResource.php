@@ -11,6 +11,7 @@ use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunOperationCompletePutDat
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunOperationResumePutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunOperationStartPutData;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunOperationSuspendPutData;
+use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
 use Ipsocode\Cin7\Requests\Production\Order\Run\Operation\Complete\PutProductionOrderRunOperationComplete;
 use Ipsocode\Cin7\Requests\Production\Order\Run\Operation\Resume\PutProductionOrderRunOperationResume;
 use Ipsocode\Cin7\Requests\Production\Order\Run\Operation\Start\PutProductionOrderRunOperationStart;
@@ -25,6 +26,7 @@ final class OperationResource extends BaseResource
 {
     /**
      * @param array<string, mixed>|ProductionRunOperationStartPutData $body
+     * @return Response<ProductionRunsData>
      */
     public function start(array|ProductionRunOperationStartPutData $body): Response
     {
@@ -33,6 +35,7 @@ final class OperationResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionRunOperationSuspendPutData $body
+     * @return Response<ProductionRunsData>
      */
     public function suspend(array|ProductionRunOperationSuspendPutData $body): Response
     {
@@ -41,6 +44,7 @@ final class OperationResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionRunOperationResumePutData $body
+     * @return Response<ProductionRunsData>
      */
     public function resume(array|ProductionRunOperationResumePutData $body): Response
     {
@@ -49,6 +53,7 @@ final class OperationResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionRunOperationCompletePutData $body
+     * @return Response<ProductionRunsData>
      */
     public function complete(array|ProductionRunOperationCompletePutData $body): Response
     {

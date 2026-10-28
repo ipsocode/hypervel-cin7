@@ -24,6 +24,9 @@ final class PostMeContacts extends WriteRequest
         return 'me/contacts';
     }
 
+    /**
+     * @param Response<MeContactData> $response
+     */
     public function createDtoFromResponse(Response $response): MeContactData
     {
         return MeContactData::from($response->json('MeContactsList.0'))->setResponse($response);

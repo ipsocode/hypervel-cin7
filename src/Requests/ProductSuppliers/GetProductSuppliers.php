@@ -39,6 +39,9 @@ final class GetProductSuppliers extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<ProductSuppliersData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductSuppliersData
     {
         return ProductSuppliersData::from($response->json())->setResponse($response);

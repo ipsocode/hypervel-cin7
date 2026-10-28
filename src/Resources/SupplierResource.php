@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Supplier\SupplierData;
 use Ipsocode\Cin7\Data\Supplier\SupplierPostData;
 use Ipsocode\Cin7\Data\Supplier\SupplierPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -29,6 +30,7 @@ final class SupplierResource extends BaseResource
      * @param null|string $name only suppliers whose name starts with this
      * @param null|DateTimeInterface|string $modifiedSince only suppliers modified since this time
      * @param null|bool $includeDeprecated include deprecated suppliers too
+     * @return Response<list<SupplierData>>
      */
     public function get(
         ?int $page = null,
@@ -77,6 +79,7 @@ final class SupplierResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SupplierPostData $body
+     * @return Response<SupplierData>
      */
     public function post(array|SupplierPostData $body): Response
     {
@@ -85,6 +88,7 @@ final class SupplierResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SupplierPutData $body
+     * @return Response<SupplierData>
      */
     public function put(array|SupplierPutData $body): Response
     {

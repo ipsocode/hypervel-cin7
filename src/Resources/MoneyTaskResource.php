@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
 use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskPostData;
 use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskPutData;
 use Ipsocode\Cin7\Requests\MoneyTask\DeleteMoneyTask;
@@ -25,6 +26,8 @@ final class MoneyTaskResource extends BaseResource
 {
     /**
      * One money task.
+     *
+     * @return Response<MoneyTaskData>
      */
     public function get(
         string $taskId,
@@ -34,6 +37,7 @@ final class MoneyTaskResource extends BaseResource
 
     /**
      * @param array<string, mixed>|MoneyTaskPostData $body
+     * @return Response<MoneyTaskData>
      */
     public function post(array|MoneyTaskPostData $body): Response
     {
@@ -42,6 +46,7 @@ final class MoneyTaskResource extends BaseResource
 
     /**
      * @param array<string, mixed>|MoneyTaskPutData $body
+     * @return Response<MoneyTaskData>
      */
     public function put(array|MoneyTaskPutData $body): Response
     {
@@ -52,6 +57,7 @@ final class MoneyTaskResource extends BaseResource
      * Void the money task (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<MoneyTaskData>
      */
     public function delete(
         string $id,

@@ -36,6 +36,9 @@ final class GetProductionOrderReferenceData extends Cin7Request
         return $this->queryValues([]);
     }
 
+    /**
+     * @param Response<ProductionOrderReferenceData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionOrderReferenceData
     {
         return ProductionOrderReferenceData::from($response->json())->setResponse($response);
