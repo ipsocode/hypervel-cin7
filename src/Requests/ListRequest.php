@@ -67,10 +67,6 @@ abstract class ListRequest extends Cin7Request implements MapPaginatedResponseIt
 
     /**
      * @param Response<list<TItem>> $response
-     * @param Response<list<TItem>> $response
-     * @param Response<list<TItem>> $response
-     * @param Response<list<TItem>> $response
-     * @param Response<list<TItem>> $response
      * @return list<TItem>
      */
     public function createDtoFromResponse(Response $response): array
