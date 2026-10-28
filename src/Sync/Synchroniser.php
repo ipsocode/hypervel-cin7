@@ -162,10 +162,10 @@ final class Synchroniser
      */
     private function unseen(Module $module, Carbon $start): array
     {
-        return array_map(
-            strval(...),
-            array_values($this->rows($module)->toBase()->where('synced_at', '<', $start)->orderBy('cin7_id')->pluck('cin7_id')->all()),
-        );
+        /** @var list<int|string> $identifiers */
+        $identifiers = $this->rows($module)->toBase()->where('synced_at', '<', $start)->orderBy('cin7_id')->pluck('cin7_id')->all();
+
+        return array_map(strval(...), $identifiers);
     }
 
     /**
