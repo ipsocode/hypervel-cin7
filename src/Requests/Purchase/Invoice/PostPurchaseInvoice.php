@@ -26,6 +26,9 @@ final class PostPurchaseInvoice extends WriteRequest
         return 'purchase/invoice';
     }
 
+    /**
+     * @param Response<PurchaseInvoiceData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseInvoiceData
     {
         return PurchaseInvoiceData::from($response->json())->setResponse($response);

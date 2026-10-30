@@ -41,6 +41,9 @@ final class GetSaleFulfilment extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<SaleFulfilmentsData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleFulfilmentsData
     {
         return SaleFulfilmentsData::from($response->json())->setResponse($response);

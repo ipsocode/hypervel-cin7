@@ -39,6 +39,9 @@ final class GetFinishedGoodsOrder extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<FinishedGoodsOrderData> $response
+     */
     public function createDtoFromResponse(Response $response): FinishedGoodsOrderData
     {
         return FinishedGoodsOrderData::from($response->json())->setResponse($response);

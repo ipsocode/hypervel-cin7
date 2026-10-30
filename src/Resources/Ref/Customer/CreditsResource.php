@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref\Customer;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Ref\Customer\Credits\GetCustomerCredits;
 
@@ -22,6 +23,7 @@ final class CreditsResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $customerId only this customer's credits
      * @param null|bool $showUsedCredits include the credits already used
+     * @return Response<list<CustomerCreditData>>
      */
     public function get(
         ?int $page = null,

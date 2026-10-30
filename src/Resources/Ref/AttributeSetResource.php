@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\AttributeSet\AttributeSetData;
 use Ipsocode\Cin7\Data\Ref\AttributeSet\AttributeSetPostData;
 use Ipsocode\Cin7\Data\Ref\AttributeSet\AttributeSetPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -29,6 +30,7 @@ final class AttributeSetResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $id only the attribute set with this ID
      * @param null|string $name only attribute sets whose name starts with this
+     * @return Response<list<AttributeSetData>>
      */
     public function get(?int $page = null, ?int $limit = null, ?string $id = null, ?string $name = null): Response
     {
@@ -50,6 +52,7 @@ final class AttributeSetResource extends BaseResource
 
     /**
      * @param array<string, mixed>|AttributeSetPostData $body
+     * @return Response<AttributeSetData>
      */
     public function post(array|AttributeSetPostData $body): Response
     {
@@ -58,6 +61,7 @@ final class AttributeSetResource extends BaseResource
 
     /**
      * @param array<string, mixed>|AttributeSetPutData $body
+     * @return Response<AttributeSetData>
      */
     public function put(array|AttributeSetPutData $body): Response
     {
@@ -66,6 +70,8 @@ final class AttributeSetResource extends BaseResource
 
     /**
      * Delete the attribute set with this ID.
+     *
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

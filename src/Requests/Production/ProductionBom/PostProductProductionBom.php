@@ -24,6 +24,9 @@ final class PostProductProductionBom extends WriteRequest
         return 'production/productionBOM';
     }
 
+    /**
+     * @param Response<ProductProductionBomsData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductProductionBomsData
     {
         return ProductProductionBomsData::from($response->json())->setResponse($response);

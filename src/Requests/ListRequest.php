@@ -19,6 +19,7 @@ use Ipsocode\Cin7\PageDefaults;
  *
  * @template TItem of Data&WithResponse
  * @extends Cin7Request<list<TItem>>
+ * @implements MapPaginatedResponseItems<TItem>
  */
 abstract class ListRequest extends Cin7Request implements MapPaginatedResponseItems, Paginatable
 {
@@ -65,6 +66,7 @@ abstract class ListRequest extends Cin7Request implements MapPaginatedResponseIt
     }
 
     /**
+     * @param Response<list<TItem>> $response
      * @return list<TItem>
      */
     public function createDtoFromResponse(Response $response): array

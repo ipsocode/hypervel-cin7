@@ -24,6 +24,7 @@ final class PostCustomerTemplates extends WriteRequest
     }
 
     /**
+     * @param Response<list<CustomerDefaultTemplateData>> $response
      * @return list<CustomerDefaultTemplateData>
      */
     public function createDtoFromResponse(Response $response): array

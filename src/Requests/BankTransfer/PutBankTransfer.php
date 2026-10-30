@@ -24,6 +24,9 @@ final class PutBankTransfer extends WriteRequest
         return 'bankTransfer';
     }
 
+    /**
+     * @param Response<BankTransferData> $response
+     */
     public function createDtoFromResponse(Response $response): BankTransferData
     {
         return BankTransferData::from($response->json())->setResponse($response);

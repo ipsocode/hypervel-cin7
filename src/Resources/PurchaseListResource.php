@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Resources;
 
 use DateTimeInterface;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\PurchaseList\PurchaseListData;
 use Ipsocode\Cin7\Enums\InvoiceStatus;
 use Ipsocode\Cin7\Enums\TaskStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -35,6 +36,7 @@ final class PurchaseListResource extends ListResource
      * @param null|TaskStatus $unstockStatus only purchases with this unstock status
      * @param null|string $status only purchases with this status
      * @param null|string $dropShipTaskId only the drop-ship purchases this sale task created
+     * @return Response<list<PurchaseListData>>
      */
     public function get(
         ?int $page = null,

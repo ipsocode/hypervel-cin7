@@ -26,6 +26,7 @@ abstract class ListResource extends BaseResource
      * @template TItem of Data&WithResponse
      *
      * @param ListRequest<TItem> $request
+     * @return Response<list<TItem>>
      */
     protected function sendList(ListRequest $request): Response
     {

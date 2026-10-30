@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Product\ProductPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -41,6 +42,7 @@ final class ProductResource extends BaseResource
      * @param null|bool $includeAttachments include the attachments
      * @param null|bool $includeReorderLevels include the reorder levels
      * @param null|bool $includeCustomPrices include the customer specific prices
+     * @return Response<list<ProductData>>
      */
     public function get(
         ?int $page = null,
@@ -124,6 +126,7 @@ final class ProductResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductPostData $body
+     * @return Response<ProductData>
      */
     public function post(array|ProductPostData $body): Response
     {
@@ -132,6 +135,7 @@ final class ProductResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductPutData $body
+     * @return Response<ProductData>
      */
     public function put(array|ProductPutData $body): Response
     {

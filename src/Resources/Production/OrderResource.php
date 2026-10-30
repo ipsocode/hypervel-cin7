@@ -8,9 +8,12 @@ use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAuthorisePostData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderMessageData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderPostData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderPutData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrderReferenceData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderReleasePostData;
+use Ipsocode\Cin7\Data\Production\Order\ProductionOrdersData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderUndoPostData;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderVoidPostData;
 use Ipsocode\Cin7\Requests\Production\Order\Authorise\PostProductionOrderAuthorise;
@@ -35,6 +38,7 @@ final class OrderResource extends BaseResource
      * A production order, answered under `ProductionOrders`.
      *
      * @param null|bool $returnAttachmentsContent return the attachments' content
+     * @return Response<ProductionOrdersData>
      */
     public function get(string $productionOrderId, ?bool $returnAttachmentsContent = null): Response
     {
@@ -44,6 +48,7 @@ final class OrderResource extends BaseResource
     /**
      * @param array<string, mixed>|ProductionOrderPostData $body
      * @param bool $recalculateDates perform the capacity calculation, answering a warning if it fails
+     * @return Response<ProductionOrdersData>
      */
     public function post(array|ProductionOrderPostData $body, ?bool $recalculateDates = null): Response
     {
@@ -54,6 +59,7 @@ final class OrderResource extends BaseResource
      * @param array<string, mixed>|ProductionOrderPutData $body
      * @param bool $allowRecalculateDates perform the capacity calculation, answering a warning if it fails
      * @param bool $allowRecalculateCyclesAndQuantities recalculate the operations' cycles and quantities when the quantity changes
+     * @return Response<ProductionOrdersData>
      */
     public function put(array|ProductionOrderPutData $body, ?bool $allowRecalculateDates = null, ?bool $allowRecalculateCyclesAndQuantities = null): Response
     {
@@ -62,6 +68,7 @@ final class OrderResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionOrderAuthorisePostData $body
+     * @return Response<ProductionOrdersData>
      */
     public function authorise(array|ProductionOrderAuthorisePostData $body): Response
     {
@@ -70,6 +77,7 @@ final class OrderResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionOrderReleasePostData $body
+     * @return Response<ProductionOrdersData>
      */
     public function release(array|ProductionOrderReleasePostData $body): Response
     {
@@ -78,6 +86,7 @@ final class OrderResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionOrderUndoPostData $body
+     * @return Response<ProductionOrderMessageData>
      */
     public function undo(array|ProductionOrderUndoPostData $body): Response
     {
@@ -86,6 +95,7 @@ final class OrderResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductionOrderVoidPostData $body
+     * @return Response<ProductionOrderMessageData>
      */
     public function void(array|ProductionOrderVoidPostData $body): Response
     {
@@ -94,6 +104,8 @@ final class OrderResource extends BaseResource
 
     /**
      * The reference data a production order uses.
+     *
+     * @return Response<ProductionOrderReferenceData>
      */
     public function referenceData(): Response
     {

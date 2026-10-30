@@ -42,6 +42,9 @@ final class GetAdvancedPurchaseInvoice extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<AdvancedPurchaseInvoicesData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchaseInvoicesData
     {
         return AdvancedPurchaseInvoicesData::from($response->json())->setResponse($response);

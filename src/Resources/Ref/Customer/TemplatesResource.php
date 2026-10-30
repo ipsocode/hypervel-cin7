@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref\Customer;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Customer\Templates\CustomerDefaultTemplateData;
 use Ipsocode\Cin7\Data\Ref\Customer\Templates\CustomerDefaultTemplatesPostData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Ref\Customer\Templates\DeleteCustomerTemplates;
@@ -26,6 +27,7 @@ final class TemplatesResource extends BaseResource
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $customerId only this customer's default templates
+     * @return Response<list<CustomerDefaultTemplateData>>
      */
     public function get(
         ?int $page = null,
@@ -59,6 +61,7 @@ final class TemplatesResource extends BaseResource
 
     /**
      * @param array<string, mixed>|CustomerDefaultTemplatesPostData $body
+     * @return Response<list<CustomerDefaultTemplateData>>
      */
     public function post(array|CustomerDefaultTemplatesPostData $body): Response
     {
@@ -70,6 +73,7 @@ final class TemplatesResource extends BaseResource
      *
      * @param string $templateId the ID of the template
      * @param string $customerId the ID of the customer
+     * @return Response<list<CustomerDefaultTemplateData>>
      */
     public function delete(string $templateId, string $customerId): Response
     {

@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Category\ProductCategoryData;
 use Ipsocode\Cin7\Data\Ref\Category\ProductCategoryPostData;
 use Ipsocode\Cin7\Data\Ref\Category\ProductCategoryPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class CategoryResource extends BaseResource
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $name only product categories whose name starts with this
+     * @return Response<list<ProductCategoryData>>
      */
     public function get(?int $page = null, ?int $limit = null, ?string $name = null): Response
     {
@@ -48,6 +50,7 @@ final class CategoryResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductCategoryPostData $body
+     * @return Response<ProductCategoryData>
      */
     public function post(array|ProductCategoryPostData $body): Response
     {
@@ -56,6 +59,7 @@ final class CategoryResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductCategoryPutData $body
+     * @return Response<ProductCategoryData>
      */
     public function put(array|ProductCategoryPutData $body): Response
     {
@@ -64,6 +68,8 @@ final class CategoryResource extends BaseResource
 
     /**
      * Delete the product category with this ID.
+     *
+     * @return Response<null>
      */
     public function delete(string $id): Response
     {

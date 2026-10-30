@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Journal\JournalData;
 use Ipsocode\Cin7\Data\Journal\JournalPostData;
 use Ipsocode\Cin7\Data\Journal\JournalPutData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
@@ -31,6 +32,7 @@ final class JournalResource extends BaseResource
      * @param null|string $taskId only the journal with this task ID
      * @param null|CompletionStatus $status only journals with this status
      * @param null|string $search only journals with this text in their number, status, narration or notes
+     * @return Response<list<JournalData>>
      */
     public function get(
         ?int $page = null,
@@ -62,6 +64,7 @@ final class JournalResource extends BaseResource
 
     /**
      * @param array<string, mixed>|JournalPostData $body
+     * @return Response<JournalData>
      */
     public function post(array|JournalPostData $body): Response
     {
@@ -70,6 +73,7 @@ final class JournalResource extends BaseResource
 
     /**
      * @param array<string, mixed>|JournalPutData $body
+     * @return Response<JournalData>
      */
     public function put(array|JournalPutData $body): Response
     {
@@ -79,6 +83,8 @@ final class JournalResource extends BaseResource
     /**
      * Void a journal with `void: true`, or undo the void with `void: false`; without `void` none
      * is sent and Cin7 defaults it to `false`.
+     *
+     * @return Response<JournalData>
      */
     public function delete(string $id, ?bool $void = null): Response
     {

@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Purchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalData;
 use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalPostData;
 use Ipsocode\Cin7\Requests\Purchase\ManualJournal\GetPurchaseManualJournal;
 use Ipsocode\Cin7\Requests\Purchase\ManualJournal\PostPurchaseManualJournal;
@@ -22,6 +23,8 @@ final class ManualJournalResource extends BaseResource
 {
     /**
      * A purchase's manual journal, by its `TaskID`.
+     *
+     * @return Response<PurchaseManualJournalData>
      */
     public function get(string $taskId): Response
     {
@@ -30,6 +33,7 @@ final class ManualJournalResource extends BaseResource
 
     /**
      * @param array<string, mixed>|PurchaseManualJournalPostData $body
+     * @return Response<PurchaseManualJournalData>
      */
     public function post(array|PurchaseManualJournalPostData $body): Response
     {

@@ -39,6 +39,9 @@ final class GetDisassembly extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<DisassemblyData> $response
+     */
     public function createDtoFromResponse(Response $response): DisassemblyData
     {
         return DisassemblyData::from($response->json())->setResponse($response);

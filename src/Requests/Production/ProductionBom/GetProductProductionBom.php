@@ -41,6 +41,9 @@ final class GetProductProductionBom extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<ProductProductionBomsData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductProductionBomsData
     {
         return ProductProductionBomsData::from($response->json())->setResponse($response);

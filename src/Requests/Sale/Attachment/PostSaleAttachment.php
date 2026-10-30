@@ -24,6 +24,9 @@ final class PostSaleAttachment extends WriteRequest
         return 'sale/attachment';
     }
 
+    /**
+     * @param Response<SaleAttachmentsData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleAttachmentsData
     {
         return SaleAttachmentsData::from($response->json())->setResponse($response);

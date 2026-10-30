@@ -40,6 +40,9 @@ final class GetProductMarkupPrices extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<MarkupPricesData> $response
+     */
     public function createDtoFromResponse(Response $response): MarkupPricesData
     {
         return MarkupPricesData::from($response->json())->setResponse($response);

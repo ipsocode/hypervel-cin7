@@ -25,6 +25,7 @@ final class PostProductAttachments extends WriteRequest
     }
 
     /**
+     * @param Response<list<AttachmentLineData>> $response
      * @return list<AttachmentLineData>
      */
     public function createDtoFromResponse(Response $response): array

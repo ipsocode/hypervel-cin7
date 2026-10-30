@@ -24,6 +24,7 @@ final class PostCarrier extends WriteRequest
     }
 
     /**
+     * @param Response<list<CarrierData>> $response
      * @return list<CarrierData>
      */
     public function createDtoFromResponse(Response $response): array

@@ -24,6 +24,9 @@ final class PutProductionOrderRunOperationSuspend extends WriteRequest
         return 'production/order/run/operation/suspend';
     }
 
+    /**
+     * @param Response<ProductionRunsData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductionRunsData
     {
         return ProductionRunsData::from($response->json())->setResponse($response);

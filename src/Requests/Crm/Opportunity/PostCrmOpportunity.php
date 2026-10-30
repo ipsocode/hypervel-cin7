@@ -24,6 +24,7 @@ final class PostCrmOpportunity extends WriteRequest
     }
 
     /**
+     * @param Response<list<OpportunityData>> $response
      * @return list<OpportunityData>
      */
     public function createDtoFromResponse(Response $response): array

@@ -24,6 +24,7 @@ final class PutCrmLead extends WriteRequest
     }
 
     /**
+     * @param Response<list<LeadData>> $response
      * @return list<LeadData>
      */
     public function createDtoFromResponse(Response $response): array

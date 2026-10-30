@@ -24,6 +24,9 @@ final class PutProductMarkupPrices extends WriteRequest
         return 'product/markupprices';
     }
 
+    /**
+     * @param Response<MarkupPricesData> $response
+     */
     public function createDtoFromResponse(Response $response): MarkupPricesData
     {
         return MarkupPricesData::from($response->json())->setResponse($response);

@@ -42,6 +42,9 @@ final class GetPurchaseCreditNote extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<PurchaseCreditNoteData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseCreditNoteData
     {
         return PurchaseCreditNoteData::from($response->json())->setResponse($response);

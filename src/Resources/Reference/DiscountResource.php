@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Reference;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Reference\Discount\ProductDiscountRuleData;
 use Ipsocode\Cin7\Data\Reference\Discount\ProductDiscountRulePutData;
 use Ipsocode\Cin7\Data\Reference\Discount\ProductDiscountRulesPostData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class DiscountResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $id only the discount rule with this ID
      * @param null|string $search only discount rules with this text in their name
+     * @return Response<list<ProductDiscountRuleData>>
      */
     public function get(
         ?int $page = null,
@@ -58,6 +60,7 @@ final class DiscountResource extends BaseResource
      * Create discount rules: the body lists them under `DiscountRules`.
      *
      * @param array<string, mixed>|ProductDiscountRulesPostData $body
+     * @return Response<ProductDiscountRuleData>
      */
     public function post(array|ProductDiscountRulesPostData $body): Response
     {
@@ -68,6 +71,7 @@ final class DiscountResource extends BaseResource
      * Change one discount rule: the body is the rule itself.
      *
      * @param array<string, mixed>|ProductDiscountRulePutData $body
+     * @return Response<ProductDiscountRuleData>
      */
     public function put(array|ProductDiscountRulePutData $body): Response
     {

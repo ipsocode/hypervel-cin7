@@ -24,6 +24,9 @@ final class PutMeAddresses extends WriteRequest
         return 'me/addresses';
     }
 
+    /**
+     * @param Response<MeAddressData> $response
+     */
     public function createDtoFromResponse(Response $response): MeAddressData
     {
         return MeAddressData::from($response->json('MeAddressesList.0'))->setResponse($response);

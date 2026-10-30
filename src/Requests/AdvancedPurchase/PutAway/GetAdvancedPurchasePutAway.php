@@ -39,6 +39,9 @@ final class GetAdvancedPurchasePutAway extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<AdvancedPurchasePutAwaysData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchasePutAwaysData
     {
         return AdvancedPurchasePutAwaysData::from($response->json())->setResponse($response);

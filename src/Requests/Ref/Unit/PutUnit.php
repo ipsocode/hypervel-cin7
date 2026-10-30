@@ -24,6 +24,9 @@ final class PutUnit extends WriteRequest
         return 'ref/unit';
     }
 
+    /**
+     * @param Response<UnitOfMeasureData> $response
+     */
     public function createDtoFromResponse(Response $response): UnitOfMeasureData
     {
         return UnitOfMeasureData::from($response->json())->setResponse($response);

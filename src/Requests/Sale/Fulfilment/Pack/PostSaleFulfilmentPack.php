@@ -24,6 +24,9 @@ final class PostSaleFulfilmentPack extends WriteRequest
         return 'sale/fulfilment/pack';
     }
 
+    /**
+     * @param Response<SaleFulfilmentPackData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleFulfilmentPackData
     {
         return SaleFulfilmentPackData::from($response->json())->setResponse($response);

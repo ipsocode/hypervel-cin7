@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Crm;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Crm\TaskCategory\TaskCategoryData;
 use Ipsocode\Cin7\Data\Crm\TaskCategory\TaskCategoryPostData;
 use Ipsocode\Cin7\Data\Crm\TaskCategory\TaskCategoryPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class TaskCategoryResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $id only the category with this ID
      * @param null|string $name only categories whose name starts with this
+     * @return Response<list<TaskCategoryData>>
      */
     public function get(
         ?int $page = null,
@@ -66,6 +68,7 @@ final class TaskCategoryResource extends BaseResource
 
     /**
      * @param array<string, mixed>|TaskCategoryPostData $body
+     * @return Response<list<TaskCategoryData>>
      */
     public function post(array|TaskCategoryPostData $body): Response
     {
@@ -74,6 +77,7 @@ final class TaskCategoryResource extends BaseResource
 
     /**
      * @param array<string, mixed>|TaskCategoryPutData $body
+     * @return Response<list<TaskCategoryData>>
      */
     public function put(array|TaskCategoryPutData $body): Response
     {

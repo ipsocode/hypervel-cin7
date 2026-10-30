@@ -24,6 +24,7 @@ final class PostWebhooks extends WriteRequest
     }
 
     /**
+     * @param Response<list<WebhookData>> $response
      * @return list<WebhookData>
      */
     public function createDtoFromResponse(Response $response): array

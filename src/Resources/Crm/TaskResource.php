@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Crm\Task\TaskData;
 use Ipsocode\Cin7\Data\Crm\Task\TaskPostData;
 use Ipsocode\Cin7\Data\Crm\Task\TaskPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -37,6 +38,7 @@ final class TaskResource extends BaseResource
      * @param null|DateTimeInterface|string $completeDateTo only tasks completed at or before this
      * @param null|string $assignedTo only tasks assigned to this user
      * @param null|string $category only tasks of this category
+     * @return Response<list<TaskData>>
      */
     public function get(
         ?int $page = null,
@@ -115,6 +117,7 @@ final class TaskResource extends BaseResource
 
     /**
      * @param array<string, mixed>|TaskPostData $body
+     * @return Response<list<TaskData>>
      */
     public function post(array|TaskPostData $body): Response
     {
@@ -123,6 +126,7 @@ final class TaskResource extends BaseResource
 
     /**
      * @param array<string, mixed>|TaskPutData $body
+     * @return Response<list<TaskData>>
      */
     public function put(array|TaskPutData $body): Response
     {

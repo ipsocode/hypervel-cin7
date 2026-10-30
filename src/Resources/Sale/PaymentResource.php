@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Sale;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPostData;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentPutData;
 use Ipsocode\Cin7\Requests\Sale\Payment\DeleteSalePayment;
@@ -21,6 +22,8 @@ final class PaymentResource extends BaseResource
 {
     /**
      * A sale's payments.
+     *
+     * @return Response<list<SalePaymentLinePartialData>>
      */
     public function get(
         string $saleId,
@@ -30,6 +33,7 @@ final class PaymentResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SalePaymentPostData $body
+     * @return Response<SalePaymentLinePartialData>
      */
     public function post(array|SalePaymentPostData $body): Response
     {
@@ -38,6 +42,7 @@ final class PaymentResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SalePaymentPutData $body
+     * @return Response<SalePaymentLinePartialData>
      */
     public function put(array|SalePaymentPutData $body): Response
     {
@@ -46,6 +51,8 @@ final class PaymentResource extends BaseResource
 
     /**
      * Delete one payment; there is no void.
+     *
+     * @return Response<null>
      */
     public function delete(
         string $id,

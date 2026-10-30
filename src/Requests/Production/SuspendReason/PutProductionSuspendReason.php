@@ -24,6 +24,9 @@ final class PutProductionSuspendReason extends WriteRequest
         return 'production/suspendReason';
     }
 
+    /**
+     * @param Response<SuspendReasonData> $response
+     */
     public function createDtoFromResponse(Response $response): SuspendReasonData
     {
         return SuspendReasonData::from($response->json())->setResponse($response);

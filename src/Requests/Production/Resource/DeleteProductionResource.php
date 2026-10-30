@@ -39,6 +39,9 @@ final class DeleteProductionResource extends Cin7Request
         ]);
     }
 
+    /**
+     * @param Response<ResourceData> $response
+     */
     public function createDtoFromResponse(Response $response): ResourceData
     {
         return ResourceData::from($response->json())->setResponse($response);

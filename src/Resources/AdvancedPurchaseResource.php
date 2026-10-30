@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchaseData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePostData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchasePutData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\DeleteAdvancedPurchase;
@@ -40,6 +41,7 @@ final class AdvancedPurchaseResource extends BaseResource
      * manual journals.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @return Response<AdvancedPurchaseData>
      */
     public function get(
         string $id,
@@ -50,6 +52,7 @@ final class AdvancedPurchaseResource extends BaseResource
 
     /**
      * @param AdvancedPurchasePostData|array<string, mixed> $body
+     * @return Response<AdvancedPurchaseData>
      */
     public function post(array|AdvancedPurchasePostData $body): Response
     {
@@ -58,6 +61,7 @@ final class AdvancedPurchaseResource extends BaseResource
 
     /**
      * @param AdvancedPurchasePutData|array<string, mixed> $body
+     * @return Response<AdvancedPurchaseData>
      */
     public function put(array|AdvancedPurchasePutData $body): Response
     {
@@ -68,6 +72,7 @@ final class AdvancedPurchaseResource extends BaseResource
      * Void the purchase (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<AdvancedPurchaseData>
      */
     public function delete(
         string $id,

@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Ref;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Ref\Templates\TemplateData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Ref\Templates\GetTemplates;
 
@@ -24,6 +25,7 @@ final class TemplatesResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $type only templates of this type
      * @param null|string $name only templates with this name
+     * @return Response<list<TemplateData>>
      */
     public function get(
         ?int $page = null,

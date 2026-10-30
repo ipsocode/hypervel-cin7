@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Production;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Production\FactoryCalendar\FactoryCalendarData;
 use Ipsocode\Cin7\Data\Production\FactoryCalendar\FactoryCalendarPostData;
 use Ipsocode\Cin7\Data\Production\FactoryCalendar\FactoryCalendarPutData;
 use Ipsocode\Cin7\Requests\Production\FactoryCalendar\GetProductionFactoryCalendar;
@@ -22,6 +23,8 @@ final class FactoryCalendarResource extends BaseResource
 {
     /**
      * The factory calendar of a year.
+     *
+     * @return Response<FactoryCalendarData>
      */
     public function get(int $year): Response
     {
@@ -30,6 +33,7 @@ final class FactoryCalendarResource extends BaseResource
 
     /**
      * @param array<string, mixed>|FactoryCalendarPostData $body
+     * @return Response<FactoryCalendarData>
      */
     public function post(array|FactoryCalendarPostData $body): Response
     {
@@ -38,6 +42,7 @@ final class FactoryCalendarResource extends BaseResource
 
     /**
      * @param array<string, mixed>|FactoryCalendarPutData $body
+     * @return Response<FactoryCalendarData>
      */
     public function put(array|FactoryCalendarPutData $body): Response
     {

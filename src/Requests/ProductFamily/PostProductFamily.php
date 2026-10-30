@@ -29,6 +29,9 @@ final class PostProductFamily extends WriteRequest
         return 'productFamily';
     }
 
+    /**
+     * @param Response<ProductFamilyData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductFamilyData
     {
         return ProductFamilyData::from($response->json('ProductFamilies.0'))->setResponse($response);

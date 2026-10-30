@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\AdvancedPurchase;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchaseInvoicesData;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchasePartialInvoicePostData;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\DeleteAdvancedPurchaseInvoice;
 use Ipsocode\Cin7\Requests\AdvancedPurchase\Invoice\GetAdvancedPurchaseInvoice;
@@ -24,6 +25,7 @@ final class InvoiceResource extends BaseResource
      * An advanced purchase's invoices, by its `PurchaseID`.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
+     * @return Response<AdvancedPurchaseInvoicesData>
      */
     public function get(
         string $purchaseId,
@@ -34,6 +36,7 @@ final class InvoiceResource extends BaseResource
 
     /**
      * @param AdvancedPurchasePartialInvoicePostData|array<string, mixed> $body
+     * @return Response<AdvancedPurchaseInvoicesData>
      */
     public function post(array|AdvancedPurchasePartialInvoicePostData $body): Response
     {
@@ -44,6 +47,7 @@ final class InvoiceResource extends BaseResource
      * Void the invoice task (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<AdvancedPurchaseInvoicesData>
      */
     public function delete(
         string $taskId,

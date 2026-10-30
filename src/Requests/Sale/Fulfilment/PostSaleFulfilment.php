@@ -24,6 +24,9 @@ final class PostSaleFulfilment extends WriteRequest
         return 'sale/fulfilment';
     }
 
+    /**
+     * @param Response<SaleFulfilmentsData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleFulfilmentsData
     {
         return SaleFulfilmentsData::from($response->json())->setResponse($response);

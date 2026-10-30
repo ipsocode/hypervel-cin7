@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Resources\Reference;
 use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Reference\Deals\ProductDealData;
 use Ipsocode\Cin7\Data\Reference\Deals\ProductDealPostData;
 use Ipsocode\Cin7\Data\Reference\Deals\ProductDealPutData;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -28,6 +29,7 @@ final class DealsResource extends BaseResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|string $id only the deal with this ID
      * @param null|string $search only deals with this text in their name
+     * @return Response<list<ProductDealData>>
      */
     public function get(
         ?int $page = null,
@@ -56,6 +58,7 @@ final class DealsResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductDealPostData $body
+     * @return Response<ProductDealData>
      */
     public function post(array|ProductDealPostData $body): Response
     {
@@ -64,6 +67,7 @@ final class DealsResource extends BaseResource
 
     /**
      * @param array<string, mixed>|ProductDealPutData $body
+     * @return Response<ProductDealData>
      */
     public function put(array|ProductDealPutData $body): Response
     {

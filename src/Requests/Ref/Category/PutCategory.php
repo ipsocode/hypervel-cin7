@@ -24,6 +24,9 @@ final class PutCategory extends WriteRequest
         return 'ref/category';
     }
 
+    /**
+     * @param Response<ProductCategoryData> $response
+     */
     public function createDtoFromResponse(Response $response): ProductCategoryData
     {
         return ProductCategoryData::from($response->json())->setResponse($response);

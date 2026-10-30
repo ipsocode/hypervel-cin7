@@ -39,6 +39,9 @@ final class PostAdvancedPurchaseCreditNote extends WriteRequest
         return 'advanced-purchase/creditnote';
     }
 
+    /**
+     * @param Response<AdvancedPurchaseCreditNotesData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchaseCreditNotesData
     {
         return AdvancedPurchaseCreditNotesData::from($response->json())->setResponse($response);

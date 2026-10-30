@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources;
 
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\InventoryWriteOffList\InventoryWriteOffListData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\InventoryWriteOffList\GetInventoryWriteOffList;
@@ -21,6 +22,7 @@ final class InventoryWriteOffListResource extends ListResource
      * @param null|int $limit the page size, 1 to 1000
      * @param null|CompletionStatus $status only write-offs with this status
      * @param null|string $search only write-offs with this text in the number, location, status or notes
+     * @return Response<list<InventoryWriteOffListData>>
      */
     public function get(
         ?int $page = null,

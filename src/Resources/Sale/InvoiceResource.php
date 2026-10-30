@@ -9,6 +9,7 @@ use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePostData;
 use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicePutData;
+use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
 use Ipsocode\Cin7\Requests\Sale\Invoice\DeleteSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Invoice\GetSaleInvoice;
 use Ipsocode\Cin7\Requests\Sale\Invoice\PostSaleInvoice;
@@ -24,6 +25,7 @@ final class InvoiceResource extends BaseResource
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
      * @param null|bool $includeProductInfo add the products the lines use
+     * @return Response<SaleInvoicesData>
      */
     public function get(
         string $saleId,
@@ -39,6 +41,7 @@ final class InvoiceResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleInvoicePostData $body
+     * @return Response<SaleInvoicesData>
      */
     public function post(array|SaleInvoicePostData $body): Response
     {
@@ -47,6 +50,7 @@ final class InvoiceResource extends BaseResource
 
     /**
      * @param array<string, mixed>|SaleInvoicePutData $body
+     * @return Response<SaleInvoicesData>
      */
     public function put(array|SaleInvoicePutData $body): Response
     {
@@ -57,6 +61,7 @@ final class InvoiceResource extends BaseResource
      * Void the invoice (`void: true`), or undo a void (`false`, the default Cin7 applies).
      *
      * @param null|bool $void void (true) or undo a void (false)
+     * @return Response<SaleInvoicesData>
      */
     public function delete(
         string $taskId,

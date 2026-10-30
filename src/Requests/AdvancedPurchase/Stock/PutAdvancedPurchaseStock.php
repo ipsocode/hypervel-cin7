@@ -31,6 +31,9 @@ final class PutAdvancedPurchaseStock extends WriteRequest
         return 'advanced-purchase/stock';
     }
 
+    /**
+     * @param Response<AdvancedPurchaseStocksData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchaseStocksData
     {
         return AdvancedPurchaseStocksData::from($response->json())->setResponse($response);

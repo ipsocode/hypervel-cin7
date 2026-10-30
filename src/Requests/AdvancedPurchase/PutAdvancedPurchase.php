@@ -30,6 +30,9 @@ final class PutAdvancedPurchase extends WriteRequest
         return 'advanced-purchase';
     }
 
+    /**
+     * @param Response<AdvancedPurchaseData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchaseData
     {
         return AdvancedPurchaseData::from($response->json())->setResponse($response);

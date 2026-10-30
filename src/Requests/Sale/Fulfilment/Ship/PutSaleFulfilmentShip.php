@@ -29,6 +29,9 @@ final class PutSaleFulfilmentShip extends WriteRequest
         return 'sale/fulfilment/ship';
     }
 
+    /**
+     * @param Response<SaleFulfilmentShipData> $response
+     */
     public function createDtoFromResponse(Response $response): SaleFulfilmentShipData
     {
         return SaleFulfilmentShipData::from($response->json())->setResponse($response);

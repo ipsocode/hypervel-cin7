@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Resources\Production;
 
 use DateTimeInterface;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Data\Production\OrderList\ProductionOrderListData;
 use Ipsocode\Cin7\Enums\ProductionOrderListStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Production\OrderList\GetProductionOrderList;
@@ -29,6 +30,7 @@ final class OrderListResource extends ListResource
      * @param null|DateTimeInterface|string $completionDateFrom only orders completed on this date or later
      * @param null|DateTimeInterface|string $completionDateTo only orders completed on this date or earlier
      * @param null|string $sourceTaskId only orders produced by this sale task
+     * @return Response<list<ProductionOrderListData>>
      */
     public function get(
         ?int $page = null,

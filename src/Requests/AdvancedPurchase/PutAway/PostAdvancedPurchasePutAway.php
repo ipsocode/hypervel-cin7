@@ -31,6 +31,9 @@ final class PostAdvancedPurchasePutAway extends WriteRequest
         return 'advanced-purchase/put-away';
     }
 
+    /**
+     * @param Response<AdvancedPurchasePutAwaysData> $response
+     */
     public function createDtoFromResponse(Response $response): AdvancedPurchasePutAwaysData
     {
         return AdvancedPurchasePutAwaysData::from($response->json())->setResponse($response);

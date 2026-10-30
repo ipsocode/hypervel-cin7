@@ -38,6 +38,9 @@ final class PostPurchaseCreditNote extends WriteRequest
         return 'purchase/creditnote';
     }
 
+    /**
+     * @param Response<PurchaseCreditNoteData> $response
+     */
     public function createDtoFromResponse(Response $response): PurchaseCreditNoteData
     {
         return PurchaseCreditNoteData::from($response->json())->setResponse($response);
