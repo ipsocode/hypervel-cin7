@@ -115,28 +115,57 @@ enum Module: string
     }
 
     /**
-     * Whether an incremental walk of the list sends an upper bound, `UpdatedUntil`, so the pages
-     * stay still while they are walked.
+     * Tell whether an incremental walk of the list sends an upper bound, `UpdatedUntil`, so a
+     * record updated during the walk does not join its end: a list module with a modified time
+     * that cannot be asked for one record by identifier.
      */
     public function bounded(): bool
     {
-        return $this === self::SaleList || $this === self::PurchaseList;
+        return $this->modifiedKey() !== null && $this->source() === null && ! $this->confirms();
+    }
+
+    /**
+     * The request for the document of one record of a bounded list, which says whether Cin7 still
+     * has the record, because the list has no filter for its identifier.
+     *
+     * @return Cin7Request<covariant Data>
+     *
+     * @throws LogicException for a module that is not a bounded list
+     */
+    public function existenceRequest(string $id): Cin7Request
+    {
+        return match ($this) {
+            self::SaleList => new GetSale($id),
+            self::PurchaseList => new GetAdvancedPurchase($id),
+            default => throw new LogicException("[{$this->value}] is not a bounded list."),
+        };
+    }
+
+    /**
+     * Tell whether a full pull can ask Cin7 for one record of the list by identifier, before it
+     * deletes a row it did not see. Not so for a bounded list, which is asked by document, a
+     * reference book, which is read whole, and a document module.
+     */
+    public function confirms(): bool
+    {
+        return $this->definition()['find'] !== null;
     }
 
     /**
      * The request for one record of a list module by identifier, sent before a full pull deletes a
-     * row it did not see. Cin7 orders these lists by modified time and they take no upper bound,
-     * so a record that changed while the pages were walked moves, and can push an unchanged one
-     * onto a page already read. Null where the pages stay still or are read whole: a bounded
-     * list, a reference book, and a document module.
+     * row it did not see.
      *
-     * @return null|ListRequest<covariant Data&WithResponse>
+     * @return ListRequest<covariant Data&WithResponse>
+     *
+     * @throws LogicException for a module that does not confirm
      */
-    public function findRequest(string $id): ?ListRequest
+    public function findRequest(string $id): ListRequest
     {
         $find = $this->definition()['find'];
 
-        return $find === null ? null : $find($id);
+        return $find === null
+            ? throw new LogicException("[{$this->value}] cannot be asked for one record by identifier.")
+            : $find($id);
     }
 
     /**
@@ -203,8 +232,8 @@ enum Module: string
      * - `list`: builds the list request; null for a document module. A closure rather than a
      *   request, because the since and until arguments and the deprecated records differ by module.
      * - `document`: builds the request for one document; null for a list module.
-     * - `find`: builds the request for one record by identifier; null unless the list is walked
-     *   with no upper bound, in modified-time order, so a full pull confirms a row it missed.
+     * - `find`: builds the request for one record by identifier; null for a list that has no filter
+     *   for it, which existenceRequest() asks by document instead.
      *
      * @return array{
      *     id: string,
@@ -237,7 +266,7 @@ enum Module: string
                 'data' => CustomerData::class,
                 'list' => static fn (?DateTimeInterface $since) => new GetCustomer(modifiedSince: $since, includeDeprecated: true),
                 'document' => null,
-                'find' => static fn (string $id) => new GetCustomer(id: $id, includeDeprecated: true),
+                'find' => static fn (string $id): GetCustomer => new GetCustomer(id: $id, includeDeprecated: true),
             ],
             self::Supplier => [
                 'id' => 'ID',
@@ -246,7 +275,7 @@ enum Module: string
                 'data' => SupplierData::class,
                 'list' => static fn (?DateTimeInterface $since) => new GetSupplier(modifiedSince: $since, includeDeprecated: true),
                 'document' => null,
-                'find' => static fn (string $id) => new GetSupplier(id: $id, includeDeprecated: true),
+                'find' => static fn (string $id): GetSupplier => new GetSupplier(id: $id, includeDeprecated: true),
             ],
             self::Product => [
                 'id' => 'ID',
@@ -255,9 +284,9 @@ enum Module: string
                 'data' => ProductData::class,
                 'list' => static fn (?DateTimeInterface $since) => new GetProduct(modifiedSince: $since, includeDeprecated: true),
                 'document' => null,
-                'find' => static fn (string $id) => new GetProduct(id: $id, includeDeprecated: true),
+                'find' => static fn (string $id): GetProduct => new GetProduct(id: $id, includeDeprecated: true),
             ],
-            // An upper bound keeps the pages still while they are walked.
+            // An upper bound keeps a record updated during the walk off its end.
             self::SaleList => [
                 'id' => 'SaleID',
                 'modified' => 'Updated',

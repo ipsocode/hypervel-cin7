@@ -204,6 +204,25 @@ class ListPullTest extends SyncTestCase
         yield 'product' => [Module::Product, 'Products', $record];
     }
 
+    public function testAFullPullAsksForNoMoreRowsThanTheDocumentsAPullReads(): void
+    {
+        $this->app->get('config')->set('cin7.sync.documents', 1);
+        $mock = Saloon::fake([
+            Cin7Fake::list('CustomerList', [$this->customer('c-1'), $this->customer('c-2'), $this->customer('c-3')]),
+            Cin7Fake::list('CustomerList', [$this->customer('c-1')]),
+            // c-2 is the one asked for, and Cin7 has no such customer; c-3 waits for the next full pull.
+            Cin7Fake::list('CustomerList'),
+        ]);
+
+        $this->synchroniser()->pull(Module::Customer);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::Customer, full: true);
+
+        $this->assertSame(1, $result->deleted);
+        $this->assertSame(['c-1', 'c-3'], $this->stored(Module::Customer)->keys()->all());
+        $mock->assertSentCount(3);
+    }
+
     public function testAFullPullWhoseConfirmationFailsDeletesNothing(): void
     {
         Saloon::fake([

@@ -32,11 +32,11 @@ Every key is in [configuration](configuration.md#keys).
 | `synced_at` | The last pull that returned the record, changed or not |
 | `failures` | On a list row, the times its document read failed since the row last changed; 0 otherwise |
 | `failed_at` | The last of those failures; null when none |
-| `last_error` | That failure's message, cut to 255 characters; null when none |
+| `last_error` | That failure's message; null when none |
 | `created_at`, `updated_at` | `updated_at` moves only when the record changed |
 
 The three failure columns come from a second migration, so an application that ran the first
-gets them too. They are only ever written on a list row (`saleList`, `purchaseList`), by the
+gets them too, and a third makes `last_error` a `text` column, so a message is kept whole. They are only ever written on a list row (`saleList`, `purchaseList`), by the
 pull of its document module, because the document row does not exist while its read keeps
 failing. See [a document that keeps failing](#a-document-that-keeps-failing).
 
@@ -95,7 +95,7 @@ other records point to comes before the records that point to it.
    incremental pull asks for what changed since `sync.lookback` minutes ago (a day by
    default), or since the module's newest `synced_at` when that is older, so a gap in the
    schedule is read again. `saleList` and `purchaseList` also send the pull's start as
-   `UpdatedUntil`, so the pages stay still while they are walked.
+   `UpdatedUntil`, so a record updated during the walk does not join its end.
 3. It walks the pages one at a time, `sync.limit` records a page, waiting `sync.pause_ms`
    between calls. It does not send pages concurrently: the sync shares the application's
    rate-limit window, and the connector makes every caller wait for capacity rather than fail,
@@ -105,23 +105,26 @@ other records point to comes before the records that point to it.
    only its `synced_at` moved; a full pull refreshes its payload too, without moving
    `updated_at`.
 5. A full pull of `saleList` or `purchaseList` that is not a first fill then walks the list once
-   more, from the pull's start with no `UpdatedUntil`, and stores what that returns. It reads
+   more, after the same pause, from the pull's start with no `UpdatedUntil`, and stores what that returns. It reads
    what changed while the bounded walk ran, which that walk left out, so step 6 keeps it. Both walks
    must complete.
-6. A full pull that completes and read something then deletes the module's rows it did not
-   see. Cin7 returns every list in the order of the record's modified time, the time its
-   `ModifiedSince` and `UpdatedSince` filters compare ([Cin7 API
-   reference](https://help.core.cin7.com/hc/en-us/sections/10207284005007-Cin7-API)).
-   `customer`, `supplier` and `product` take no upper bound, so a record changed while their
-   pages are walked moves, and an unchanged record can slip from a page not yet read onto one
-   already read. So before one of their rows goes as gone, the pull asks Cin7 for it by `ID`,
-   deprecated records included, one call each, and a record still returned is stored and kept.
-   `saleList` and `purchaseList` keep their pages still with `UpdatedUntil`, and a reference
-   book is read whole, so their unseen rows go without a call. A pull that fails, a
-   confirmation included, deletes nothing and keeps what it wrote, but gives the rows it
-   reached their last sync back, so the module's newest `synced_at` does not move and the next
-   pull reaches back as far as the failed one did. One that began on an empty module is undone,
-   so the next pull is a full one again.
+6. A full pull that completes, and whose first walk read something, then deletes the module's
+   rows Cin7 no longer returns. Cin7 returns every list in the order of the record's modified
+   time, the time its `ModifiedSince` and `UpdatedSince` filters compare ([Cin7 API
+   reference](https://help.core.cin7.com/hc/en-us/sections/10207284005007-Cin7-API)). So a
+   record changed while the pages are walked moves, and an unchanged record can slip from a page
+   not yet read onto one already read, whether the walk sends an upper bound or not. A row the
+   walk did not see is therefore asked for before it goes: a `customer`, `supplier` or `product`
+   by `ID`, deprecated records included, and a record still returned is stored and kept; a
+   `saleList` or `purchaseList` row by its document, `GET sale` or `GET advanced-purchase`, and
+   a row whose document answers is kept. A row is deleted only when Cin7 does not return it, or
+   rejects the request as that record's own (a client error other than 401, 403, 408 and 429).
+   Any other failure fails the pull. At most `sync.documents` rows are asked for in a pull, in
+   `ID` order, and the rest stay until the next full pull. A reference book is read whole, so
+   its unseen rows go without a call. A pull that fails, a confirmation included, deletes
+   nothing and keeps what it wrote, but gives the rows it reached their last sync back, so the
+   module's newest `synced_at` does not move and the next pull reaches back as far as the failed
+   one did. One that began on an empty module is undone, so the next pull is a full one again.
 
 No cursor is stored. Reading the look-back window again costs a few pages, and a record whose
 modified time has not moved is not rewritten, so a pull that was missed or failed is covered by
@@ -149,16 +152,19 @@ other documents:
 - A document that fails does not fail the job: the module's result is `ok`, with the number of
   failed documents and the first error, and `cin7:sync` exits 0. Parked ones show in the
   `Parked documents` column of `cin7:sync --status`.
-- A run that read documents and wrote **none** fails the module, and with it the job, as before,
-  and counts against no row: that is Cin7 or the credentials failing, not the documents, and
-  counting it would park the whole backlog in an outage. A run with a single document pending
-  cannot tell the two apart, so it is treated the same way.
+- Only a read Cin7 rejects as that document's own counts: a client error other than 401, 403,
+  408 and 429. Any other failure (a timeout or connection error, a 5xx, a throttle, a rejected
+  key) says Cin7, the network or the credentials are failing, not the document: the run stops
+  there, the module and the job fail as they did before, and no row is blamed, so an outage
+  parks nothing.
+- A document that reaches `sync.max_failures` is logged as a warning, with its list row's
+  identifier and last error.
 
 The calls a first fill costs: one per page of each list (500 records a page), plus one per
 sale and purchase, at most `sync.documents` of each per run. With the default hourly pull and
 250 documents, 6,000 sales take a day to fill.
-A full pull also costs one call per `customer`, `supplier` or `product` row it did not see,
-which is usually none.
+A full pull also costs one call per `customer`, `supplier`, `product`, `saleList` or
+`purchaseList` row it did not see, at most `sync.documents` of them, which is usually none.
 
 ## The schedule
 

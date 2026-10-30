@@ -8,8 +8,10 @@ use Hypervel\Database\ConnectionInterface;
 use Hypervel\Database\Eloquent\Builder;
 use Hypervel\Database\Query\Builder as QueryBuilder;
 use Hypervel\Database\Query\JoinClause;
+use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Support\Carbon;
 use Hypervel\Support\Facades\Cache;
+use Hypervel\Support\Facades\Log;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
 use stdClass;
@@ -87,10 +89,15 @@ final class Synchroniser
             $requests[] = $module->listRequest($start, null);
         }
 
-        $read = $written = $unchanged = 0;
+        $read = $written = $unchanged = $walked = 0;
+        $gone = [];
 
         try {
-            foreach ($requests as $request) {
+            foreach ($requests as $index => $request) {
+                if ($index > 0) {
+                    $this->pause();
+                }
+
                 $paginator = $this->cin7->paginate($request)->perPageLimit(SyncConfig::limit());
 
                 // Driven by hand rather than foreach, so the pause falls between calls only.
@@ -102,6 +109,11 @@ final class Synchroniser
                     $read += count($items);
                     $written += $changed;
                     $unchanged += $same;
+
+                    if ($index === 0) {
+                        $walked += count($items);
+                    }
+
                     $paginator->next();
 
                     if ($paginator->valid()) {
@@ -110,25 +122,37 @@ final class Synchroniser
                 }
             }
 
-            // These lists come in modified-time order with no upper bound, so a record changed
-            // during the walk moves, and can push an unchanged one onto a page already read.
-            // Before a row goes as gone, ask Cin7 for it by identifier: one still returned is
-            // stored, which gives it this pull's start, so the deletion below keeps it.
-            if ($full && $read > 0) {
-                foreach ($this->unseen($module, $start) as $id) {
-                    $request = $module->findRequest($id);
-
-                    if ($request === null) {
-                        break;
-                    }
-
+            // A record changed during the walk moves, and can push an unchanged one onto a page
+            // already read, whether the list has an upper bound or not. So before a row goes as
+            // gone, ask Cin7 for it, up to `sync.documents` rows a pull: a customer, supplier or
+            // product by identifier, which stores a record still returned, and a sale or purchase
+            // by its document, which keeps the row. Only a row Cin7 does not return is deleted.
+            if ($full && $walked > 0 && ($module->bounded() || $module->confirms())) {
+                foreach (array_slice($this->unseen($module, $start), 0, SyncConfig::documents()) as $id) {
                     $this->pause();
 
-                    $items = $request->mapPaginatedResponseItems($this->cin7->send($request));
+                    if ($module->bounded()) {
+                        if ($this->exists($module, $id)) {
+                            $this->rows($module)->toBase()->where('cin7_id', $id)->update(['synced_at' => $start->format(self::DATE)]);
+                            ++$read;
+                            ++$unchanged;
+                        } else {
+                            $gone[] = $id;
+                        }
+
+                        continue;
+                    }
+
+                    $find = $module->findRequest($id);
+                    $items = $find->mapPaginatedResponseItems($this->cin7->send($find));
                     [$changed, $same] = $this->store($module, $items, $start, $full);
                     $read += count($items);
                     $written += $changed;
                     $unchanged += $same;
+
+                    if ($items === []) {
+                        $gone[] = $id;
+                    }
                 }
             }
         } catch (Throwable $exception) {
@@ -146,16 +170,25 @@ final class Synchroniser
             return new PullResult($module, $full, $read, $written, $unchanged, error: $exception);
         }
 
-        // Only a complete full pull that read something can say what Cin7 no longer returns.
-        $deleted = $full && $read > 0
-            ? (int) $this->rows($module)->where('synced_at', '<', $start)->delete()
-            : 0;
+        // Only a complete full pull whose first walk read something can say what Cin7 no longer
+        // returns. Of a module whose rows are confirmed, that is the rows Cin7 said are gone.
+        $deleted = 0;
+
+        if ($full && $walked > 0) {
+            if ($module->bounded() || $module->confirms()) {
+                foreach (array_chunk($gone, self::CHUNK) as $ids) {
+                    $deleted += (int) $this->rows($module)->where('synced_at', '<', $start)->whereIn('cin7_id', $ids)->delete();
+                }
+            } else {
+                $deleted = (int) $this->rows($module)->where('synced_at', '<', $start)->delete();
+            }
+        }
 
         return new PullResult($module, $full, $read, $written, $unchanged, $deleted);
     }
 
     /**
-     * The identifiers of a list module's stored rows that a pull did not reach, which a full pull
+     * Return the identifiers of a list module's stored rows that a pull did not reach, which a full pull
      * deletes unless Cin7 still returns them.
      *
      * @return list<string>
@@ -170,16 +203,17 @@ final class Synchroniser
 
     /**
      * Read the documents whose list row has none yet or changed since, oldest first, up to
-     * `sync.documents` a run. One that fails is recorded on its list row and the rest are still
-     * read; it is tried again until it has failed `sync.max_failures` times. A run that read
-     * documents and wrote none says Cin7 or the credentials are failing, not the rows: the module
-     * fails, and no row is blamed.
+     * `sync.documents` a run. A read Cin7 rejects as that document's own, a client error, is
+     * recorded on its list row and the rest are still read; the row is tried again until it has
+     * failed `sync.max_failures` times. Any other failure says Cin7, the network or the
+     * credentials are failing, not the row: the run stops, the module fails, and no row is blamed.
      */
     private function pullDocuments(Module $module, Module $list, bool $full, Carbon $start): PullResult
     {
         $deleted = $full ? $this->deleteOrphans($module) : 0;
         $read = $written = 0;
-        $failures = [];
+        $failures = $versions = [];
+        $error = null;
 
         foreach ($this->pending($module) as $row) {
             if ($read++ > 0) {
@@ -199,35 +233,89 @@ final class Synchroniser
 
                 ++$written;
             } catch (Throwable $exception) {
+                if (! $this->rejectedAsItsOwn($exception)) {
+                    $error = $exception;
+
+                    break;
+                }
+
                 $failures[(string) $row->cin7_id] = $exception;
+                $versions[(string) $row->cin7_id] = $row->cin7_modified_at;
             }
         }
 
-        if ($failures === []) {
-            return new PullResult($module, $full, $read, $written, deleted: $deleted);
-        }
+        $this->recordFailures($list, $failures, $versions, $start);
 
-        if ($written === 0) {
-            return new PullResult($module, $full, $read, $written, deleted: $deleted, error: reset($failures));
-        }
-
-        $this->recordFailures($list, $failures, $start);
-
-        return new PullResult($module, $full, $read, $written, deleted: $deleted, failedDocuments: count($failures), documentError: reset($failures));
+        return new PullResult($module, $full, $read, $written, deleted: $deleted, error: $error, failedDocuments: count($failures), documentError: reset($failures) ?: null);
     }
 
     /**
-     * Count a failed read on the document's list row, which exists while the document may not.
+     * Tell whether Cin7 answered a read with a client error about that record alone, which is
+     * not an outage, a throttle or a rejected key.
+     */
+    private function rejectedAsItsOwn(Throwable $exception): bool
+    {
+        return $exception instanceof RequestException
+            && $exception->status() >= 400
+            && $exception->status() < 500
+            && ! in_array($exception->status(), [401, 403, 408, 429], true);
+    }
+
+    /**
+     * Tell whether Cin7 still has the record of a bounded list, by asking for its document.
+     *
+     * @throws Throwable when the answer is not a record's own rejection
+     */
+    private function exists(Module $module, string $id): bool
+    {
+        try {
+            $this->cin7->send($module->existenceRequest($id));
+
+            return true;
+        } catch (Throwable $exception) {
+            return $this->rejectedAsItsOwn($exception) ? false : throw $exception;
+        }
+    }
+
+    /**
+     * Count a failed read on the document's list row, which exists while the document may not. A
+     * row that changed since it was read is a new version, which the failure does not count against.
+     * A document that reaches `sync.max_failures` is parked, which is logged as a warning.
      *
      * @param array<string, Throwable> $failures by Cin7 identifier
+     * @param array<string, null|string> $versions the list row's modified time as it was read, by Cin7 identifier
      */
-    private function recordFailures(Module $list, array $failures, Carbon $start): void
+    private function recordFailures(Module $list, array $failures, array $versions, Carbon $start): void
     {
         foreach ($failures as $id => $exception) {
             // On the query builder, which leaves updated_at alone.
-            $this->rows($list)->toBase()->where('cin7_id', $id)->increment('failures', 1, [
+            $query = $this->rows($list)->toBase()->where('cin7_id', (string) $id);
+
+            $versions[$id] === null
+                ? $query->whereNull('cin7_modified_at')
+                : $query->where('cin7_modified_at', $versions[$id]);
+
+            $query->increment('failures', 1, [
                 'failed_at' => $start->format(self::DATE),
-                'last_error' => mb_substr($exception->getMessage(), 0, 255),
+                'last_error' => $exception->getMessage(),
+            ]);
+        }
+
+        if ($failures === []) {
+            return;
+        }
+
+        $parked = $this->rows($list)->toBase()
+            ->whereIn('cin7_id', array_map(strval(...), array_keys($failures)))
+            ->where('failures', '>=', SyncConfig::maxFailures())
+            ->where('failed_at', $start->format(self::DATE))
+            ->pluck('last_error', 'cin7_id');
+
+        foreach ($parked as $id => $error) {
+            Log::warning('A Cin7 document is parked: it failed to read ' . SyncConfig::maxFailures() . ' times, and is read again when Cin7 changes the record or `cin7:sync --retry-failed` runs.', [
+                'module' => $list->value,
+                'id' => (string) $id,
+                'error' => $error,
             ]);
         }
     }
@@ -317,7 +405,7 @@ final class Synchroniser
     }
 
     /**
-     * The value with the keys of every object sorted, so a payload whose keys came back in another
+     * Return the value with the keys of every object sorted, so a payload whose keys came back in another
      * order (PostgreSQL's `jsonb` reorders them) compares equal under `===`, which unlike `==`
      * does not take `null` for `""` or `"1.0"` for `"1"`.
      */
@@ -356,7 +444,7 @@ final class Synchroniser
                 ->orWhereColumn('l.cin7_modified_at', '>', 'd.cin7_modified_at')
                 // A document read while its list row had no modified time stored none, and a
                 // comparison with NULL is never true.
-                ->orWhere(fn (QueryBuilder $query) => $query->whereNotNull('l.cin7_modified_at')->whereNull('d.cin7_modified_at')));
+                ->orWhere(fn (QueryBuilder $query): QueryBuilder => $query->whereNotNull('l.cin7_modified_at')->whereNull('d.cin7_modified_at')));
 
         // Rows with no modified time come first, read on their own because databases disagree on
         // where NULLs sort (PostgreSQL puts them last, SQLite and MySQL first).

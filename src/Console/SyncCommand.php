@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Console;
 
 use Hypervel\Console\Command;
 use Hypervel\Support\Carbon;
+use Hypervel\Support\Str;
 use InvalidArgumentException;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Sync\Module;
@@ -70,7 +71,7 @@ class SyncCommand extends Command
                 match (true) {
                     $result->skipped => 'skipped: another pull holds its lock',
                     $result->failed() => 'failed: ' . $result->error?->getMessage(),
-                    $result->failedDocuments > 0 => sprintf('ok, %d documents failed: %s', $result->failedDocuments, $result->documentError?->getMessage()),
+                    $result->failedDocuments > 0 => sprintf('ok, %d %s failed: %s', $result->failedDocuments, Str::plural('document', $result->failedDocuments), $result->documentError?->getMessage()),
                     default => 'ok',
                 },
             ], $results),
@@ -107,7 +108,7 @@ class SyncCommand extends Command
                 ->where('failures', '>', 0)
                 ->update(['failures' => 0, 'failed_at' => null, 'last_error' => null]);
 
-            $this->info(sprintf('%s: %d documents released.', $module->value, $released));
+            $this->info(sprintf('%s: %d %s released.', $module->value, $released, Str::plural('document', $released)));
         }
     }
 

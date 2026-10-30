@@ -67,8 +67,12 @@ class ModuleTest extends TestCase
         $this->assertSame($source, $module->source());
 
         // Only a list walked with no upper bound can be asked for one record by identifier.
-        $found = $module->findRequest('id');
-        $find === null ? $this->assertNull($found) : $this->assertInstanceOf($find, $found);
+        $this->assertSame($find !== null, $module->confirms());
+        $this->assertSame($find === null && $modifiedKey !== null && $source === null, $module->bounded());
+
+        if ($find !== null) {
+            $this->assertInstanceOf($find, $module->findRequest('id'));
+        }
 
         $this->assertInstanceOf($request, $source === null ? $module->listRequest(null, Carbon::now()) : $module->documentRequest('id'));
 
@@ -101,6 +105,23 @@ class ModuleTest extends TestCase
         yield 'purchaseList' => [Module::PurchaseList, 'ID', 'LastUpdatedDate', GetPurchaseList::class, PurchaseListData::class, null];
         yield 'sale' => [Module::Sale, 'ID', null, GetSale::class, SaleData::class, Module::SaleList];
         yield 'advanced-purchase' => [Module::AdvancedPurchase, 'ID', null, GetAdvancedPurchase::class, AdvancedPurchaseData::class, Module::PurchaseList];
+    }
+
+    public function testABoundedListIsAskedForARecordByItsDocument(): void
+    {
+        $this->assertInstanceOf(GetSale::class, Module::SaleList->existenceRequest('id'));
+        $this->assertInstanceOf(GetAdvancedPurchase::class, Module::PurchaseList->existenceRequest('id'));
+
+        $this->expectException(LogicException::class);
+
+        Module::Customer->existenceRequest('id');
+    }
+
+    public function testAModuleThatDoesNotConfirmHasNoFindRequest(): void
+    {
+        $this->expectException(LogicException::class);
+
+        Module::SaleList->findRequest('id');
     }
 
     public function testEveryModuleIsInTheTable(): void

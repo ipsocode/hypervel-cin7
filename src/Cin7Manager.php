@@ -63,9 +63,10 @@ final class Cin7Manager
         // A key the connection leaves out of `rate_limit` is the top-level one, and the casts
         // stop unset CIN7_* values (null) and string numbers from a TypeError on resolve.
         $rateLimit = is_array($connection['rate_limit'] ?? null) ? $connection['rate_limit'] : [];
-        $store = array_key_exists('store', $rateLimit) ? $rateLimit['store'] : config('cin7.rate_limit.store');
+        // A blank store, such as `CIN7_RATE_STORE=` in `.env`, is left out too; one that is still
+        // blank is unset, so the connector falls back to `saloon.rate_limiter.store`.
+        $store = array_key_exists('store', $rateLimit) && $rateLimit['store'] !== '' ? $rateLimit['store'] : config('cin7.rate_limit.store');
 
-        // A blank CIN7_RATE_STORE is unset, so the connector falls back to `saloon.rate_limiter.store`.
         if ($store === '') {
             $store = null;
         }
