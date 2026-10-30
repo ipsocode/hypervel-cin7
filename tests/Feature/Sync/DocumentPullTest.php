@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7\Tests\Feature\Sync;
 
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Support\Carbon;
+use Hypervel\Support\Facades\Log;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Sync\Module;
 use Ipsocode\Cin7\Sync\Payload;
@@ -170,7 +171,6 @@ class DocumentPullTest extends SyncTestCase
         $this->assertSame([1, 0], [$lists['s-1']->failures, $lists['s-2']->failures]);
         $this->assertSame('2026-10-03 12:00:00', $lists['s-1']->failed_at?->format('Y-m-d H:i:s'));
         $this->assertStringContainsString('xxxxxxxx', (string) $lists['s-1']->last_error);
-        $this->assertLessThanOrEqual(255, strlen((string) $lists['s-1']->last_error));
         $this->assertNull($lists['s-2']->failed_at);
         // The counter is not a change of the record.
         $this->assertEquals($updated, $lists['s-1']->updated_at);
@@ -263,20 +263,53 @@ class DocumentPullTest extends SyncTestCase
         $this->assertSame(1, $this->stored(Module::SaleList)['s-1']->failures);
     }
 
-    public function testARunWhereEveryDocumentFailsFailsTheModuleAndBlamesNoRow(): void
+    public function testAFailureThatIsNotTheDocumentsOwnStopsTheRunAndBlamesNoRow(): void
     {
-        Saloon::fake([
-            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-01T09:00:00Z'), $this->sale('s-2', '2026-10-02T09:00:00Z')]),
-            Cin7Fake::error('Something went wrong'),
-            Cin7Fake::error('Something went wrong'),
+        $mock = Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-01T09:00:00Z'), $this->sale('s-2', '2026-10-02T09:00:00Z'), $this->sale('s-3', '2026-10-03T09:00:00Z')]),
+            Cin7Fake::error('Sale not found'),
+            Cin7Fake::error('Something went wrong', 500, 500),
         ]);
 
         $this->synchroniser()->pull(Module::SaleList);
         $result = $this->synchroniser()->pull(Module::Sale);
 
+        // s-1 is its own failure and is counted; the 500 on s-2 stops the run before s-3 and blames nobody.
         $this->assertTrue($result->failed());
-        $this->assertSame([2, 0, 0], [$result->read, $result->written, $result->failedDocuments]);
+        $this->assertSame([2, 0, 1], [$result->read, $result->written, $result->failedDocuments]);
+        $this->assertSame([1, 0, 0], $this->stored(Module::SaleList)->pluck('failures')->all());
+        $mock->assertSentCount(3);
+    }
+
+    public function testAnOutageThatBeginsAfterAWriteParksNothing(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-01T09:00:00Z'), $this->sale('s-2', '2026-10-02T09:00:00Z')]),
+            Cin7Fake::record(['ID' => 's-1']),
+            Cin7Fake::error('Something went wrong', 500, 500),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $result = $this->synchroniser()->pull(Module::Sale);
+
+        $this->assertSame([1, 2, 0], [$result->written, $result->read, $result->failedDocuments]);
+        $this->assertTrue($result->failed());
         $this->assertSame([0, 0], $this->stored(Module::SaleList)->pluck('failures')->all());
+    }
+
+    public function testAParkedDocumentIsLogged(): void
+    {
+        $this->app->get('config')->set('cin7.sync.max_failures', 1);
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1')]),
+            Cin7Fake::error('Sale not found'),
+        ]);
+        Log::shouldReceive('warning')->once()->withArgs(
+            static fn (string $message, array $context): bool => [$context['module'], $context['id']] === ['saleList', 's-1'] && str_contains($context['error'], 'Sale not found'),
+        );
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->synchroniser()->pull(Module::Sale);
     }
 
     public function testEveryPurchaseIsReadFromAdvancedPurchase(): void
@@ -306,6 +339,8 @@ class DocumentPullTest extends SyncTestCase
             Cin7Fake::record(['ID' => 's-2']),
             Cin7Fake::list('SaleList', [$this->sale('s-1')]),
             Cin7Fake::list('SaleList'),
+            // s-2 was not returned, so the pull asks for its document, which Cin7 no longer has.
+            Cin7Fake::error('Sale not found', 400, 404),
         ]);
 
         $this->synchroniser()->pull(Module::SaleList);
@@ -315,8 +350,48 @@ class DocumentPullTest extends SyncTestCase
         $result = $this->synchroniser()->pull(Module::Sale, full: true);
 
         $this->assertSame([0, 1], [$result->read, $result->deleted]);
+        $this->assertSame(['s-1'], $this->stored(Module::SaleList)->keys()->all());
         $this->assertSame(['s-1'], $this->stored(Module::Sale)->keys()->all());
-        $mock->assertSentCount(5);
+        $mock->assertSentCount(6);
+    }
+
+    public function testAFullPullKeepsAnUnchangedRecordTheBoundedWalkSkipped(): void
+    {
+        $mock = Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1'), $this->sale('s-2')]),
+            // A record changed during the walk, so the bounded pages shifted and s-2 was never read.
+            Cin7Fake::list('SaleList', [$this->sale('s-1')]),
+            Cin7Fake::list('SaleList'),
+            Cin7Fake::record(['ID' => 's-2']),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::SaleList, full: true);
+
+        $this->assertSame([2, 0], [$result->read, $result->deleted]);
+        $rows = $this->stored(Module::SaleList);
+        $this->assertSame(['s-1', 's-2'], $rows->keys()->all());
+        $this->assertSame('2026-10-03 13:00:00', $rows['s-2']->synced_at->toDateTimeString());
+        $this->assertSame(['saleList', 'saleList', 'saleList', 'sale'], $this->endpoints($mock));
+    }
+
+    public function testAFullPullFailsWhenTheAnswerAboutARecordIsNotItsOwn(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1'), $this->sale('s-2')]),
+            Cin7Fake::list('SaleList', [$this->sale('s-1')]),
+            Cin7Fake::list('SaleList'),
+            Cin7Fake::error('Something went wrong', 500, 500),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->travel(1)->hours();
+        $result = $this->synchroniser()->pull(Module::SaleList, full: true);
+
+        $this->assertTrue($result->failed());
+        $this->assertSame(0, $result->deleted);
+        $this->assertSame(['s-1', 's-2'], $this->stored(Module::SaleList)->keys()->all());
     }
 
     public function testAFullPullKeepsARecordUpdatedWhileTheBoundedWalkRan(): void

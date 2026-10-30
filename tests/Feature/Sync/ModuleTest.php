@@ -107,6 +107,16 @@ class ModuleTest extends TestCase
         yield 'advanced-purchase' => [Module::AdvancedPurchase, 'ID', null, GetAdvancedPurchase::class, AdvancedPurchaseData::class, Module::PurchaseList];
     }
 
+    public function testABoundedListIsAskedForARecordByItsDocument(): void
+    {
+        $this->assertInstanceOf(GetSale::class, Module::SaleList->existenceRequest('id'));
+        $this->assertInstanceOf(GetAdvancedPurchase::class, Module::PurchaseList->existenceRequest('id'));
+
+        $this->expectException(LogicException::class);
+
+        Module::Customer->existenceRequest('id');
+    }
+
     public function testAModuleThatDoesNotConfirmHasNoFindRequest(): void
     {
         $this->expectException(LogicException::class);

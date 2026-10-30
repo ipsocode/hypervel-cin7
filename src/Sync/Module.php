@@ -115,9 +115,9 @@ enum Module: string
     }
 
     /**
-     * Tell whether an incremental walk of the list sends an upper bound, `UpdatedUntil`, so the
-     * pages stay still while they are walked: a list module with a modified time that cannot be asked
-     * for one record by identifier.
+     * Tell whether an incremental walk of the list sends an upper bound, `UpdatedUntil`, so a
+     * record updated during the walk does not join its end: a list module with a modified time
+     * that cannot be asked for one record by identifier.
      */
     public function bounded(): bool
     {
@@ -125,11 +125,26 @@ enum Module: string
     }
 
     /**
-     * Tell whether a full pull can ask Cin7 for one record of the list by identifier, before it deletes
-     * a row it did not see. Cin7 orders these lists by modified time and they take no upper
-     * bound, so a record that changed while the pages were walked moves, and can push an
-     * unchanged one onto a page already read. Not so for a bounded list, a reference book, and a
-     * document module.
+     * The request for the document of one record of a bounded list, which says whether Cin7 still
+     * has the record, because the list has no filter for its identifier.
+     *
+     * @return Cin7Request<covariant Data>
+     *
+     * @throws LogicException for a module that is not a bounded list
+     */
+    public function existenceRequest(string $id): Cin7Request
+    {
+        return match ($this) {
+            self::SaleList => new GetSale($id),
+            self::PurchaseList => new GetAdvancedPurchase($id),
+            default => throw new LogicException("[{$this->value}] is not a bounded list."),
+        };
+    }
+
+    /**
+     * Tell whether a full pull can ask Cin7 for one record of the list by identifier, before it
+     * deletes a row it did not see. Not so for a bounded list, which is asked by document, a
+     * reference book, which is read whole, and a document module.
      */
     public function confirms(): bool
     {
@@ -217,8 +232,8 @@ enum Module: string
      * - `list`: builds the list request; null for a document module. A closure rather than a
      *   request, because the since and until arguments and the deprecated records differ by module.
      * - `document`: builds the request for one document; null for a list module.
-     * - `find`: builds the request for one record by identifier; null unless the list is walked
-     *   with no upper bound, in modified-time order, so a full pull confirms a row it missed.
+     * - `find`: builds the request for one record by identifier; null for a list that has no filter
+     *   for it, which existenceRequest() asks by document instead.
      *
      * @return array{
      *     id: string,
@@ -271,7 +286,7 @@ enum Module: string
                 'document' => null,
                 'find' => static fn (string $id): GetProduct => new GetProduct(id: $id, includeDeprecated: true),
             ],
-            // An upper bound keeps the pages still while they are walked.
+            // An upper bound keeps a record updated during the walk off its end.
             self::SaleList => [
                 'id' => 'SaleID',
                 'modified' => 'Updated',
