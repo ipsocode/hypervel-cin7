@@ -39,7 +39,7 @@ final class Pull implements ShouldQueue, ShouldBeUnique
     }
 
     /**
-     * Seconds to wait before each retry. A retry pulls every module again, so it waits minutes.
+     * Return the seconds to wait before each retry. A retry pulls every module again, so it waits minutes.
      *
      * @return list<int>
      */
