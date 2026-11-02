@@ -105,7 +105,7 @@ class Cin7ServiceProvider extends ServiceProvider
             return [
                 'Version' => InstalledVersions::getPrettyVersion('ipsocode/hypervel-cin7'),
                 'Rate limit' => $max > 0 && $period > 0 ? "{$max} calls per {$period}s" : 'off',
-                'Limiter store' => (string) (config('cin7.rate_limit.store') ?? 'default'),
+                'Limiter store' => (string) (config('cin7.rate_limit.store') ?: config('saloon.rate_limiter.store') ?: 'default'),
                 'Sync' => $sync ? 'on' : 'off',
                 'Sync pull' => $sync ? (SyncConfig::cron() ?? 'not scheduled') : '-',
                 'Sync full pull' => $sync ? (SyncConfig::full() ?? 'not scheduled') : '-',

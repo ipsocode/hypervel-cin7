@@ -20,6 +20,9 @@ use Ipsocode\Cin7\Cin7Connector;
  * @property array<string, mixed> $payload
  * @property null|Carbon $cin7_modified_at
  * @property Carbon $synced_at
+ * @property int $failures
+ * @property null|Carbon $failed_at
+ * @property null|string $last_error
  * @property null|Carbon $created_at
  * @property null|Carbon $updated_at
  *

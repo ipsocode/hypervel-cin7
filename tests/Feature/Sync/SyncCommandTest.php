@@ -8,6 +8,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Support\Facades\Artisan;
 use Hypervel\Support\Facades\Cache;
 use Ipsocode\Cin7\Sync\Module;
+use Ipsocode\Cin7\Sync\Payload;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 
 /**
@@ -133,7 +134,7 @@ class SyncCommandTest extends SyncTestCase
         ]);
 
         $this->artisan('cin7:sync saleList sale')
-            ->expectsOutputToContain('ok, 1 documents failed: ')
+            ->expectsOutputToContain('ok, 1 document failed: ')
             ->assertExitCode(0);
     }
 
@@ -157,7 +158,7 @@ class SyncCommandTest extends SyncTestCase
             ->assertExitCode(0);
 
         $this->artisan('cin7:sync sale --retry-failed')
-            ->expectsOutputToContain('sale: 1 documents released.')
+            ->expectsOutputToContain('sale: 1 document released.')
             ->assertExitCode(0);
 
         $this->assertSame(['s-1', 's-2'], $this->stored(Module::Sale)->keys()->all());
@@ -183,13 +184,13 @@ class SyncCommandTest extends SyncTestCase
         ]);
         $this->artisan('cin7:sync saleList sale')->assertExitCode(0);
 
-        $parked = $this->stored(Module::SaleList)->map(static fn ($row): array => [$row->failures, (string) $row->failed_at, $row->last_error])->all();
+        $parked = $this->stored(Module::SaleList)->map(static fn (Payload $row): array => [$row->failures, (string) $row->failed_at, $row->last_error])->all();
 
         $this->artisan('cin7:sync sale --status --retry-failed')
             ->doesntExpectOutputToContain('released')
             ->assertExitCode(0);
 
-        $this->assertSame($parked, $this->stored(Module::SaleList)->map(static fn ($row): array => [$row->failures, (string) $row->failed_at, $row->last_error])->all());
+        $this->assertSame($parked, $this->stored(Module::SaleList)->map(static fn (Payload $row): array => [$row->failures, (string) $row->failed_at, $row->last_error])->all());
         $this->assertSame(1, $this->stored(Module::SaleList)->max('failures'));
     }
 
