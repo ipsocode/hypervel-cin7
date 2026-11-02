@@ -14,6 +14,7 @@ use Hypervel\Support\Facades\Cache;
 use Hypervel\Support\Facades\Log;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
+use Ipsocode\Cin7\Data\Other\ErrorData;
 use stdClass;
 use Throwable;
 
@@ -251,14 +252,23 @@ final class Synchroniser
 
     /**
      * Tell whether Cin7 answered a read with a client error about that record alone, which is
-     * not an outage, a throttle or a rejected key.
+     * not an outage, a throttle or a rejected key. Cin7 sometimes sends its Error Model with a
+     * 200, so the code in the body stands in for the status then.
      */
     private function rejectedAsItsOwn(Throwable $exception): bool
     {
-        return $exception instanceof RequestException
-            && $exception->status() >= 400
-            && $exception->status() < 500
-            && ! in_array($exception->status(), [401, 403, 408, 429], true);
+        if (! $exception instanceof RequestException) {
+            return false;
+        }
+
+        $code = $exception->status();
+
+        if ($code >= 200 && $code < 300) {
+            $body = (array) $exception->response()->json();
+            $code = ErrorData::from(array_is_list($body) ? $body[0] : $body)->ErrorCode ?? $code;
+        }
+
+        return $code >= 400 && $code < 500 && ! in_array($code, [401, 403, 408, 429], true);
     }
 
     /**

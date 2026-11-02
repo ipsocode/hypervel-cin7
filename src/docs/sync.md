@@ -118,7 +118,8 @@ other records point to comes before the records that point to it.
    by `ID`, deprecated records included, and a record still returned is stored and kept; a
    `saleList` or `purchaseList` row by its document, `GET sale` or `GET advanced-purchase`, and
    a row whose document answers is kept. A row is deleted only when Cin7 does not return it, or
-   rejects the request as that record's own (a client error other than 401, 403, 408 and 429).
+   rejects the request as that record's own (a client error, or an Error Model in a 200 that carries one, other than 401, 403, 408
+   and 429).
    Any other failure fails the pull. At most `sync.documents` rows are asked for in a pull, in
    `ID` order, and the rest stay until the next full pull. A reference book is read whole, so
    its unseen rows go without a call. A pull that fails, a confirmation included, deletes
@@ -152,8 +153,8 @@ other documents:
 - A document that fails does not fail the job: the module's result is `ok`, with the number of
   failed documents and the first error, and `cin7:sync` exits 0. Parked ones show in the
   `Parked documents` column of `cin7:sync --status`.
-- Only a read Cin7 rejects as that document's own counts: a client error other than 401, 403,
-  408 and 429. Any other failure (a timeout or connection error, a 5xx, a throttle, a rejected
+- Only a read Cin7 rejects as that document's own counts: a client error, or an Error Model in a 200
+  that carries one, other than 401, 403, 408 and 429. Any other failure (a timeout or connection error, a 5xx, a throttle, a rejected
   key) says Cin7, the network or the credentials are failing, not the document: the run stops
   there, the module and the job fail as they did before, and no row is blamed, so an outage
   parks nothing.

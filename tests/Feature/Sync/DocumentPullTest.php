@@ -155,6 +155,57 @@ class DocumentPullTest extends SyncTestCase
         $this->assertSame(['s-1', 's-2'], $this->stored(Module::Sale)->keys()->all());
     }
 
+    public function testAnErrorModelInA200IsCountedOnTheListRowAndTheRestAreStillRead(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-01T09:00:00Z'), $this->sale('s-2', '2026-10-02T09:00:00Z')]),
+            Cin7Fake::error('Sale not found', 400, 200),
+            Cin7Fake::record(['ID' => 's-2']),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $result = $this->synchroniser()->pull(Module::Sale);
+
+        $this->assertFalse($result->failed());
+        $this->assertSame([2, 1, 1], [$result->read, $result->written, $result->failedDocuments]);
+        $this->assertSame(1, $this->stored(Module::SaleList)['s-1']->failures);
+    }
+
+    public function testAServerErrorModelInA200StillFailsTheRunAndBlamesNoRow(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1')]),
+            Cin7Fake::error('Something went wrong', 500, 200),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $result = $this->synchroniser()->pull(Module::Sale);
+
+        $this->assertTrue($result->failed());
+        $this->assertSame(0, $this->stored(Module::SaleList)['s-1']->failures);
+    }
+
+    public function testAFullPullDeletesADocumentWhoseAnswerIsAnErrorModelInA200(): void
+    {
+        Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1'), $this->sale('s-2')]),
+            Cin7Fake::record(['ID' => 's-1']),
+            Cin7Fake::record(['ID' => 's-2']),
+            Cin7Fake::list('SaleList', [$this->sale('s-1')]),
+            Cin7Fake::list('SaleList'),
+            Cin7Fake::error('Sale not found', 400, 200),
+        ]);
+
+        $this->synchroniser()->pull(Module::SaleList);
+        $this->synchroniser()->pull(Module::Sale);
+        $this->travel(1)->hours();
+        $this->synchroniser()->pull(Module::SaleList, full: true);
+        $result = $this->synchroniser()->pull(Module::Sale, full: true);
+
+        $this->assertSame(1, $result->deleted);
+        $this->assertSame(['s-1'], $this->stored(Module::SaleList)->keys()->all());
+    }
+
     public function testAFailedReadIsCountedOnTheListRow(): void
     {
         Saloon::fake([

@@ -34,7 +34,7 @@ those values through `config()`, never by reading the environment directly.
 | `sync.lookback` | `CIN7_SYNC_LOOKBACK` | `1440` | Minutes an incremental pull reaches back |
 | `sync.limit` | `CIN7_SYNC_LIMIT` | `500` | Records a page, 1 to 1000 |
 | `sync.pause_ms` | `CIN7_SYNC_PAUSE_MS` | `1000` | Milliseconds between the sync's own calls |
-| `sync.documents` | `CIN7_SYNC_DOCUMENTS` | `250` | Sale and purchase documents read per module per run |
+| `sync.documents` | `CIN7_SYNC_DOCUMENTS` | `250` | Sale and purchase documents read per module per run, and the unseen rows a full pull of a list asks Cin7 for before deleting |
 | `sync.max_failures` | `CIN7_SYNC_MAX_FAILURES` | `3` | Times a document may fail to read before the sync [stops trying it](sync.md#a-document-that-keeps-failing); from `1` to `32767` |
 | `sync.queue` | `CIN7_SYNC_QUEUE` | none | The queue the scheduled pulls go on |
 | `sync.timeout` | `CIN7_SYNC_TIMEOUT` | `3600` | Seconds a queued pull, and its module lock, may last |

@@ -111,7 +111,8 @@ return [
         // Milliseconds between the sync's own calls, which share the rate-limit window.
         'pause_ms' => (int) env('CIN7_SYNC_PAUSE_MS', 1000),
 
-        // Documents read per module per run, one call each.
+        // Documents read per module per run, one call each, and the unseen rows a full pull of a list
+        // asks Cin7 for before deleting.
         'documents' => (int) env('CIN7_SYNC_DOCUMENTS', 250),
 
         // Times a document may fail to read before the sync stops trying it, until its list row
