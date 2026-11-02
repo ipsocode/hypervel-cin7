@@ -100,6 +100,7 @@ abstract class WriteRequest extends Cin7Request
      */
     private static function omitPath(array $data, array $path): array
     {
+        /** @var string $key A path always holds at least one segment. */
         $key = array_shift($path);
 
         if ($path === []) {
