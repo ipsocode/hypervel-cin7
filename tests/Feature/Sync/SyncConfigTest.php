@@ -91,6 +91,9 @@ class SyncConfigTest extends TestCase
 
         $this->assertSame([0, 1000, 0, 0, 1, 1], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout(), SyncConfig::maxFailures()]);
 
+        $this->config(['max_failures' => 100000]);
+        $this->assertSame(32767, SyncConfig::maxFailures());
+
         $this->config(['limit' => 0]);
         $this->assertSame(1, SyncConfig::limit());
     }

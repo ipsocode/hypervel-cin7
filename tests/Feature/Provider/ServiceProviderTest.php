@@ -214,4 +214,14 @@ class ServiceProviderTest extends TestCase
 
         $this->assertSame('worker-array', $about['limiter_store']);
     }
+
+    public function testAboutNamesTheSaloonStoreForABlankLimiterStore(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.store', '');
+        $this->app->get('config')->set('saloon.rate_limiter.store', 'worker-array');
+
+        Artisan::call('about', ['--json' => true]);
+
+        $this->assertSame('worker-array', json_decode(Artisan::output(), true)['cin7']['limiter_store']);
+    }
 }
