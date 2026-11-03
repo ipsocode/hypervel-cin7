@@ -126,8 +126,8 @@ return [
         DeleteStockTake::class => [DeleteStockTake::class, [$taskId], Cin7Payloads::load('stocktake', 'delete.response'), StockTakeData::class, ''],
     ],
     'bodies' => [
-        StockTakePostData::class => [StockTakePostData::class, Cin7Payloads::load('stocktake', 'post.request')],
-        StockTakePutData::class => [StockTakePutData::class, Cin7Payloads::load('stocktake', 'put.request')],
+        StockTakePostData::class => [StockTakePostData::class, PostStockTake::class, Cin7Payloads::load('stocktake', 'post.request')],
+        StockTakePutData::class => [StockTakePutData::class, PutStockTake::class, Cin7Payloads::load('stocktake', 'put.request')],
     ],
     'missing' => [
         'stock take POST without Account' => [StockTakePostData::class, Arr::except(Cin7Payloads::load('stocktake', 'post.request'), 'Account')],

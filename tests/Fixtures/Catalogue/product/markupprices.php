@@ -65,7 +65,7 @@ return [
         PutProductMarkupPrices::class => [PutProductMarkupPrices::class, [[]], Cin7Payloads::load('product/markupprices', 'put.response'), MarkupPricesData::class, ''],
     ],
     'bodies' => [
-        MarkupPricesData::class => [MarkupPricesData::class, Cin7Payloads::load('product/markupprices', 'put.request')],
+        MarkupPricesData::class => [MarkupPricesData::class, PutProductMarkupPrices::class, Cin7Payloads::load('product/markupprices', 'put.request')],
     ],
     'missing' => [
         'markup prices without ProductID' => [MarkupPricesData::class, Arr::except(Cin7Payloads::load('product/markupprices', 'put.request'), 'ProductID')],

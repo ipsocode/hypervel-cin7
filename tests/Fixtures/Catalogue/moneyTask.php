@@ -116,8 +116,8 @@ return [
         ],
     ],
     'bodies' => [
-        MoneyTaskPostData::class => [MoneyTaskPostData::class, Cin7Payloads::load('moneyTask', 'post.request')],
-        MoneyTaskPutData::class => [MoneyTaskPutData::class, Cin7Payloads::load('moneyTask', 'put.request')],
+        MoneyTaskPostData::class => [MoneyTaskPostData::class, PostMoneyTask::class, Cin7Payloads::load('moneyTask', 'post.request')],
+        MoneyTaskPutData::class => [MoneyTaskPutData::class, PutMoneyTask::class, Cin7Payloads::load('moneyTask', 'put.request')],
     ],
     'missing' => [
         'money task PUT without TaskID' => [MoneyTaskPutData::class, Arr::except(Cin7Payloads::load('moneyTask', 'put.request'), 'TaskID')],

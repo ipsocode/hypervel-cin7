@@ -37,8 +37,8 @@ return [
         PutCrmWorkflow::class => [PutCrmWorkflow::class, [[]], Cin7Payloads::load('crm/workflow', 'put.response'), WorkflowData::class, 'Workflows'],
     ],
     'bodies' => [
-        WorkflowPostData::class => [WorkflowPostData::class, Cin7Payloads::load('crm/workflow', 'post.request')],
-        WorkflowPutData::class => [WorkflowPutData::class, Cin7Payloads::load('crm/workflow', 'put.request')],
+        WorkflowPostData::class => [WorkflowPostData::class, PostCrmWorkflow::class, Cin7Payloads::load('crm/workflow', 'post.request')],
+        WorkflowPutData::class => [WorkflowPutData::class, PutCrmWorkflow::class, Cin7Payloads::load('crm/workflow', 'put.request')],
     ],
     'missing' => [
         'Workflow without ID' => [WorkflowData::class, Arr::except(Cin7Payloads::load('crm/workflow', 'get.response')['Workflows'][0], 'ID')],

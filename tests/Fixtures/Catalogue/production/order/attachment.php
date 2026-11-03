@@ -76,7 +76,7 @@ return [
         GetProductionOrderAttachment::class => [GetProductionOrderAttachment::class, [$id], Cin7Payloads::load('production/order/attachment', 'get.response'), ProductionOrderAttachmentsData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderAttachmentData production/order/attachment' => [ProductionOrderAttachmentData::class, Cin7Payloads::load('production/order/attachment', 'post.request')],
-        'ProductionOrderAttachmentPutData production/order/attachment' => [ProductionOrderAttachmentPutData::class, Cin7Payloads::load('production/order/attachment', 'put.request')],
+        'ProductionOrderAttachmentData production/order/attachment' => [ProductionOrderAttachmentData::class, PostProductionOrderAttachment::class, Cin7Payloads::load('production/order/attachment', 'post.request')],
+        'ProductionOrderAttachmentPutData production/order/attachment' => [ProductionOrderAttachmentPutData::class, PutProductionOrderAttachment::class, Cin7Payloads::load('production/order/attachment', 'put.request')],
     ],
 ];

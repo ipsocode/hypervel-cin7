@@ -36,8 +36,8 @@ return [
         PutCrmTask::class => [PutCrmTask::class, [[]], Cin7Payloads::load('crm/task', 'put.response'), TaskData::class, 'Tasks'],
     ],
     'bodies' => [
-        TaskPostData::class => [TaskPostData::class, Cin7Payloads::load('crm/task', 'post.request')],
-        TaskPutData::class => [TaskPutData::class, Cin7Payloads::load('crm/task', 'put.request')],
+        TaskPostData::class => [TaskPostData::class, PostCrmTask::class, Cin7Payloads::load('crm/task', 'post.request')],
+        TaskPutData::class => [TaskPutData::class, PutCrmTask::class, Cin7Payloads::load('crm/task', 'put.request')],
     ],
     'missing' => [
         'Task without ID' => [TaskData::class, Arr::except(Cin7Payloads::load('crm/task', 'get.response')['Tasks'][0], 'ID')],

@@ -45,8 +45,8 @@ return [
         PutWebhooks::class => [PutWebhooks::class, [[]], Cin7Payloads::load('webhooks', 'put.response'), WebhookData::class, 'Webhooks'],
     ],
     'bodies' => [
-        WebhookPostData::class => [WebhookPostData::class, Cin7Payloads::load('webhooks', 'post.request')],
-        WebhookPutData::class => [WebhookPutData::class, Cin7Payloads::load('webhooks', 'put.request')],
+        WebhookPostData::class => [WebhookPostData::class, PostWebhooks::class, Cin7Payloads::load('webhooks', 'post.request')],
+        WebhookPutData::class => [WebhookPutData::class, PutWebhooks::class, Cin7Payloads::load('webhooks', 'put.request')],
     ],
     'missing' => [
         'webhook POST without Type' => [WebhookPostData::class, Arr::except($post, 'Type')],

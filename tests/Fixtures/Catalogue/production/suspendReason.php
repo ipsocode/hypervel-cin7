@@ -55,6 +55,6 @@ return [
         PutProductionSuspendReason::class => [PutProductionSuspendReason::class, [[]], Cin7Payloads::load('production/suspendReason', 'put.response'), SuspendReasonData::class, ''],
     ],
     'bodies' => [
-        'SuspendReasonData production/suspendReason' => [SuspendReasonData::class, Cin7Payloads::load('production/suspendReason', 'put.request')],
+        'SuspendReasonData production/suspendReason' => [SuspendReasonData::class, PutProductionSuspendReason::class, Cin7Payloads::load('production/suspendReason', 'put.request')],
     ],
 ];

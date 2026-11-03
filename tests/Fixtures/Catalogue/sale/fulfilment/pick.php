@@ -101,8 +101,8 @@ return [
         PutSaleFulfilmentPick::class => [PutSaleFulfilmentPick::class, [[]], Cin7Payloads::load('sale/fulfilment/pick', 'get.response'), SaleFulfilmentPickData::class, ''],
     ],
     'bodies' => [
-        SaleFulfilmentPickPostData::class => [SaleFulfilmentPickPostData::class, Cin7Payloads::load('sale/fulfilment/pick', 'post.request')],
-        SaleFulfilmentPickPutData::class => [SaleFulfilmentPickPutData::class, Cin7Payloads::load('sale/fulfilment/pick', 'put.request')],
+        SaleFulfilmentPickPostData::class => [SaleFulfilmentPickPostData::class, PostSaleFulfilmentPick::class, Cin7Payloads::load('sale/fulfilment/pick', 'post.request')],
+        SaleFulfilmentPickPutData::class => [SaleFulfilmentPickPutData::class, PutSaleFulfilmentPick::class, Cin7Payloads::load('sale/fulfilment/pick', 'put.request')],
     ],
     'missing' => [
         'pick without Status' => [SaleFulfilmentPickData::class, Arr::except(Cin7Payloads::load('sale/fulfilment/pick', 'get.response'), 'Status')],

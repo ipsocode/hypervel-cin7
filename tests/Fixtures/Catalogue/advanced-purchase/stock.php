@@ -130,8 +130,8 @@ return [
         DeleteAdvancedPurchaseStock::class => [DeleteAdvancedPurchaseStock::class, ['task-1'], Cin7Payloads::load('advanced-purchase/stock', 'delete.response'), AdvancedPurchaseStocksData::class, ''],
     ],
     'bodies' => [
-        AdvancedPurchaseStockPostData::class => [AdvancedPurchaseStockPostData::class, Cin7Payloads::load('advanced-purchase/stock', 'post.request')],
-        AdvancedPurchaseStockPutData::class => [AdvancedPurchaseStockPutData::class, Cin7Payloads::load('advanced-purchase/stock', 'put.request')],
+        AdvancedPurchaseStockPostData::class => [AdvancedPurchaseStockPostData::class, PostAdvancedPurchaseStock::class, Cin7Payloads::load('advanced-purchase/stock', 'post.request')],
+        AdvancedPurchaseStockPutData::class => [AdvancedPurchaseStockPutData::class, PutAdvancedPurchaseStock::class, Cin7Payloads::load('advanced-purchase/stock', 'put.request')],
     ],
     'missing' => [
         'advanced purchase stock envelope without PurchaseID' => [AdvancedPurchaseStocksData::class, Arr::except(Cin7Payloads::load('advanced-purchase/stock', 'get.response'), 'PurchaseID')],

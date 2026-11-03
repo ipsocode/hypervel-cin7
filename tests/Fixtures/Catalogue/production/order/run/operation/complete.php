@@ -34,6 +34,6 @@ return [
         PutProductionOrderRunOperationComplete::class => [PutProductionOrderRunOperationComplete::class, [[]], Cin7Payloads::load('production/order/run/operation/complete', 'put.response'), ProductionRunsData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunOperationCompletePutData production/order/run/operation/complete' => [ProductionRunOperationCompletePutData::class, Cin7Payloads::load('production/order/run/operation/complete', 'put.request')],
+        'ProductionRunOperationCompletePutData production/order/run/operation/complete' => [ProductionRunOperationCompletePutData::class, PutProductionOrderRunOperationComplete::class, Cin7Payloads::load('production/order/run/operation/complete', 'put.request')],
     ],
 ];

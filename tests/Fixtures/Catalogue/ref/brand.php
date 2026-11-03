@@ -111,8 +111,8 @@ return [
         PutBrand::class => [PutBrand::class, [[]], Cin7Payloads::load('ref/brand', 'put.response'), BrandData::class, ''],
     ],
     'bodies' => [
-        BrandPostData::class => [BrandPostData::class, Cin7Payloads::load('ref/brand', 'post.request')],
-        BrandPutData::class => [BrandPutData::class, Cin7Payloads::load('ref/brand', 'put.request')],
+        BrandPostData::class => [BrandPostData::class, PostBrand::class, Cin7Payloads::load('ref/brand', 'post.request')],
+        BrandPutData::class => [BrandPutData::class, PutBrand::class, Cin7Payloads::load('ref/brand', 'put.request')],
     ],
     'missing' => [
         'brand POST without Name' => [BrandPostData::class, []],

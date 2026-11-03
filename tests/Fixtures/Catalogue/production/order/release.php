@@ -34,6 +34,6 @@ return [
         PostProductionOrderRelease::class => [PostProductionOrderRelease::class, [[]], Cin7Payloads::load('production/order/release', 'post.response'), ProductionOrdersData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderReleasePostData production/order/release' => [ProductionOrderReleasePostData::class, Cin7Payloads::load('production/order/release', 'post.request')],
+        'ProductionOrderReleasePostData production/order/release' => [ProductionOrderReleasePostData::class, PostProductionOrderRelease::class, Cin7Payloads::load('production/order/release', 'post.request')],
     ],
 ];

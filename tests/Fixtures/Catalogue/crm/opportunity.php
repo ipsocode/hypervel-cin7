@@ -38,8 +38,8 @@ return [
         PutCrmOpportunity::class => [PutCrmOpportunity::class, [[]], Cin7Payloads::load('crm/opportunity', 'put.response'), OpportunityData::class, 'opportunityList'],
     ],
     'bodies' => [
-        OpportunityPostData::class => [OpportunityPostData::class, Cin7Payloads::load('crm/opportunity', 'post.request')],
-        OpportunityPutData::class => [OpportunityPutData::class, Cin7Payloads::load('crm/opportunity', 'put.request')],
+        OpportunityPostData::class => [OpportunityPostData::class, PostCrmOpportunity::class, Cin7Payloads::load('crm/opportunity', 'post.request')],
+        OpportunityPutData::class => [OpportunityPutData::class, PutCrmOpportunity::class, Cin7Payloads::load('crm/opportunity', 'put.request')],
     ],
     'missing' => [
         'Opportunity without ID' => [OpportunityData::class, Arr::except(Cin7Payloads::load('crm/opportunity', 'get.response')['opportunityList'][0], 'ID')],

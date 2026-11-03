@@ -152,8 +152,8 @@ return [
         DeleteAdvancedPurchase::class => [DeleteAdvancedPurchase::class, ['guid-1'], Cin7Payloads::load('advanced-purchase', 'delete.response'), AdvancedPurchaseData::class, ''],
     ],
     'bodies' => [
-        AdvancedPurchasePostData::class => [AdvancedPurchasePostData::class, Cin7Payloads::load('advanced-purchase', 'post.request')],
-        AdvancedPurchasePutData::class => [AdvancedPurchasePutData::class, Cin7Payloads::load('advanced-purchase', 'put.request')],
+        AdvancedPurchasePostData::class => [AdvancedPurchasePostData::class, PostAdvancedPurchase::class, Cin7Payloads::load('advanced-purchase', 'post.request')],
+        AdvancedPurchasePutData::class => [AdvancedPurchasePutData::class, PutAdvancedPurchase::class, Cin7Payloads::load('advanced-purchase', 'put.request')],
     ],
     'missing' => [
         'advanced purchase without Approach' => [AdvancedPurchaseData::class, Arr::except($purchase, 'Approach')],

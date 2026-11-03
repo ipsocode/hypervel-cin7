@@ -124,8 +124,8 @@ return [
         DeleteStockAdjustment::class => [DeleteStockAdjustment::class, [$taskId], Cin7Payloads::load('stockadjustment', 'delete.response'), StockAdjustmentData::class, ''],
     ],
     'bodies' => [
-        StockAdjustmentPostData::class => [StockAdjustmentPostData::class, Cin7Payloads::load('stockadjustment', 'post.request')],
-        StockAdjustmentPutData::class => [StockAdjustmentPutData::class, Cin7Payloads::load('stockadjustment', 'put.request')],
+        StockAdjustmentPostData::class => [StockAdjustmentPostData::class, PostStockAdjustment::class, Cin7Payloads::load('stockadjustment', 'post.request')],
+        StockAdjustmentPutData::class => [StockAdjustmentPutData::class, PutStockAdjustment::class, Cin7Payloads::load('stockadjustment', 'put.request')],
     ],
     'missing' => [
         'stock adjustment POST without Status' => [StockAdjustmentPostData::class, Arr::except(Cin7Payloads::load('stockadjustment', 'post.request'), 'Status')],

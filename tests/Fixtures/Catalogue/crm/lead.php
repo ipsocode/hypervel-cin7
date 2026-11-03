@@ -36,8 +36,8 @@ return [
         PutCrmLead::class => [PutCrmLead::class, [[]], Cin7Payloads::load('crm/lead', 'put.response'), LeadData::class, 'LeadList'],
     ],
     'bodies' => [
-        LeadPostData::class => [LeadPostData::class, Cin7Payloads::load('crm/lead', 'post.request')],
-        LeadPutData::class => [LeadPutData::class, Cin7Payloads::load('crm/lead', 'put.request')],
+        LeadPostData::class => [LeadPostData::class, PostCrmLead::class, Cin7Payloads::load('crm/lead', 'post.request')],
+        LeadPutData::class => [LeadPutData::class, PutCrmLead::class, Cin7Payloads::load('crm/lead', 'put.request')],
     ],
     'missing' => [
         'Lead POST without LeadStatus' => [LeadPostData::class, Arr::except(Cin7Payloads::load('crm/lead', 'post.request'), 'LeadStatus')],

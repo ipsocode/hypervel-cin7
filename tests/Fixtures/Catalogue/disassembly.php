@@ -75,7 +75,7 @@ return [
         DeleteDisassembly::class => [DeleteDisassembly::class, [$taskId], Cin7Payloads::load('disassembly', 'delete.response'), DisassemblyData::class, ''],
     ],
     'bodies' => [
-        DisassemblyPostData::class => [DisassemblyPostData::class, Cin7Payloads::load('disassembly', 'post.request')],
+        DisassemblyPostData::class => [DisassemblyPostData::class, PostDisassembly::class, Cin7Payloads::load('disassembly', 'post.request')],
     ],
     'missing' => [
         'disassembly POST without Status' => [DisassemblyPostData::class, Arr::except(Cin7Payloads::load('disassembly', 'post.request'), 'Status')],

@@ -146,10 +146,10 @@ return [
         PutProductFamilyProductionBom::class => [PutProductFamilyProductionBom::class, [[]], Cin7Payloads::load('production/productionBOM', 'family.put.response'), ProductFamilyProductionBomsData::class, ''],
     ],
     'bodies' => [
-        'ProductProductionBomPostData production/productionBOM' => [ProductProductionBomPostData::class, Cin7Payloads::load('production/productionBOM', 'product.post.request')],
-        'ProductProductionBomPutData production/productionBOM' => [ProductProductionBomPutData::class, Cin7Payloads::load('production/productionBOM', 'product.put.request')],
-        'ProductFamilyProductionBomPostData production/productionBOM' => [ProductFamilyProductionBomPostData::class, Cin7Payloads::load('production/productionBOM', 'family.post.request')],
-        'ProductFamilyProductionBomPutData production/productionBOM' => [ProductFamilyProductionBomPutData::class, Cin7Payloads::load('production/productionBOM', 'family.put.request')],
+        'ProductProductionBomPostData production/productionBOM' => [ProductProductionBomPostData::class, PostProductProductionBom::class, Cin7Payloads::load('production/productionBOM', 'product.post.request')],
+        'ProductProductionBomPutData production/productionBOM' => [ProductProductionBomPutData::class, PutProductProductionBom::class, Cin7Payloads::load('production/productionBOM', 'product.put.request')],
+        'ProductFamilyProductionBomPostData production/productionBOM' => [ProductFamilyProductionBomPostData::class, PostProductFamilyProductionBom::class, Cin7Payloads::load('production/productionBOM', 'family.post.request')],
+        'ProductFamilyProductionBomPutData production/productionBOM' => [ProductFamilyProductionBomPutData::class, PutProductFamilyProductionBom::class, Cin7Payloads::load('production/productionBOM', 'family.put.request')],
     ],
     'missing' => [
         'ProductionBomResourceData without ResourceID' => [ProductionBomResourceData::class, Arr::except(Cin7Payloads::load('production/productionBOM', 'product.post.request')['ProductionBOMs'][0]['Operations'][0]['Resources'][0], 'ResourceID')],

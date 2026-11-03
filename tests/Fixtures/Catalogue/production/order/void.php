@@ -34,6 +34,6 @@ return [
         PostProductionOrderVoid::class => [PostProductionOrderVoid::class, [[]], Cin7Payloads::load('production/order/void', 'post.response'), ProductionOrderMessageData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderVoidPostData production/order/void' => [ProductionOrderVoidPostData::class, Cin7Payloads::load('production/order/void', 'post.request')],
+        'ProductionOrderVoidPostData production/order/void' => [ProductionOrderVoidPostData::class, PostProductionOrderVoid::class, Cin7Payloads::load('production/order/void', 'post.request')],
     ],
 ];

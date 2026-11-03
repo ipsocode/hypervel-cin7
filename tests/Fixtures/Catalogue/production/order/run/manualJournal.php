@@ -34,6 +34,6 @@ return [
         PutProductionOrderRunManualJournal::class => [PutProductionOrderRunManualJournal::class, [[], $id], Cin7Payloads::load('production/order/run/manualJournal', 'put.response'), ProductionRunsData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunManualJournalsPutData production/order/run/manualJournal' => [ProductionRunManualJournalsPutData::class, Cin7Payloads::load('production/order/run/manualJournal', 'put.request')],
+        'ProductionRunManualJournalsPutData production/order/run/manualJournal' => [ProductionRunManualJournalsPutData::class, PutProductionOrderRunManualJournal::class, Cin7Payloads::load('production/order/run/manualJournal', 'put.request')],
     ],
 ];

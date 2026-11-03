@@ -120,8 +120,8 @@ return [
         PutAttributeSet::class => [PutAttributeSet::class, [[]], Cin7Payloads::load('ref/attributeset', 'put.response'), AttributeSetData::class, ''],
     ],
     'bodies' => [
-        AttributeSetPostData::class => [AttributeSetPostData::class, Cin7Payloads::load('ref/attributeset', 'post.request')],
-        AttributeSetPutData::class => [AttributeSetPutData::class, Cin7Payloads::load('ref/attributeset', 'put.request')],
+        AttributeSetPostData::class => [AttributeSetPostData::class, PostAttributeSet::class, Cin7Payloads::load('ref/attributeset', 'post.request')],
+        AttributeSetPutData::class => [AttributeSetPutData::class, PutAttributeSet::class, Cin7Payloads::load('ref/attributeset', 'put.request')],
     ],
     'missing' => [
         'attribute set POST without Attribute1Type' => [AttributeSetPostData::class, Arr::except(Cin7Payloads::load('ref/attributeset', 'post.request'), 'Attribute1Type')],

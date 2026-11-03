@@ -33,6 +33,6 @@ return [
         PutProductionOrderRunUndo::class => [PutProductionOrderRunUndo::class, [[]], Cin7Payloads::load('production/order/run/undo', 'put.response'), ProductionRunUndoData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunUndoData production/order/run/undo' => [ProductionRunUndoData::class, Cin7Payloads::load('production/order/run/undo', 'put.request')],
+        'ProductionRunUndoData production/order/run/undo' => [ProductionRunUndoData::class, PutProductionOrderRunUndo::class, Cin7Payloads::load('production/order/run/undo', 'put.request')],
     ],
 ];

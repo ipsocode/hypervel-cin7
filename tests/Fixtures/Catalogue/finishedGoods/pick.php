@@ -49,7 +49,7 @@ return [
         PostFinishedGoodsPick::class => [PostFinishedGoodsPick::class, [[]], Cin7Payloads::load('finishedGoods/pick', 'post.response'), FinishedGoodsPickData::class, ''],
     ],
     'bodies' => [
-        FinishedGoodsPickData::class => [FinishedGoodsPickData::class, Cin7Payloads::load('finishedGoods/pick', 'post.request')],
+        FinishedGoodsPickData::class => [FinishedGoodsPickData::class, PostFinishedGoodsPick::class, Cin7Payloads::load('finishedGoods/pick', 'post.request')],
     ],
     'missing' => [
         'finished goods pick POST without CompletionDate' => [FinishedGoodsPickData::class, Arr::except(Cin7Payloads::load('finishedGoods/pick', 'post.request'), 'CompletionDate')],

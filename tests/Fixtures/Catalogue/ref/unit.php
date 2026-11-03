@@ -111,8 +111,8 @@ return [
         PutUnit::class => [PutUnit::class, [[]], Cin7Payloads::load('ref/unit', 'put.response'), UnitOfMeasureData::class, ''],
     ],
     'bodies' => [
-        UnitOfMeasurePostData::class => [UnitOfMeasurePostData::class, Cin7Payloads::load('ref/unit', 'post.request')],
-        UnitOfMeasurePutData::class => [UnitOfMeasurePutData::class, Cin7Payloads::load('ref/unit', 'put.request')],
+        UnitOfMeasurePostData::class => [UnitOfMeasurePostData::class, PostUnit::class, Cin7Payloads::load('ref/unit', 'post.request')],
+        UnitOfMeasurePutData::class => [UnitOfMeasurePutData::class, PutUnit::class, Cin7Payloads::load('ref/unit', 'put.request')],
     ],
     'missing' => [
         'unit of measure POST without Name' => [UnitOfMeasurePostData::class, []],

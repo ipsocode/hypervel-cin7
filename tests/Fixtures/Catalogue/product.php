@@ -122,8 +122,8 @@ return [
         PutProduct::class => [PutProduct::class, [['ID' => 'guid-1']], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
     ],
     'bodies' => [
-        ProductPostData::class => [ProductPostData::class, Cin7Payloads::load('product', 'post.request')],
-        ProductPutData::class => [ProductPutData::class, Cin7Payloads::load('product', 'put.request')],
+        ProductPostData::class => [ProductPostData::class, PostProduct::class, Cin7Payloads::load('product', 'post.request')],
+        ProductPutData::class => [ProductPutData::class, PutProduct::class, Cin7Payloads::load('product', 'put.request')],
     ],
     'missing' => [
         'product POST without Type' => [ProductPostData::class, Arr::except(Cin7Payloads::load('product', 'post.request'), 'Type')],

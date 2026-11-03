@@ -75,8 +75,8 @@ return [
         PutProductionOrder::class => [PutProductionOrder::class, [[]], Cin7Payloads::load('production/order', 'put.response'), ProductionOrdersData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderPostData production/order' => [ProductionOrderPostData::class, Cin7Payloads::load('production/order', 'post.request')],
-        'ProductionOrderPutData production/order' => [ProductionOrderPutData::class, Cin7Payloads::load('production/order', 'put.request')],
+        'ProductionOrderPostData production/order' => [ProductionOrderPostData::class, PostProductionOrder::class, Cin7Payloads::load('production/order', 'post.request')],
+        'ProductionOrderPutData production/order' => [ProductionOrderPutData::class, PutProductionOrder::class, Cin7Payloads::load('production/order', 'put.request')],
     ],
     'missing' => [
         'ProductionOrderOperationAttachmentData without ContentType' => [ProductionOrderOperationAttachmentData::class, Arr::except(Cin7Payloads::load('production/order', 'get.response')['ProductionOrders'][0]['Operations'][0]['Attachments'][0], 'ContentType')],

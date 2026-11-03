@@ -103,9 +103,9 @@ return [
         PutDeals::class => [PutDeals::class, [[]], Cin7Payloads::load('reference/deals', 'put.response'), ProductDealData::class, 'Deals.0'],
     ],
     'bodies' => [
-        ProductDealPostData::class => [ProductDealPostData::class, Cin7Payloads::load('reference/deals', 'post.request')],
-        ProductDealPutData::class => [ProductDealPutData::class, Cin7Payloads::load('reference/deals', 'put.request')],
-        'deal with customers and tags' => [ProductDealPostData::class, [
+        ProductDealPostData::class => [ProductDealPostData::class, PostDeals::class, Cin7Payloads::load('reference/deals', 'post.request')],
+        ProductDealPutData::class => [ProductDealPutData::class, PutDeals::class, Cin7Payloads::load('reference/deals', 'put.request')],
+        'deal with customers and tags' => [ProductDealPostData::class, PostDeals::class, [
             'Name' => 'Product Deal 1',
             'DealCustomers' => [['ID' => $dealId, 'CustomerID' => $dealId, 'CustomerName' => 'Customer 1']],
             'DealCustomerTags' => [['ID' => $dealId, 'TagName' => 'VIP']],

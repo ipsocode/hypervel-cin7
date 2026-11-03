@@ -78,7 +78,7 @@ return [
         DeleteSaleCreditNote::class => [DeleteSaleCreditNote::class, ['task-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
     ],
     'bodies' => [
-        SaleCreditNotePostData::class => [SaleCreditNotePostData::class, Cin7Payloads::saleCreditNotePost()],
+        SaleCreditNotePostData::class => [SaleCreditNotePostData::class, PostSaleCreditNote::class, Cin7Payloads::saleCreditNotePost()],
     ],
     'missing' => [
         'credit note POST without CreditNoteInvoiceNumber' => [

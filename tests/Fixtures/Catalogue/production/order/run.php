@@ -93,8 +93,8 @@ return [
         'GetProductionOrderRun with every list filled' => [GetProductionOrderRun::class, [$id], $full, ProductionRunsData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunPostData production/order/run' => [ProductionRunPostData::class, Cin7Payloads::load('production/order/run', 'post.request')],
-        'ProductionRunData production/order/run' => [ProductionRunData::class, Cin7Payloads::load('production/order/run', 'put.request')],
+        'ProductionRunPostData production/order/run' => [ProductionRunPostData::class, PostProductionOrderRun::class, Cin7Payloads::load('production/order/run', 'post.request')],
+        'ProductionRunData production/order/run' => [ProductionRunData::class, PutProductionOrderRun::class, Cin7Payloads::load('production/order/run', 'put.request')],
     ],
     'missing' => [
         'ProductionRunOperationResourceCostData without RunCostID' => [ProductionRunOperationResourceCostData::class, Arr::except(Cin7Payloads::load('production/order/run/operation/complete', 'put.response')['Runs'][0]['Operations'][0]['ResourceCosts'][0], 'RunCostID')],

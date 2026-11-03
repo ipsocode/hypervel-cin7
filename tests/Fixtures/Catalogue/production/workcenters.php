@@ -85,8 +85,8 @@ return [
         PutProductionWorkCenters::class => [PutProductionWorkCenters::class, [[]], Cin7Payloads::load('production/workcenters', 'put.response'), WorkCentersData::class, ''],
     ],
     'bodies' => [
-        'WorkCentersData production/workcenters' => [WorkCentersData::class, Cin7Payloads::load('production/workcenters', 'post.request')],
-        'WorkCentersData production/workcenters' => [WorkCentersData::class, Cin7Payloads::load('production/workcenters', 'put.request')],
+        WorkCentersData::class . ' POST' => [WorkCentersData::class, PostProductionWorkCenters::class, Cin7Payloads::load('production/workcenters', 'post.request')],
+        WorkCentersData::class . ' PUT' => [WorkCentersData::class, PutProductionWorkCenters::class, Cin7Payloads::load('production/workcenters', 'put.request')],
     ],
     'missing' => [
         'WorkCenterLocationData without ID' => [WorkCenterLocationData::class, Arr::except(Cin7Payloads::load('production/workcenters', 'post.request')['Workcenters'][0]['WorkCenterLocations'][0], 'ID')],

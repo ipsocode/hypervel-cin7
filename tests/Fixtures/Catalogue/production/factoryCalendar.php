@@ -66,8 +66,8 @@ return [
         PutProductionFactoryCalendar::class => [PutProductionFactoryCalendar::class, [[]], Cin7Payloads::load('production/factoryCalendar', 'put.response'), FactoryCalendarData::class, ''],
     ],
     'bodies' => [
-        'FactoryCalendarPostData production/factoryCalendar' => [FactoryCalendarPostData::class, Cin7Payloads::load('production/factoryCalendar', 'post.request')],
-        'FactoryCalendarPutData production/factoryCalendar' => [FactoryCalendarPutData::class, Cin7Payloads::load('production/factoryCalendar', 'put.request')],
+        'FactoryCalendarPostData production/factoryCalendar' => [FactoryCalendarPostData::class, PostProductionFactoryCalendar::class, Cin7Payloads::load('production/factoryCalendar', 'post.request')],
+        'FactoryCalendarPutData production/factoryCalendar' => [FactoryCalendarPutData::class, PutProductionFactoryCalendar::class, Cin7Payloads::load('production/factoryCalendar', 'put.request')],
     ],
     'missing' => [
         'FactoryCalendarDayData without DayOfWeek' => [FactoryCalendarDayData::class, Arr::except(Cin7Payloads::load('production/factoryCalendar', 'get.response')['FactoryCalendarDays'][0], 'DayOfWeek')],

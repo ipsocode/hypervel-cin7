@@ -116,8 +116,8 @@ return [
         PutMeContacts::class => [PutMeContacts::class, [[]], Cin7Payloads::load('me/contacts', 'put.response'), MeContactData::class, 'MeContactsList.0'],
     ],
     'bodies' => [
-        MeContactPostData::class => [MeContactPostData::class, Cin7Payloads::load('me/contacts', 'post.request')],
-        MeContactPutData::class => [MeContactPutData::class, Cin7Payloads::load('me/contacts', 'put.request')],
+        MeContactPostData::class => [MeContactPostData::class, PostMeContacts::class, Cin7Payloads::load('me/contacts', 'post.request')],
+        MeContactPutData::class => [MeContactPutData::class, PutMeContacts::class, Cin7Payloads::load('me/contacts', 'put.request')],
     ],
     'missing' => [
         'me contact POST without Name' => [MeContactPostData::class, Arr::except(Cin7Payloads::load('me/contacts', 'post.request'), 'Name')],

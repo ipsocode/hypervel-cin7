@@ -94,8 +94,8 @@ return [
         PutTax::class => [PutTax::class, [[]], Cin7Payloads::taxSaved(), TaxData::class, 'TaxRuleList.0'],
     ],
     'bodies' => [
-        TaxPostData::class => [TaxPostData::class, Cin7Payloads::load('ref/tax', 'post.request')],
-        TaxPutData::class => [TaxPutData::class, Cin7Payloads::load('ref/tax', 'put.request')],
+        TaxPostData::class => [TaxPostData::class, PostTax::class, Cin7Payloads::load('ref/tax', 'post.request')],
+        TaxPutData::class => [TaxPutData::class, PutTax::class, Cin7Payloads::load('ref/tax', 'put.request')],
     ],
     'missing' => [
         'tax PUT without ID' => [TaxPutData::class, Arr::except(Cin7Payloads::load('ref/tax', 'put.request'), 'ID')],

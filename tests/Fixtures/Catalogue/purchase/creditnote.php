@@ -98,7 +98,7 @@ return [
         PostPurchaseCreditNote::class => [PostPurchaseCreditNote::class, [[]], Cin7Payloads::load('purchase/creditnote', 'post.response'), PurchaseCreditNoteData::class, ''],
     ],
     'bodies' => [
-        PurchaseCreditNotePostData::class => [PurchaseCreditNotePostData::class, Cin7Payloads::load('purchase/creditnote', 'post.request')],
+        PurchaseCreditNotePostData::class => [PurchaseCreditNotePostData::class, PostPurchaseCreditNote::class, Cin7Payloads::load('purchase/creditnote', 'post.request')],
     ],
     'missing' => [
         'purchase credit note POST without TaskID' => [PurchaseCreditNotePostData::class, Arr::except(Cin7Payloads::load('purchase/creditnote', 'post.request'), 'TaskID')],

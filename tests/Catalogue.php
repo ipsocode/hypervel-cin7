@@ -18,7 +18,7 @@ use SplFileInfo;
  *   request class, verb, path, query and body it sends, or only the call and the key of the
  *   `requests` row that expects the same, which the loader fills in
  * - `dtos`: the request, its fixture and the data class `dto()` returns
- * - `bodies`: a body class and the reference's request example it round-trips
+ * - `bodies`: a body class, the write request that sends it and the reference's request example it round-trips
  * - `missing`: a class and a payload without one of its required fields
  * - `required`: the fields of a class the reference requires
  * - `omitted`: a request, the body given and the body sent without its `$omit` fields

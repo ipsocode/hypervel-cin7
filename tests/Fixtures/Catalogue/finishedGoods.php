@@ -90,8 +90,8 @@ return [
         DeleteFinishedGoods::class => [DeleteFinishedGoods::class, [$taskId], Cin7Payloads::load('finishedGoods', 'delete.response'), FinishedGoodsData::class, ''],
     ],
     'bodies' => [
-        FinishedGoodsPostData::class => [FinishedGoodsPostData::class, Cin7Payloads::load('finishedGoods', 'post.request')],
-        FinishedGoodsPutData::class => [FinishedGoodsPutData::class, Cin7Payloads::load('finishedGoods', 'put.request')],
+        FinishedGoodsPostData::class => [FinishedGoodsPostData::class, PostFinishedGoods::class, Cin7Payloads::load('finishedGoods', 'post.request')],
+        FinishedGoodsPutData::class => [FinishedGoodsPutData::class, PutFinishedGoods::class, Cin7Payloads::load('finishedGoods', 'put.request')],
     ],
     'missing' => [
         'finished goods POST without Status' => [FinishedGoodsPostData::class, Arr::except(Cin7Payloads::load('finishedGoods', 'post.request'), 'Status')],

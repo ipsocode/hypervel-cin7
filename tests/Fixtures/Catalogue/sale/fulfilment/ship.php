@@ -102,8 +102,8 @@ return [
         PutSaleFulfilmentShip::class => [PutSaleFulfilmentShip::class, [[]], Cin7Payloads::load('sale/fulfilment/ship', 'get.response'), SaleFulfilmentShipData::class, ''],
     ],
     'bodies' => [
-        SaleFulfilmentShipPostData::class => [SaleFulfilmentShipPostData::class, Cin7Payloads::load('sale/fulfilment/ship', 'post.request')],
-        SaleFulfilmentShipPutData::class => [SaleFulfilmentShipPutData::class, Cin7Payloads::load('sale/fulfilment/ship', 'put.request')],
+        SaleFulfilmentShipPostData::class => [SaleFulfilmentShipPostData::class, PostSaleFulfilmentShip::class, Cin7Payloads::load('sale/fulfilment/ship', 'post.request')],
+        SaleFulfilmentShipPutData::class => [SaleFulfilmentShipPutData::class, PutSaleFulfilmentShip::class, Cin7Payloads::load('sale/fulfilment/ship', 'put.request')],
     ],
     'missing' => [
         'ship POST without Status' => [SaleFulfilmentShipPostData::class, Arr::except(Cin7Payloads::load('sale/fulfilment/ship', 'post.request'), 'Status')],

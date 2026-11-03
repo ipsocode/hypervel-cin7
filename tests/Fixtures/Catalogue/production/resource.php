@@ -85,8 +85,8 @@ return [
         DeleteProductionResource::class => [DeleteProductionResource::class, [$id], Cin7Payloads::load('production/resource', 'delete.response'), ResourceData::class, ''],
     ],
     'bodies' => [
-        'ResourcesPostData production/resource' => [ResourcesPostData::class, Cin7Payloads::load('production/resource', 'post.request')],
-        'ResourcePutData production/resource' => [ResourcePutData::class, Cin7Payloads::load('production/resource', 'put.request')],
+        'ResourcesPostData production/resource' => [ResourcesPostData::class, PostProductionResource::class, Cin7Payloads::load('production/resource', 'post.request')],
+        'ResourcePutData production/resource' => [ResourcePutData::class, PutProductionResource::class, Cin7Payloads::load('production/resource', 'put.request')],
     ],
     'missing' => [
         'CustomWorkingDayData without DayOfWeek' => [CustomWorkingDayData::class, Arr::except(Cin7Payloads::load('production/resource', 'get.response')['ResourceCapacities'][0]['CustomWorkingDays'][0], 'DayOfWeek')],

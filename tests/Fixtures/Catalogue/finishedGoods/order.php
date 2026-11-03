@@ -49,7 +49,7 @@ return [
         PostFinishedGoodsOrder::class => [PostFinishedGoodsOrder::class, [[]], Cin7Payloads::load('finishedGoods/order', 'post.response'), FinishedGoodsOrderData::class, ''],
     ],
     'bodies' => [
-        FinishedGoodsOrderData::class => [FinishedGoodsOrderData::class, Cin7Payloads::load('finishedGoods/order', 'post.request')],
+        FinishedGoodsOrderData::class => [FinishedGoodsOrderData::class, PostFinishedGoodsOrder::class, Cin7Payloads::load('finishedGoods/order', 'post.request')],
     ],
     'missing' => [
         'finished goods order line without Quantity' => [FinishedGoodsOrderLineData::class, Arr::except(Cin7Payloads::load('finishedGoods/order', 'post.request')['OrderLines'][0], 'Quantity')],

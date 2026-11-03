@@ -36,8 +36,8 @@ return [
         PutCrmTaskCategory::class => [PutCrmTaskCategory::class, [[]], Cin7Payloads::load('crm/taskcategory', 'put.response'), TaskCategoryData::class, 'Categories'],
     ],
     'bodies' => [
-        TaskCategoryPostData::class => [TaskCategoryPostData::class, Cin7Payloads::load('crm/taskcategory', 'post.request')],
-        TaskCategoryPutData::class => [TaskCategoryPutData::class, Cin7Payloads::load('crm/taskcategory', 'put.request')],
+        TaskCategoryPostData::class => [TaskCategoryPostData::class, PostCrmTaskCategory::class, Cin7Payloads::load('crm/taskcategory', 'post.request')],
+        TaskCategoryPutData::class => [TaskCategoryPutData::class, PutCrmTaskCategory::class, Cin7Payloads::load('crm/taskcategory', 'put.request')],
     ],
     'missing' => [
         'Task category without ID' => [TaskCategoryData::class, Arr::except(Cin7Payloads::load('crm/taskcategory', 'get.response')['Categories'][0], 'ID')],

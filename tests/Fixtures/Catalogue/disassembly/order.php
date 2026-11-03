@@ -50,7 +50,7 @@ return [
         PostDisassemblyOrder::class => [PostDisassemblyOrder::class, [[]], Cin7Payloads::load('disassembly/order', 'post.response'), DisassemblyOrderData::class, ''],
     ],
     'bodies' => [
-        DisassemblyOrderData::class => [DisassemblyOrderData::class, Cin7Payloads::load('disassembly/order', 'post.request')],
+        DisassemblyOrderData::class => [DisassemblyOrderData::class, PostDisassemblyOrder::class, Cin7Payloads::load('disassembly/order', 'post.request')],
     ],
     'missing' => [
         'disassembly order line without Quantity' => [DisassemblyOrderLineData::class, Arr::except(Cin7Payloads::load('disassembly/order', 'post.request')['OrderLines'][0], 'Quantity')],

@@ -34,6 +34,6 @@ return [
         PostProductionOrderAuthorise::class => [PostProductionOrderAuthorise::class, [[]], Cin7Payloads::load('production/order/authorise', 'post.response'), ProductionOrdersData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderAuthorisePostData production/order/authorise' => [ProductionOrderAuthorisePostData::class, Cin7Payloads::load('production/order/authorise', 'post.request')],
+        'ProductionOrderAuthorisePostData production/order/authorise' => [ProductionOrderAuthorisePostData::class, PostProductionOrderAuthorise::class, Cin7Payloads::load('production/order/authorise', 'post.request')],
     ],
 ];

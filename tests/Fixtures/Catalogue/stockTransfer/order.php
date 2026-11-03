@@ -64,7 +64,7 @@ return [
         PostStockTransferOrder::class => [PostStockTransferOrder::class, [[]], Cin7Payloads::load('stockTransfer/order', 'post.response'), StockTransferOrderData::class, ''],
     ],
     'bodies' => [
-        StockTransferOrderPostData::class => [StockTransferOrderPostData::class, Cin7Payloads::load('stockTransfer/order', 'post.request')],
+        StockTransferOrderPostData::class => [StockTransferOrderPostData::class, PostStockTransferOrder::class, Cin7Payloads::load('stockTransfer/order', 'post.request')],
     ],
     'missing' => [
         'stock transfer order POST without Status' => [StockTransferOrderPostData::class, Arr::except(Cin7Payloads::load('stockTransfer/order', 'post.request'), 'Status')],

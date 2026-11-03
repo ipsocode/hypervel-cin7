@@ -182,7 +182,7 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
     `with data` row;
   - `resources`: every public resource method;
   - `dtos`: a fixture round-trips through `createDtoFromResponse`;
-  - `bodies`: a write fixture round-trips through its body class;
+  - `bodies`: a write fixture round-trips through its body class, and its write request validates it;
   - `missing`: each required field, left out, fails;
   - `required`: a class's required fields, in its constructor's order, the parent's forwarded ones
     first;

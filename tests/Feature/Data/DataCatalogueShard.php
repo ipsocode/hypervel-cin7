@@ -91,7 +91,10 @@ abstract class DataCatalogueShard extends TestCase
      */
     public static function bodyProvider(): array
     {
-        return Catalogue::shard('bodies', static::SHARD);
+        return array_map(
+            static fn (array $row): array => [$row[0], $row[2]],
+            Catalogue::shard('bodies', static::SHARD),
+        );
     }
 
     /**

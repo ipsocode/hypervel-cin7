@@ -34,6 +34,6 @@ return [
         PostProductionOrderUndo::class => [PostProductionOrderUndo::class, [[]], Cin7Payloads::load('production/order/undo', 'post.response'), ProductionOrderMessageData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderUndoPostData production/order/undo' => [ProductionOrderUndoPostData::class, Cin7Payloads::load('production/order/undo', 'post.request')],
+        'ProductionOrderUndoPostData production/order/undo' => [ProductionOrderUndoPostData::class, PostProductionOrderUndo::class, Cin7Payloads::load('production/order/undo', 'post.request')],
     ],
 ];

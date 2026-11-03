@@ -9,14 +9,18 @@ use Hypervel\Validation\ValidationException;
 use Ipsocode\Cin7\Data\ProductSuppliers\ProductSuppliersData;
 use Ipsocode\Cin7\Data\Reference\Deals\ProductDealPostData;
 use Ipsocode\Cin7\Data\Reference\Deals\ProductDealPutData;
+use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionClass;
+use ReflectionMethod;
 
 /**
- * Every `bodies` row, the reference's request example, goes through the validation `send()`
- * runs on a data object body (`WriteRequest::defaultBody()`: `required` relaxed to `present`),
- * so a wrong validation attribute fails here and not only for a real caller.
+ * Every `bodies` row, the reference's request example, is sent through the request that takes its
+ * data class: `WriteRequest::defaultBody()` leaves out the nulls and the `$omit` fields and
+ * validates what remains with `required` relaxed to `present`, so a wrong validation attribute
+ * fails here and not only for a real caller.
  *
  * The rows in `expectedFailures()` are the examples that fail it, each on exactly the fields
  * listed, with an index in a path written as `*`: the model requires what the reference's table
@@ -25,24 +29,20 @@ use PHPUnit\Framework\Attributes\DataProvider;
  *
  * @see src/docs/data.md
  */
-class BodyValidationTest extends TestCase
+class ExampleBodyValidationTest extends TestCase
 {
     /**
      * @param class-string<Data> $class
+     * @param class-string<WriteRequest<mixed>> $request
      * @param array<string, mixed> $fixture
      */
     #[DataProvider('bodyProvider')]
-    public function testABodyValidatesTheWayASendDoes(string $key, string $class, array $fixture): void
+    public function testABodyValidatesTheWayASendDoes(string $key, string $class, string $request, array $fixture): void
     {
         $failed = [];
 
         try {
-            $class::factory()
-                ->afterRules(static fn (array $rules): array => array_map(
-                    static fn (mixed $rule): mixed => $rule === 'required' ? 'present' : $rule,
-                    $rules,
-                ))
-                ->validate(self::withoutNulls($class::from($fixture)->toArray()));
+            self::bodyOf($request, $class::from($fixture));
         } catch (ValidationException $exception) {
             $failed = array_values(array_unique(array_map(
                 static fn (string $field): string => (string) preg_replace('/\.\d+(?=\.|$)/', '.*', $field),
@@ -60,17 +60,27 @@ class BodyValidationTest extends TestCase
     }
 
     /**
-     * @return array<string, array{string, class-string<Data>, array<string, mixed>}>
+     * @return array<string, array{string, class-string<Data>, class-string<WriteRequest<mixed>>, array<string, mixed>}>
      */
     public static function bodyProvider(): array
     {
         $rows = [];
 
-        foreach (Catalogue::rows('bodies') as $key => [$class, $fixture]) {
-            $rows[$key] = [(string) $key, $class, $fixture];
+        foreach (Catalogue::rows('bodies') as $key => [$class, $request, $fixture]) {
+            $rows[$key] = [(string) $key, $class, $request, $fixture];
         }
 
         return $rows;
+    }
+
+    /**
+     * Every `bodies` row names the write request that sends its data class.
+     */
+    public function testEveryBodyNamesAWriteRequest(): void
+    {
+        foreach (array_column(Catalogue::rows('bodies'), 1) as $request) {
+            $this->assertTrue(is_subclass_of($request, WriteRequest::class), (string) $request);
+        }
     }
 
     /**
@@ -122,23 +132,18 @@ class BodyValidationTest extends TestCase
     }
 
     /**
-     * Drop the null values of a data object's array, at every depth, as `WriteRequest` does.
+     * The body a request sends for a data object, as `send()` builds it.
      *
-     * @param array<array-key, mixed> $data
+     * @param class-string<WriteRequest<mixed>> $request
      * @return array<array-key, mixed>
      */
-    private static function withoutNulls(array $data): array
+    private static function bodyOf(string $request, Data $body): array
     {
-        $list = array_is_list($data);
+        $instance = new ReflectionClass($request)->newInstanceWithoutConstructor();
 
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                $data[$key] = self::withoutNulls($value);
-            } elseif ($value === null && ! $list) {
-                unset($data[$key]);
-            }
-        }
+        // The request's own arguments (an ID, a query) play no part in the body.
+        new ReflectionMethod(WriteRequest::class, '__construct')->invoke($instance, $body);
 
-        return $data;
+        return new ReflectionMethod($instance, 'defaultBody')->invoke($instance);
     }
 }
