@@ -43,8 +43,8 @@ return [
         PutCarrier::class => [PutCarrier::class, [[]], Cin7Payloads::load('ref/carrier', 'put.response'), CarrierData::class, 'CarrierList'],
     ],
     'bodies' => [
-        CarrierPostData::class => [CarrierPostData::class, Cin7Payloads::load('ref/carrier', 'post.request')],
-        CarrierPutData::class => [CarrierPutData::class, Cin7Payloads::load('ref/carrier', 'put.request')],
+        CarrierPostData::class => [CarrierPostData::class, PostCarrier::class, Cin7Payloads::load('ref/carrier', 'post.request')],
+        CarrierPutData::class => [CarrierPutData::class, PutCarrier::class, Cin7Payloads::load('ref/carrier', 'put.request')],
     ],
     'missing' => [
         'carrier POST without Description' => [CarrierPostData::class, []],

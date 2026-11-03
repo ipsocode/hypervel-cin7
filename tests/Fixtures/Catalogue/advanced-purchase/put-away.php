@@ -77,7 +77,7 @@ return [
         PostAdvancedPurchasePutAway::class => [PostAdvancedPurchasePutAway::class, [[]], Cin7Payloads::load('advanced-purchase/put-away', 'post.response'), AdvancedPurchasePutAwaysData::class, ''],
     ],
     'bodies' => [
-        AdvancedPurchasePutAwayPostData::class => [AdvancedPurchasePutAwayPostData::class, Cin7Payloads::load('advanced-purchase/put-away', 'post.request')],
+        AdvancedPurchasePutAwayPostData::class => [AdvancedPurchasePutAwayPostData::class, PostAdvancedPurchasePutAway::class, Cin7Payloads::load('advanced-purchase/put-away', 'post.request')],
     ],
     'missing' => [
         'advanced purchase put away envelope without PurchaseID' => [AdvancedPurchasePutAwaysData::class, Arr::except(Cin7Payloads::load('advanced-purchase/put-away', 'get.response'), 'PurchaseID')],

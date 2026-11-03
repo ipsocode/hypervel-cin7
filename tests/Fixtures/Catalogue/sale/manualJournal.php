@@ -70,7 +70,7 @@ return [
         PostSaleManualJournal::class => [PostSaleManualJournal::class, [[]], Cin7Payloads::load('sale/manualJournal', 'get.response'), SaleManualJournalData::class, ''],
     ],
     'bodies' => [
-        SaleManualJournalPostData::class => [SaleManualJournalPostData::class, Cin7Payloads::load('sale/manualJournal', 'post.request')],
+        SaleManualJournalPostData::class => [SaleManualJournalPostData::class, PostSaleManualJournal::class, Cin7Payloads::load('sale/manualJournal', 'post.request')],
     ],
     'missing' => [
         'manual journal POST without SaleID' => [SaleManualJournalPostData::class, Arr::except(Cin7Payloads::load('sale/manualJournal', 'post.request'), 'SaleID')],

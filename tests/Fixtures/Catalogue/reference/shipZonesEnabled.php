@@ -57,7 +57,7 @@ return [
         PutShipZonesEnabled::class => [PutShipZonesEnabled::class, [[]], Cin7Payloads::load('reference/shipZonesEnabled', 'put.response'), ShipZonesEnabledData::class, ''],
     ],
     'bodies' => [
-        ShipZonesEnabledData::class => [ShipZonesEnabledData::class, Cin7Payloads::load('reference/shipZonesEnabled', 'put.request')],
+        ShipZonesEnabledData::class => [ShipZonesEnabledData::class, PutShipZonesEnabled::class, Cin7Payloads::load('reference/shipZonesEnabled', 'put.request')],
     ],
     'missing' => [
         'ship zones enabled without IsEnabled' => [ShipZonesEnabledData::class, []],

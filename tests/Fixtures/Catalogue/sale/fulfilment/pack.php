@@ -104,8 +104,8 @@ return [
         PutSaleFulfilmentPack::class => [PutSaleFulfilmentPack::class, [[]], Cin7Payloads::load('sale/fulfilment/pack', 'get.response'), SaleFulfilmentPackData::class, ''],
     ],
     'bodies' => [
-        SaleFulfilmentPackPostData::class => [SaleFulfilmentPackPostData::class, Cin7Payloads::load('sale/fulfilment/pack', 'post.request')],
-        'pack PUT' => [SaleFulfilmentPackData::class, Cin7Payloads::load('sale/fulfilment/pack', 'put.request')],
+        SaleFulfilmentPackPostData::class => [SaleFulfilmentPackPostData::class, PostSaleFulfilmentPack::class, Cin7Payloads::load('sale/fulfilment/pack', 'post.request')],
+        'pack PUT' => [SaleFulfilmentPackData::class, PutSaleFulfilmentPack::class, Cin7Payloads::load('sale/fulfilment/pack', 'put.request')],
     ],
     'missing' => [
         'pack without Status' => [SaleFulfilmentPackData::class, Arr::except(Cin7Payloads::load('sale/fulfilment/pack', 'get.response'), 'Status')],

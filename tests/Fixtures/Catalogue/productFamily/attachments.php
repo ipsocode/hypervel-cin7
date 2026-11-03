@@ -79,7 +79,7 @@ return [
         DeleteProductFamilyAttachments::class => [DeleteProductFamilyAttachments::class, ['3ba9b33c-662a-4bed-935a-9e13e7535c88'], Cin7Payloads::load('productFamily/attachments', 'delete.response'), AttachmentLineData::class, ''],
     ],
     'bodies' => [
-        ProductFamilyAttachmentPostData::class => [ProductFamilyAttachmentPostData::class, Cin7Payloads::load('productFamily/attachments', 'post.request')],
+        ProductFamilyAttachmentPostData::class => [ProductFamilyAttachmentPostData::class, PostProductFamilyAttachments::class, Cin7Payloads::load('productFamily/attachments', 'post.request')],
     ],
     'missing' => [
         'product family attachment POST without FamilyID' => [ProductFamilyAttachmentPostData::class, Arr::except(Cin7Payloads::load('productFamily/attachments', 'post.request'), 'FamilyID')],

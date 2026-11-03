@@ -99,8 +99,8 @@ return [
         GetProductSuppliers::class => [GetProductSuppliers::class, [$productId], Cin7Payloads::load('product-suppliers', 'get.response'), ProductSuppliersData::class, ''],
     ],
     'bodies' => [
-        ProductSuppliersData::class . ' POST' => [ProductSuppliersData::class, Cin7Payloads::load('product-suppliers', 'post.request')],
-        ProductSuppliersData::class . ' PUT' => [ProductSuppliersData::class, Cin7Payloads::load('product-suppliers', 'put.request')],
+        ProductSuppliersData::class . ' POST' => [ProductSuppliersData::class, PostProductSuppliers::class, Cin7Payloads::load('product-suppliers', 'post.request')],
+        ProductSuppliersData::class . ' PUT' => [ProductSuppliersData::class, PutProductSuppliers::class, Cin7Payloads::load('product-suppliers', 'put.request')],
     ],
     'missing' => [
         'product suppliers without ProductSuppliers' => [ProductSuppliersData::class, Arr::except(Cin7Payloads::load('product-suppliers', 'post.request'), 'ProductSuppliers')],

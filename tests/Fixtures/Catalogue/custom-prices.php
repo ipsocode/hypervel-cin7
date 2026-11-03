@@ -84,8 +84,8 @@ return [
         ],
     ],
     'bodies' => [
-        CustomPricesData::class . ' POST' => [CustomPricesData::class, Cin7Payloads::load('custom-prices', 'post.request')],
-        CustomPricesData::class . ' PUT' => [CustomPricesData::class, Cin7Payloads::load('custom-prices', 'put.request')],
+        CustomPricesData::class . ' POST' => [CustomPricesData::class, PostCustomPrices::class, Cin7Payloads::load('custom-prices', 'post.request')],
+        CustomPricesData::class . ' PUT' => [CustomPricesData::class, PutCustomPrices::class, Cin7Payloads::load('custom-prices', 'put.request')],
     ],
     'missing' => [
         'custom prices without CustomPrices' => [CustomPricesData::class, Arr::except(Cin7Payloads::load('custom-prices', 'post.request'), 'CustomPrices')],

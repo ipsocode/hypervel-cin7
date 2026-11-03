@@ -33,6 +33,31 @@ return [
             [],
             ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
+        PostFinishedGoodsPick::class . ' with data' => [
+            PostFinishedGoodsPick::class,
+            [fn (): FinishedGoodsPickData => FinishedGoodsPickData::from(Cin7Payloads::load('finishedGoods/pick', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/finishedGoods/pick',
+            [],
+            [
+                'CompletionDate' => '2019-02-16T00:00:00',
+                'TaskID' => 'dcede9f5-58ba-4236-81fe-b3d43890b2dc',
+                'Status' => 'COMPLETED',
+                'WIPAccount' => '715',
+                'WIPDate' => '2019-02-15T00:00:00',
+                'Account' => '714',
+                'PickLines' => [
+                    [
+                        'Unit' => 'Item',
+                        'Cost' => 0.0,
+                        'ProductID' => 'e1cb8393-349d-41e6-b317-c42f21c543c6',
+                        'ProductCode' => 'Assembly 01',
+                        'Name' => 'Assembly name 01',
+                        'Quantity' => 30.0,
+                    ],
+                ],
+            ],
+        ],
     ],
     'resources' => [
         'finishedGoods pick get' => [
@@ -49,7 +74,7 @@ return [
         PostFinishedGoodsPick::class => [PostFinishedGoodsPick::class, [[]], Cin7Payloads::load('finishedGoods/pick', 'post.response'), FinishedGoodsPickData::class, ''],
     ],
     'bodies' => [
-        FinishedGoodsPickData::class => [FinishedGoodsPickData::class, Cin7Payloads::load('finishedGoods/pick', 'post.request')],
+        FinishedGoodsPickData::class => [FinishedGoodsPickData::class, PostFinishedGoodsPick::class, Cin7Payloads::load('finishedGoods/pick', 'post.request')],
     ],
     'missing' => [
         'finished goods pick POST without CompletionDate' => [FinishedGoodsPickData::class, Arr::except(Cin7Payloads::load('finishedGoods/pick', 'post.request'), 'CompletionDate')],

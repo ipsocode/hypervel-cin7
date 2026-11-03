@@ -71,7 +71,7 @@ return [
         PostPurchaseManualJournal::class => [PostPurchaseManualJournal::class, [[]], Cin7Payloads::load('purchase/manualJournal', 'post.response'), PurchaseManualJournalData::class, ''],
     ],
     'bodies' => [
-        PurchaseManualJournalPostData::class => [PurchaseManualJournalPostData::class, Cin7Payloads::load('purchase/manualJournal', 'post.request')],
+        PurchaseManualJournalPostData::class => [PurchaseManualJournalPostData::class, PostPurchaseManualJournal::class, Cin7Payloads::load('purchase/manualJournal', 'post.request')],
     ],
     'missing' => [
         'purchase manual journal POST without TaskID' => [PurchaseManualJournalPostData::class, Arr::except(Cin7Payloads::load('purchase/manualJournal', 'post.request'), 'TaskID')],

@@ -111,9 +111,9 @@ return [
         PutPurchasePayment::class => [PutPurchasePayment::class, [[]], Cin7Payloads::load('purchase/payment', 'put.response'), PurchasePaymentData::class, ''],
     ],
     'bodies' => [
-        PurchasePaymentPostData::class => [PurchasePaymentPostData::class, Cin7Payloads::load('purchase/payment', 'post.request')],
+        PurchasePaymentPostData::class => [PurchasePaymentPostData::class, PostPurchasePayment::class, Cin7Payloads::load('purchase/payment', 'post.request')],
         // The PUT example also sends the POST-only `Type`, which the PUT body does not take.
-        PurchasePaymentPutData::class => [PurchasePaymentPutData::class, Arr::except(Cin7Payloads::load('purchase/payment', 'put.request'), 'Type')],
+        PurchasePaymentPutData::class => [PurchasePaymentPutData::class, PutPurchasePayment::class, Arr::except(Cin7Payloads::load('purchase/payment', 'put.request'), 'Type')],
     ],
     'missing' => [
         'purchase payment POST without Account' => [PurchasePaymentPostData::class, Arr::except(Cin7Payloads::load('purchase/payment', 'post.request'), 'Account')],

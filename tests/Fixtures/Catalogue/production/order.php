@@ -46,6 +46,26 @@ return [
             ['RecalculateDates' => 'true'],
             ['ProductID' => $id, 'LocationID' => $id],
         ],
+        PostProductionOrder::class . ' with data' => [
+            PostProductionOrder::class,
+            [fn (): ProductionOrderPostData => ProductionOrderPostData::from(Cin7Payloads::load('production/order', 'post.request')), 'recalculateDates' => true],
+            Method::POST,
+            '/ExternalApi/v2/production/order',
+            ['RecalculateDates' => 'true'],
+            [
+                'ProductID' => 'c07693d0-f2ea-4aeb-ab0b-e1e1378003ef',
+                'ProductSKU' => '',
+                'LocationName' => '',
+                'WIPAccountCode' => '715',
+                'FinishedGoodsAccountCode' => '620',
+                'Quantity' => 1.0,
+                'CapacityCalculationType' => 'FromStartForward',
+                'StartDate' => '2021-02-12T00:00:00',
+                'IsIgnoreLeadTime' => false,
+                'BOMVersion' => 1,
+                'LocationID' => 'e579b996-eba9-45a2-8b09-5b3280b7c0af',
+            ],
+        ],
         PutProductionOrder::class => [
             PutProductionOrder::class,
             [['ProductionOrderID' => $id, 'Quantity' => 5], 'allowRecalculateDates' => true, 'allowRecalculateCyclesAndQuantities' => false],
@@ -53,6 +73,19 @@ return [
             '/ExternalApi/v2/production/order',
             ['AllowRecalculateDates' => 'true', 'AllowRecalculateCyclesAndQuantities' => 'false'],
             ['ProductionOrderID' => $id, 'Quantity' => 5],
+        ],
+        PutProductionOrder::class . ' with data' => [
+            PutProductionOrder::class,
+            [fn (): ProductionOrderPutData => ProductionOrderPutData::from(Cin7Payloads::load('production/order', 'put.request')), 'allowRecalculateDates' => true, 'allowRecalculateCyclesAndQuantities' => false],
+            Method::PUT,
+            '/ExternalApi/v2/production/order',
+            ['AllowRecalculateDates' => 'true', 'AllowRecalculateCyclesAndQuantities' => 'false'],
+            [
+                'ProductionOrderID' => 'fd5197cc-cf19-45cf-aafc-98e86647f941',
+                'Quantity' => 5.0,
+                'BOMVersion' => 2,
+                'LocationID' => '35c5646b-6a6d-4045-9512-04e1064a3e90',
+            ],
         ],
     ],
     'resources' => [
@@ -75,8 +108,8 @@ return [
         PutProductionOrder::class => [PutProductionOrder::class, [[]], Cin7Payloads::load('production/order', 'put.response'), ProductionOrdersData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderPostData production/order' => [ProductionOrderPostData::class, Cin7Payloads::load('production/order', 'post.request')],
-        'ProductionOrderPutData production/order' => [ProductionOrderPutData::class, Cin7Payloads::load('production/order', 'put.request')],
+        'ProductionOrderPostData production/order' => [ProductionOrderPostData::class, PostProductionOrder::class, Cin7Payloads::load('production/order', 'post.request')],
+        'ProductionOrderPutData production/order' => [ProductionOrderPutData::class, PutProductionOrder::class, Cin7Payloads::load('production/order', 'put.request')],
     ],
     'missing' => [
         'ProductionOrderOperationAttachmentData without ContentType' => [ProductionOrderOperationAttachmentData::class, Arr::except(Cin7Payloads::load('production/order', 'get.response')['ProductionOrders'][0]['Operations'][0]['Attachments'][0], 'ContentType')],

@@ -122,8 +122,8 @@ return [
         PutAccount::class => [PutAccount::class, [[]], Cin7Payloads::load('ref/account', 'put.response'), AccountData::class, 'AccountsList.0'],
     ],
     'bodies' => [
-        AccountPostData::class => [AccountPostData::class, Cin7Payloads::load('ref/account', 'post.request')],
-        AccountPutData::class => [AccountPutData::class, Cin7Payloads::load('ref/account', 'put.request')],
+        AccountPostData::class => [AccountPostData::class, PostAccount::class, Cin7Payloads::load('ref/account', 'post.request')],
+        AccountPutData::class => [AccountPutData::class, PutAccount::class, Cin7Payloads::load('ref/account', 'put.request')],
     ],
     'missing' => [
         'account POST without Code' => [AccountPostData::class, Arr::except(Cin7Payloads::load('ref/account', 'post.request'), 'Code')],

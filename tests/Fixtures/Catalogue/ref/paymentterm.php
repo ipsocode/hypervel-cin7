@@ -119,8 +119,8 @@ return [
         PutPaymentTerm::class => [PutPaymentTerm::class, [[]], Cin7Payloads::load('ref/paymentterm', 'put.response'), PaymentTermData::class, 'PaymentTermList.0'],
     ],
     'bodies' => [
-        PaymentTermPostData::class => [PaymentTermPostData::class, Cin7Payloads::load('ref/paymentterm', 'post.request')],
-        PaymentTermPutData::class => [PaymentTermPutData::class, Cin7Payloads::load('ref/paymentterm', 'put.request')],
+        PaymentTermPostData::class => [PaymentTermPostData::class, PostPaymentTerm::class, Cin7Payloads::load('ref/paymentterm', 'post.request')],
+        PaymentTermPutData::class => [PaymentTermPutData::class, PutPaymentTerm::class, Cin7Payloads::load('ref/paymentterm', 'put.request')],
     ],
     'missing' => [
         'ref paymentterm POST without Name' => [PaymentTermPostData::class, Arr::except(Cin7Payloads::load('ref/paymentterm', 'post.request'), 'Name')],

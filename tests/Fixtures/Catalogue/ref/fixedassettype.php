@@ -105,8 +105,8 @@ return [
         PutFixedAssetType::class => [PutFixedAssetType::class, [[]], Cin7Payloads::load('ref/fixedassettype', 'put.response'), FixedAssetTypeData::class, 'FixedAssetTypeList.0'],
     ],
     'bodies' => [
-        FixedAssetTypePostData::class => [FixedAssetTypePostData::class, Cin7Payloads::load('ref/fixedassettype', 'post.request')],
-        FixedAssetTypePutData::class => [FixedAssetTypePutData::class, Cin7Payloads::load('ref/fixedassettype', 'put.request')],
+        FixedAssetTypePostData::class => [FixedAssetTypePostData::class, PostFixedAssetType::class, Cin7Payloads::load('ref/fixedassettype', 'post.request')],
+        FixedAssetTypePutData::class => [FixedAssetTypePutData::class, PutFixedAssetType::class, Cin7Payloads::load('ref/fixedassettype', 'put.request')],
     ],
     'missing' => [
         'ref fixedassettype POST without Name' => [FixedAssetTypePostData::class, Arr::except(Cin7Payloads::load('ref/fixedassettype', 'post.request'), 'Name')],

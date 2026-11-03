@@ -84,7 +84,7 @@ return [
         DeleteSaleFulfilment::class => [DeleteSaleFulfilment::class, ['task-1'], Cin7Payloads::load('sale/fulfilment', 'get.response'), SaleFulfilmentsData::class, ''],
     ],
     'bodies' => [
-        'fulfilment POST' => [SaleFulfilmentsData::class, Cin7Payloads::load('sale/fulfilment', 'post.request')],
+        'fulfilment POST' => [SaleFulfilmentsData::class, PostSaleFulfilment::class, Cin7Payloads::load('sale/fulfilment', 'post.request')],
     ],
     'missing' => [
         'fulfilments without SaleID' => [SaleFulfilmentsData::class, Arr::except(Cin7Payloads::load('sale/fulfilment', 'get.response'), 'SaleID')],

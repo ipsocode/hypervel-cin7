@@ -121,8 +121,8 @@ return [
         DeleteSaleInvoice::class => [DeleteSaleInvoice::class, ['task-1'], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
     ],
     'bodies' => [
-        SaleInvoicePostData::class => [SaleInvoicePostData::class, Cin7Payloads::saleInvoicePost()],
-        SaleInvoicePutData::class => [SaleInvoicePutData::class, Cin7Payloads::saleInvoicePut()],
+        SaleInvoicePostData::class => [SaleInvoicePostData::class, PostSaleInvoice::class, Cin7Payloads::saleInvoicePost()],
+        SaleInvoicePutData::class => [SaleInvoicePutData::class, PutSaleInvoice::class, Cin7Payloads::saleInvoicePut()],
     ],
     'missing' => [
         'invoice POST without Status' => [SaleInvoicePostData::class, Arr::except(Cin7Payloads::saleInvoicePost(), 'Status')],

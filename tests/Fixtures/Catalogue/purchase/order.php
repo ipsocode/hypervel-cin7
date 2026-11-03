@@ -87,7 +87,7 @@ return [
         PostPurchaseOrder::class => [PostPurchaseOrder::class, [[]], Cin7Payloads::load('purchase/order', 'post.response'), PurchaseOrderData::class, ''],
     ],
     'bodies' => [
-        PurchaseOrderPostData::class => [PurchaseOrderPostData::class, Cin7Payloads::load('purchase/order', 'post.request')],
+        PurchaseOrderPostData::class => [PurchaseOrderPostData::class, PostPurchaseOrder::class, Cin7Payloads::load('purchase/order', 'post.request')],
     ],
     'missing' => [
         'purchase order POST without TaskID' => [PurchaseOrderPostData::class, Arr::except(Cin7Payloads::load('purchase/order', 'post.request'), 'TaskID')],

@@ -99,8 +99,8 @@ return [
         PutSalePayment::class => [PutSalePayment::class, [[]], Cin7Payloads::salePayment(), SalePaymentLinePartialData::class, ''],
     ],
     'bodies' => [
-        SalePaymentPostData::class => [SalePaymentPostData::class, Cin7Payloads::salePaymentPost()],
-        SalePaymentPutData::class => [SalePaymentPutData::class, Cin7Payloads::salePaymentPut()],
+        SalePaymentPostData::class => [SalePaymentPostData::class, PostSalePayment::class, Cin7Payloads::salePaymentPost()],
+        SalePaymentPutData::class => [SalePaymentPutData::class, PutSalePayment::class, Cin7Payloads::salePaymentPut()],
     ],
     'missing' => [
         'payment POST without Type' => [SalePaymentPostData::class, Arr::except(Cin7Payloads::salePaymentPost(), 'Type')],

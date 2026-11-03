@@ -123,8 +123,8 @@ return [
         PutMeAddresses::class => [PutMeAddresses::class, [[]], Cin7Payloads::load('me/addresses', 'put.response'), MeAddressData::class, 'MeAddressesList.0'],
     ],
     'bodies' => [
-        MeAddressPostData::class => [MeAddressPostData::class, Cin7Payloads::load('me/addresses', 'post.request')],
-        MeAddressPutData::class => [MeAddressPutData::class, Cin7Payloads::load('me/addresses', 'put.request')],
+        MeAddressPostData::class => [MeAddressPostData::class, PostMeAddresses::class, Cin7Payloads::load('me/addresses', 'post.request')],
+        MeAddressPutData::class => [MeAddressPutData::class, PutMeAddresses::class, Cin7Payloads::load('me/addresses', 'put.request')],
     ],
     'missing' => [
         'me address POST without Type' => [MeAddressPostData::class, Arr::except(Cin7Payloads::load('me/addresses', 'post.request'), 'Type')],

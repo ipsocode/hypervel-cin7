@@ -77,7 +77,7 @@ return [
         DeletePurchaseAttachment::class => [DeletePurchaseAttachment::class, ['attachment-1'], Cin7Payloads::load('purchase/attachment', 'delete.response'), PurchaseAttachmentsData::class, ''],
     ],
     'bodies' => [
-        PurchaseAttachmentPostData::class => [PurchaseAttachmentPostData::class, Cin7Payloads::load('purchase/attachment', 'post.request')],
+        PurchaseAttachmentPostData::class => [PurchaseAttachmentPostData::class, PostPurchaseAttachment::class, Cin7Payloads::load('purchase/attachment', 'post.request')],
     ],
     'missing' => [
         'purchase attachments without TaskID' => [PurchaseAttachmentsData::class, Arr::except(Cin7Payloads::load('purchase/attachment', 'get.response'), 'TaskID')],

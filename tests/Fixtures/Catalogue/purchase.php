@@ -152,8 +152,8 @@ return [
         DeletePurchase::class => [DeletePurchase::class, ['guid-1'], Cin7Payloads::load('purchase', 'delete.response'), PurchaseData::class, ''],
     ],
     'bodies' => [
-        PurchasePostData::class => [PurchasePostData::class, Cin7Payloads::load('purchase', 'post.request')],
-        PurchasePutData::class => [PurchasePutData::class, Cin7Payloads::load('purchase', 'put.request')],
+        PurchasePostData::class => [PurchasePostData::class, PostPurchase::class, Cin7Payloads::load('purchase', 'post.request')],
+        PurchasePutData::class => [PurchasePutData::class, PutPurchase::class, Cin7Payloads::load('purchase', 'put.request')],
     ],
     'missing' => [
         'purchase without Approach' => [PurchaseData::class, Arr::except($purchase, 'Approach')],

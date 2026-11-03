@@ -93,7 +93,7 @@ return [
         PostPurchaseInvoice::class => [PostPurchaseInvoice::class, [[]], Cin7Payloads::load('purchase/invoice', 'post.response'), PurchaseInvoiceData::class, ''],
     ],
     'bodies' => [
-        PurchaseInvoicePostData::class => [PurchaseInvoicePostData::class, Cin7Payloads::load('purchase/invoice', 'post.request')],
+        PurchaseInvoicePostData::class => [PurchaseInvoicePostData::class, PostPurchaseInvoice::class, Cin7Payloads::load('purchase/invoice', 'post.request')],
     ],
     'missing' => [
         'purchase invoice POST without TaskID' => [PurchaseInvoicePostData::class, Arr::except(Cin7Payloads::load('purchase/invoice', 'post.request'), 'TaskID')],
