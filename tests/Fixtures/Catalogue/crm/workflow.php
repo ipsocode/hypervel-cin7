@@ -28,8 +28,8 @@ return [
     'resources' => [
         'crm workflow get' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->workflow()->get(), GetCrmWorkflow::class, Method::GET, $uri, ['page' => 1, 'limit' => 100], null],
         'crm workflow paginate' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->workflow()->paginate(name: 'my')->current(), GetCrmWorkflow::class, Method::GET, $uri, ['Name' => 'my', 'page' => 1, 'limit' => 100], null],
-        'crm workflow post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->workflow()->post(['Name' => 'A']), PostCrmWorkflow::class, Method::POST, $uri, [], ['Name' => 'A']],
-        'crm workflow put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->workflow()->put(['ID' => $id, 'Name' => 'B']), PutCrmWorkflow::class, Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'B']],
+        'crm workflow post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->workflow()->post(['Name' => 'A']), PostCrmWorkflow::class],
+        'crm workflow put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->workflow()->put(['ID' => $id, 'Name' => 'B']), PutCrmWorkflow::class],
     ],
     'dtos' => [
         GetCrmWorkflow::class => [GetCrmWorkflow::class, [], Cin7Payloads::load('crm/workflow', 'get.response'), WorkflowData::class, 'Workflows'],

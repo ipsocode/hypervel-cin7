@@ -28,10 +28,6 @@ return [
         'production order undo' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->undo(['productionOrderID' => $id, 'ApplyToTasks' => true]),
             PostProductionOrderUndo::class,
-            Method::POST,
-            '/ExternalApi/v2/production/order/undo',
-            [],
-            ['productionOrderID' => $id, 'ApplyToTasks' => true],
         ],
     ],
     'dtos' => [

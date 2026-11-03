@@ -7,8 +7,5 @@ composer.lock
 /tests/.cache/
 /tests/coverage/
 
-# The to-do list docs/ai/scripts/todo.py writes; it is never committed.
-/TODO.md
-
 # Claude Code's local state, such as its settings and worktrees.
 /.claude

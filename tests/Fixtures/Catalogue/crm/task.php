@@ -27,8 +27,8 @@ return [
     'resources' => [
         'crm task get' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->task()->get(), GetCrmTask::class, Method::GET, $uri, ['page' => 1, 'limit' => 100], null],
         'crm task paginate' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->task()->paginate(category: 'task cat 1')->current(), GetCrmTask::class, Method::GET, $uri, ['Category' => 'task cat 1', 'page' => 1, 'limit' => 100], null],
-        'crm task post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->task()->post(['Name' => 'A']), PostCrmTask::class, Method::POST, $uri, [], ['Name' => 'A']],
-        'crm task put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->task()->put(['ID' => $id, 'Name' => 'B']), PutCrmTask::class, Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'B']],
+        'crm task post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->task()->post(['Name' => 'A']), PostCrmTask::class],
+        'crm task put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->task()->put(['ID' => $id, 'Name' => 'B']), PutCrmTask::class],
     ],
     'dtos' => [
         GetCrmTask::class => [GetCrmTask::class, [], Cin7Payloads::load('crm/task', 'get.response'), TaskData::class, 'Tasks'],

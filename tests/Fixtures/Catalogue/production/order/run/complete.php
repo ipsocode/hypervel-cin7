@@ -28,10 +28,6 @@ return [
         'production order run complete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->complete(['ProductionOrderID' => $id, 'ProductionRunID' => $id]),
             PutProductionOrderRunComplete::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/complete',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id],
         ],
     ],
     'dtos' => [

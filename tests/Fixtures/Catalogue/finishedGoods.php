@@ -57,26 +57,14 @@ return [
         'finishedGoods get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->finishedGoods()->get($taskId),
             GetFinishedGoods::class,
-            Method::GET,
-            '/ExternalApi/v2/finishedGoods',
-            ['TaskID' => $taskId],
-            null,
         ],
         'finishedGoods post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->finishedGoods()->post(['Status' => 'DRAFT', 'Notes' => 'Test']),
             PostFinishedGoods::class,
-            Method::POST,
-            '/ExternalApi/v2/finishedGoods',
-            [],
-            ['Status' => 'DRAFT', 'Notes' => 'Test'],
         ],
         'finishedGoods put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->finishedGoods()->put(['ID' => $taskId, 'Notes' => 'Test']),
             PutFinishedGoods::class,
-            Method::PUT,
-            '/ExternalApi/v2/finishedGoods',
-            [],
-            ['ID' => $taskId, 'Notes' => 'Test'],
         ],
         'finishedGoods delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->finishedGoods()->delete($taskId),

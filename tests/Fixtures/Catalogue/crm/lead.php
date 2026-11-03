@@ -27,8 +27,8 @@ return [
     'resources' => [
         'crm lead get' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->lead()->get(), GetCrmLead::class, Method::GET, $uri, ['page' => 1, 'limit' => 100], null],
         'crm lead paginate' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->lead()->paginate(name: 'A')->current(), GetCrmLead::class, Method::GET, $uri, ['Name' => 'A', 'page' => 1, 'limit' => 100], null],
-        'crm lead post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->lead()->post(['Name' => 'A']), PostCrmLead::class, Method::POST, $uri, [], ['Name' => 'A']],
-        'crm lead put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->lead()->put(['ID' => $id, 'Name' => 'B']), PutCrmLead::class, Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'B']],
+        'crm lead post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->lead()->post(['Name' => 'A']), PostCrmLead::class],
+        'crm lead put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->lead()->put(['ID' => $id, 'Name' => 'B']), PutCrmLead::class],
     ],
     'dtos' => [
         GetCrmLead::class => [GetCrmLead::class, [], Cin7Payloads::load('crm/lead', 'get.response'), LeadData::class, 'LeadList'],

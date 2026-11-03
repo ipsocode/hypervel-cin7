@@ -38,18 +38,10 @@ return [
         'finishedGoods order get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->finishedGoods()->order()->get($taskId),
             GetFinishedGoodsOrder::class,
-            Method::GET,
-            '/ExternalApi/v2/finishedGoods/order',
-            ['TaskID' => $taskId],
-            null,
         ],
         'finishedGoods order post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->finishedGoods()->order()->post(['TaskID' => $taskId, 'Status' => 'DRAFT']),
             PostFinishedGoodsOrder::class,
-            Method::POST,
-            '/ExternalApi/v2/finishedGoods/order',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'DRAFT'],
         ],
     ],
     'dtos' => [

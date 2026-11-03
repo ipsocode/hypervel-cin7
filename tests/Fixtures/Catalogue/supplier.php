@@ -84,10 +84,6 @@ return [
         'supplier post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->supplier()->post(['Name' => 'Bayside Club']),
             PostSupplier::class,
-            Method::POST,
-            '/ExternalApi/v2/supplier',
-            [],
-            ['Name' => 'Bayside Club'],
         ],
         'supplier post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->supplier()->post(SupplierPostData::from($fields)),
@@ -100,10 +96,6 @@ return [
         'supplier put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->supplier()->put(['ID' => '733062e8-56d7-4de6-ba06-ed8c690f5f01', 'Name' => 'Bayside Club']),
             PutSupplier::class,
-            Method::PUT,
-            '/ExternalApi/v2/supplier',
-            [],
-            ['ID' => '733062e8-56d7-4de6-ba06-ed8c690f5f01', 'Name' => 'Bayside Club'],
         ],
         'supplier put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->supplier()->put(SupplierPutData::from([...$fields, 'ID' => '733062e8-56d7-4de6-ba06-ed8c690f5f01', 'Status' => 'Deprecated'])),

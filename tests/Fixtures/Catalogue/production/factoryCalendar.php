@@ -50,26 +50,14 @@ return [
         'production factoryCalendar get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->factoryCalendar()->get(2024),
             GetProductionFactoryCalendar::class,
-            Method::GET,
-            '/ExternalApi/v2/production/factoryCalendar',
-            ['Year' => 2024],
-            null,
         ],
         'production factoryCalendar post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->factoryCalendar()->post(['Year' => 2024, 'WeekStart' => 'Monday']),
             PostProductionFactoryCalendar::class,
-            Method::POST,
-            '/ExternalApi/v2/production/factoryCalendar',
-            [],
-            ['Year' => 2024, 'WeekStart' => 'Monday'],
         ],
         'production factoryCalendar put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->factoryCalendar()->put(['Year' => 2024]),
             PutProductionFactoryCalendar::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/factoryCalendar',
-            [],
-            ['Year' => 2024],
         ],
     ],
     'dtos' => [

@@ -145,7 +145,7 @@ the Money Task. Each file returns its rows by kind, and
 | Kind | A row is |
 |---|---|
 | `requests` | a request class, its arguments, and the method, path, query and body it sends; `… with data` rows send a data object body |
-| `resources` | a resource call, keyed `<resource path> <method>` (`sale payment put`), and the request it sends |
+| `resources` | a resource call, keyed `<resource path> <method>` (`sale payment put`), and the request it sends, or the key of the `requests` row that expects the same, which the loader fills in |
 | `dtos` | a request, its fixture and the data class `dto()` returns, with where the record sits in the fixture |
 | `bodies` | a body class and the reference's request example it round-trips and validates (`BodyValidationTest` lists the examples that fail, and on which fields) |
 | `missing` | a class and a payload without one of its required fields, which cannot be built |

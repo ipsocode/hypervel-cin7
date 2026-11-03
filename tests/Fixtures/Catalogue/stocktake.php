@@ -77,18 +77,10 @@ return [
         'stockTake get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockTake()->get($taskId),
             GetStockTake::class,
-            Method::GET,
-            '/ExternalApi/v2/stocktake',
-            ['TaskID' => $taskId],
-            null,
         ],
         'stockTake post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockTake()->post(['Account' => '403', 'Reference' => 'Test']),
             PostStockTake::class,
-            Method::POST,
-            '/ExternalApi/v2/stocktake',
-            [],
-            ['Account' => '403', 'Reference' => 'Test'],
         ],
         'stockTake post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockTake()->post(StockTakePostData::from($fields)),
@@ -101,10 +93,6 @@ return [
         'stockTake put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockTake()->put(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PutStockTake::class,
-            Method::PUT,
-            '/ExternalApi/v2/stocktake',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
         'stockTake put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockTake()->put(StockTakePutData::from([...$fields, 'TaskID' => $taskId, 'Status' => StockTakeStatus::Completed])),

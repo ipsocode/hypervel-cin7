@@ -26,11 +26,11 @@ return [
         PostCustomerTemplates::class . ' with data' => [PostCustomerTemplates::class, [fn (): CustomerDefaultTemplatesPostData => CustomerDefaultTemplatesPostData::from($body)], Method::POST, $uri, [], $body],
     ],
     'resources' => [
-        'ref customer templates get' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->get(customerId: $customer), GetCustomerTemplates::class, Method::GET, $uri, ['CustomerId' => $customer, 'page' => 1, 'limit' => 100], null],
+        'ref customer templates get' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->get(customerId: $customer), GetCustomerTemplates::class],
         'ref customer templates paginate' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->paginate()->current(), GetCustomerTemplates::class, Method::GET, $uri, ['page' => 1, 'limit' => 100], null],
-        'ref customer templates post' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->post($body), PostCustomerTemplates::class, Method::POST, $uri, [], $body],
-        'ref customer templates post with data' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->post(CustomerDefaultTemplatesPostData::from($body)), PostCustomerTemplates::class, Method::POST, $uri, [], $body],
-        'ref customer templates delete' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->delete($template, $customer), DeleteCustomerTemplates::class, Method::DELETE, $uri, ['TemplateId' => $template, 'CustomerId' => $customer], null],
+        'ref customer templates post' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->post($body), PostCustomerTemplates::class],
+        'ref customer templates post with data' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->post(CustomerDefaultTemplatesPostData::from($body)), PostCustomerTemplates::class],
+        'ref customer templates delete' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->templates()->delete($template, $customer), DeleteCustomerTemplates::class],
     ],
     'dtos' => [
         GetCustomerTemplates::class => [GetCustomerTemplates::class, [], Cin7Payloads::load('ref/customer/templates', 'get.response'), CustomerDefaultTemplateData::class, 'CustomerTemplates'],

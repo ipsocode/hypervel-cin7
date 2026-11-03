@@ -58,18 +58,10 @@ return [
         'advancedPurchase putAway get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->putAway()->get('5a7fb526-527a-4229-b331-90b6f5535aab'),
             GetAdvancedPurchasePutAway::class,
-            Method::GET,
-            '/ExternalApi/v2/advanced-purchase/put-away',
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab'],
-            null,
         ],
         'advancedPurchase putAway post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->putAway()->post(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Status' => 'AUTHORISED', 'Lines' => []]),
             PostAdvancedPurchasePutAway::class,
-            Method::POST,
-            '/ExternalApi/v2/advanced-purchase/put-away',
-            [],
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Status' => 'AUTHORISED', 'Lines' => []],
         ],
         'advancedPurchase putAway post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->putAway()->post(AdvancedPurchasePutAwayPostData::from(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '807c3266-157b-4c0d-8131-a3b8e06c0d97', 'Status' => 'AUTHORISED', 'Lines' => [$line]])),

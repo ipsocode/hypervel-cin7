@@ -28,10 +28,6 @@ return [
         'production order release' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->release(['productionOrderID' => $id, 'releaseDate' => '2024-05-01T00:00:00']),
             PostProductionOrderRelease::class,
-            Method::POST,
-            '/ExternalApi/v2/production/order/release',
-            [],
-            ['productionOrderID' => $id, 'releaseDate' => '2024-05-01T00:00:00'],
         ],
     ],
     'dtos' => [

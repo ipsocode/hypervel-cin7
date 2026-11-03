@@ -53,10 +53,6 @@ return [
         'purchase attachment get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->attachment()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136'),
             GetPurchaseAttachment::class,
-            Method::GET,
-            '/ExternalApi/v2/purchase/attachment',
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136'],
-            null,
         ],
         'purchase attachment post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->attachment()->post(['PurchaseID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'FileName' => 'Test', 'Content' => 'AAAA']),
@@ -69,18 +65,10 @@ return [
         'purchase attachment post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->attachment()->post(PurchaseAttachmentPostData::from(['PurchaseID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'])),
             PostPurchaseAttachment::class,
-            Method::POST,
-            '/ExternalApi/v2/purchase/attachment',
-            [],
-            ['PurchaseID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'],
         ],
         'purchase attachment delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->attachment()->delete('990d6602-2f4a-432b-97e1-04a2f51f7036'),
             DeletePurchaseAttachment::class,
-            Method::DELETE,
-            '/ExternalApi/v2/purchase/attachment',
-            ['ID' => '990d6602-2f4a-432b-97e1-04a2f51f7036'],
-            null,
         ],
     ],
     'dtos' => [

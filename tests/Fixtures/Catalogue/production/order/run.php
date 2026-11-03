@@ -76,26 +76,14 @@ return [
         'production order run post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->post(['ProductionOrderID' => $id, 'IncreaseOrderQuantity' => true]),
             PostProductionOrderRun::class,
-            Method::POST,
-            '/ExternalApi/v2/production/order/run',
-            [],
-            ['ProductionOrderID' => $id, 'IncreaseOrderQuantity' => true],
         ],
         'production order run get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->get($id, includeAttachmentContent: true),
             GetProductionOrderRun::class,
-            Method::GET,
-            '/ExternalApi/v2/production/order/run',
-            ['ProductionOrderID' => $id, 'IncludeAttachmentContent' => 'true'],
-            null,
         ],
         'production order run put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->put(['RunID' => $id, 'Quantity' => 15], $id, true),
             PutProductionOrderRun::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run',
-            ['ProductionOrderID' => $id, 'IncreaseOrderQuantity' => 'true'],
-            ['RunID' => $id, 'Quantity' => 15],
         ],
     ],
     'dtos' => [

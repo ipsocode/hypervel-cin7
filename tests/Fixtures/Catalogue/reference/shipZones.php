@@ -94,10 +94,6 @@ return [
         'reference shipZones post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->shipZones()->post(['Name' => 'Zone']),
             PostShipZones::class,
-            Method::POST,
-            $uri,
-            [],
-            ['Name' => 'Zone'],
         ],
         'reference shipZones post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->shipZones()->post(ShippingZonePostData::from($fields)),
@@ -110,26 +106,14 @@ return [
         'reference shipZones put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->shipZones()->put(['ZoneID' => $zoneId, 'Name' => 'Zone v2']),
             PutShipZones::class,
-            Method::PUT,
-            $uri,
-            [],
-            ['ZoneID' => $zoneId, 'Name' => 'Zone v2'],
         ],
         'reference shipZones put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->shipZones()->put(ShippingZonePutData::from(['ZoneID' => $zoneId, 'Name' => 'Zone v2'])),
             PutShipZones::class,
-            Method::PUT,
-            $uri,
-            [],
-            ['ZoneID' => $zoneId, 'Name' => 'Zone v2'],
         ],
         'reference shipZones delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->shipZones()->delete($zoneId),
             DeleteShipZones::class,
-            Method::DELETE,
-            $uri,
-            ['ShipZoneID' => $zoneId],
-            null,
         ],
     ],
     'dtos' => [

@@ -28,10 +28,6 @@ return [
         'production order run operation start' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->operation()->start(['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id, 'WithAutoConsume' => true]),
             PutProductionOrderRunOperationStart::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/operation/start',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id, 'WithAutoConsume' => true],
         ],
     ],
     'dtos' => [

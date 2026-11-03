@@ -28,10 +28,6 @@ return [
         'production order authorise' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->authorise(['productionOrderID' => $id]),
             PostProductionOrderAuthorise::class,
-            Method::POST,
-            '/ExternalApi/v2/production/order/authorise',
-            [],
-            ['productionOrderID' => $id],
         ],
     ],
     'dtos' => [

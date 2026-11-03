@@ -39,18 +39,10 @@ return [
         'disassembly order get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->order()->get($taskId),
             GetDisassemblyOrder::class,
-            Method::GET,
-            '/ExternalApi/v2/disassembly/order',
-            ['TaskID' => $taskId],
-            null,
         ],
         'disassembly order post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->order()->post(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PostDisassemblyOrder::class,
-            Method::POST,
-            '/ExternalApi/v2/disassembly/order',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
     ],
     'dtos' => [

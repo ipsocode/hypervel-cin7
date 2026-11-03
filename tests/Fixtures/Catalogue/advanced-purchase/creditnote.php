@@ -86,10 +86,6 @@ return [
         'advancedPurchase creditNote get with combined charges' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->creditNote()->get('5a7fb526-527a-4229-b331-90b6f5535aab', combineAdditionalCharges: true),
             GetAdvancedPurchaseCreditNote::class,
-            Method::GET,
-            '/ExternalApi/v2/advanced-purchase/creditnote',
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'CombineAdditionalCharges' => 'true'],
-            null,
         ],
         'advancedPurchase creditNote post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->creditNote()->post(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '00000000-0000-0000-0000-000000000000']),
@@ -110,10 +106,6 @@ return [
         'advancedPurchase creditNote delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->creditNote()->delete('43ce7d3b-8c67-4aff-9224-b36b95811b08'),
             DeleteAdvancedPurchaseCreditNote::class,
-            Method::DELETE,
-            '/ExternalApi/v2/advanced-purchase/creditnote',
-            ['TaskID' => '43ce7d3b-8c67-4aff-9224-b36b95811b08'],
-            null,
         ],
     ],
     'dtos' => [

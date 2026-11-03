@@ -27,10 +27,6 @@ return [
         'production order run void' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->void(['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'ApplyToRelatedTasks' => true]),
             PutProductionOrderRunVoid::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/void',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'ApplyToRelatedTasks' => true],
         ],
     ],
     'dtos' => [

@@ -94,10 +94,6 @@ return [
         'journal post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->journal()->post(['Status' => 'DRAFT', 'Currency' => 'USD']),
             PostJournal::class,
-            Method::POST,
-            '/ExternalApi/v2/journal',
-            [],
-            ['Status' => 'DRAFT', 'Currency' => 'USD'],
         ],
         'journal post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->journal()->post(JournalPostData::from($fields)),
@@ -110,10 +106,6 @@ return [
         'journal put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->journal()->put(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PutJournal::class,
-            Method::PUT,
-            '/ExternalApi/v2/journal',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
         'journal put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->journal()->put(JournalPutData::from([...$fields, 'TaskID' => $taskId])),
