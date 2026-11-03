@@ -115,24 +115,47 @@ class SyncCommand extends Command
     }
 
     /**
+     * Show what the table holds for each module, in two grouped queries whatever the module count.
+     *
      * @param list<Module> $modules
      */
     private function status(array $modules, string $accountId): void
     {
+        // The builder's aggregates return one value for the whole query, so the per-module ones
+        // are raw selects beside groupBy(); every value they compare against stays a binding.
+        $totals = Payload::query()->toBase()
+            ->where('account_id', $accountId)
+            ->whereIn('module', array_map(static fn (Module $module): string => $module->value, $modules))
+            ->groupBy('module')
+            ->select('module')
+            ->selectRaw('count(*) as records, max(synced_at) as last_synced, max(cin7_modified_at) as newest')
+            ->get()
+            ->keyBy('module');
+
+        $sources = array_filter(array_map(static fn (Module $module): ?string => $module->source()?->value, $modules));
+
+        $parked = Payload::query()->toBase()
+            ->where('account_id', $accountId)
+            ->whereIn('module', array_values(array_unique($sources)))
+            ->where('failures', '>=', SyncConfig::maxFailures())
+            ->groupBy('module')
+            ->select('module')
+            ->selectRaw('count(*) as parked')
+            ->get()
+            ->pluck('parked', 'module');
+
         $this->table(
             ['Module', 'Rows', 'Parked documents', 'Last synced', 'Newest change in Cin7'],
-            array_map(static function (Module $module) use ($accountId): array {
-                $rows = Payload::forModule($module, $accountId);
+            array_map(static function (Module $module) use ($totals, $parked): array {
+                $total = $totals->get($module->value);
                 // PostgreSQL drops trailing zeros from fractional seconds, so spell the time out.
-                $newest = $rows->max('cin7_modified_at');
+                $newest = $total->newest ?? null;
 
                 return [
                     $module->value,
-                    $rows->count(),
-                    $module->source() === null ? '-' : Payload::forModule($module->source(), $accountId)
-                        ->where('failures', '>=', SyncConfig::maxFailures())
-                        ->count(),
-                    (string) $rows->max('synced_at') ?: 'never',
+                    (int) ($total->records ?? 0),
+                    $module->source() === null ? '-' : (int) $parked->get($module->source()->value, 0),
+                    $total->last_synced ?? 'never',
                     $newest === null ? '-' : Date::parse($newest)->format('Y-m-d H:i:s.v'),
                 ];
             }, $modules),
