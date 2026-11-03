@@ -148,6 +148,15 @@ class ServiceProviderTest extends TestCase
             ->assertExitCode(1);
     }
 
+    public function testTheSyncCommandSaysItIsOffEvenWhenTheDefaultConnectionIsMissing(): void
+    {
+        $this->app->get('config')->set('cin7.default', 'missing');
+
+        $this->artisan('cin7:sync')
+            ->expectsOutputToContain('The Cin7 sync is off')
+            ->assertExitCode(1);
+    }
+
     public function testTheConnectorNamesItsAccount(): void
     {
         $this->assertSame('acct-test', $this->connector()->accountId());
@@ -172,5 +181,32 @@ class ServiceProviderTest extends TestCase
         $about = json_decode(Artisan::output(), true)['cin7'];
 
         $this->assertSame(['off', 'redis', 'off', '-', '-'], [$about['rate_limit'], $about['limiter_store'], $about['sync'], $about['sync_pull'], $about['sync_full_pull']]);
+    }
+
+    public function testAboutPrintsTheDefaultConnectionsOwnRateLimitAndStore(): void
+    {
+        $config = $this->app->get('config');
+        $config->set('cin7.connections.main', [
+            'account_id' => 'acct-main',
+            'application_key' => 'key-main',
+            'rate_limit' => ['max' => 10, 'period' => 5, 'store' => 'redis'],
+        ]);
+        $config->set('cin7.default', 'main');
+
+        Artisan::call('about', ['--json' => true]);
+        $about = json_decode(Artisan::output(), true)['cin7'];
+
+        $this->assertSame(['10 calls per 5s', 'redis'], [$about['rate_limit'], $about['limiter_store']]);
+        $this->assertSame('redis', $this->app->make(Cin7Manager::class)->connection()->rateLimitStore());
+    }
+
+    public function testAboutNamesTheLimiterDefaultForABlankSalloonStore(): void
+    {
+        $this->app->get('config')->set('saloon.rate_limiter.store', '');
+
+        Artisan::call('about', ['--json' => true]);
+        $about = json_decode(Artisan::output(), true)['cin7'];
+
+        $this->assertSame('worker-array', $about['limiter_store']);
     }
 }

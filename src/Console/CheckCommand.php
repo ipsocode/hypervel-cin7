@@ -53,7 +53,7 @@ class CheckCommand extends Command
         }
 
         $window = $cin7->rateLimitWindow();
-        $store = (string) ($cin7->rateLimitStore() ?? config('saloon.rate_limiter.store') ?? $limiter->getDefaultInstance());
+        $store = $cin7->limiterStore();
         $details['rate_limit'] = $window === null ? 'off' : "{$window[0]} calls per {$window[1]}s";
         $details['limiter_store'] = $store;
 

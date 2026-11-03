@@ -10,6 +10,7 @@ use Hypervel\RateLimiter\AdmissionPolicy;
 use Hypervel\RateLimiter\Contracts\Decision;
 use Hypervel\RateLimiter\Cooldown;
 use Hypervel\RateLimiter\Limit;
+use Hypervel\RateLimiter\RateLimiter;
 use Hypervel\Saloon\Http\Connector;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
@@ -136,6 +137,23 @@ final class Cin7Connector extends Connector implements HasPagination
     public function rateLimitStore(): ?string
     {
         return $this->rateLimitStore;
+    }
+
+    /**
+     * The limiter store requests use: the connection's, else `saloon.rate_limiter.store`, else the
+     * limiter's default. A blank name counts as unset.
+     */
+    public function limiterStore(): string
+    {
+        $configured = config('saloon.rate_limiter.store');
+
+        foreach ([$this->rateLimitStore, $configured] as $store) {
+            if (is_string($store) && $store !== '') {
+                return $store;
+            }
+        }
+
+        return app(RateLimiter::class)->getDefaultInstance();
     }
 
     /**

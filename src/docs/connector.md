@@ -35,7 +35,9 @@ throttles on its own key, as does a second API application of the same account.
 by. It is a credential: log or print neither it nor the application key.
 `rateLimitStore()` returns the limiter store the connection names (`null` falls back as
 [choosing the limiter store](#choosing-the-limiter-store) describes), and `rateLimitWindow()` the
-window as `[calls, seconds]`, or `null` when it is off.
+window as `[calls, seconds]`, or `null` when it is off. `limiterStore()` returns the store requests
+actually use, with that fallback applied and a blank name treated as unset; `php artisan about` and
+`cin7:check` both print it for the default connection.
 
 | Constructor argument | Default | Config key |
 |---|---|---|

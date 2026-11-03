@@ -30,7 +30,7 @@ class SyncCommand extends Command
 
     protected string $description = 'Copy Cin7 records into the local payload table';
 
-    public function handle(Synchroniser $synchroniser, Cin7Connector $cin7): int
+    public function handle(): int
     {
         if (! SyncConfig::enabled()) {
             $this->error('The Cin7 sync is off. Set CIN7_SYNC=true (cin7.sync.enabled) to use it.');
@@ -46,6 +46,9 @@ class SyncCommand extends Command
             return self::FAILURE;
         }
 
+        // Resolved here, not injected, so a sync that is off never builds the default connection.
+        $cin7 = app(Cin7Connector::class);
+
         if ($this->option('status')) {
             $this->status($modules, $cin7->accountId());
 
@@ -56,7 +59,7 @@ class SyncCommand extends Command
             $this->release($modules, $cin7->accountId());
         }
 
-        $results = $synchroniser->pullMany($modules, (bool) $this->option('full'));
+        $results = app(Synchroniser::class)->pullMany($modules, (bool) $this->option('full'));
 
         $this->table(
             ['Module', 'Pull', 'Read', 'Written', 'Unchanged', 'Deleted', 'Result'],

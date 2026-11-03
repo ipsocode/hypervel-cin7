@@ -97,15 +97,15 @@ class Cin7ServiceProvider extends ServiceProvider
      */
     protected function registerAbout(): void
     {
-        AboutCommand::add('Cin7', static function (): array {
-            $max = (int) config('cin7.rate_limit.max', 60);
-            $period = (int) config('cin7.rate_limit.period', 60);
+        AboutCommand::add('Cin7', function (): array {
+            $cin7 = $this->app->make(Cin7Manager::class)->connection();
+            $window = $cin7->rateLimitWindow();
             $sync = SyncConfig::enabled();
 
             return [
                 'Version' => InstalledVersions::getPrettyVersion('ipsocode/hypervel-cin7'),
-                'Rate limit' => $max > 0 && $period > 0 ? "{$max} calls per {$period}s" : 'off',
-                'Limiter store' => (string) (config('cin7.rate_limit.store') ?? 'default'),
+                'Rate limit' => $window === null ? 'off' : "{$window[0]} calls per {$window[1]}s",
+                'Limiter store' => $cin7->limiterStore(),
                 'Sync' => $sync ? 'on' : 'off',
                 'Sync pull' => $sync ? (SyncConfig::cron() ?? 'not scheduled') : '-',
                 'Sync full pull' => $sync ? (SyncConfig::full() ?? 'not scheduled') : '-',
