@@ -707,13 +707,17 @@ calls a minute, or a 503. Those are the only responses retried:
   `retry.jitter_ms` fall back to `1`, `0` and `0`.
 - **Read at construction.** `Cin7Request`'s constructor reads the config and
   sets the policy on the request, because Saloon's `PendingRequest` copies the
-  request's retry policy when it is built, before any boot hook runs. A config
-  change therefore applies to requests constructed after it:
+  request's retry policy when it is built, before any boot hook runs. The
+  retry settings belong in the published `config/cin7.php` or the `CIN7_RETRY_*`
+  environment variables, which are read at boot. Configuration is shared by
+  every coroutine in a worker, so do not call `config([...])` to change them
+  while requests are being served: it changes the policy of every request the
+  worker builds after it. A test may set them before it constructs its request:
 
   ```php
-  config(['cin7.retry.times' => 2, 'cin7.retry.delay_ms' => 250]);
+  $this->app->get('config')->set('cin7.retry.times', 2);
 
-  $request = new Ipsocode\Cin7\Requests\Customer\GetCustomer(); // reads the values above
+  $request = new Ipsocode\Cin7\Requests\Customer\GetCustomer(); // reads 2 attempts
   ```
 
 The wait goes through `Hypervel\Support\Sleep`, which suspends only the
