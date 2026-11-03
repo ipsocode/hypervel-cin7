@@ -160,6 +160,26 @@ class Cin7ManagerTest extends TestCase
         $this->assertSame(60, $policy->decaySeconds);
     }
 
+    public function testAConnectionsNullLimitIsTheTopLevelValue(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.max', '25');
+        $this->app->get('config')->set('cin7.rate_limit.period', '20');
+        $this->useSandbox(['max' => null, 'period' => null]);
+
+        $policy = $this->policy($this->manager()->connection('sandbox'));
+
+        $this->assertSame(25, $policy->maxAttempts);
+        $this->assertSame(20, $policy->decaySeconds);
+    }
+
+    public function testATopLevelNullLimitDisablesTheWindow(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.max', null);
+        $this->app->get('config')->set('cin7.rate_limit.period', null);
+
+        $this->assertNull($this->manager()->connection()->rateLimitWindow());
+    }
+
     public function testAConnectionsOwnRateLimitWinsAndIsCast(): void
     {
         $this->useSandbox(['max' => '30', 'period' => '15', 'store' => 'redis']);

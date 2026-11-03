@@ -24,7 +24,7 @@ Every key is in [configuration](configuration.md#keys).
 
 | Column | Holds |
 |---|---|
-| `account_id` | The Cin7 account the record belongs to, from `cin7.account_id` |
+| `account_id` | The Cin7 account the record belongs to: the default connection's `accountId()`, which `CIN7_CONNECTION` can point at a named connection. The sync covers that one connection only |
 | `module` | The endpoint it came from, spelled as the request path: `customer`, `saleList`, `ref/tax` |
 | `cin7_id` | The record's identifier, under the key its module uses (below) |
 | `payload` | The record as Cin7 returned it: `jsonb` on PostgreSQL, `json` on MySQL |

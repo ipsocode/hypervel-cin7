@@ -86,7 +86,7 @@ which is evaluated when the configuration loads. Everything else goes through
 | `account_id`, `application_key`, `rate_limit.*`, `connections.*` | The first time a connection is resolved, by `Cin7Connector` injection or `Cin7Manager::connection()` | None for that worker: each connector is built once per worker |
 | `default` | Each time `Cin7Connector` is resolved or `connection()` is called without a name | Picks which connection that resolves; the connectors already built stay |
 | `retry.*` | Each time a request is constructed (`new GetCustomer(...)` and the rest) | Applies to requests constructed after the change |
-| `sync.enabled` | When the provider boots | None for that worker: the migration and the schedule are registered at boot |
+| `sync.enabled` | When the provider boots, and again each time `cin7:sync` or the `about` section runs | The migration and the schedule are registered at boot, so a later change does not add or remove them for that worker; the command and `about` see the new value |
 | the other `sync.*` | Each time a pull, the schedule or the job reads them | Applies from the next read |
 
 So set any runtime override of `retry.*` before the `new`, not just before
@@ -110,7 +110,7 @@ whole.
 
 ## Casts and fallbacks
 
-[`Cin7ServiceProvider`](../Cin7ServiceProvider.php) casts each value rather
+[`Cin7Manager`](../Cin7Manager.php) casts each value rather
 than trusting its type, so a missing or loosely typed value does not throw a
 `TypeError` when the container resolves the connector:
 
@@ -119,10 +119,10 @@ than trusting its type, so a missing or loosely typed value does not throw a
 | `account_id`, `application_key` | `(string)` | Unset (`null`) becomes `''`. The connector resolves, and Cin7 rejects the call instead |
 | `base_url` | `(string)`, falling back to the V2 URL when absent, `null` or `''` | A connection's own `base_url` wins over the top-level one; a blank `CIN7_BASE_URL=` counts as unset |
 | `timeout`, `connect_timeout` | `null` and `''` become `null`; anything else `(int)` | `null` sends no option, so the `saloon` connection's value applies; a blank `CIN7_TIMEOUT=` counts as unset rather than `0`, which would wait forever. A connection's own key wins over the top-level one |
-| `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. A key present but `null` becomes `0`, which disables the window |
+| `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. At the top level, a key present but `null` becomes `0`, which disables the window |
 | `rate_limit.store` | `null` stays `null`; anything else `(string)` | `null` lets the store fallback chain apply |
 | `rate_limit.cooldown` | `(int)`, falling back to `5` when the key is absent or `null` | A string such as `'9'` becomes `9`. `0` or less records no cooldown after a 503 or a 429 without `Retry-After` |
-| `connections.<name>.rate_limit.*` | the same casts | A key the connection leaves out is the top-level one, `store` included. A key present but `null` is not left out: `max` and `period` become `0`, and `store` stays `null`; a `null` `cooldown` is left out |
+| `connections.<name>.rate_limit.*` | the same casts | A key the connection leaves out is the top-level one, `store` included. A `null` `max`, `period` or `cooldown` counts as left out and is the top-level value; a `null` `store` is not left out and stays `null`, so the store fallback chain applies |
 
 `Cin7Manager` applies these when it builds a connection. A name with no
 `connections` entry, and not `default`, throws an `InvalidArgumentException`
