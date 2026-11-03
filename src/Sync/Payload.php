@@ -7,7 +7,7 @@ namespace Ipsocode\Cin7\Sync;
 use Hypervel\Data\Data;
 use Hypervel\Database\Eloquent\Builder;
 use Hypervel\Database\Eloquent\Model;
-use Hypervel\Support\Carbon;
+use Hypervel\Support\CarbonImmutable;
 use Ipsocode\Cin7\Cin7Connector;
 
 /**
@@ -18,10 +18,10 @@ use Ipsocode\Cin7\Cin7Connector;
  * @property string $module
  * @property string $cin7_id
  * @property array<string, mixed> $payload
- * @property null|Carbon $cin7_modified_at
- * @property Carbon $synced_at
- * @property null|Carbon $created_at
- * @property null|Carbon $updated_at
+ * @property null|CarbonImmutable $cin7_modified_at
+ * @property CarbonImmutable $synced_at
+ * @property null|CarbonImmutable $created_at
+ * @property null|CarbonImmutable $updated_at
  *
  * @see src/docs/sync.md
  */
@@ -65,9 +65,9 @@ final class Payload extends Model
     {
         return [
             'payload' => 'array',
-            'cin7_modified_at' => 'datetime',
-            'synced_at' => 'datetime',
-            'failed_at' => 'datetime',
+            'cin7_modified_at' => 'immutable_datetime',
+            'synced_at' => 'immutable_datetime',
+            'failed_at' => 'immutable_datetime',
         ];
     }
 }

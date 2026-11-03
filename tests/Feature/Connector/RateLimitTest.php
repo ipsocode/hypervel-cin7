@@ -14,6 +14,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Support\Carbon;
+use Hypervel\Support\Facades\Date;
 use Hypervel\Support\Facades\Http;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
@@ -208,13 +209,14 @@ class RateLimitTest extends TestCase
     public function testAnHttpDateRetryAfterIsReadAndAPastOneRecordsNone(): void
     {
         $connector = new Cin7Connector('acct', 'key');
-        $future = gmdate('D, d M Y H:i:s \G\M\T', time() + 45);
-        $past = gmdate('D, d M Y H:i:s \G\M\T', time() - 45);
+        $this->freezeTime();
+        $now = Date::now()->getTimestamp();
+        $future = gmdate('D, d M Y H:i:s \G\M\T', $now + 45);
+        $past = gmdate('D, d M Y H:i:s \G\M\T', $now - 45);
 
         $seconds = $connector->resolveRateLimitCooldownFor($this->responseTo(MockResponse::make([], 429, ['Retry-After' => $future])));
 
-        $this->assertGreaterThanOrEqual(43, $seconds);
-        $this->assertLessThanOrEqual(45, $seconds);
+        $this->assertSame(45, $seconds);
         $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(MockResponse::make([], 429, ['Retry-After' => $past]))));
     }
 

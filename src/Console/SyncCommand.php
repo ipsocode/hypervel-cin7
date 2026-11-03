@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Console;
 
 use Hypervel\Console\Command;
-use Hypervel\Support\Carbon;
+use Hypervel\Support\Facades\Date;
 use InvalidArgumentException;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Sync\Module;
@@ -133,7 +133,7 @@ class SyncCommand extends Command
                         ->where('failures', '>=', SyncConfig::maxFailures())
                         ->count(),
                     (string) $rows->max('synced_at') ?: 'never',
-                    $newest === null ? '-' : Carbon::parse($newest)->format('Y-m-d H:i:s.v'),
+                    $newest === null ? '-' : Date::parse($newest)->format('Y-m-d H:i:s.v'),
                 ];
             }, $modules),
         );

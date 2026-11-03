@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Sync;
 
+use Carbon\CarbonInterface;
 use Hypervel\Database\ConnectionInterface;
 use Hypervel\Database\Eloquent\Builder;
 use Hypervel\Database\Query\Builder as QueryBuilder;
 use Hypervel\Database\Query\JoinClause;
-use Hypervel\Support\Carbon;
 use Hypervel\Support\Facades\Cache;
+use Hypervel\Support\Facades\Date;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
 use stdClass;
@@ -72,7 +73,7 @@ final class Synchroniser
 
             try {
                 // Every row a pull writes carries its start, so a full pull can tell what it saw.
-                $start = Carbon::now()->startOfSecond();
+                $start = Date::now()->startOfSecond();
 
                 $list = $module->source();
 
@@ -87,7 +88,7 @@ final class Synchroniser
         }
     }
 
-    private function pullList(Module $module, bool $full, Carbon $start): PullResult
+    private function pullList(Module $module, bool $full, CarbonInterface $start): PullResult
     {
         // The module's last sync, which a pull that fails must leave where it was.
         $previous = $this->rows($module)->max('synced_at');
@@ -168,7 +169,7 @@ final class Synchroniser
 
         // Only a complete full pull that read something can say what Cin7 no longer returns.
         $deleted = $full && $read > 0
-            ? (int) $this->rows($module)->where('synced_at', '<', $start)->delete()
+            ? (int) $this->rows($module)->where('synced_at', '<', $start->format(self::DATE))->delete()
             : 0;
 
         return new PullResult($module, $full, $read, $written, $unchanged, $deleted);
@@ -180,10 +181,10 @@ final class Synchroniser
      *
      * @return list<string>
      */
-    private function unseen(Module $module, Carbon $start): array
+    private function unseen(Module $module, CarbonInterface $start): array
     {
         /** @var list<int|string> $identifiers */
-        $identifiers = $this->rows($module)->toBase()->where('synced_at', '<', $start)->orderBy('cin7_id')->pluck('cin7_id')->all();
+        $identifiers = $this->rows($module)->toBase()->where('synced_at', '<', $start->format(self::DATE))->orderBy('cin7_id')->pluck('cin7_id')->all();
 
         return array_map(strval(...), $identifiers);
     }
@@ -195,7 +196,7 @@ final class Synchroniser
      * documents and wrote none says Cin7 or the credentials are failing, not the rows: the module
      * fails, and no row is blamed.
      */
-    private function pullDocuments(Module $module, Module $list, bool $full, Carbon $start): PullResult
+    private function pullDocuments(Module $module, Module $list, bool $full, CarbonInterface $start): PullResult
     {
         $deleted = $full ? $this->deleteOrphans($module) : 0;
         $read = $written = 0;
@@ -241,7 +242,7 @@ final class Synchroniser
      *
      * @param array<string, Throwable> $failures by Cin7 identifier
      */
-    private function recordFailures(Module $list, array $failures, Carbon $start): void
+    private function recordFailures(Module $list, array $failures, CarbonInterface $start): void
     {
         foreach ($failures as $id => $exception) {
             // On the query builder, which leaves updated_at alone.
@@ -256,10 +257,10 @@ final class Synchroniser
      * Since when an incremental pull asks: `sync.lookback` minutes back, or the module's last
      * sync if that is older, so a gap in the schedule is read again.
      */
-    private function since(string $lastSync, Carbon $start): Carbon
+    private function since(string $lastSync, CarbonInterface $start): CarbonInterface
     {
-        $lookback = $start->copy()->subMinutes(SyncConfig::lookback());
-        $newest = Carbon::parse($lastSync);
+        $lookback = $start->subMinutes(SyncConfig::lookback());
+        $newest = Date::parse($lastSync);
 
         return $newest->lt($lookback) ? $newest : $lookback;
     }
@@ -273,7 +274,7 @@ final class Synchroniser
      * @param array<array-key, mixed> $items
      * @return array{int, int} the records written and the records unchanged
      */
-    private function store(Module $module, array $items, Carbon $start, bool $full): array
+    private function store(Module $module, array $items, CarbonInterface $start, bool $full): array
     {
         $records = [];
 
@@ -456,7 +457,7 @@ final class Synchroniser
      * @param array<array-key, mixed> $payload
      * @return array<string, mixed>
      */
-    private function row(Module $module, string $id, array $payload, ?string $modified, Carbon $start): array
+    private function row(Module $module, string $id, array $payload, ?string $modified, CarbonInterface $start): array
     {
         $at = $start->format(self::DATE);
 

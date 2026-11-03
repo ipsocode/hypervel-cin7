@@ -17,6 +17,7 @@ use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\HasPagination;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
+use Hypervel\Support\Facades\Date;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
@@ -596,7 +597,7 @@ final class Cin7Connector extends Connector implements HasPagination
             $errors = DateTimeImmutable::getLastErrors();
             $valid = $date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))
                 && $date->format('D, d M Y H:i:s \G\M\T') === $value;
-            $seconds = $valid ? $date->getTimestamp() - time() : null;
+            $seconds = $valid ? $date->getTimestamp() - Date::now()->getTimestamp() : null;
         }
 
         if ($seconds === null || $seconds > $limit) {
