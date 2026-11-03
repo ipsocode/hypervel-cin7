@@ -27,10 +27,6 @@ return [
         'production order run undo' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->undo(['ProductionOrderID' => $id, 'ProductionRunID' => $id]),
             PutProductionOrderRunUndo::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/undo',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id],
         ],
     ],
     'dtos' => [

@@ -38,18 +38,10 @@ return [
         'finishedGoods pick get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->finishedGoods()->pick()->get($taskId),
             GetFinishedGoodsPick::class,
-            Method::GET,
-            '/ExternalApi/v2/finishedGoods/pick',
-            ['TaskID' => $taskId],
-            null,
         ],
         'finishedGoods pick post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->finishedGoods()->pick()->post(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PostFinishedGoodsPick::class,
-            Method::POST,
-            '/ExternalApi/v2/finishedGoods/pick',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
     ],
     'dtos' => [

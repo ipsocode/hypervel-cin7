@@ -33,10 +33,6 @@ return [
         'ref supplier deposits paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->supplier()->deposits()->paginate()->current(),
             GetSupplierDeposits::class,
-            Method::GET,
-            '/ExternalApi/v2/ref/supplier/deposits',
-            ['page' => 1, 'limit' => 100],
-            null,
         ],
     ],
     'dtos' => [

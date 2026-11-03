@@ -29,8 +29,8 @@ return [
     'resources' => [
         'crm opportunity get' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->opportunity()->get(), GetCrmOpportunity::class, Method::GET, $uri, ['page' => 1, 'limit' => 100], null],
         'crm opportunity paginate' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->opportunity()->paginate(id: $id)->current(), GetCrmOpportunity::class, Method::GET, $uri, ['ID' => $id, 'page' => 1, 'limit' => 100], null],
-        'crm opportunity post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->opportunity()->post(['Name' => 'A']), PostCrmOpportunity::class, Method::POST, $uri, [], ['Name' => 'A']],
-        'crm opportunity put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->opportunity()->put(['ID' => $id, 'Name' => 'B']), PutCrmOpportunity::class, Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'B']],
+        'crm opportunity post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->opportunity()->post(['Name' => 'A']), PostCrmOpportunity::class],
+        'crm opportunity put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->opportunity()->put(['ID' => $id, 'Name' => 'B']), PutCrmOpportunity::class],
     ],
     'dtos' => [
         GetCrmOpportunity::class => [GetCrmOpportunity::class, [], Cin7Payloads::load('crm/opportunity', 'get.response'), OpportunityData::class, 'opportunityList'],

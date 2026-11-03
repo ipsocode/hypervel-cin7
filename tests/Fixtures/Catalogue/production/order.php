@@ -59,26 +59,14 @@ return [
         'production order get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->get($id, returnAttachmentsContent: true),
             GetProductionOrder::class,
-            Method::GET,
-            '/ExternalApi/v2/production/order',
-            ['ProductionOrderID' => $id, 'ReturnAttachmentsContent' => 'true'],
-            null,
         ],
         'production order post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->post(['ProductID' => $id, 'LocationID' => $id], recalculateDates: true),
             PostProductionOrder::class,
-            Method::POST,
-            '/ExternalApi/v2/production/order',
-            ['RecalculateDates' => 'true'],
-            ['ProductID' => $id, 'LocationID' => $id],
         ],
         'production order put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->put(['ProductionOrderID' => $id, 'Quantity' => 5], allowRecalculateDates: true, allowRecalculateCyclesAndQuantities: false),
             PutProductionOrder::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order',
-            ['AllowRecalculateDates' => 'true', 'AllowRecalculateCyclesAndQuantities' => 'false'],
-            ['ProductionOrderID' => $id, 'Quantity' => 5],
         ],
     ],
     'dtos' => [

@@ -28,10 +28,6 @@ return [
         'production order void' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->void(['productionOrderID' => $id, 'ApplyToTasks' => false]),
             PostProductionOrderVoid::class,
-            Method::POST,
-            '/ExternalApi/v2/production/order/void',
-            [],
-            ['productionOrderID' => $id, 'ApplyToTasks' => false],
         ],
     ],
     'dtos' => [

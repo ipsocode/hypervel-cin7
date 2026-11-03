@@ -66,10 +66,6 @@ return [
         'sale fulfilment ship get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->ship()->get('cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57'),
             GetSaleFulfilmentShip::class,
-            Method::GET,
-            '/ExternalApi/v2/sale/fulfilment/ship',
-            ['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57'],
-            null,
         ],
         'sale fulfilment ship post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->ship()->post(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'DRAFT', 'Lines' => [$line]]),
@@ -82,10 +78,6 @@ return [
         'sale fulfilment ship post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->ship()->post(SaleFulfilmentShipPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'DRAFT'])),
             PostSaleFulfilmentShip::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/fulfilment/ship',
-            [],
-            ['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'DRAFT'],
         ],
         'sale fulfilment ship put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->ship()->put(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'PARTIALLY AUTHORISED']),

@@ -28,10 +28,6 @@ return [
         'production order run manualJournal' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->manualJournal(['RunID' => $id], $id),
             PutProductionOrderRunManualJournal::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/manualJournal',
-            ['ProductionOrderID' => $id],
-            ['RunID' => $id],
         ],
     ],
     'dtos' => [

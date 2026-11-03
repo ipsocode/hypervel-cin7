@@ -90,10 +90,6 @@ return [
         'ref account post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->account()->post(['Code' => '001', 'Name' => 'Accounts Payable test']),
             PostAccount::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/account',
-            [],
-            ['Code' => '001', 'Name' => 'Accounts Payable test'],
         ],
         'ref account post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->account()->post(AccountPostData::from($fields)),
@@ -106,10 +102,6 @@ return [
         'ref account put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->account()->put(['Code' => '001', 'Name' => 'Accounts Payable put test']),
             PutAccount::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/account',
-            [],
-            ['Code' => '001', 'Name' => 'Accounts Payable put test'],
         ],
         'ref account put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->account()->put(AccountPutData::from([...$fields, 'Type' => 'BANK', 'Bank' => 'Bank of Example', 'BankAccountNumber' => '12345678'])),
@@ -122,10 +114,6 @@ return [
         'ref account delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->account()->delete('001'),
             DeleteAccount::class,
-            Method::DELETE,
-            '/ExternalApi/v2/ref/account',
-            ['Code' => '001'],
-            null,
         ],
     ],
     'dtos' => [

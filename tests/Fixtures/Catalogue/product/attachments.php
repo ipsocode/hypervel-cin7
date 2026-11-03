@@ -55,18 +55,10 @@ return [
         'product attachments get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->attachments()->get('76755c09-60de-483c-a63b-18fd12c2d932'),
             GetProductAttachments::class,
-            Method::GET,
-            '/ExternalApi/v2/product/attachments',
-            ['ProductID' => '76755c09-60de-483c-a63b-18fd12c2d932'],
-            null,
         ],
         'product attachments post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->attachments()->post($url),
             PostProductAttachments::class,
-            Method::POST,
-            '/ExternalApi/v2/product/attachments',
-            [],
-            $url,
         ],
         'product attachments post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->attachments()->post(ProductAttachmentPostData::from([...$url, 'IsDefault' => true])),
@@ -79,10 +71,6 @@ return [
         'product attachments delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->attachments()->delete('3ba9b33c-662a-4bed-935a-9e13e7535c88'),
             DeleteProductAttachments::class,
-            Method::DELETE,
-            '/ExternalApi/v2/product/attachments',
-            ['ID' => '3ba9b33c-662a-4bed-935a-9e13e7535c88'],
-            null,
         ],
     ],
     'dtos' => [

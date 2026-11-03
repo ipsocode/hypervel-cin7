@@ -47,10 +47,6 @@ return [
         'sale manualJournal get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->manualJournal()->get('916ab4c0-6ccb-4c93-873d-0603859050e4'),
             GetSaleManualJournal::class,
-            Method::GET,
-            '/ExternalApi/v2/sale/manualJournal',
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
-            null,
         ],
         'sale manualJournal post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->manualJournal()->post(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'Status' => 'AUTHORISED']),

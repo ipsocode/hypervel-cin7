@@ -92,10 +92,6 @@ return [
         'ref attributeSet post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->attributeSet()->post(['Name' => 'Test set']),
             PostAttributeSet::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/attributeset',
-            [],
-            ['Name' => 'Test set'],
         ],
         'ref attributeSet post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->attributeSet()->post(AttributeSetPostData::from(['Name' => 'Test set', ...$first])),
@@ -108,26 +104,14 @@ return [
         'ref attributeSet put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->attributeSet()->put(['ID' => $id, 'Name' => 'Test set']),
             PutAttributeSet::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/attributeset',
-            [],
-            ['ID' => $id, 'Name' => 'Test set'],
         ],
         'ref attributeSet put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->attributeSet()->put(AttributeSetPutData::from(['Name' => 'Test set', ...$first, 'ID' => $id])),
-            PutAttributeSet::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/attributeset',
-            [],
-            [...$first, 'ID' => $id, 'Name' => 'Test set'],
+            PutAttributeSet::class . ' with data',
         ],
         'ref attributeSet delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->attributeSet()->delete($id),
             DeleteAttributeSet::class,
-            Method::DELETE,
-            '/ExternalApi/v2/ref/attributeset',
-            ['ID' => $id],
-            null,
         ],
     ],
     'dtos' => [

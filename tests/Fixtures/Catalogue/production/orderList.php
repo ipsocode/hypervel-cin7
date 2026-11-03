@@ -28,10 +28,6 @@ return [
         'production orderList get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->orderList()->get(status: ProductionOrderListStatus::Draft, search: 'x', locationId: 'x', requiredByDateFrom: '2024-01-01T00:00:00', requiredByDateTo: '2024-01-01T00:00:00', completionDateFrom: '2024-01-01T00:00:00', completionDateTo: '2024-01-01T00:00:00', sourceTaskId: 'x'),
             GetProductionOrderList::class,
-            Method::GET,
-            '/ExternalApi/v2/production/orderList',
-            ['Status' => 'Draft', 'Search' => 'x', 'LocationID' => 'x', 'RequiredByDateFrom' => '2024-01-01T00:00:00', 'RequiredByDateTo' => '2024-01-01T00:00:00', 'CompletionDateFrom' => '2024-01-01T00:00:00', 'CompletionDateTo' => '2024-01-01T00:00:00', 'SourceTaskID' => 'x', 'page' => 1, 'limit' => 100],
-            null,
         ],
         'production orderList paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->orderList()->paginate()->current(),

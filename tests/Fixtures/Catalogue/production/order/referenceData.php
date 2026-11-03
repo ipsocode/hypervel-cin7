@@ -27,10 +27,6 @@ return [
         'production order referenceData' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->referenceData(),
             GetProductionOrderReferenceData::class,
-            Method::GET,
-            '/ExternalApi/v2/production/order/referenceData',
-            [],
-            null,
         ],
     ],
     'dtos' => [

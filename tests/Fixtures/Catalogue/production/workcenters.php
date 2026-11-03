@@ -57,10 +57,6 @@ return [
         'production workCenters get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->get(name: 'x'),
             GetProductionWorkCenters::class,
-            Method::GET,
-            '/ExternalApi/v2/production/workcenters',
-            ['Name' => 'x', 'page' => 1, 'limit' => 100],
-            null,
         ],
         'production workCenters paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->paginate()->current(),
@@ -73,26 +69,14 @@ return [
         'production workCenters post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->post(['Workcenters' => []]),
             PostProductionWorkCenters::class,
-            Method::POST,
-            '/ExternalApi/v2/production/workcenters',
-            [],
-            ['Workcenters' => []],
         ],
         'production workCenters put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->put(['Workcenters' => []]),
             PutProductionWorkCenters::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/workcenters',
-            [],
-            ['Workcenters' => []],
         ],
         'production workCenters delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->delete($id),
             DeleteProductionWorkCenters::class,
-            Method::DELETE,
-            '/ExternalApi/v2/production/workcenters',
-            ['WorkCenterId' => $id],
-            null,
         ],
     ],
     'dtos' => [

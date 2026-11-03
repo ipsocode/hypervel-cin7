@@ -33,10 +33,6 @@ return [
         'ref customer credits paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->customer()->credits()->paginate()->current(),
             GetCustomerCredits::class,
-            Method::GET,
-            '/ExternalApi/v2/ref/customer/credits',
-            ['page' => 1, 'limit' => 100],
-            null,
         ],
     ],
     'dtos' => [

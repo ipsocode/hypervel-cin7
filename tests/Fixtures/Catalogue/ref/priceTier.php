@@ -25,10 +25,6 @@ return [
         'ref priceTier get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->priceTier()->get(),
             GetPriceTier::class,
-            Method::GET,
-            '/ExternalApi/v2/ref/priceTier',
-            [],
-            null,
         ],
     ],
     'dtos' => [

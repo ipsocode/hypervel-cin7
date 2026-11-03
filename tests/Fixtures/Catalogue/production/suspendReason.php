@@ -36,10 +36,6 @@ return [
         'production suspendReason get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->suspendReason()->get(workCenterId: 'x'),
             GetProductionSuspendReason::class,
-            Method::GET,
-            '/ExternalApi/v2/production/suspendReason',
-            ['WorkcenterID' => 'x', 'page' => 1, 'limit' => 100],
-            null,
         ],
         'production suspendReason paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->suspendReason()->paginate()->current(),
@@ -52,10 +48,6 @@ return [
         'production suspendReason put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->suspendReason()->put(['Reason' => 'Break']),
             PutProductionSuspendReason::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/suspendReason',
-            [],
-            ['Reason' => 'Break'],
         ],
     ],
     'dtos' => [

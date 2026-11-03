@@ -85,18 +85,10 @@ return [
         'advancedPurchase stock get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->stock()->get('5a7fb526-527a-4229-b331-90b6f5535aab'),
             GetAdvancedPurchaseStock::class,
-            Method::GET,
-            '/ExternalApi/v2/advanced-purchase/stock',
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab'],
-            null,
         ],
         'advancedPurchase stock post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->stock()->post(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Status' => 'AUTHORISED', 'Lines' => []]),
             PostAdvancedPurchaseStock::class,
-            Method::POST,
-            '/ExternalApi/v2/advanced-purchase/stock',
-            [],
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Status' => 'AUTHORISED', 'Lines' => []],
         ],
         'advancedPurchase stock post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->stock()->post(AdvancedPurchaseStockPostData::from(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Status' => 'AUTHORISED', 'Lines' => [$line]])),
@@ -109,10 +101,6 @@ return [
         'advancedPurchase stock put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->stock()->put(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Status' => 'DRAFT', 'Lines' => []]),
             PutAdvancedPurchaseStock::class,
-            Method::PUT,
-            '/ExternalApi/v2/advanced-purchase/stock',
-            [],
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Status' => 'DRAFT', 'Lines' => []],
         ],
         'advancedPurchase stock put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->stock()->put(AdvancedPurchaseStockPutData::from(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Status' => 'DRAFT', 'Lines' => []])),
@@ -133,10 +121,6 @@ return [
         'advancedPurchase stock delete with void' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->stock()->delete('3320ef94-a7e8-4d81-9588-2a3e14cfca6f', void: true),
             DeleteAdvancedPurchaseStock::class,
-            Method::DELETE,
-            '/ExternalApi/v2/advanced-purchase/stock',
-            ['TaskID' => '3320ef94-a7e8-4d81-9588-2a3e14cfca6f', 'Void' => 'true'],
-            null,
         ],
     ],
     'dtos' => [

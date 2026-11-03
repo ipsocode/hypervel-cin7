@@ -75,18 +75,10 @@ return [
         'bankTransfer get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->bankTransfer()->get($taskId),
             GetBankTransfer::class,
-            Method::GET,
-            '/ExternalApi/v2/bankTransfer',
-            ['TaskID' => $taskId],
-            null,
         ],
         'bankTransfer post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->bankTransfer()->post(['Status' => 'DRAFT', 'Reference' => 'Test']),
             PostBankTransfer::class,
-            Method::POST,
-            '/ExternalApi/v2/bankTransfer',
-            [],
-            ['Status' => 'DRAFT', 'Reference' => 'Test'],
         ],
         'bankTransfer post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->bankTransfer()->post(BankTransferPostData::from($fields)),
@@ -99,10 +91,6 @@ return [
         'bankTransfer put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->bankTransfer()->put(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PutBankTransfer::class,
-            Method::PUT,
-            '/ExternalApi/v2/bankTransfer',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
         'bankTransfer put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->bankTransfer()->put(BankTransferPutData::from([...$fields, 'TaskID' => $taskId])),

@@ -11,12 +11,12 @@ All 102 resources are built. `feature/saloon` modeled them and merged into `main
 `names.py list` marks every one done against the blueprint with sha256 `0f497ee8c694`. The work now
 is a resource the reference changes or adds, or a fix to one already built.
 
-`scripts/todo.py` writes `TODO.md` at the root: every resource by its anchor, grouped by reference
-group and ranked High, Medium or Low (its `HIGH` and `LOW` lists, the rest Medium, a group with
-nothing left Done), with the models each resource documents, the class each becomes, and a tick
-where it exists, taken from the code. It is a working list, not part of the repository:
-`feature/saloon` carried one and deleted it before merging, and `main` has none. Leave it out of
-every commit.
+The scripts in `scripts/` are manual tools, with no tests, lint or CI of their own: nothing checks
+that `requests.py`'s templates still match the hand-edited classes, so compare a generated class
+with a neighbor before relying on it. `required.py` (section 5, step 3) needs the blueprint
+downloaded, which `blueprint.py` says how to get, so it runs only where that was done. There was a
+`todo.py` that wrote a `TODO.md` of what was left; it went when every resource was built, and
+`names.py list` shows what exists.
 
 ## 1. What to build
 
@@ -101,7 +101,7 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
   unanchored table takes its heading (`Available Fields for Purchase Order` is `PurchaseOrderData`),
   singular for one record (`SupplierDepositData`). A keyed envelope such as `{PurchaseID, Invoices}`
   is plural (`AdvancedPurchaseInvoicesData`). A list's row is named after the list
-  (`PurchaseListData`). `TABLES` in `names.py` holds the exceptions, and `TODO.md` prints every
+  (`PurchaseListData`). `TABLES` in `names.py` holds the exceptions, and `names.py show` prints every
   class.
 - A model lives in the folder of the path whose name it carries (`PurchaseOrderLineData` in
   `Purchase/Order/`), else in the deepest folder common to the paths that use it. Once two families
@@ -217,8 +217,7 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
    One may stay on that list only as a verb's own body class whose example leaves it out, a value
    Cin7 computes, or the ID of a nested item being added, with the class's docblock and
    `src/docs/data.md` saying so; the script exits 1 for any other.
-4. To see what is left, run `python3 $S/todo.py`: it writes `TODO.md`, ticked from the code. Leave
-   it out of the commit.
+4. To see what exists against the blueprint, run `python3 $S/names.py list`.
 5. Commit one resource, or one small group, per commit. The message says what it adds, and names the
    issue as `#<n>` when there is one.
 6. Push your branch only after the checks pass.

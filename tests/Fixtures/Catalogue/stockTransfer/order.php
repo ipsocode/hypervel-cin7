@@ -49,26 +49,14 @@ return [
         'stockTransfer order get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockTransfer()->order()->get($taskId),
             GetStockTransferOrder::class,
-            Method::GET,
-            '/ExternalApi/v2/stockTransfer/order',
-            ['TaskID' => $taskId],
-            null,
         ],
         'stockTransfer order post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockTransfer()->order()->post(['TaskID' => $taskId, 'Status' => 'DRAFT']),
             PostStockTransferOrder::class,
-            Method::POST,
-            '/ExternalApi/v2/stockTransfer/order',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'DRAFT'],
         ],
         'stockTransfer order post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockTransfer()->order()->post(StockTransferOrderPostData::from($fields)),
-            PostStockTransferOrder::class,
-            Method::POST,
-            '/ExternalApi/v2/stockTransfer/order',
-            [],
-            $sent,
+            PostStockTransferOrder::class . ' with data',
         ],
     ],
     'dtos' => [

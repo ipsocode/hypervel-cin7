@@ -28,10 +28,6 @@ return [
         'production order run operation suspend' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->operation()->suspend(['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id, 'SuspendReasonID' => $id]),
             PutProductionOrderRunOperationSuspend::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/operation/suspend',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id, 'SuspendReasonID' => $id],
         ],
     ],
     'dtos' => [

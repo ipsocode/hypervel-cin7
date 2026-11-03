@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Hypervel\Saloon\Http\BaseResource;
+use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Resources\ListResource;
 use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\Resources;
@@ -48,6 +49,15 @@ class ResourceCatalogueTest extends TestCase
                 $this->assertNotEmpty($covered, "No resource row for {$class}::{$method->getName()}() ('{$key}').");
             }
         }
+    }
+
+    public function testAResourceRowThatNamesARequestRowCarriesTheExpectationsOfThatRow(): void
+    {
+        $rows = Catalogue::rows('resources');
+        $request = Catalogue::rows('requests')[GetCustomer::class];
+
+        $this->assertCount(6, $rows['customer get']);
+        $this->assertSame([GetCustomer::class, ...array_slice($request, 2)], array_slice($rows['customer get'], 1));
     }
 
     /**

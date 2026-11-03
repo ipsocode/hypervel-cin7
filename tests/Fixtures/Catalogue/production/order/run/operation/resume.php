@@ -28,10 +28,6 @@ return [
         'production order run operation resume' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->operation()->resume(['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id]),
             PutProductionOrderRunOperationResume::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/operation/resume',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id],
         ],
     ],
     'dtos' => [

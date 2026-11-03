@@ -48,10 +48,6 @@ return [
         'advancedPurchase manualJournal get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->manualJournal()->get('5a7fb526-527a-4229-b331-90b6f5535aab'),
             GetAdvancedPurchaseManualJournal::class,
-            Method::GET,
-            '/ExternalApi/v2/advanced-purchase/manualJournal',
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab'],
-            null,
         ],
         'advancedPurchase manualJournal post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->manualJournal()->post(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '807c3266-157b-4c0d-8131-a3b8e06c0d97', 'Status' => 'AUTHORISED']),

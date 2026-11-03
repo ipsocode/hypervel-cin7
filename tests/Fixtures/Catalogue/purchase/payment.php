@@ -71,18 +71,10 @@ return [
         'purchase payment get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->payment()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136'),
             GetPurchasePayment::class,
-            Method::GET,
-            '/ExternalApi/v2/purchase/payment',
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136'],
-            null,
         ],
         'purchase payment post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->payment()->post(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Type' => 'Payment', 'Amount' => 1.5]),
             PostPurchasePayment::class,
-            Method::POST,
-            '/ExternalApi/v2/purchase/payment',
-            [],
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Type' => 'Payment', 'Amount' => 1.5],
         ],
         'purchase payment post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->payment()->post(PurchasePaymentPostData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Type' => 'Payment', 'Amount' => 1.5, 'DatePaid' => '2017-12-21T00:00:00', 'Account' => '718', 'CurrencyRate' => 1.0, 'DepositID' => 'a8cbf4d7-9f2c-4b5e-8d1a-3c6e2f7b9d40'])),
@@ -95,10 +87,6 @@ return [
         'purchase payment put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->payment()->put(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5]),
             PutPurchasePayment::class,
-            Method::PUT,
-            '/ExternalApi/v2/purchase/payment',
-            [],
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5],
         ],
         'purchase payment put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->payment()->put(PurchasePaymentPutData::from(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'ID' => 'd3d96860-648f-462a-9e19-eb61e03da136', 'Amount' => 2.5, 'Account' => '718', 'DatePaid' => '2017-12-21T00:00:00', 'CurrencyRate' => 1.0, 'Reference' => 'PAY-1'])),

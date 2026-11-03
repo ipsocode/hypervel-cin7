@@ -32,12 +32,12 @@ return [
         PutWebhooks::class . ' with data' => [PutWebhooks::class, [fn (): WebhookPutData => WebhookPutData::from($put)], Method::PUT, $uri, [], $putSent],
     ],
     'resources' => [
-        'webhooks get' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->get(), GetWebhooks::class, Method::GET, $uri, [], null],
-        'webhooks post' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->post($post), PostWebhooks::class, Method::POST, $uri, [], $post],
-        'webhooks post with data' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->post(WebhookPostData::from($post)), PostWebhooks::class, Method::POST, $uri, [], $post],
-        'webhooks put' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->put($put), PutWebhooks::class, Method::PUT, $uri, [], $put],
-        'webhooks put with data' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->put(WebhookPutData::from($put)), PutWebhooks::class, Method::PUT, $uri, [], $putSent],
-        'webhooks delete' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->delete($id), DeleteWebhooks::class, Method::DELETE, $uri, ['ID' => $id], null],
+        'webhooks get' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->get(), GetWebhooks::class],
+        'webhooks post' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->post($post), PostWebhooks::class],
+        'webhooks post with data' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->post(WebhookPostData::from($post)), PostWebhooks::class],
+        'webhooks put' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->put($put), PutWebhooks::class],
+        'webhooks put with data' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->put(WebhookPutData::from($put)), PutWebhooks::class . ' with data'],
+        'webhooks delete' => [fn (Cin7Connector $cin7): mixed => $cin7->webhooks()->delete($id), DeleteWebhooks::class],
     ],
     'dtos' => [
         GetWebhooks::class => [GetWebhooks::class, [], Cin7Payloads::load('webhooks', 'get.response'), WebhookData::class, 'Webhooks'],

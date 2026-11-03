@@ -47,18 +47,10 @@ return [
         'disassembly get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->get($taskId),
             GetDisassembly::class,
-            Method::GET,
-            '/ExternalApi/v2/disassembly',
-            ['TaskID' => $taskId],
-            null,
         ],
         'disassembly post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->post(['Status' => 'DRAFT', 'WIPAccount' => '715']),
             PostDisassembly::class,
-            Method::POST,
-            '/ExternalApi/v2/disassembly',
-            [],
-            ['Status' => 'DRAFT', 'WIPAccount' => '715'],
         ],
         'disassembly delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->delete($taskId),
