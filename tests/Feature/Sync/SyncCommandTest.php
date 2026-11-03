@@ -7,7 +7,9 @@ namespace Ipsocode\Cin7\Tests\Feature\Sync;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Support\Facades\Artisan;
 use Hypervel\Support\Facades\Cache;
+use Hypervel\Support\Facades\DB;
 use Ipsocode\Cin7\Sync\Module;
+use Ipsocode\Cin7\Sync\Payload;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 
 /**
@@ -124,6 +126,50 @@ class SyncCommandTest extends SyncTestCase
         $mock->assertNothingSent();
     }
 
+    public function testStatusGroupsEveryModuleAndCountsOnlyTheAccountsParkedDocuments(): void
+    {
+        $this->app->get('config')->set('cin7.sync.max_failures', 2);
+
+        $this->store([
+            ['acct-test', 'customer', 'c-1', '2026-10-01 10:00:00.123', '2026-10-02 08:00:00', 0],
+            ['acct-test', 'customer', 'c-2', '2026-10-02 09:30:00.500', '2026-10-03 11:00:00', 0],
+            ['acct-test', 'saleList', 's-1', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 2],
+            ['acct-test', 'saleList', 's-2', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 1],
+            ['acct-test', 'sale', 's-2', '2026-10-01 09:00:00.000', '2026-10-03 11:30:00', 0],
+            ['acct-test', 'purchaseList', 'p-1', null, '2026-10-03 11:00:00', 3],
+            ['acct-other', 'customer', 'c-9', '2026-10-03 09:00:00.000', '2026-10-03 11:59:00', 0],
+            ['acct-other', 'saleList', 's-9', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 5],
+        ]);
+
+        $this->artisan('cin7:sync customer supplier sale advanced-purchase purchaseList --status')
+            ->expectsTable(
+                ['Module', 'Rows', 'Parked documents', 'Last synced', 'Newest change in Cin7'],
+                [
+                    ['customer', 2, '-', '2026-10-03 11:00:00', '2026-10-02 09:30:00.500'],
+                    ['supplier', 0, '-', 'never', '-'],
+                    ['sale', 1, 1, '2026-10-03 11:30:00', '2026-10-01 09:00:00.000'],
+                    ['advanced-purchase', 0, 1, 'never', '-'],
+                    ['purchaseList', 1, '-', '2026-10-03 11:00:00', '-'],
+                ],
+            )
+            ->assertExitCode(0);
+    }
+
+    public function testStatusIssuesTwoQueriesWhateverTheModuleCount(): void
+    {
+        $queries = 0;
+        DB::listen(function () use (&$queries): void {
+            ++$queries;
+        });
+
+        $this->artisan('cin7:sync customer --status')->assertExitCode(0);
+        $this->assertSame(2, $queries);
+
+        $queries = 0;
+        $this->artisan('cin7:sync', ['module' => ['*'], '--status' => true])->assertExitCode(0);
+        $this->assertSame(2, $queries);
+    }
+
     public function testADocumentThatFailedIsShownAndTheCommandStillSucceeds(): void
     {
         Saloon::fake([
@@ -207,5 +253,23 @@ class SyncCommandTest extends SyncTestCase
         }
 
         $this->assertSame(['c-1'], $this->stored(Module::Customer)->keys()->all());
+    }
+
+    /**
+     * Store rows straight into the table: account, module, identifier, modified, synced, failures.
+     *
+     * @param list<array{string, string, string, null|string, string, int}> $rows
+     */
+    private function store(array $rows): void
+    {
+        Payload::query()->toBase()->insert(array_map(static fn (array $row): array => [
+            'account_id' => $row[0],
+            'module' => $row[1],
+            'cin7_id' => $row[2],
+            'payload' => '{}',
+            'cin7_modified_at' => $row[3],
+            'synced_at' => $row[4],
+            'failures' => $row[5],
+        ], $rows));
     }
 }
