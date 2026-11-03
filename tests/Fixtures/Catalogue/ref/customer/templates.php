@@ -38,7 +38,7 @@ return [
         DeleteCustomerTemplates::class => [DeleteCustomerTemplates::class, ['', ''], Cin7Payloads::load('ref/customer/templates', 'delete.response'), CustomerDefaultTemplateData::class, 'CustomerTemplates'],
     ],
     'bodies' => [
-        CustomerDefaultTemplatesPostData::class => [CustomerDefaultTemplatesPostData::class, Cin7Payloads::load('ref/customer/templates', 'post.request')],
+        CustomerDefaultTemplatesPostData::class => [CustomerDefaultTemplatesPostData::class, PostCustomerTemplates::class, Cin7Payloads::load('ref/customer/templates', 'post.request')],
     ],
     'missing' => [
         'customer default template without TemplateID' => [CustomerDefaultTemplateData::class, ['CustomerID' => $customer]],

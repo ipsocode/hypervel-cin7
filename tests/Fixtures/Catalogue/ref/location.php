@@ -43,8 +43,8 @@ return [
         PutLocation::class => [PutLocation::class, [[]], Cin7Payloads::load('ref/location', 'put.response'), LocationData::class, ''],
     ],
     'bodies' => [
-        LocationPostData::class => [LocationPostData::class, Cin7Payloads::load('ref/location', 'post.request')],
-        LocationPutData::class => [LocationPutData::class, Cin7Payloads::load('ref/location', 'put.request')],
+        LocationPostData::class => [LocationPostData::class, PostLocation::class, Cin7Payloads::load('ref/location', 'post.request')],
+        LocationPutData::class => [LocationPutData::class, PutLocation::class, Cin7Payloads::load('ref/location', 'put.request')],
     ],
     'missing' => [
         'location POST without Name' => [LocationPostData::class, Arr::except(Cin7Payloads::load('ref/location', 'post.request'), 'Name')],

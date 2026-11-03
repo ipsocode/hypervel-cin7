@@ -114,7 +114,7 @@ return [
         DeleteAdvancedPurchaseCreditNote::class => [DeleteAdvancedPurchaseCreditNote::class, ['task-1'], Cin7Payloads::load('advanced-purchase/creditnote', 'delete.response'), AdvancedPurchaseCreditNotesData::class, ''],
     ],
     'bodies' => [
-        AdvancedPurchasePartialCreditNotePostData::class => [AdvancedPurchasePartialCreditNotePostData::class, Cin7Payloads::load('advanced-purchase/creditnote', 'post.request')],
+        AdvancedPurchasePartialCreditNotePostData::class => [AdvancedPurchasePartialCreditNotePostData::class, PostAdvancedPurchaseCreditNote::class, Cin7Payloads::load('advanced-purchase/creditnote', 'post.request')],
     ],
     'missing' => [
         'advanced purchase credit note envelope without CreditNotes' => [AdvancedPurchaseCreditNotesData::class, Arr::except(Cin7Payloads::load('advanced-purchase/creditnote', 'get.response'), 'CreditNotes')],

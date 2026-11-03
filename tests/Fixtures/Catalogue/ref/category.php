@@ -111,8 +111,8 @@ return [
         PutCategory::class => [PutCategory::class, [[]], Cin7Payloads::load('ref/category', 'put.response'), ProductCategoryData::class, ''],
     ],
     'bodies' => [
-        ProductCategoryPostData::class => [ProductCategoryPostData::class, Cin7Payloads::load('ref/category', 'post.request')],
-        ProductCategoryPutData::class => [ProductCategoryPutData::class, Cin7Payloads::load('ref/category', 'put.request')],
+        ProductCategoryPostData::class => [ProductCategoryPostData::class, PostCategory::class, Cin7Payloads::load('ref/category', 'post.request')],
+        ProductCategoryPutData::class => [ProductCategoryPutData::class, PutCategory::class, Cin7Payloads::load('ref/category', 'put.request')],
     ],
     'missing' => [
         'product category POST without Name' => [ProductCategoryPostData::class, []],

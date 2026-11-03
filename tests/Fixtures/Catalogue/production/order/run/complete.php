@@ -23,6 +23,29 @@ return [
             [],
             ['ProductionOrderID' => $id, 'ProductionRunID' => $id],
         ],
+        PutProductionOrderRunComplete::class . ' with data' => [
+            PutProductionOrderRunComplete::class,
+            [fn (): ProductionRunCompletePutData => ProductionRunCompletePutData::from(Cin7Payloads::load('production/order/run/complete', 'put.request'))],
+            Method::PUT,
+            '/ExternalApi/v2/production/order/run/complete',
+            [],
+            [
+                'ProductionOrderID' => '1c634596-eb51-4ff1-828b-ee1b42a9a5f1',
+                'ProductionRunID' => '1c634596-eb51-4ff1-828b-ee1b42a9a5f1',
+                'EffectiveDate' => '2021-03-05T00:00:00',
+                'FinishedProducts' => [
+                    [
+                        'Quantity' => 4920.0,
+                        'WastageQuantity' => 0.0,
+                        'ReceivedDate' => '2022-05-12T00:00:00',
+                        'Received' => true,
+                        'LocationID' => '70c7737c-4233-4655-a960-f7cd742bab4b',
+                        'ProductID' => '27670203-9136-4ef8-96c3-33ffc41149da',
+                        'BatchSN' => 'MO-01753/1-1',
+                    ],
+                ],
+            ],
+        ],
     ],
     'resources' => [
         'production order run complete' => [
@@ -34,6 +57,6 @@ return [
         PutProductionOrderRunComplete::class => [PutProductionOrderRunComplete::class, [[]], Cin7Payloads::load('production/order/run/complete', 'put.response'), ProductionRunsData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunCompletePutData production/order/run/complete' => [ProductionRunCompletePutData::class, Cin7Payloads::load('production/order/run/complete', 'put.request')],
+        'ProductionRunCompletePutData production/order/run/complete' => [ProductionRunCompletePutData::class, PutProductionOrderRunComplete::class, Cin7Payloads::load('production/order/run/complete', 'put.request')],
     ],
 ];

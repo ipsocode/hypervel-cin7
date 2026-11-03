@@ -71,7 +71,7 @@ return [
         PostAdvancedPurchaseManualJournal::class => [PostAdvancedPurchaseManualJournal::class, [[]], Cin7Payloads::load('advanced-purchase/manualJournal', 'post.response'), AdvancedPurchaseManualJournalsData::class, ''],
     ],
     'bodies' => [
-        AdvancedPurchasePartialManualJournalPostData::class => [AdvancedPurchasePartialManualJournalPostData::class, Cin7Payloads::load('advanced-purchase/manualJournal', 'post.request')],
+        AdvancedPurchasePartialManualJournalPostData::class => [AdvancedPurchasePartialManualJournalPostData::class, PostAdvancedPurchaseManualJournal::class, Cin7Payloads::load('advanced-purchase/manualJournal', 'post.request')],
     ],
     'missing' => [
         'advanced purchase manual journal envelope without PurchaseID' => [AdvancedPurchaseManualJournalsData::class, Arr::except(Cin7Payloads::load('advanced-purchase/manualJournal', 'get.response'), 'PurchaseID')],

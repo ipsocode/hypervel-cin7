@@ -78,7 +78,7 @@ return [
         PostPurchaseStock::class => [PostPurchaseStock::class, [[]], Cin7Payloads::load('purchase/stock', 'post.response'), PurchaseStockData::class, ''],
     ],
     'bodies' => [
-        PurchaseStockPostData::class => [PurchaseStockPostData::class, $request],
+        PurchaseStockPostData::class => [PurchaseStockPostData::class, PostPurchaseStock::class, $request],
     ],
     'missing' => [
         'purchase stock POST without TaskID' => [PurchaseStockPostData::class, Arr::except($request, 'TaskID')],

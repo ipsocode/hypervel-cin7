@@ -105,8 +105,8 @@ return [
         PutDiscount::class => [PutDiscount::class, [[]], Cin7Payloads::load('reference/discount', 'put.response'), ProductDiscountRuleData::class, 'DiscountRules.0'],
     ],
     'bodies' => [
-        ProductDiscountRulesPostData::class => [ProductDiscountRulesPostData::class, Cin7Payloads::load('reference/discount', 'post.request')],
-        ProductDiscountRulePutData::class => [ProductDiscountRulePutData::class, Cin7Payloads::load('reference/discount', 'put.request')],
+        ProductDiscountRulesPostData::class => [ProductDiscountRulesPostData::class, PostDiscount::class, Cin7Payloads::load('reference/discount', 'post.request')],
+        ProductDiscountRulePutData::class => [ProductDiscountRulePutData::class, PutDiscount::class, Cin7Payloads::load('reference/discount', 'put.request')],
     ],
     'missing' => [
         'discount POST without DiscountRules' => [ProductDiscountRulesPostData::class, Arr::except(Cin7Payloads::load('reference/discount', 'post.request'), 'DiscountRules')],

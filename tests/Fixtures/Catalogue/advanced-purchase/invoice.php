@@ -111,7 +111,7 @@ return [
         DeleteAdvancedPurchaseInvoice::class => [DeleteAdvancedPurchaseInvoice::class, ['task-1'], Cin7Payloads::load('advanced-purchase/invoice', 'delete.response'), AdvancedPurchaseInvoicesData::class, ''],
     ],
     'bodies' => [
-        AdvancedPurchasePartialInvoicePostData::class => [AdvancedPurchasePartialInvoicePostData::class, Cin7Payloads::load('advanced-purchase/invoice', 'post.request')],
+        AdvancedPurchasePartialInvoicePostData::class => [AdvancedPurchasePartialInvoicePostData::class, PostAdvancedPurchaseInvoice::class, Cin7Payloads::load('advanced-purchase/invoice', 'post.request')],
     ],
     'missing' => [
         'advanced purchase invoice envelope without PurchaseID' => [AdvancedPurchaseInvoicesData::class, Arr::except(Cin7Payloads::load('advanced-purchase/invoice', 'get.response'), 'PurchaseID')],

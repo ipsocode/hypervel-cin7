@@ -124,8 +124,8 @@ return [
         DeleteBankTransfer::class => [DeleteBankTransfer::class, [$taskId], Cin7Payloads::load('bankTransfer', 'delete.response'), BankTransferData::class, ''],
     ],
     'bodies' => [
-        BankTransferPostData::class => [BankTransferPostData::class, Cin7Payloads::load('bankTransfer', 'post.request')],
-        BankTransferPutData::class => [BankTransferPutData::class, Cin7Payloads::load('bankTransfer', 'put.request')],
+        BankTransferPostData::class => [BankTransferPostData::class, PostBankTransfer::class, Cin7Payloads::load('bankTransfer', 'post.request')],
+        BankTransferPutData::class => [BankTransferPutData::class, PutBankTransfer::class, Cin7Payloads::load('bankTransfer', 'put.request')],
     ],
     'missing' => [
         'bank transfer POST without ToAccount' => [BankTransferPostData::class, Arr::except(Cin7Payloads::load('bankTransfer', 'post.request'), 'ToAccount')],

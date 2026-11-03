@@ -112,8 +112,8 @@ return [
         PutSupplier::class => [PutSupplier::class, [[]], Cin7Payloads::load('supplier', 'put.response'), SupplierData::class, 'SupplierList.0'],
     ],
     'bodies' => [
-        SupplierPostData::class => [SupplierPostData::class, Cin7Payloads::load('supplier', 'post.request')],
-        SupplierPutData::class => [SupplierPutData::class, Cin7Payloads::load('supplier', 'put.request')],
+        SupplierPostData::class => [SupplierPostData::class, PostSupplier::class, Cin7Payloads::load('supplier', 'post.request')],
+        SupplierPutData::class => [SupplierPutData::class, PutSupplier::class, Cin7Payloads::load('supplier', 'put.request')],
     ],
     'missing' => [
         'supplier POST without AccountPayable' => [SupplierPostData::class, Arr::except(Cin7Payloads::load('supplier', 'post.request'), 'AccountPayable')],

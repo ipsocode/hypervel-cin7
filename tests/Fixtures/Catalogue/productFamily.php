@@ -121,8 +121,8 @@ return [
         PutProductFamily::class => [PutProductFamily::class, [[]], Cin7Payloads::load('productFamily', 'put.response'), ProductFamilyData::class, 'ProductFamilies.0'],
     ],
     'bodies' => [
-        ProductFamilyPostData::class => [ProductFamilyPostData::class, Cin7Payloads::load('productFamily', 'post.request')],
-        ProductFamilyPutData::class => [ProductFamilyPutData::class, Cin7Payloads::load('productFamily', 'put.request')],
+        ProductFamilyPostData::class => [ProductFamilyPostData::class, PostProductFamily::class, Cin7Payloads::load('productFamily', 'post.request')],
+        ProductFamilyPutData::class => [ProductFamilyPutData::class, PutProductFamily::class, Cin7Payloads::load('productFamily', 'put.request')],
     ],
     'missing' => [
         'family POST without Option1Name' => [ProductFamilyPostData::class, Arr::except(Cin7Payloads::load('productFamily', 'post.request'), 'Option1Name')],

@@ -122,8 +122,8 @@ return [
         PutShipZones::class => [PutShipZones::class, [[]], Cin7Payloads::load('reference/shipZones', 'put.response'), ShippingZoneData::class, 'ShipZones.0'],
     ],
     'bodies' => [
-        ShippingZonePostData::class => [ShippingZonePostData::class, Cin7Payloads::load('reference/shipZones', 'post.request')],
-        ShippingZonePutData::class => [ShippingZonePutData::class, Cin7Payloads::load('reference/shipZones', 'put.request')],
+        ShippingZonePostData::class => [ShippingZonePostData::class, PostShipZones::class, Cin7Payloads::load('reference/shipZones', 'post.request')],
+        ShippingZonePutData::class => [ShippingZonePutData::class, PutShipZones::class, Cin7Payloads::load('reference/shipZones', 'put.request')],
     ],
     'missing' => [
         'ship zone POST without Name' => [ShippingZonePostData::class, Arr::except(Cin7Payloads::load('reference/shipZones', 'post.request'), 'Name')],

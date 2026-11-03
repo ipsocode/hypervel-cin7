@@ -139,8 +139,8 @@ return [
         DeleteJournal::class => [DeleteJournal::class, [$taskId], Cin7Payloads::load('journal', 'delete.response'), JournalData::class, 'Journals.0'],
     ],
     'bodies' => [
-        JournalPostData::class => [JournalPostData::class, Cin7Payloads::load('journal', 'post.request')],
-        JournalPutData::class => [JournalPutData::class, Cin7Payloads::load('journal', 'put.request')],
+        JournalPostData::class => [JournalPostData::class, PostJournal::class, Cin7Payloads::load('journal', 'post.request')],
+        JournalPutData::class => [JournalPutData::class, PutJournal::class, Cin7Payloads::load('journal', 'put.request')],
     ],
     'missing' => [
         'journal POST without Currency' => [JournalPostData::class, Arr::except(Cin7Payloads::load('journal', 'post.request'), 'Currency')],

@@ -20,6 +20,7 @@ use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
+use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -134,6 +135,21 @@ class RequestCatalogueTest extends TestCase
         sort($classes);
 
         $this->assertSame(self::concreteRequestClasses(), $classes);
+    }
+
+    /**
+     * A write request sends a typed body through `WriteRequest::defaultBody()`, which strips the
+     * nulls, applies `$omit` and validates, so each one needs a row that sends a data object.
+     */
+    public function testEveryWriteRequestHasATypedBodyRow(): void
+    {
+        $writes = array_filter(self::concreteRequestClasses(), static fn (string $class): bool => is_subclass_of($class, WriteRequest::class));
+
+        $this->assertNotEmpty($writes);
+
+        foreach ($writes as $class) {
+            $this->assertArrayHasKey($class . ' with data', Catalogue::rows('requests'));
+        }
     }
 
     public function testEachClassFolderMatchesItsResolvedEndpointPath(): void

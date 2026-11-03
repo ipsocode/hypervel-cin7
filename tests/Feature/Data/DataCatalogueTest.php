@@ -11,173 +11,10 @@ use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Ipsocode\Cin7\Attributes\DateTime;
-use Ipsocode\Cin7\Data\AbstractAddressData;
-use Ipsocode\Cin7\Data\AbstractCatalogueItemData;
-use Ipsocode\Cin7\Data\AbstractChargeData;
-use Ipsocode\Cin7\Data\AbstractLineData;
-use Ipsocode\Cin7\Data\AbstractManualJournalLineData;
-use Ipsocode\Cin7\Data\AbstractPurchaseCreditNoteData;
-use Ipsocode\Cin7\Data\AbstractPurchaseData;
-use Ipsocode\Cin7\Data\AbstractPurchaseInvoiceData;
-use Ipsocode\Cin7\Data\AbstractPurchaseListData;
-use Ipsocode\Cin7\Data\AbstractPurchaseManualJournalData;
-use Ipsocode\Cin7\Data\AbstractPurchasePaymentData;
-use Ipsocode\Cin7\Data\AbstractPurchaseStockLineData;
-use Ipsocode\Cin7\Data\AbstractSaleListData;
-use Ipsocode\Cin7\Data\AbstractSalePaymentLineData;
-use Ipsocode\Cin7\Data\AbstractStockLineData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchaseData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchaseCreditNotesData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\Invoice\AdvancedPurchaseInvoicesData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchaseManualJournalsData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\Payment\AdvancedPurchasePaymentData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AbstractAdvancedPurchasePutAwayData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwaysData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AbstractAdvancedPurchaseStockData;
-use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStocksData;
-use Ipsocode\Cin7\Data\BankTransfer\AbstractBankTransferData;
-use Ipsocode\Cin7\Data\BankTransfer\BankTransferData;
-use Ipsocode\Cin7\Data\Crm\Lead\AbstractLeadData;
-use Ipsocode\Cin7\Data\Crm\Lead\LeadData;
-use Ipsocode\Cin7\Data\Crm\Opportunity\AbstractOpportunityData;
-use Ipsocode\Cin7\Data\Crm\Opportunity\OpportunityData;
-use Ipsocode\Cin7\Data\Crm\Task\AbstractTaskData;
-use Ipsocode\Cin7\Data\Crm\Task\TaskData;
-use Ipsocode\Cin7\Data\Crm\TaskCategory\AbstractTaskCategoryData;
-use Ipsocode\Cin7\Data\Crm\TaskCategory\TaskCategoryData;
-use Ipsocode\Cin7\Data\Crm\Workflow\AbstractWorkflowData;
-use Ipsocode\Cin7\Data\Crm\Workflow\WorkflowData;
-use Ipsocode\Cin7\Data\Customer\AbstractCustomerData;
-use Ipsocode\Cin7\Data\Customer\CustomerData;
-use Ipsocode\Cin7\Data\Disassembly\AbstractDisassemblyData;
-use Ipsocode\Cin7\Data\Disassembly\DisassemblyData;
-use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderData;
-use Ipsocode\Cin7\Data\DisassemblyList\DisassemblyListData;
-use Ipsocode\Cin7\Data\FinishedGoods\AbstractFinishedGoodsData;
-use Ipsocode\Cin7\Data\FinishedGoods\FinishedGoodsData;
-use Ipsocode\Cin7\Data\FinishedGoods\Order\FinishedGoodsOrderData;
-use Ipsocode\Cin7\Data\FinishedGoods\Pick\FinishedGoodsPickData;
-use Ipsocode\Cin7\Data\FinishedGoodsList\FinishedGoodsListData;
-use Ipsocode\Cin7\Data\InventoryWriteOff\AbstractInventoryWriteOffData;
-use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffData;
-use Ipsocode\Cin7\Data\InventoryWriteOffList\InventoryWriteOffListData;
-use Ipsocode\Cin7\Data\Journal\AbstractJournalData;
-use Ipsocode\Cin7\Data\Journal\JournalData;
-use Ipsocode\Cin7\Data\Me\Addresses\AbstractMeAddressData;
-use Ipsocode\Cin7\Data\Me\Addresses\MeAddressData;
-use Ipsocode\Cin7\Data\Me\Contacts\AbstractMeContactData;
-use Ipsocode\Cin7\Data\Me\Contacts\MeContactData;
-use Ipsocode\Cin7\Data\Me\MeData;
-use Ipsocode\Cin7\Data\MoneyTask\AbstractMoneyTaskData;
-use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
-use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
 use Ipsocode\Cin7\Data\Other\ErrorData;
-use Ipsocode\Cin7\Data\Product\AbstractProductData;
-use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
-use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Data\Product\ProductSupplierOptionIntervalData;
-use Ipsocode\Cin7\Data\ProductFamily\AbstractProductFamilyData;
-use Ipsocode\Cin7\Data\ProductFamily\ProductFamilyData;
-use Ipsocode\Cin7\Data\Production\FactoryCalendar\FactoryCalendarData;
-use Ipsocode\Cin7\Data\Production\Order\AbstractProductionOrderData;
-use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentData;
-use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentsData;
-use Ipsocode\Cin7\Data\Production\Order\ProductionOrderMessageData;
-use Ipsocode\Cin7\Data\Production\Order\ProductionOrderReferenceData;
-use Ipsocode\Cin7\Data\Production\Order\ProductionOrdersData;
-use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunData;
-use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
-use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunUndoData;
-use Ipsocode\Cin7\Data\Production\OrderList\ProductionOrderListData;
-use Ipsocode\Cin7\Data\Production\ProductionBom\AbstractProductFamilyProductionBomData;
-use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomsData;
-use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomsData;
-use Ipsocode\Cin7\Data\Production\Resource\AbstractResourceData;
-use Ipsocode\Cin7\Data\Production\Resource\ResourceData;
-use Ipsocode\Cin7\Data\Production\Resource\ResourcesData;
-use Ipsocode\Cin7\Data\Production\SuspendReason\SuspendReasonData;
-use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCenterData;
-use Ipsocode\Cin7\Data\Production\WorkCenters\WorkCentersData;
-use Ipsocode\Cin7\Data\ProductSuppliers\ProductSuppliersData;
-use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentsData;
-use Ipsocode\Cin7\Data\Purchase\CreditNote\PurchaseCreditNoteData;
-use Ipsocode\Cin7\Data\Purchase\Invoice\PurchaseInvoiceData;
-use Ipsocode\Cin7\Data\Purchase\ManualJournal\PurchaseManualJournalData;
-use Ipsocode\Cin7\Data\Purchase\Order\AbstractPurchaseOrderData;
-use Ipsocode\Cin7\Data\Purchase\Order\PurchaseOrderData;
-use Ipsocode\Cin7\Data\Purchase\Payment\PurchasePaymentData;
-use Ipsocode\Cin7\Data\Purchase\PurchaseData;
-use Ipsocode\Cin7\Data\Purchase\Stock\AbstractPurchaseStockData;
-use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
-use Ipsocode\Cin7\Data\PurchaseCreditNoteList\PurchaseCreditNoteListData;
-use Ipsocode\Cin7\Data\PurchaseList\PurchaseListData;
-use Ipsocode\Cin7\Data\Ref\Account\AbstractAccountData;
-use Ipsocode\Cin7\Data\Ref\Account\AccountData;
-use Ipsocode\Cin7\Data\Ref\Account\Bank\BankAccountData;
-use Ipsocode\Cin7\Data\Ref\AttributeSet\AbstractAttributeSetData;
-use Ipsocode\Cin7\Data\Ref\Brand\AbstractBrandData;
-use Ipsocode\Cin7\Data\Ref\Brand\BrandData;
-use Ipsocode\Cin7\Data\Ref\Carrier\AbstractCarrierData;
-use Ipsocode\Cin7\Data\Ref\Carrier\CarrierData;
-use Ipsocode\Cin7\Data\Ref\Category\AbstractProductCategoryData;
-use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
-use Ipsocode\Cin7\Data\Ref\Customer\Templates\CustomerDefaultTemplateData;
-use Ipsocode\Cin7\Data\Ref\FixedAssetType\AbstractFixedAssetTypeData;
-use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypeData;
-use Ipsocode\Cin7\Data\Ref\Location\AbstractLocationData;
-use Ipsocode\Cin7\Data\Ref\Location\LocationData;
-use Ipsocode\Cin7\Data\Ref\PaymentTerm\AbstractPaymentTermData;
-use Ipsocode\Cin7\Data\Ref\PaymentTerm\PaymentTermData;
-use Ipsocode\Cin7\Data\Ref\Supplier\Deposits\SupplierDepositData;
-use Ipsocode\Cin7\Data\Ref\Tax\AbstractTaxData;
-use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
-use Ipsocode\Cin7\Data\Ref\Templates\TemplateData;
-use Ipsocode\Cin7\Data\Ref\Unit\AbstractUnitOfMeasureData;
-use Ipsocode\Cin7\Data\Reference\Deals\AbstractProductDealData;
-use Ipsocode\Cin7\Data\Reference\Deals\ProductDealData;
-use Ipsocode\Cin7\Data\Reference\Discount\AbstractProductDiscountRuleData;
-use Ipsocode\Cin7\Data\Reference\Discount\ProductDiscountRuleData;
-use Ipsocode\Cin7\Data\Reference\ShipZones\AbstractShippingZoneData;
-use Ipsocode\Cin7\Data\Reference\ShipZones\ShippingZoneData;
-use Ipsocode\Cin7\Data\Reference\ShipZonesEnabled\ShipZonesEnabledData;
-use Ipsocode\Cin7\Data\Sale\AbstractSaleData;
-use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentsData;
-use Ipsocode\Cin7\Data\Sale\CreditNote\AbstractSaleCreditNoteData;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotePaymentData;
-use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
-use Ipsocode\Cin7\Data\Sale\Fulfilment\AbstractSaleFulfilmentPickPackTaskData;
-use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackData;
-use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickData;
-use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentsData;
-use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\AbstractSaleFulfilmentShipTaskData;
-use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
-use Ipsocode\Cin7\Data\Sale\Invoice\AbstractSaleInvoiceData;
-use Ipsocode\Cin7\Data\Sale\Invoice\SaleInvoicesData;
-use Ipsocode\Cin7\Data\Sale\ManualJournal\AbstractSaleManualJournalData;
-use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
 use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalLineData;
-use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
-use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
-use Ipsocode\Cin7\Data\Sale\Quote\AbstractSaleQuoteData;
-use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
-use Ipsocode\Cin7\Data\Sale\SaleData;
-use Ipsocode\Cin7\Data\SaleCreditNoteList\SaleCreditNoteListData;
-use Ipsocode\Cin7\Data\SaleList\SaleListData;
-use Ipsocode\Cin7\Data\StockAdjustment\AbstractStockAdjustmentData;
-use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentData;
-use Ipsocode\Cin7\Data\StockAdjustmentList\StockAdjustmentListData;
-use Ipsocode\Cin7\Data\StockTake\AbstractStockTakeData;
-use Ipsocode\Cin7\Data\StockTake\StockTakeData;
-use Ipsocode\Cin7\Data\StockTakeList\StockTakeListData;
-use Ipsocode\Cin7\Data\StockTransfer\AbstractStockTransferData;
-use Ipsocode\Cin7\Data\StockTransfer\Order\StockTransferOrderData;
-use Ipsocode\Cin7\Data\StockTransfer\StockTransferData;
-use Ipsocode\Cin7\Data\StockTransferList\StockTransferListData;
-use Ipsocode\Cin7\Data\Supplier\AbstractSupplierData;
-use Ipsocode\Cin7\Data\Supplier\SupplierData;
-use Ipsocode\Cin7\Data\Transactions\TransactionData;
-use Ipsocode\Cin7\Data\Webhooks\AbstractWebhookData;
-use Ipsocode\Cin7\Data\Webhooks\WebhookData;
 use Ipsocode\Cin7\Requests\Product\GetProduct;
 use Ipsocode\Cin7\Requests\Sale\CreditNote\GetSaleCreditNote;
 use Ipsocode\Cin7\Requests\Sale\GetSale;
@@ -425,11 +262,13 @@ class DataCatalogueTest extends TestCase
 
     /**
      * Every model is a final class; an abstract class holds only the fields several models share
-     * (the `Abstract…Data` classes): a model is a final child that adds its own fields.
+     * (the `Abstract…Data` classes), so another class extends it: a model is a final child that
+     * adds its own fields.
      */
     public function testEveryDataClassIsFinalOrAnAbstractParentAndExtendsData(): void
     {
-        $parents = [];
+        $abstract = [];
+        $extended = [];
 
         foreach (self::dataClasses() as $class) {
             $reflection = new ReflectionClass($class);
@@ -438,75 +277,17 @@ class DataCatalogueTest extends TestCase
             $this->assertTrue($reflection->isSubclassOf(Data::class), $class);
 
             if ($reflection->isAbstract()) {
-                $parents[] = $class;
+                $abstract[] = $class;
             }
+
+            $extended[$reflection->getParentClass()->getName()] = true;
         }
 
-        $this->assertSame([
-            AbstractAddressData::class,
-            AbstractCatalogueItemData::class,
-            AbstractChargeData::class,
-            AbstractLineData::class,
-            AbstractManualJournalLineData::class,
-            AbstractPurchaseCreditNoteData::class,
-            AbstractPurchaseData::class,
-            AbstractPurchaseInvoiceData::class,
-            AbstractPurchaseListData::class,
-            AbstractPurchaseManualJournalData::class,
-            AbstractPurchasePaymentData::class,
-            AbstractPurchaseStockLineData::class,
-            AbstractSaleListData::class,
-            AbstractSalePaymentLineData::class,
-            AbstractStockLineData::class,
-            AbstractAdvancedPurchasePutAwayData::class,
-            AbstractAdvancedPurchaseStockData::class,
-            AbstractBankTransferData::class,
-            AbstractLeadData::class,
-            AbstractOpportunityData::class,
-            AbstractTaskCategoryData::class,
-            AbstractTaskData::class,
-            AbstractWorkflowData::class,
-            AbstractCustomerData::class,
-            AbstractDisassemblyData::class,
-            AbstractFinishedGoodsData::class,
-            AbstractInventoryWriteOffData::class,
-            AbstractJournalData::class,
-            AbstractMeAddressData::class,
-            AbstractMeContactData::class,
-            AbstractMoneyTaskData::class,
-            AbstractProductFamilyData::class,
-            AbstractProductData::class,
-            AbstractProductionOrderData::class,
-            AbstractProductFamilyProductionBomData::class,
-            AbstractResourceData::class,
-            AbstractPurchaseOrderData::class,
-            AbstractPurchaseStockData::class,
-            AbstractAccountData::class,
-            AbstractAttributeSetData::class,
-            AbstractBrandData::class,
-            AbstractCarrierData::class,
-            AbstractProductCategoryData::class,
-            AbstractFixedAssetTypeData::class,
-            AbstractLocationData::class,
-            AbstractPaymentTermData::class,
-            AbstractTaxData::class,
-            AbstractUnitOfMeasureData::class,
-            AbstractProductDealData::class,
-            AbstractProductDiscountRuleData::class,
-            AbstractShippingZoneData::class,
-            AbstractSaleData::class,
-            AbstractSaleCreditNoteData::class,
-            AbstractSaleFulfilmentPickPackTaskData::class,
-            AbstractSaleFulfilmentShipTaskData::class,
-            AbstractSaleInvoiceData::class,
-            AbstractSaleManualJournalData::class,
-            AbstractSaleQuoteData::class,
-            AbstractStockAdjustmentData::class,
-            AbstractStockTakeData::class,
-            AbstractStockTransferData::class,
-            AbstractSupplierData::class,
-            AbstractWebhookData::class,
-        ], $parents);
+        $this->assertNotEmpty($abstract);
+
+        foreach ($abstract as $class) {
+            $this->assertArrayHasKey($class, $extended, "{$class} is abstract and nothing extends it.");
+        }
     }
 
     /**
@@ -551,9 +332,17 @@ class DataCatalogueTest extends TestCase
         }
     }
 
+    /**
+     * The class each request's `dto()` returns, a `dtos` catalogue row's data class, keeps the
+     * response it was built from.
+     */
     public function testEveryResponseDataClassKeepsItsResponse(): void
     {
-        foreach ([CustomerData::class, ProductData::class, TaxData::class, CustomerCreditData::class, MoneyTaskData::class, MoneyTaskListData::class, SaleData::class, SaleListData::class, SaleOrderData::class, SaleQuoteData::class, SaleManualJournalData::class, SaleAttachmentsData::class, SaleCreditNoteListData::class, SaleFulfilmentsData::class, SaleFulfilmentPickData::class, SaleFulfilmentPackData::class, SaleFulfilmentShipData::class, SaleInvoicesData::class, SaleCreditNotesData::class, SalePaymentLinePartialData::class, SupplierData::class, SupplierDepositData::class, MeData::class, MeAddressData::class, MeContactData::class, PurchasePaymentData::class, PurchaseOrderData::class, PurchaseStockData::class, PurchaseListData::class, PurchaseCreditNoteListData::class, PurchaseManualJournalData::class, PurchaseAttachmentsData::class, AdvancedPurchaseStocksData::class, PurchaseInvoiceData::class, PurchaseCreditNoteData::class, AdvancedPurchaseManualJournalsData::class, AdvancedPurchaseInvoicesData::class, AdvancedPurchasePutAwaysData::class, AdvancedPurchasePaymentData::class, AdvancedPurchaseCreditNotesData::class, PurchaseData::class, AdvancedPurchaseData::class, AccountData::class, BankAccountData::class, FixedAssetTypeData::class, PaymentTermData::class, JournalData::class, TransactionData::class, BankTransferData::class, MarkupPricesData::class, ProductFamilyData::class, BrandData::class, StockAdjustmentData::class, StockAdjustmentListData::class, StockTakeData::class, StockTakeListData::class, StockTransferData::class, StockTransferListData::class, StockTransferOrderData::class, InventoryWriteOffData::class, InventoryWriteOffListData::class, LocationData::class, CarrierData::class, TemplateData::class, CustomerDefaultTemplateData::class, ProductSuppliersData::class, ShippingZoneData::class, ShipZonesEnabledData::class, ProductDiscountRuleData::class, ProductDealData::class, LeadData::class, OpportunityData::class, TaskData::class, TaskCategoryData::class, WorkflowData::class, WebhookData::class, DisassemblyData::class, DisassemblyListData::class, DisassemblyOrderData::class, FinishedGoodsData::class, FinishedGoodsListData::class, FinishedGoodsOrderData::class, FinishedGoodsPickData::class, FactoryCalendarData::class, ProductionOrderAttachmentData::class, ProductionOrderAttachmentsData::class, ProductionOrderMessageData::class, ProductionOrderReferenceData::class, ProductionOrdersData::class, ProductionRunData::class, ProductionRunUndoData::class, ProductionRunsData::class, ProductionOrderListData::class, ProductFamilyProductionBomsData::class, ProductProductionBomsData::class, ResourceData::class, ResourcesData::class, SuspendReasonData::class, WorkCenterData::class, WorkCentersData::class] as $class) {
+        $classes = array_unique(array_column(Catalogue::rows('dtos'), 3));
+
+        $this->assertNotEmpty($classes);
+
+        foreach ($classes as $class) {
             $this->assertInstanceOf(WithResponse::class, new ReflectionClass($class)->newInstanceWithoutConstructor());
         }
     }

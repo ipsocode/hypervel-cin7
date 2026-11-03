@@ -77,7 +77,7 @@ return [
         DeleteSaleAttachment::class => [DeleteSaleAttachment::class, ['attachment-1'], Cin7Payloads::load('sale/attachment', 'get.response'), SaleAttachmentsData::class, ''],
     ],
     'bodies' => [
-        SaleAttachmentPostData::class => [SaleAttachmentPostData::class, Cin7Payloads::load('sale/attachment', 'post.request')],
+        SaleAttachmentPostData::class => [SaleAttachmentPostData::class, PostSaleAttachment::class, Cin7Payloads::load('sale/attachment', 'post.request')],
     ],
     'missing' => [
         'attachments without SaleID' => [SaleAttachmentsData::class, Arr::except(Cin7Payloads::load('sale/attachment', 'get.response'), 'SaleID')],

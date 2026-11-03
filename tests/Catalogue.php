@@ -13,12 +13,12 @@ use SplFileInfo;
  * The catalog rows, one file per API path under `tests/Fixtures/Catalogue/`
  * (`sale/invoice.php` holds the rows for `sale/invoice`). Each file returns its rows by kind:
  *
- * - `requests`: one per request class, plus `… with data` rows for data object bodies
+ * - `requests`: one per request class, plus a `… with data` row for each write request, which sends a data object body
  * - `resources`: one per resource method, keyed `<resource path> <method>`. A row is the call, then the
  *   request class, verb, path, query and body it sends, or only the call and the key of the
  *   `requests` row that expects the same, which the loader fills in
  * - `dtos`: the request, its fixture and the data class `dto()` returns
- * - `bodies`: a body class and the reference's request example it round-trips
+ * - `bodies`: a body class, the write request that sends it and the reference's request example it round-trips
  * - `missing`: a class and a payload without one of its required fields
  * - `required`: the fields of a class the reference requires
  * - `omitted`: a request, the body given and the body sent without its `$omit` fields

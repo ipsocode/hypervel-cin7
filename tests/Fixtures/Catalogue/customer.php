@@ -103,8 +103,8 @@ return [
         PutCustomer::class => [PutCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
     ],
     'bodies' => [
-        CustomerPostData::class => [CustomerPostData::class, Cin7Payloads::load('customer', 'post.request')],
-        CustomerPutData::class => [CustomerPutData::class, Cin7Payloads::load('customer', 'put.request')],
+        CustomerPostData::class => [CustomerPostData::class, PostCustomer::class, Cin7Payloads::load('customer', 'post.request')],
+        CustomerPutData::class => [CustomerPutData::class, PutCustomer::class, Cin7Payloads::load('customer', 'put.request')],
     ],
     'missing' => [
         'customer POST without Status' => [CustomerPostData::class, Arr::except(Cin7Payloads::load('customer', 'post.request'), 'Status')],

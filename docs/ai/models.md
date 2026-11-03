@@ -181,10 +181,10 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
 - **Catalog rows:** `tests/Fixtures/Catalogue/<path>.php` returns rows by kind. A key two files
   share throws. The kinds are:
   - `requests`: class, arguments, method, path, query and body; for a data-object body, add a
-    `with data` row;
+    `with data` row (every write request needs one);
   - `resources`: every public resource method;
   - `dtos`: a fixture round-trips through `createDtoFromResponse`;
-  - `bodies`: a write fixture round-trips through its body class;
+  - `bodies`: a write fixture round-trips through its body class, and its write request validates it;
   - `missing`: each required field, left out, fails;
   - `required`: a class's required fields, in its constructor's order, the parent's forwarded ones
     first;
@@ -192,13 +192,12 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
 - **Body key order:** an expected body follows `toArray()`. That is the child's own promoted
   properties, then the parent's declared properties, then the parent's promoted constructor
   properties, then trait properties.
-- **Hard-coded lists to extend:**
-  - in `DataCatalogueTest`, the abstract parents (in the asserted order) and the `WithResponse`
-    classes;
-  - the accessors in `ConnectorResourcesTest`;
-  - in `BodyValidationTest`, a case for every new `#[In]` (`postOnlyStatusProvider`),
-    `#[RequiredWithout]` (`eitherFieldProvider`), `#[RequiredIf]` and `#[Required]`
-    (`productionRequiredFieldProvider`) rule.
+- **Checks derived from the catalogue:** `DataCatalogueTest` needs no edit for a new abstract
+  parent (it only has to be extended) or a new response class (a `dtos` row's data class has to
+  keep its response), and `ConnectorResourcesTest` walks the accessors by reflection.
+- **Hard-coded lists to extend:** in `BodyValidationTest`, a case for every new `#[In]`
+  (`postOnlyStatusProvider`), `#[RequiredWithout]` (`eitherFieldProvider`), `#[RequiredIf]` and
+  `#[Required]` (`productionRequiredFieldProvider`) rule.
 
 ### Docs
 

@@ -365,8 +365,8 @@ foreach ($cin7->ref()->tax()->paginate() as $response) {
 
 ## Where the reference's tables and examples disagree
 
-- **Request examples that fail their own body's validation.** `BodyValidationTest` sends every
-  `bodies` row through the validation `send()` runs, and these examples fail it on the fields
+- **Request examples that fail their own body's validation.** `ExampleBodyValidationTest` sends every
+  `bodies` row through its request's `defaultBody()`, the validation `send()` runs, and these examples fail it on the fields
   listed, because the model requires what the table requires and the example leaves it out:
   - a product supplier's POST and PUT examples send a supplier option with `LocationID` and
     `LocationName` both `null` (one is required);

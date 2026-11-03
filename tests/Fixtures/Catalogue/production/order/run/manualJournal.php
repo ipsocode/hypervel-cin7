@@ -23,6 +23,34 @@ return [
             ['ProductionOrderID' => $id],
             ['RunID' => $id],
         ],
+        PutProductionOrderRunManualJournal::class . ' with data' => [
+            PutProductionOrderRunManualJournal::class,
+            [fn (): ProductionRunManualJournalsPutData => ProductionRunManualJournalsPutData::from(Cin7Payloads::load('production/order/run/manualJournal', 'put.request')), 'productionOrderId' => $id],
+            Method::PUT,
+            '/ExternalApi/v2/production/order/run/manualJournal',
+            ['ProductionOrderID' => $id],
+            [
+                'RunID' => '2f4b8820-3676-4795-b867-4ba28ad84df7',
+                'ManualJournals' => [
+                    [
+                        'Amount' => 34.0,
+                        'Date' => '2021-02-22T00:00:00',
+                        'Debit' => '1320',
+                        'Credit' => '1530',
+                        'Reference' => 'ref 1',
+                        'OperationID' => 'feef1b7d-58c8-4c81-9ba0-4f24a4dbeba6',
+                    ],
+                    [
+                        'Amount' => 12.0,
+                        'Date' => '2021-02-22T00:00:00',
+                        'Debit' => '1320',
+                        'Credit' => '1530',
+                        'JournalID' => 'feef1b7d-58c8-4c81-9ba0-4f24a4dbeba5',
+                        'Reference' => 'ref 2',
+                    ],
+                ],
+            ],
+        ],
     ],
     'resources' => [
         'production order run manualJournal' => [
@@ -34,6 +62,6 @@ return [
         PutProductionOrderRunManualJournal::class => [PutProductionOrderRunManualJournal::class, [[], $id], Cin7Payloads::load('production/order/run/manualJournal', 'put.response'), ProductionRunsData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunManualJournalsPutData production/order/run/manualJournal' => [ProductionRunManualJournalsPutData::class, Cin7Payloads::load('production/order/run/manualJournal', 'put.request')],
+        'ProductionRunManualJournalsPutData production/order/run/manualJournal' => [ProductionRunManualJournalsPutData::class, PutProductionOrderRunManualJournal::class, Cin7Payloads::load('production/order/run/manualJournal', 'put.request')],
     ],
 ];

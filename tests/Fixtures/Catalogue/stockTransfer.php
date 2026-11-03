@@ -119,8 +119,8 @@ return [
         DeleteStockTransfer::class => [DeleteStockTransfer::class, [$taskId], Cin7Payloads::load('stockTransfer', 'delete.response'), StockTransferData::class, ''],
     ],
     'bodies' => [
-        StockTransferPostData::class => [StockTransferPostData::class, Cin7Payloads::load('stockTransfer', 'post.request')],
-        StockTransferPutData::class => [StockTransferPutData::class, Cin7Payloads::load('stockTransfer', 'put.request')],
+        StockTransferPostData::class => [StockTransferPostData::class, PostStockTransfer::class, Cin7Payloads::load('stockTransfer', 'post.request')],
+        StockTransferPutData::class => [StockTransferPutData::class, PutStockTransfer::class, Cin7Payloads::load('stockTransfer', 'put.request')],
     ],
     'missing' => [
         'stock transfer POST without Status' => [StockTransferPostData::class, Arr::except(Cin7Payloads::load('stockTransfer', 'post.request'), 'Status')],
