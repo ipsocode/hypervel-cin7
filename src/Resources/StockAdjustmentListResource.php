@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\StockAdjustmentList\StockAdjustmentListData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -12,8 +14,10 @@ use Ipsocode\Cin7\Requests\StockAdjustmentList\GetStockAdjustmentList;
 
 /**
  * `stockadjustmentList`, the stock adjustment list.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class StockAdjustmentListResource extends ListResource
+final class StockAdjustmentListResource extends BaseResource
 {
     /**
      * Fetch one page of stock adjustments; without a page or limit, page 1 of 100.
@@ -28,7 +32,7 @@ final class StockAdjustmentListResource extends ListResource
         ?int $limit = null,
         ?CompletionStatus $status = null,
     ): Response {
-        return $this->sendList(new GetStockAdjustmentList(
+        return $this->connector->send(new GetStockAdjustmentList(
             $page,
             $limit,
             $status,
@@ -46,7 +50,7 @@ final class StockAdjustmentListResource extends ListResource
         ?int $limit = null,
         ?CompletionStatus $status = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetStockAdjustmentList(
+        return $this->connector->paginate(new GetStockAdjustmentList(
             null,
             $limit,
             $status,

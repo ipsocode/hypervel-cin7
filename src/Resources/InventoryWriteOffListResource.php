@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\InventoryWriteOffList\InventoryWriteOffListData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -12,8 +14,10 @@ use Ipsocode\Cin7\Requests\InventoryWriteOffList\GetInventoryWriteOffList;
 
 /**
  * `inventoryWriteOffList`, the inventory write-off list.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class InventoryWriteOffListResource extends ListResource
+final class InventoryWriteOffListResource extends BaseResource
 {
     /**
      * Fetch one page of inventory write-offs; without a page or limit, page 1 of 100.
@@ -30,7 +34,7 @@ final class InventoryWriteOffListResource extends ListResource
         ?CompletionStatus $status = null,
         ?string $search = null,
     ): Response {
-        return $this->sendList(new GetInventoryWriteOffList(
+        return $this->connector->send(new GetInventoryWriteOffList(
             $page,
             $limit,
             $status,
@@ -51,7 +55,7 @@ final class InventoryWriteOffListResource extends ListResource
         ?CompletionStatus $status = null,
         ?string $search = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetInventoryWriteOffList(
+        return $this->connector->paginate(new GetInventoryWriteOffList(
             null,
             $limit,
             $status,

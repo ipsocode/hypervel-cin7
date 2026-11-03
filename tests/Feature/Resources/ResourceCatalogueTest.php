@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Tests\Feature\Resources;
 
 use Hypervel\Saloon\Http\BaseResource;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
-use Ipsocode\Cin7\Resources\ListResource;
 use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\Resources;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -58,20 +57,5 @@ class ResourceCatalogueTest extends TestCase
 
         $this->assertCount(6, $rows['customer get']);
         $this->assertSame([GetCustomer::class, ...array_slice($request, 2)], array_slice($rows['customer get'], 1));
-    }
-
-    /**
-     * A list-only endpoint's resource, `Resources\\SaleListResource` or `Resources\\Production\\OrderListResource`,
-     * sends and paginates through `ListResource`, whose helpers take only a `ListRequest`.
-     */
-    public function testEveryListResourceExtendsListResource(): void
-    {
-        $lists = array_filter(Resources::classes(), static fn (string $class): bool => str_ends_with($class, 'ListResource'));
-
-        $this->assertNotEmpty($lists);
-
-        foreach ($lists as $class) {
-            $this->assertTrue(is_subclass_of($class, ListResource::class), "{$class} must extend ListResource.");
-        }
     }
 }

@@ -47,12 +47,11 @@ foreach ($this->cin7->customer()->paginate()->items() as $customer) {
   `get(string $id, ?bool $combineAdditionalCharges = null, …)`. A list's `get()` takes `page`,
   `limit` and the list's filters the same way, and its `paginate()` the same arguments without
   `page`. See [query parameters](requests.md#query-parameters) for every request's arguments.
-- **A list-only endpoint's resource extends `ListResource`.** The `*List` paths (`saleList`,
-  `production/orderList`, …) have no write or keyed read, so their resource declares `get()` and
-  `paginate()` with the endpoint's typed filters and hands the request to `sendList()` and
-  `paginateList()`, which take only a `ListRequest`: a request that cannot paginate is a static
-  error, not a run-time one. A list that sits beside writes on one path (`customer`, `ref/brand`)
-  stays on `BaseResource` and calls the connector itself.
+- **Every resource extends `BaseResource` and calls the connector itself**, a `*List` path's too.
+  A list-only endpoint's resource (`saleList`, `production/orderList`, …) declares `get()` and
+  `paginate()` with the endpoint's typed filters, as the list of a path that sits beside writes
+  (`customer`, `ref/brand`) does. Saloon's paginator rejects a request that is not `Paginatable`
+  before it sends anything, and only a `ListRequest` is.
 - **A write's identifier is the caller's job.** `post()` and `put()` take the
   body verbatim; the caller merges in the identifier a PUT needs (see
   [PUT identifiers](#put-identifiers)).
@@ -1240,8 +1239,7 @@ request:
    query parameter as a typed constructor argument (see
    [writing a request class](requests.md#writing-a-request-class)).
 2. Add the method to the resource, with the request's arguments, delegating to
-   `$this->connector->send()` or `$this->connector->paginate()` (`$this->sendList()` or
-   `$this->paginateList()` in a `*ListResource`).
+   `$this->connector->send()` or `$this->connector->paginate()`.
 3. Add its `requests` and `resources` rows to the path's file under `tests/Fixtures/Catalogue/`
    (see [the catalog](testing.md#the-catalog)).
 4. Add the accessor, and its test in
