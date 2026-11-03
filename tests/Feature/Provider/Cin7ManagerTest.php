@@ -240,6 +240,18 @@ class Cin7ManagerTest extends TestCase
         $this->assertNull($this->manager()->connection('local')->resolveRateLimitStoreName());
     }
 
+    public function testABlankConnectionStoreInheritsTheTopLevelOne(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.store', 'redis');
+        $this->app->get('config')->set('cin7.connections.local', [
+            'account_id' => 'acct-local',
+            'application_key' => 'key-local',
+            'rate_limit' => ['store' => ''],
+        ]);
+
+        $this->assertSame('redis', $this->manager()->connection('local')->resolveRateLimitStoreName());
+    }
+
     /**
      * @param array<string, mixed> $connection
      */

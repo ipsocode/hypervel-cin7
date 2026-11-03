@@ -32,6 +32,10 @@ env:
   # Off, or it records every query and fails at the end of each test against a table the
   # suite never migrates; phpunit.xml says more.
   TELESCOPE_ENABLED: false
+  # The framework's OpenTelemetry exporters have no collector in a test run, so the SDK is off. Here and not
+  # in phpunit.xml: PHPUnit turns "true" into 1, which the SDK rejects as a boolean and reads as false. The
+  # Testbench commands export it to the test workers, which includes bin/run-database-tests.sh.
+  OTEL_SDK_DISABLED: true
 
 workbench:
   # An outbound API client: nothing to authenticate, no HTTP surface to health-check.

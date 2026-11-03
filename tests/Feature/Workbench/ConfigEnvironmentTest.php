@@ -19,6 +19,9 @@ class ConfigEnvironmentTest extends TestCase
             Yaml::parseFile($root . '/testbench.yaml')['env'],
         );
 
+        // Only testbench.yaml sets it: PHPUnit turns "true" into 1, which the SDK rejects as a boolean.
+        unset($yaml['OTEL_SDK_DISABLED']);
+
         $phpunit = [];
 
         foreach ((new SimpleXMLElement((string) file_get_contents($root . '/phpunit.xml')))->xpath('//php/env[not(@force)]') as $env) {

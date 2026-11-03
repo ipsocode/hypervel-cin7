@@ -62,7 +62,7 @@ fi
 cd "$project_directory"
 
 printf 'Running %s\n' 'tests/Feature/Sync'
-vendor/bin/paratest "${paratest_options[@]}" tests/Feature/Sync
+vendor/bin/testbench package:test --parallel "${paratest_options[@]}" tests/Feature/Sync
 
 shopt -s nullglob
 candidate_directories=(tests/Feature/*/Database/"$driver_directory")
@@ -80,5 +80,5 @@ fi
 
 for test_directory in "${test_directories[@]}"; do
     printf 'Running %s\n' "$test_directory"
-    vendor/bin/paratest "${paratest_options[@]}" "$test_directory"
+    vendor/bin/testbench package:test --parallel "${paratest_options[@]}" "$test_directory"
 done
