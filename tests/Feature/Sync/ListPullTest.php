@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Sync;
 
+use Hypervel\Cache\Contracts\Lock;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Support\Facades\Cache;
+use Hypervel\Support\Facades\DB;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Sync\Module;
 use Ipsocode\Cin7\Sync\Payload;
 use Ipsocode\Cin7\Testing\Cin7Fake;
+use Mockery as m;
 use PHPUnit\Framework\Attributes\DataProvider;
+use RuntimeException;
 
 /**
  * A list module's pull: the window it asks for, what it writes, and what a failure leaves.
@@ -386,6 +390,57 @@ class ListPullTest extends SyncTestCase
         $this->synchroniser()->pull(Module::Customer);
 
         $this->assertTrue(Cache::lock('cin7:sync:acct-test:customer', 60)->get());
+    }
+
+    public function testALockThatThrowsFailsOnlyItsModule(): void
+    {
+        $lockError = new RuntimeException('cache down');
+        $other = m::mock(Lock::class);
+        $other->shouldReceive('get')->once()->andReturnTrue();
+        $other->shouldReceive('release')->once();
+        Cache::shouldReceive('lock')->twice()->andReturnUsing(
+            fn (string $key) => str_ends_with($key, 'customer') ? throw $lockError : $other,
+        );
+        Saloon::fake([Cin7Fake::list('SupplierList', [['ID' => 's-1', 'LastModifiedOn' => '2026-10-01T10:00:00Z']])]);
+
+        $results = $this->synchroniser()->pullMany([Module::Customer, Module::Supplier]);
+
+        $this->assertSame($lockError, $results[0]->error);
+        $this->assertFalse($results[1]->failed());
+        $this->assertSame(['s-1'], $this->stored(Module::Supplier)->keys()->all());
+    }
+
+    public function testAFailingLastSyncQueryFailsOnlyItsModuleAndReleasesTheLock(): void
+    {
+        $queryError = new RuntimeException('query failed');
+        DB::listen(function ($query) use ($queryError): void {
+            if (str_contains($query->sql, 'max(') && in_array('customer', $query->bindings, true)) {
+                throw $queryError;
+            }
+        });
+        Saloon::fake([Cin7Fake::list('SupplierList', [['ID' => 's-1', 'LastModifiedOn' => '2026-10-01T10:00:00Z']])]);
+
+        $results = $this->synchroniser()->pullMany([Module::Customer, Module::Supplier]);
+
+        $this->assertSame($queryError, $results[0]->error);
+        $this->assertFalse($results[1]->failed());
+        $this->assertTrue(Cache::lock('cin7:sync:acct-test:customer', 60)->get());
+    }
+
+    public function testAFailingRollbackKeepsThePullsOwnError(): void
+    {
+        $rollbackError = new RuntimeException('delete failed');
+        DB::listen(function ($query) use ($rollbackError): void {
+            if (str_starts_with($query->sql, 'delete')) {
+                throw $rollbackError;
+            }
+        });
+        Saloon::fake([Cin7Fake::error('Something went wrong')]);
+
+        $result = $this->synchroniser()->pull(Module::Customer);
+
+        $this->assertTrue($result->failed());
+        $this->assertNotSame($rollbackError, $result->error);
     }
 
     public function testEachModuleIsPulledInOrderAndAFailureDoesNotStopTheNext(): void

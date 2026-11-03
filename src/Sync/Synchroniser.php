@@ -48,27 +48,32 @@ final class Synchroniser
     }
 
     /**
-     * Pull one module, unless another pull of it holds its lock.
+     * Pull one module, unless another pull of it holds its lock. A failure anywhere in the pull,
+     * the lock and the bookkeeping included, is the module's result, not an exception.
      */
     public function pull(Module $module, bool $full = false): PullResult
     {
-        $lock = Cache::lock('cin7:sync:' . $this->cin7->accountId() . ':' . $module->value, SyncConfig::timeout());
-
-        if (! $lock->get()) {
-            return new PullResult($module, $full, skipped: true);
-        }
-
         try {
-            // Every row a pull writes carries its start, so a full pull can tell what it saw.
-            $start = Carbon::now()->startOfSecond();
+            $lock = Cache::lock('cin7:sync:' . $this->cin7->accountId() . ':' . $module->value, SyncConfig::timeout());
 
-            $list = $module->source();
+            if (! $lock->get()) {
+                return new PullResult($module, $full, skipped: true);
+            }
 
-            return $list === null
-                ? $this->pullList($module, $full, $start)
-                : $this->pullDocuments($module, $list, $full, $start);
-        } finally {
-            $lock->release();
+            try {
+                // Every row a pull writes carries its start, so a full pull can tell what it saw.
+                $start = Carbon::now()->startOfSecond();
+
+                $list = $module->source();
+
+                return $list === null
+                    ? $this->pullList($module, $full, $start)
+                    : $this->pullDocuments($module, $list, $full, $start);
+            } finally {
+                $lock->release();
+            }
+        } catch (Throwable $exception) {
+            return new PullResult($module, $full, error: $exception);
         }
     }
 
@@ -135,12 +140,17 @@ final class Synchroniser
             // A first fill that failed is undone, so the next pull is a full one again. Otherwise
             // the rows it reached keep what it wrote but get their last sync back, so the module's
             // newest synced_at does not move and the next pull reaches back as far as this one.
-            if ($empty) {
-                $this->rows($module)->delete();
-            } else {
-                $this->rows($module)->toBase()
-                    ->where('synced_at', $start->format(self::DATE))
-                    ->update(['synced_at' => $previous]);
+            try {
+                if ($empty) {
+                    $this->rows($module)->delete();
+                } else {
+                    $this->rows($module)->toBase()
+                        ->where('synced_at', $start->format(self::DATE))
+                        ->update(['synced_at' => $previous]);
+                }
+            } catch (Throwable $rollback) {
+                // The pull's own error is the one the result reports; this one is only logged.
+                report($rollback);
             }
 
             return new PullResult($module, $full, $read, $written, $unchanged, error: $exception);
