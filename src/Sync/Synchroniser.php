@@ -14,6 +14,7 @@ use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
 use stdClass;
 use Throwable;
+use UnexpectedValueException;
 
 /**
  * Copies Cin7 records into the payload table, one module at a time.
@@ -276,12 +277,21 @@ final class Synchroniser
     {
         $records = [];
 
-        foreach ($items as $item) {
+        foreach ($items as $position => $item) {
             $id = is_array($item) ? ($item[$module->idKey()] ?? null) : null;
 
-            if (is_string($id) && $id !== '') {
-                $records[$id] = $item;
+            // Dropping the item would leave its stored row unseen, and a full pull deletes
+            // what it did not see, so a record is never skipped quietly: the module fails.
+            if (! is_string($id) || $id === '') {
+                throw new UnexpectedValueException(sprintf(
+                    'Cin7 sent [%s] item %s without a usable string [%s].',
+                    $module->value,
+                    $position,
+                    $module->idKey(),
+                ));
             }
+
+            $records[$id] = $item;
         }
 
         $ids = array_map(strval(...), array_keys($records));

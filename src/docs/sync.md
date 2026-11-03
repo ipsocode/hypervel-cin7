@@ -123,6 +123,12 @@ other records point to comes before the records that point to it.
    pull reaches back as far as the failed one did. One that began on an empty module is undone,
    so the next pull is a full one again.
 
+A list item with no usable `ID` (missing, empty or not a string) is never skipped: the module's
+pull fails with an exception naming the module and the item's position, so a dropped item can
+never make a full pull delete a stored row. Fix the record in Cin7 and the next pull succeeds. A
+record whose modified time cannot be read is logged as a warning with its module and `ID`, and
+is treated as changed, so it is written again on every pull until Cin7 sends a readable time.
+
 No cursor is stored. Reading the look-back window again costs a few pages, and a record whose
 modified time has not moved is not rewritten, so a pull that was missed or failed is covered by
 the next one with nothing to keep in step. The weekly full pull covers a gap longer than that.

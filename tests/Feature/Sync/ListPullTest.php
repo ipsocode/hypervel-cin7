@@ -9,6 +9,7 @@ use Hypervel\Contracts\Debug\ExceptionHandler;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Support\Facades\Cache;
 use Hypervel\Support\Facades\DB;
+use Hypervel\Support\Facades\Log;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Sync\Module;
 use Ipsocode\Cin7\Sync\Payload;
@@ -17,6 +18,7 @@ use Mockery as m;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use Throwable;
+use UnexpectedValueException;
 
 /**
  * A list module's pull: the window it asks for, what it writes, and what a failure leaves.
@@ -313,19 +315,44 @@ class ListPullTest extends SyncTestCase
         $this->assertCount(0, $this->stored(Module::Customer));
     }
 
-    public function testRecordsWithoutAnIdentifierAreSkipped(): void
+    #[DataProvider('unusableItems')]
+    public function testAnItemWithoutAUsableIdFailsTheModuleAndDeletesNothing(mixed $item, string $position): void
     {
-        Saloon::fake([Cin7Fake::list('CustomerList', [
-            $this->customer('c-1'),
-            ['Name' => 'No identifier'],
-            ['ID' => '', 'Name' => 'Empty identifier'],
-            'not a record',
-        ])]);
+        Saloon::fake([
+            Cin7Fake::list('CustomerList', [$this->customer('c-1'), $this->customer('c-2')]),
+            Cin7Fake::list('CustomerList', [$this->customer('c-1'), $item]),
+        ]);
+
+        $this->synchroniser()->pull(Module::Customer);
+        $result = $this->synchroniser()->pull(Module::Customer, full: true);
+
+        $this->assertInstanceOf(UnexpectedValueException::class, $result->error);
+        $this->assertStringContainsString("[customer] {$position} without a usable string [ID]", $result->error->getMessage());
+        $this->assertSame(0, $result->deleted);
+        $this->assertSame(['c-1', 'c-2'], $this->stored(Module::Customer)->keys()->all());
+    }
+
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function unusableItems(): array
+    {
+        return [
+            'a missing id' => [['Name' => 'No identifier'], 'item 1'],
+            'an empty id' => [['ID' => '', 'Name' => 'Empty identifier'], 'item 1'],
+            'a non-string id' => [['ID' => 42, 'Name' => 'Numeric identifier'], 'item 1'],
+            'an item that is no record' => ['not a record', 'item 1'],
+        ];
+    }
+
+    public function testAFirstFillWithAnItemWithoutAnIdStoresNothing(): void
+    {
+        Saloon::fake([Cin7Fake::list('CustomerList', [$this->customer('c-1'), ['Name' => 'No identifier']])]);
 
         $result = $this->synchroniser()->pull(Module::Customer);
 
-        $this->assertSame([4, 1], [$result->read, $result->written]);
-        $this->assertSame(['c-1'], $this->stored(Module::Customer)->keys()->all());
+        $this->assertInstanceOf(UnexpectedValueException::class, $result->error);
+        $this->assertCount(0, $this->stored(Module::Customer));
     }
 
     public function testARecordWithoutAReadableModifiedTimeIsWrittenEveryTime(): void
@@ -335,11 +362,16 @@ class ListPullTest extends SyncTestCase
             Cin7Fake::list('CustomerList', [$this->customer('c-1', null), $this->customer('c-2', 'not a date')]),
         ]);
 
+        Log::spy();
+
         $this->synchroniser()->pull(Module::Customer);
         $result = $this->synchroniser()->pull(Module::Customer);
 
         $this->assertSame([2, 0], [$result->written, $result->unchanged]);
         $this->assertNull($this->stored(Module::Customer)['c-2']->cin7_modified_at);
+        Log::shouldHaveReceived('warning')
+            ->with('Cin7 sync: [customer] record [c-2] has the unreadable modified time [not a date]; it is treated as changed.')
+            ->twice();
     }
 
     public function testItPausesBetweenItsCallsOnly(): void
