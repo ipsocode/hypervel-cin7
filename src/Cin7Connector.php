@@ -60,8 +60,10 @@ use UnitEnum;
 /**
  * The Cin7 Core connector.
  *
- * It holds only readonly values, all set in the constructor, so one singleton per worker is
- * shared across coroutines.
+ * It holds only readonly values, all set in the constructor, so one instance is shared across
+ * coroutines. Saloon's `Connector` adds none that a caller can change: its headers, query and
+ * options come from methods, its only property (`$response`) has no setter, and a mock client
+ * travels with `send()` or the request.
  *
  * @see src/docs/connector.md
  *
