@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources;
 
 use DateTimeInterface;
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\PurchaseList\PurchaseListData;
 use Ipsocode\Cin7\Enums\InvoiceStatus;
 use Ipsocode\Cin7\Enums\TaskStatus;
@@ -14,8 +16,10 @@ use Ipsocode\Cin7\Requests\PurchaseList\GetPurchaseList;
 
 /**
  * `purchaseList`, the purchases, simple, advanced and service ones.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class PurchaseListResource extends ListResource
+final class PurchaseListResource extends BaseResource
 {
     /**
      * Fetch one page of purchases; without a page or limit, page 1 of 100.
@@ -53,7 +57,7 @@ final class PurchaseListResource extends ListResource
         ?string $status = null,
         ?string $dropShipTaskId = null,
     ): Response {
-        return $this->sendList(new GetPurchaseList(
+        return $this->connector->send(new GetPurchaseList(
             $page,
             $limit,
             $search,
@@ -104,7 +108,7 @@ final class PurchaseListResource extends ListResource
         ?string $status = null,
         ?string $dropShipTaskId = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetPurchaseList(
+        return $this->connector->paginate(new GetPurchaseList(
             null,
             $limit,
             $search,

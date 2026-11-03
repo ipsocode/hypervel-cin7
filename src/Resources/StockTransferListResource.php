@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\StockTransferList\StockTransferListData;
 use Ipsocode\Cin7\Enums\StockTransferStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -12,8 +14,10 @@ use Ipsocode\Cin7\Requests\StockTransferList\GetStockTransferList;
 
 /**
  * `stockTransferList`, the stock transfer list.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class StockTransferListResource extends ListResource
+final class StockTransferListResource extends BaseResource
 {
     /**
      * Fetch one page of stock transfers; without a page or limit, page 1 of 100.
@@ -30,7 +34,7 @@ final class StockTransferListResource extends ListResource
         ?StockTransferStatus $status = null,
         ?string $search = null,
     ): Response {
-        return $this->sendList(new GetStockTransferList(
+        return $this->connector->send(new GetStockTransferList(
             $page,
             $limit,
             $status,
@@ -51,7 +55,7 @@ final class StockTransferListResource extends ListResource
         ?StockTransferStatus $status = null,
         ?string $search = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetStockTransferList(
+        return $this->connector->paginate(new GetStockTransferList(
             null,
             $limit,
             $status,

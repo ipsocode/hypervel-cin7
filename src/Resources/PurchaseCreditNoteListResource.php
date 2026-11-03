@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Resources;
 
 use DateTimeInterface;
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\PurchaseCreditNoteList\PurchaseCreditNoteListData;
 use Ipsocode\Cin7\Enums\TaskStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -13,8 +15,10 @@ use Ipsocode\Cin7\Requests\PurchaseCreditNoteList\GetPurchaseCreditNoteList;
 
 /**
  * `purchaseCreditNoteList`, the purchases with a credit note.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class PurchaseCreditNoteListResource extends ListResource
+final class PurchaseCreditNoteListResource extends BaseResource
 {
     /**
      * Fetch one page of purchases with a credit note; without a page or limit, page 1 of 100.
@@ -38,7 +42,7 @@ final class PurchaseCreditNoteListResource extends ListResource
         ?TaskStatus $creditNoteStatus = null,
         ?string $status = null,
     ): Response {
-        return $this->sendList(new GetPurchaseCreditNoteList(
+        return $this->connector->send(new GetPurchaseCreditNoteList(
             $page,
             $limit,
             $search,
@@ -69,7 +73,7 @@ final class PurchaseCreditNoteListResource extends ListResource
         ?TaskStatus $creditNoteStatus = null,
         ?string $status = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetPurchaseCreditNoteList(
+        return $this->connector->paginate(new GetPurchaseCreditNoteList(
             null,
             $limit,
             $search,

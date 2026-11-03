@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Enums\MoneyTaskType;
@@ -13,8 +15,10 @@ use Ipsocode\Cin7\Requests\MoneyTaskList\GetMoneyTaskList;
 
 /**
  * `moneyTaskList`, the money tasks.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class MoneyTaskListResource extends ListResource
+final class MoneyTaskListResource extends BaseResource
 {
     /**
      * Fetch one page of money tasks; without a page or limit, page 1 of 100.
@@ -34,7 +38,7 @@ final class MoneyTaskListResource extends ListResource
         ?string $search = null,
         ?MoneyTaskType $taskType = null,
     ): Response {
-        return $this->sendList(new GetMoneyTaskList(
+        return $this->connector->send(new GetMoneyTaskList(
             $page,
             $limit,
             $status,
@@ -59,7 +63,7 @@ final class MoneyTaskListResource extends ListResource
         ?string $search = null,
         ?MoneyTaskType $taskType = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetMoneyTaskList(
+        return $this->connector->paginate(new GetMoneyTaskList(
             null,
             $limit,
             $status,

@@ -83,7 +83,7 @@ Classes stay open by default, with `final` only where it protects a real invaria
 leaves are the exception: every request, resource and data class written from the reference is
 `final`, and a new one is too. Each is the reference's shape for one path and verb, so a change goes
 into the leaf itself. The abstract parents are the extension points: `Cin7Request`, `ListRequest`,
-`WriteRequest`, `ListResource` and the `Abstract*Data` classes under `src/Data/`.
+`WriteRequest` and the `Abstract*Data` classes under `src/Data/`.
 
 ### Names and folders
 
@@ -168,8 +168,7 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
 - `python3 $S/requests.py spec.json` writes request classes in these shapes from a JSON list. Copy
   the closest existing class for anything else.
 - A resource per path: its methods are the operations (`get`, `post`, `put`, `delete`, and
-  `paginate` for a list; a `*List` path's resource extends `ListResource` and sends through its
-  `sendList()` and `paginateList()`), and its parent's accessor is the last segment in camelCase
+  `paginate` for a list), and its parent's accessor is the last segment in camelCase
   (`$cin7->purchase()->order()`). A top-level accessor is on `Cin7Connector`. A grouping segment such
   as `ref`, `reference` or `crm` works like `RefResource`. A single-operation action sub-path
   (`production/order/release`) is a method on its parent's resource.

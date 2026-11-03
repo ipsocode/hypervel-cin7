@@ -9,6 +9,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Response;
+use Hypervel\Saloon\Pagination\Contracts\MapPaginatedResponseItems;
 use Hypervel\Saloon\Pagination\Contracts\Paginatable;
 use InvalidArgumentException;
 use Ipsocode\Cin7\Data\Ref\Customer\Credits\CustomerCreditData;
@@ -16,8 +17,10 @@ use Ipsocode\Cin7\PageDefaults;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Requests\Cin7Request;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
+use Ipsocode\Cin7\Requests\ListRequest;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
+use LogicException;
 use Workbench\App\Support\Cin7Payloads;
 
 /**
@@ -203,9 +206,9 @@ class Cin7PaginatorTest extends TestCase
     }
 
     /**
-     * Only a key ending in `List` is the item list, even when another array comes first.
+     * The items are the ones under the request's `$listKey`, even when another array comes first.
      */
-    public function testAnUnrelatedArrayFieldDoesNotShadowTheListKey(): void
+    public function testItemsComeFromTheListKeyEvenWhenAnotherArrayComesFirst(): void
     {
         Saloon::fake([MockResponse::make([
             'Total' => 1,
@@ -318,10 +321,11 @@ class Cin7PaginatorTest extends TestCase
     }
 
     /**
-     * Every shipped request implements `MapPaginatedResponseItems`, so the suffix lookup in
-     * `getPageItems()` is only reachable through a request that does not.
+     * Every shipped request is a `ListRequest`, which maps its own items; Saloon asks the paginator
+     * only for a request that does not, and the list key differs per endpoint, so it fails on the
+     * first page instead of guessing one.
      */
-    public function testTheSuffixFallbackIsUsedWhenTheRequestDoesNotMapItsOwnItems(): void
+    public function testARequestThatDoesNotMapItsOwnItemsCannotBePaginated(): void
     {
         Saloon::fake([Cin7Fake::list('CustomerList', [Cin7Payloads::customer('a', 'ACME')])]);
 
@@ -334,30 +338,13 @@ class Cin7PaginatorTest extends TestCase
             }
         };
 
-        $items = iterator_to_array($this->connector()->paginate($request)->items(), false);
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessageMatches(sprintf(
+            '/must extend \[%s\] or implement \[%s\]/',
+            preg_quote(ListRequest::class, '/'),
+            preg_quote(MapPaginatedResponseItems::class, '/'),
+        ));
 
-        $this->assertSame(['ACME'], array_column($items, 'Name'));
-    }
-
-    /**
-     * The suffix fallback's empty path, only reachable by a request that does not map its
-     * own items against a body with no `…List` key.
-     */
-    public function testTheSuffixFallbackYieldsNoItemsWhenTheEnvelopeHasNoListKey(): void
-    {
-        Saloon::fake([MockResponse::make(['Total' => 0, 'Page' => 1])]);
-
-        $request = new class extends Cin7Request implements Paginatable {
-            protected Method $method = Method::GET;
-
-            public function resolveEndpoint(): string
-            {
-                return 'customer';
-            }
-        };
-
-        $items = iterator_to_array($this->connector()->paginate($request)->items(), false);
-
-        $this->assertSame([], $items);
+        iterator_to_array($this->connector()->paginate($request)->items(), false);
     }
 }
