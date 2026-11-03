@@ -300,8 +300,5 @@ application key's digest in the key.
 
 ### `resolveRateLimitStore()`
 
-It keeps the trait's `UnitEnum|string|null` return type on purpose, so it has
-the same signature as the `HasRateLimits` method it overrides. The connector
-only ever returns a string or `null`, so PHPStan reports the `UnitEnum` arm as
-unused; [`phpstan.neon`](../../phpstan.neon) ignores `return.unusedType` for
-`src/Cin7Connector.php` for that reason.
+It narrows the trait's `UnitEnum|string|null` return type to `?string`, since
+the connector only ever returns a string or `null`.

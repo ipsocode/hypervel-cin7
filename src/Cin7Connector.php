@@ -56,7 +56,6 @@ use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use Ipsocode\Cin7\Resources\WebhooksResource;
-use UnitEnum;
 
 /**
  * The Cin7 Core connector.
@@ -531,7 +530,7 @@ final class Cin7Connector extends Connector implements HasPagination
     /**
      * Null falls back to `saloon.rate_limiter.store`, then to the limiter's default store.
      */
-    protected function resolveRateLimitStore(): UnitEnum|string|null
+    protected function resolveRateLimitStore(): ?string
     {
         return $this->rateLimitStore;
     }

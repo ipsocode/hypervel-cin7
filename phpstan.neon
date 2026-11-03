@@ -1,6 +1,4 @@
 # Level 8, beyond the level hypervel/components runs on its own source.
-includes:
-    - phpstan-baseline.neon
 
 parameters:
     level: 8
@@ -21,9 +19,3 @@ parameters:
     # `@phpstan-ignore method.notFound (reason)`; line-wide @phpstan-ignore-line /
     # @phpstan-ignore-next-line cannot carry one, so they are reported.
     reportIgnoresWithoutComments: true
-
-    ignoreErrors:
-        # resolveRateLimitStore() keeps HasRateLimits' wider UnitEnum|string|null signature on
-        # purpose, so PHPStan reports the unused UnitEnum arm.
-        - identifier: return.unusedType
-          path: src/Cin7Connector.php
