@@ -9,9 +9,10 @@ pull requests.
 The suite needs PHP 8.4 or 8.5 with the Swoole and Redis extensions that
 `hypervel/components` requires, plus PCOV for the coverage gate. The framework's
 test case runs each test inside a Swoole coroutine, so a PHP without Swoole
-fails before the first assertion. No Redis *server* is involved — nothing here
-opens a Redis connection — but Composer will not resolve `hypervel/components`
-without the extension. CI runs in `ghcr.io/ipsocode/hypervel/ci-alpine:<php>-latest`,
+fails before the first assertion. The main suite needs no Redis *server*: the tests
+in `tests/Feature/Redis` skip unless `REDIS_HOST` (or `REDIS_CLUSTER_HOSTS_AND_PORTS`) is
+set, and `.github/workflows/redis.yml` runs them against a real Redis 8 and a Redis Cluster.
+Composer will not resolve `hypervel/components` without the extension either way. CI runs in `ghcr.io/ipsocode/hypervel/ci-alpine:<php>-latest`,
 which has all of them, and is the simplest way to match it:
 
 ```sh
@@ -83,14 +84,16 @@ test rather than only its defaults. The credentials are fake on purpose: a run
 that somehow reached `inventory.dearsystems.com` should be rejected rather than
 authenticated.
 
-`testbench.yaml` also names `Hypervel\Saloon\SaloonServiceProvider`
-explicitly. A real application discovers it from the components manifest; the
-Testbench skeleton does not.
+`testbench.yaml` also names `Hypervel\Saloon\SaloonServiceProvider` and
+`Hypervel\Data\DataServiceProvider` explicitly. A real application discovers them from
+the components manifest; the Testbench skeleton does not. `ConfigEnvironmentTest` fails
+when the two `env` lists differ.
 
 ### The Workbench application
 
 `workbench/` is the throwaway host application the suite runs against. It owns
-no models or migrations — this package defines no tables — but it does own
+no models or migrations of its own — the sync's `cin7_sync_payloads` table and its
+migrations are the package's, in `database/migrations/` — but it does own
 the seam a consuming application has: `CustomerDirectory` takes the connector
 by constructor injection, `Cin7Payloads` holds the V2 reference's examples the
 suite asserts against (the list envelopes and the Error Model are the shipped
@@ -143,14 +146,18 @@ pull request by its number. The scan they run needs no skill:
 `bin/review-scan.sh` flags what a diff adds or removes, `git diff
 origin/main...HEAD | bash bin/review-scan.sh`. No review runs in CI.
 
-CI (`.github/workflows/tests.yml`) runs for every pull request into `main`, each
-job once the one it needs has passed: the conventions check, on the bare runner
-in seconds (`.github/workflows/initial.yml`); code style, PHPStan and the suite
-under the 100% coverage gate on PHP 8.4; then PHPStan and the suite on PHP 8.5.
-A push to a branch without a pull request runs nothing, so open a draft pull
-request to get CI early. A pull request into any other branch, such as an
-umbrella issue's feature branch, runs nothing: CI runs on that branch's own pull
-request into `main`, so run the checks locally before opening one. `main`
+CI (`.github/workflows/tests.yml`) runs for every pull request into `main`: the
+conventions check, on the bare runner in seconds (`.github/workflows/initial.yml`);
+then, side by side, code style, PHPStan and the suite under the 100% coverage gate
+on PHP 8.4, and PHPStan and the suite on PHP 8.5. Two more workflows run on every
+pull request and on pushes to `main`: `databases.yml` runs the sync tests against
+MySQL, MariaDB, PostgreSQL and SQLite through `bin/run-database-tests.sh` (see
+[src/docs/testing.md](src/docs/testing.md)), and `redis.yml` runs `tests/Feature/Redis`
+against Redis and Redis Cluster. A push to a branch without a pull request runs
+nothing, so open a draft pull request to get CI early. A pull request into any
+other branch, such as an umbrella issue's feature branch, gets no `tests.yml` run
+(the two above still run): the full CI runs on that branch's own pull request into
+`main`, so run the checks locally before opening one. `main`
 changes only through a pull request that is up to date with it, passes those
 checks and has every review conversation resolved; a change that leaves a line
 of `src/` uncovered fails its own pull request. A review comments rather than
@@ -224,7 +231,7 @@ hook on the repository, so nothing is uploaded.
 
 Run the **publish** workflow on `main` (Actions → publish → *Run workflow*).
 Leave the bump on `auto` — minor if a pull request merged since the previous
-tag is labeled `breaking-change`, patch otherwise — or pick `patch`, `minor`
+tag is labeled `breaking-change` or `enhancement`, patch otherwise — or pick `patch`, `minor`
 or `major`, or type an exact version. *Highlights* go at the top of the notes;
 *dry run* shows the plan without tagging.
 

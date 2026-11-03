@@ -52,14 +52,12 @@ class ConfigFileTest extends TestCase
 
     private function setEnv(string $name, string|false $value): void
     {
-        putenv($value === false ? $name : $name . '=' . $value);
+        $repository = Env::getRepository();
 
-        if ($value === false) {
-            unset($_ENV[$name], $_SERVER[$name]);
-        } else {
-            $_ENV[$name] = $_SERVER[$name] = $value;
+        $repository->clear($name);
+
+        if ($value !== false) {
+            $repository->set($name, $value);
         }
-
-        Env::flushRepository();
     }
 }
