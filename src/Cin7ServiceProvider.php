@@ -26,12 +26,9 @@ class Cin7ServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/cin7.php', 'cin7');
 
-        // One connector per connection per worker, shared across coroutines: each holds only
-        // readonly scalars, and the manager keeps them in a map.
-        $this->app->singleton(Cin7Manager::class);
-
         // Injecting the connector by type resolves the default connection. Not a singleton of
-        // its own, so the manager's map is the one place an instance lives.
+        // its own: Cin7Manager is auto-singletoned, holds one readonly connector per connection
+        // and shares it across coroutines, so its map is the one place an instance lives.
         $this->app->bind(Cin7Connector::class, fn (Application $app) => $app->make(Cin7Manager::class)->connection());
     }
 

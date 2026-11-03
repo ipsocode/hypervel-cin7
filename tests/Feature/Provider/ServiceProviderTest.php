@@ -17,6 +17,11 @@ use Ipsocode\Cin7\Tests\TestCase;
 
 class ServiceProviderTest extends TestCase
 {
+    public function testTheManagerIsOneInstanceForTheWorker(): void
+    {
+        $this->assertSame($this->app->make(Cin7Manager::class), $this->app->make(Cin7Manager::class));
+    }
+
     public function testItMergesThePackagedConfigDefaults(): void
     {
         $this->assertSame(60, config('cin7.rate_limit.max'));
