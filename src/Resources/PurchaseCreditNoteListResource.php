@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Requests\PurchaseCreditNoteList\GetPurchaseCreditNoteList;
 final class PurchaseCreditNoteListResource extends ListResource
 {
     /**
-     * One page of purchases with a credit note; without a page or limit, page 1 of 100.
+     * Fetch one page of purchases with a credit note; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -50,7 +50,7 @@ final class PurchaseCreditNoteListResource extends ListResource
     }
 
     /**
-     * Every page of purchases with a credit note, fetched as they are walked; call `startPage()`
+     * Fetch every page of purchases with a credit note, fetched as they are walked; call `startPage()`
      * on the paginator to begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

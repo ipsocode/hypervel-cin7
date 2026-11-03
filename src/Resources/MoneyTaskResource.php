@@ -25,7 +25,7 @@ use Ipsocode\Cin7\Requests\MoneyTask\PutMoneyTask;
 final class MoneyTaskResource extends BaseResource
 {
     /**
-     * One money task.
+     * Fetch one money task.
      *
      * @return Response<MoneyTaskData>
      */

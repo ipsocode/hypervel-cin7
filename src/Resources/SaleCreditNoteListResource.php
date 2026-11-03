@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Requests\SaleCreditNoteList\GetSaleCreditNoteList;
 final class SaleCreditNoteListResource extends ListResource
 {
     /**
-     * One page of sales with a credit note; without a page or limit, page 1 of 100.
+     * Fetch one page of sales with a credit note; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -54,7 +54,7 @@ final class SaleCreditNoteListResource extends ListResource
     }
 
     /**
-     * Every page of sales with a credit note, fetched as they are walked; call `startPage()` on the
+     * Fetch every page of sales with a credit note, fetched as they are walked; call `startPage()` on the
      * paginator to begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

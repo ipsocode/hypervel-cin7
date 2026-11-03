@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\StockTransferList\GetStockTransferList;
 final class StockTransferListResource extends ListResource
 {
     /**
-     * One page of stock transfers; without a page or limit, page 1 of 100.
+     * Fetch one page of stock transfers; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -39,7 +39,7 @@ final class StockTransferListResource extends ListResource
     }
 
     /**
-     * Every page of stock transfers, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of stock transfers, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7;
 
 use Composer\InstalledVersions;
 use Hypervel\Console\Scheduling\Schedule;
+use Hypervel\Contracts\Foundation\Application;
 use Hypervel\Foundation\Console\AboutCommand;
 use Hypervel\Support\ServiceProvider;
 use Ipsocode\Cin7\Console\CheckCommand;
@@ -31,7 +32,7 @@ class Cin7ServiceProvider extends ServiceProvider
 
         // Injecting the connector by type resolves the default connection. Not a singleton of
         // its own, so the manager's map is the one place an instance lives.
-        $this->app->bind(Cin7Connector::class, fn ($app) => $app->make(Cin7Manager::class)->connection());
+        $this->app->bind(Cin7Connector::class, fn (Application $app) => $app->make(Cin7Manager::class)->connection());
     }
 
     public function boot(): void
@@ -64,7 +65,7 @@ class Cin7ServiceProvider extends ServiceProvider
     }
 
     /**
-     * The modules that read only what changed at `sync.cron`, each exception at its own time as
+     * Schedule the modules that read only what changed at `sync.cron`, each exception at its own time as
      * well, and every module, the reference books included, in the full pull at `sync.full`; a
      * null time schedules nothing. Each runs on one server.
      */
@@ -92,7 +93,7 @@ class Cin7ServiceProvider extends ServiceProvider
     }
 
     /**
-     * The package's section of `php artisan about`, read when the command runs. It names
+     * Add the package's section of `php artisan about`, read when the command runs. It names
      * neither credential.
      */
     protected function registerAbout(): void

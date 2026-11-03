@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Requests\InventoryWriteOff\PutInventoryWriteOff;
 final class InventoryWriteOffResource extends BaseResource
 {
     /**
-     * One inventory write-off, with its lines and the transactions it created.
+     * Fetch one inventory write-off, with its lines and the transactions it created.
      *
      * @return Response<InventoryWriteOffData>
      */

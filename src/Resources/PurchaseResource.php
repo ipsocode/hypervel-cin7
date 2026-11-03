@@ -39,7 +39,7 @@ use Ipsocode\Cin7\Resources\Purchase\StockResource;
 final class PurchaseResource extends BaseResource
 {
     /**
-     * One purchase, with its order, stock received, invoice, credit note and manual journal.
+     * Fetch one purchase, with its order, stock received, invoice, credit note and manual journal.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
      * @return Response<PurchaseData>
@@ -83,7 +83,7 @@ final class PurchaseResource extends BaseResource
     }
 
     /**
-     * The `purchase/order` resource, a purchase's order.
+     * Return the `purchase/order` resource, a purchase's order.
      */
     public function order(): OrderResource
     {
@@ -91,7 +91,7 @@ final class PurchaseResource extends BaseResource
     }
 
     /**
-     * The `purchase/stock` resource, a purchase's stock received.
+     * Return the `purchase/stock` resource, a purchase's stock received.
      */
     public function stock(): StockResource
     {
@@ -99,7 +99,7 @@ final class PurchaseResource extends BaseResource
     }
 
     /**
-     * The `purchase/invoice` resource, a purchase's invoice.
+     * Return the `purchase/invoice` resource, a purchase's invoice.
      */
     public function invoice(): InvoiceResource
     {
@@ -107,7 +107,7 @@ final class PurchaseResource extends BaseResource
     }
 
     /**
-     * The `purchase/creditnote` resource, a purchase's credit note.
+     * Return the `purchase/creditnote` resource, a purchase's credit note.
      */
     public function creditNote(): CreditNoteResource
     {
@@ -115,7 +115,7 @@ final class PurchaseResource extends BaseResource
     }
 
     /**
-     * The `purchase/payment` resource, a purchase's payments.
+     * Return the `purchase/payment` resource, a purchase's payments.
      */
     public function payment(): PaymentResource
     {
@@ -123,7 +123,7 @@ final class PurchaseResource extends BaseResource
     }
 
     /**
-     * The `purchase/manualJournal` resource, a purchase's manual journal.
+     * Return the `purchase/manualJournal` resource, a purchase's manual journal.
      */
     public function manualJournal(): ManualJournalResource
     {
@@ -131,7 +131,7 @@ final class PurchaseResource extends BaseResource
     }
 
     /**
-     * The `purchase/attachment` resource, a purchase's attachments.
+     * Return the `purchase/attachment` resource, a purchase's attachments.
      */
     public function attachment(): AttachmentResource
     {

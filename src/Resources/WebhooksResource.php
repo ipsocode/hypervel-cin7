@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Requests\Webhooks\PutWebhooks;
 final class WebhooksResource extends BaseResource
 {
     /**
-     * Every webhook; the reference has no paging.
+     * Fetch every webhook; the reference has no paging.
      *
      * @return Response<list<WebhookData>>
      */

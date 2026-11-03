@@ -24,7 +24,7 @@ final class Cin7Manager
     private array $connectors = [];
 
     /**
-     * The connector for a connection, the configured default one when no name is given.
+     * Return the connector for a connection, the configured default one when no name is given.
      *
      * @throws InvalidArgumentException when no such connection is configured
      */
@@ -36,7 +36,7 @@ final class Cin7Manager
     }
 
     /**
-     * The name `connection()` resolves without one: `cin7.default`.
+     * Return the name `connection()` resolves without one: `cin7.default`.
      */
     public function defaultConnectionName(): string
     {
@@ -76,8 +76,8 @@ final class Cin7Manager
         return new Cin7Connector(
             $this->credential($name, $connection, 'account_id', 'CIN7_ACCOUNT_ID'),
             $this->credential($name, $connection, 'application_key', 'CIN7_APPLICATION_KEY'),
-            (int) ($rateLimit['max'] ?? config('cin7.rate_limit.max', 60)),
-            (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', 60)),
+            (int) ($rateLimit['max'] ?? config('cin7.rate_limit.max', Cin7Connector::RATE_LIMIT_MAX)),
+            (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', Cin7Connector::RATE_LIMIT_PERIOD)),
             $store === null ? null : (string) $store,
             (int) ($rateLimit['cooldown'] ?? config('cin7.rate_limit.cooldown') ?? Cin7Connector::THROTTLE_COOLDOWN),
             (string) ($this->transportSetting($connection, 'base_url') ?? Cin7Connector::BASE_URL),
@@ -87,7 +87,7 @@ final class Cin7Manager
     }
 
     /**
-     * A connection's required credential, which fails at resolve time rather than as a 403 on
+     * Resolve a connection's required credential, which fails at resolve time rather than as a 403 on
      * the first request when it is missing or blank.
      *
      * @param array<mixed> $connection
@@ -110,13 +110,13 @@ final class Cin7Manager
     }
 
     /**
-     * A transport key, the connection's own before the top-level one. A blank value, such as
+     * Resolve a transport key, the connection's own before the top-level one. A blank value, such as
      * `CIN7_TIMEOUT=` in `.env`, counts as unset: cast, it would be a timeout of 0, which waits
      * forever, or an empty base URL.
      *
      * @param array<mixed> $connection
      */
-    private function transportSetting(array $connection, string $key): mixed
+    private function transportSetting(array $connection, string $key): int|string|null
     {
         $value = $connection[$key] ?? null;
 

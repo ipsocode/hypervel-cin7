@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Requests\Customer\PutCustomer;
 final class CustomerResource extends BaseResource
 {
     /**
-     * One page of customers; without a page or limit, page 1 of 100.
+     * Fetch one page of customers; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -58,7 +58,7 @@ final class CustomerResource extends BaseResource
     }
 
     /**
-     * Every page of customers, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of customers, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

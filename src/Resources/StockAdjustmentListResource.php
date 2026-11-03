@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\StockAdjustmentList\GetStockAdjustmentList;
 final class StockAdjustmentListResource extends ListResource
 {
     /**
-     * One page of stock adjustments; without a page or limit, page 1 of 100.
+     * Fetch one page of stock adjustments; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -36,7 +36,7 @@ final class StockAdjustmentListResource extends ListResource
     }
 
     /**
-     * Every page of stock adjustments, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of stock adjustments, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

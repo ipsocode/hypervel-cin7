@@ -8,8 +8,8 @@ use InvalidArgumentException;
 use Ipsocode\Cin7\PageDefaults;
 
 /**
- * Reads `cin7.sync.*` each time it is asked, casting and clamping rather than trusting the type,
- * as the provider does for the connector's settings.
+ * Reads `cin7.sync.*` each time it is asked, casting and clamping rather than trusting the type.
+ * `Cin7Manager` casts the connector's settings in the same way.
  *
  * @see src/docs/sync.md
  */
@@ -20,13 +20,16 @@ final class SyncConfig
      */
     public const string ALL = '*';
 
+    /**
+     * Tell whether the scheduled pulls are on.
+     */
     public static function enabled(): bool
     {
         return (bool) config('cin7.sync.enabled', false);
     }
 
     /**
-     * The common time every module is pulled at; null schedules no common pull.
+     * Return the common time every module is pulled at; null schedules no common pull.
      */
     public static function cron(): ?string
     {
@@ -34,7 +37,7 @@ final class SyncConfig
     }
 
     /**
-     * The modules pulled at the common time, in their configured order. `'*'`, the default, alone
+     * Return the modules pulled at the common time, in their configured order. `'*'`, the default, alone
      * or in a list, is every module, each list module before its documents.
      *
      * @return list<Module>
@@ -45,9 +48,9 @@ final class SyncConfig
     }
 
     /**
-     * The modules a list of names stands for: `'*'` among them is every module.
+     * Resolve the modules a list of names stands for: `'*'` among them is every module.
      *
-     * @param array<array-key, mixed> $names
+     * @param array<array-key, int|string> $names
      * @return list<Module>
      */
     public static function resolve(array $names): array
@@ -58,7 +61,7 @@ final class SyncConfig
     }
 
     /**
-     * The modules the common pull takes: those that read only what changed. A reference book,
+     * Return the modules the common pull takes: those that read only what changed. A reference book,
      * read whole, waits for the full pull or `cin7:sync`.
      *
      * @return list<Module>
@@ -69,7 +72,7 @@ final class SyncConfig
     }
 
     /**
-     * Each module pulled at a time of its own as well, with that time. A reference book cannot
+     * Return each module pulled at a time of its own as well, with that time. A reference book cannot
      * be one: it is read whole, so only the full pull and `cin7:sync` read it.
      *
      * @return list<array{Module, string}>
@@ -98,7 +101,7 @@ final class SyncConfig
     }
 
     /**
-     * The time of the full pull; null schedules none.
+     * Return the time of the full pull; null schedules none.
      */
     public static function full(): ?string
     {
@@ -106,7 +109,7 @@ final class SyncConfig
     }
 
     /**
-     * Minutes an incremental pull reaches back, at least 0.
+     * Return the minutes an incremental pull reaches back, at least 0.
      */
     public static function lookback(): int
     {
@@ -114,20 +117,23 @@ final class SyncConfig
     }
 
     /**
-     * Records a page, from 1 to the largest page Cin7 serves.
+     * Return the records a page holds, from 1 to the largest page Cin7 serves.
      */
     public static function limit(): int
     {
         return min(PageDefaults::LIMIT_MAX, max(1, (int) (config('cin7.sync.limit') ?? 500)));
     }
 
+    /**
+     * Return the milliseconds between the sync's own calls, at least 0.
+     */
     public static function pauseMs(): int
     {
         return max(0, (int) (config('cin7.sync.pause_ms') ?? 1000));
     }
 
     /**
-     * Documents read per module per run, at least 0.
+     * Return the documents read per module per run, at least 0.
      */
     public static function documents(): int
     {
@@ -135,36 +141,42 @@ final class SyncConfig
     }
 
     /**
-     * Failed reads after which a document is no longer tried, at least 1.
+     * Return the failed reads after which a document is no longer tried, at least 1.
      */
     public static function maxFailures(): int
     {
         return max(1, (int) (config('cin7.sync.max_failures') ?? 3));
     }
 
+    /**
+     * Return the queue a pull runs on; null uses the connection's default.
+     */
     public static function queue(): ?string
     {
         return self::name(config('cin7.sync.queue'));
     }
 
     /**
-     * Seconds a queued pull may run, at least 1.
+     * Return the seconds a queued pull may run, at least 1.
      */
     public static function timeout(): int
     {
         return max(1, (int) (config('cin7.sync.timeout') ?? 3600));
     }
 
+    /**
+     * Return the queue connection a pull runs on; null uses the default one.
+     */
     public static function connection(): ?string
     {
         return self::name(config('cin7.sync.connection'));
     }
 
     /**
-     * The module a configured name stands for; an unknown one fails loudly rather than being
+     * Resolve the module a configured name stands for; an unknown one fails loudly rather than being
      * skipped, so a typo never silently stops a module syncing.
      */
-    public static function module(mixed $name): Module
+    public static function module(int|string $name): Module
     {
         return Module::tryFrom((string) $name) ?? throw new InvalidArgumentException(sprintf(
             'cin7.sync names the module [%s], which is not one of: %s.',

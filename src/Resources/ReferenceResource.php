@@ -20,7 +20,7 @@ use Ipsocode\Cin7\Resources\Reference\ShipZonesResource;
 final class ReferenceResource extends BaseResource
 {
     /**
-     * The `reference/deals` resource.
+     * Return the `reference/deals` resource.
      */
     public function deals(): DealsResource
     {
@@ -28,7 +28,7 @@ final class ReferenceResource extends BaseResource
     }
 
     /**
-     * The `reference/discount` resource.
+     * Return the `reference/discount` resource.
      */
     public function discount(): DiscountResource
     {
@@ -36,7 +36,7 @@ final class ReferenceResource extends BaseResource
     }
 
     /**
-     * The `reference/shipZones` resource.
+     * Return the `reference/shipZones` resource.
      */
     public function shipZones(): ShipZonesResource
     {
@@ -44,7 +44,7 @@ final class ReferenceResource extends BaseResource
     }
 
     /**
-     * The `reference/shipZonesEnabled` resource.
+     * Return the `reference/shipZonesEnabled` resource.
      */
     public function shipZonesEnabled(): ShipZonesEnabledResource
     {

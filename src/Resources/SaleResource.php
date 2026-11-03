@@ -33,7 +33,7 @@ use Ipsocode\Cin7\Resources\Sale\QuoteResource;
 final class SaleResource extends BaseResource
 {
     /**
-     * One sale, with every model it nests.
+     * Fetch one sale, with every model it nests.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
      * @param null|bool $hideInventoryMovements leave out the inventory movements

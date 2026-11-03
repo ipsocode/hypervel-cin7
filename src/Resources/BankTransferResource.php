@@ -24,7 +24,7 @@ use Ipsocode\Cin7\Requests\BankTransfer\PutBankTransfer;
 final class BankTransferResource extends BaseResource
 {
     /**
-     * One bank transfer.
+     * Fetch one bank transfer.
      *
      * @return Response<BankTransferData>
      */

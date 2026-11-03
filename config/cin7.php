@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Ipsocode\Cin7\Cin7Connector;
+
 /*
 |--------------------------------------------------------------------------
 | Cin7 Core API client
@@ -38,18 +40,18 @@ return [
     ],
 
     // The API root, for a stub server or a staging proxy. Unset is Cin7's V2 URL.
-    'base_url' => env('CIN7_BASE_URL', 'https://inventory.dearsystems.com/ExternalApi/v2/'),
+    'base_url' => env('CIN7_BASE_URL', Cin7Connector::BASE_URL),
 
     // Seconds to wait for a response and to connect. Unset (null) inherits the `saloon` HTTP
     // connection's timeouts, which every Saloon connector in the application shares.
-    'timeout' => env('CIN7_TIMEOUT'),
-    'connect_timeout' => env('CIN7_CONNECT_TIMEOUT'),
+    'timeout' => in_array(env('CIN7_TIMEOUT'), [null, ''], true) ? null : (int) env('CIN7_TIMEOUT'),
+    'connect_timeout' => in_array(env('CIN7_CONNECT_TIMEOUT'), [null, ''], true) ? null : (int) env('CIN7_CONNECT_TIMEOUT'),
 
     // Local throttle for Cin7's limit of 60 calls per minute per API application.
     // Set `max` or `period` to 0 to remove the window; the throttling cooldown still applies.
     'rate_limit' => [
-        'max' => (int) env('CIN7_RATE_MAX', 60),
-        'period' => (int) env('CIN7_RATE_PERIOD', 60),
+        'max' => (int) env('CIN7_RATE_MAX', Cin7Connector::RATE_LIMIT_MAX),
+        'period' => (int) env('CIN7_RATE_PERIOD', Cin7Connector::RATE_LIMIT_PERIOD),
 
         // Unset falls back to `saloon.rate_limiter.store`, then `rate-limiter.default`.
         // Pick a store every worker and server shares, or the effective limit multiplies.
@@ -57,7 +59,7 @@ return [
 
         // Seconds every worker waits after a 503, or a 429 without `Retry-After`; a 429's own
         // `Retry-After` still wins. 0 records no cooldown for those.
-        'cooldown' => (int) env('CIN7_RATE_COOLDOWN', 5),
+        'cooldown' => (int) env('CIN7_RATE_COOLDOWN', Cin7Connector::THROTTLE_COOLDOWN),
     ],
 
     // Bounded retries on HTTP 429 and 503; `times` is the total number of attempts.

@@ -18,7 +18,7 @@ use Ipsocode\Cin7\Requests\PurchaseList\GetPurchaseList;
 final class PurchaseListResource extends ListResource
 {
     /**
-     * One page of purchases; without a page or limit, page 1 of 100.
+     * Fetch one page of purchases; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -71,7 +71,7 @@ final class PurchaseListResource extends ListResource
     }
 
     /**
-     * Every page of purchases, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of purchases, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

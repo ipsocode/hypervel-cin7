@@ -16,7 +16,7 @@ use Ipsocode\Cin7\Requests\FinishedGoodsList\GetFinishedGoodsList;
 final class FinishedGoodsListResource extends ListResource
 {
     /**
-     * One page of finished goods; without a page or limit, page 1 of 100.
+     * Fetch one page of finished goods; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -42,7 +42,7 @@ final class FinishedGoodsListResource extends ListResource
     }
 
     /**
-     * Every page of finished goods, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of finished goods, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

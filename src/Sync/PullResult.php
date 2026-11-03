@@ -22,7 +22,7 @@ final readonly class PullResult
         public int $deleted = 0,
         // Another pull of the module held its lock, so this one did nothing.
         public bool $skipped = false,
-        // What made the module fail: a list pull's error, or a document pull that wrote nothing.
+        // What made the module fail: an exception anywhere in the pull, which may follow some writes, or the first error of a document pull that wrote nothing.
         public ?Throwable $error = null,
         // Documents whose read failed and were recorded on their list rows, while others were written.
         public int $failedDocuments = 0,

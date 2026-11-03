@@ -105,7 +105,7 @@ enum Module: string
     }
 
     /**
-     * Whether a pull reads only what changed: a list with a since filter, or the documents of
+     * Tell whether a pull reads only what changed: a list with a since filter, or the documents of
      * the list rows that changed. A reference book has no since filter and its records no
      * modified time, so every pull reads it whole and compares the payloads; the schedule leaves
      * it to the full pull.
@@ -116,7 +116,7 @@ enum Module: string
     }
 
     /**
-     * Whether an incremental walk of the list sends an upper bound, `UpdatedUntil`, so the pages
+     * Tell whether an incremental walk of the list sends an upper bound, `UpdatedUntil`, so the pages
      * stay still while they are walked.
      */
     public function bounded(): bool
@@ -194,7 +194,7 @@ enum Module: string
     }
 
     /**
-     * Everything the sync knows about a module, in one place. The match has no default, so a case
+     * Describe everything the sync knows about a module, in one place. The match has no default, so a case
      * without a definition throws rather than taking one.
      *
      * - `id`: the key of a record's identifier.

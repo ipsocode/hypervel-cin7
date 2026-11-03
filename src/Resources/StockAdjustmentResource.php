@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Requests\StockAdjustment\PutStockAdjustment;
 final class StockAdjustmentResource extends BaseResource
 {
     /**
-     * One stock adjustment, with the lines it changed and the transactions they created.
+     * Fetch one stock adjustment, with the lines it changed and the transactions they created.
      *
      * @return Response<StockAdjustmentData>
      */

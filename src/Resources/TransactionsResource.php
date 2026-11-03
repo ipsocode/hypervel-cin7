@@ -20,7 +20,7 @@ use Ipsocode\Cin7\Requests\Transactions\GetTransactions;
 final class TransactionsResource extends BaseResource
 {
     /**
-     * One page of transactions; without a page or limit, page 1 of 100.
+     * Fetch one page of transactions; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -40,7 +40,7 @@ final class TransactionsResource extends BaseResource
     }
 
     /**
-     * Every page of transactions, fetched as they are walked; call `startPage()` on the paginator
+     * Fetch every page of transactions, fetched as they are walked; call `startPage()` on the paginator
      * to begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

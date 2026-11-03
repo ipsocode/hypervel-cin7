@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Resources\Disassembly\OrderResource;
 final class DisassemblyResource extends BaseResource
 {
     /**
-     * One disassembly, with its lines.
+     * Fetch one disassembly, with its lines.
      *
      * @return Response<DisassemblyData>
      */
@@ -52,7 +52,7 @@ final class DisassemblyResource extends BaseResource
     }
 
     /**
-     * The `disassembly/order` resource, a disassembly's order.
+     * Return the `disassembly/order` resource, a disassembly's order.
      */
     public function order(): OrderResource
     {
