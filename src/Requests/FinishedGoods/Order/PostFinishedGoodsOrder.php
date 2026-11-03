@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\FinishedGoods\Order;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\FinishedGoods\Order\FinishedGoodsOrderData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PostFinishedGoodsOrder extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = FinishedGoodsOrderData::class;
+
     public function resolveEndpoint(): string
     {
         return 'finishedGoods/order';
-    }
-
-    /**
-     * @param Response<FinishedGoodsOrderData> $response
-     */
-    public function createDtoFromResponse(Response $response): FinishedGoodsOrderData
-    {
-        return FinishedGoodsOrderData::from($response->json())->setResponse($response);
     }
 }

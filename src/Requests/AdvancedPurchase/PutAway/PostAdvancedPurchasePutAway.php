@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwaysData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -21,6 +20,8 @@ final class PostAdvancedPurchasePutAway extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = AdvancedPurchasePutAwaysData::class;
+
     /**
      * @var list<string>
      */
@@ -29,13 +30,5 @@ final class PostAdvancedPurchasePutAway extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'advanced-purchase/put-away';
-    }
-
-    /**
-     * @param Response<AdvancedPurchasePutAwaysData> $response
-     */
-    public function createDtoFromResponse(Response $response): AdvancedPurchasePutAwaysData
-    {
-        return AdvancedPurchasePutAwaysData::from($response->json())->setResponse($response);
     }
 }

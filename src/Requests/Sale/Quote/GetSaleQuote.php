@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Quote;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,6 +17,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class GetSaleQuote extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = SaleQuoteData::class;
 
     public function __construct(
         protected readonly string $saleId,
@@ -42,13 +43,5 @@ final class GetSaleQuote extends Cin7Request
             'CombineAdditionalCharges' => $this->combineAdditionalCharges,
             'IncludeProductInfo' => $this->includeProductInfo,
         ]);
-    }
-
-    /**
-     * @param Response<SaleQuoteData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleQuoteData
-    {
-        return SaleQuoteData::from($response->json())->setResponse($response);
     }
 }

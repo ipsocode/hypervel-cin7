@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Quote;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Quote\SaleQuoteData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PostSaleQuote extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = SaleQuoteData::class;
+
     public function resolveEndpoint(): string
     {
         return 'sale/quote';
-    }
-
-    /**
-     * @param Response<SaleQuoteData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleQuoteData
-    {
-        return SaleQuoteData::from($response->json())->setResponse($response);
     }
 }

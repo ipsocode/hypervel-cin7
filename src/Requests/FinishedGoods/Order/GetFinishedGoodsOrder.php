@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\FinishedGoods\Order;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\FinishedGoods\Order\FinishedGoodsOrderData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -17,6 +16,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class GetFinishedGoodsOrder extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = FinishedGoodsOrderData::class;
 
     public function __construct(
         protected readonly string $taskId,
@@ -37,13 +38,5 @@ final class GetFinishedGoodsOrder extends Cin7Request
         return $this->queryValues([
             'TaskID' => $this->taskId,
         ]);
-    }
-
-    /**
-     * @param Response<FinishedGoodsOrderData> $response
-     */
-    public function createDtoFromResponse(Response $response): FinishedGoodsOrderData
-    {
-        return FinishedGoodsOrderData::from($response->json())->setResponse($response);
     }
 }

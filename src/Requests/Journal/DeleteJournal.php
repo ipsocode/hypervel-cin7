@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Journal;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Journal\JournalData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,6 +17,10 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class DeleteJournal extends Cin7Request
 {
     protected Method $method = Method::DELETE;
+
+    protected ?string $dto = JournalData::class;
+
+    protected ?string $dtoPath = 'Journals.0';
 
     public function __construct(
         protected readonly string $id,
@@ -40,13 +43,5 @@ final class DeleteJournal extends Cin7Request
             'ID' => $this->id,
             'Void' => $this->void,
         ]);
-    }
-
-    /**
-     * @param Response<JournalData> $response
-     */
-    public function createDtoFromResponse(Response $response): JournalData
-    {
-        return JournalData::from($response->json('Journals.0'))->setResponse($response);
     }
 }

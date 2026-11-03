@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\ProductionBom;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductProductionBomsData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -17,6 +16,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class GetProductProductionBom extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = ProductProductionBomsData::class;
 
     public function __construct(
         protected readonly string $productId,
@@ -39,13 +40,5 @@ final class GetProductProductionBom extends Cin7Request
             'ProductID' => $this->productId,
             'ReturnAttachmentsContent' => $this->returnAttachmentsContent,
         ]);
-    }
-
-    /**
-     * @param Response<ProductProductionBomsData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductProductionBomsData
-    {
-        return ProductProductionBomsData::from($response->json())->setResponse($response);
     }
 }

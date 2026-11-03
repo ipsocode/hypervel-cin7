@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\Order\Run\Operation\Resume;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PutProductionOrderRunOperationResume extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = ProductionRunsData::class;
+
     public function resolveEndpoint(): string
     {
         return 'production/order/run/operation/resume';
-    }
-
-    /**
-     * @param Response<ProductionRunsData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductionRunsData
-    {
-        return ProductionRunsData::from($response->json())->setResponse($response);
     }
 }

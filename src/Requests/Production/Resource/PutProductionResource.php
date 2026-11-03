@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\Resource;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\Resource\ResourceData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PutProductionResource extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = ResourceData::class;
+
     public function resolveEndpoint(): string
     {
         return 'production/resource';
-    }
-
-    /**
-     * @param Response<ResourceData> $response
-     */
-    public function createDtoFromResponse(Response $response): ResourceData
-    {
-        return ResourceData::from($response->json())->setResponse($response);
     }
 }

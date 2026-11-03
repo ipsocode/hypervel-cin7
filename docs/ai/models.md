@@ -151,8 +151,12 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
   - `ListRequest(?int $page, ?int $limit)`, with `$listKey` and `filters()`, for a paged list. The
     list key comes from the example, which can differ from the path (see `NOTES`).
   - `Cin7Request`, with typed constructor arguments and `defaultQuery()` through `queryValues()`,
-    for a keyed GET or DELETE.
+    for a keyed GET or DELETE. A keyed request keeps its own constructor, because the identifier's
+    argument name (`$id`, `$taskId`, `$saleId`) is part of the public API.
   - `WriteRequest(array|Data $body)`, with `$omit`, for POST and PUT.
+  - Both name the record the response holds in `$dto`, and its place in the response in `$dtoPath`;
+    `Cin7Request::createDtoFromResponse()` builds `dto()` from them. A `{Success}` or `{Errors}`
+    response leaves `$dto` null, and a list response overrides `createDtoFromResponse()`.
 - Query parameters are typed named arguments, required ones first:
   - a GUID or string is `string`;
   - a flag is `bool`;

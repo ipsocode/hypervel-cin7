@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Requests\Production\Order\Run\ManualJournal;
 
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunsData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,6 +18,8 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 final class PutProductionOrderRunManualJournal extends WriteRequest
 {
     protected Method $method = Method::PUT;
+
+    protected ?string $dto = ProductionRunsData::class;
 
     /**
      * @param array<string, mixed>|Data $body
@@ -43,13 +44,5 @@ final class PutProductionOrderRunManualJournal extends WriteRequest
         return $this->queryValues([
             'ProductionOrderID' => $this->productionOrderId,
         ]);
-    }
-
-    /**
-     * @param Response<ProductionRunsData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductionRunsData
-    {
-        return ProductionRunsData::from($response->json())->setResponse($response);
     }
 }

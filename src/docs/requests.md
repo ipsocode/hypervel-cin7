@@ -20,8 +20,9 @@ A subclass declares its verb as a property default and its path through `resolve
 the data class of one item (`protected string $item`, which `ListRequest` builds `dto()` from) and
 returns its filters by wire key from `filters()`. A request that lists on a verb or a path that is
 not a `ListRequest` builds its `list<X>` with `Cin7Request::listOf()`. A read or delete of one record returns its
-parameters by wire key from `defaultQuery()`, through `queryValues()`. Only `ListRequest`
-implements `Paginatable`.
+parameters by wire key from `defaultQuery()`, through `queryValues()`. A `Cin7Request` or `WriteRequest` names the data
+class of the record the response holds (`protected ?string $dto`, and `$dtoPath` for where it sits in the
+response), which `Cin7Request` builds `dto()` from. Only `ListRequest` implements `Paginatable`.
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
@@ -728,15 +729,24 @@ attempt waits it out; see [connector](connector.md#the-throttling-cooldown).
 ## Writing a request class
 
 A new request extends the base matching its shape, declares its verb as a
-property default, and implements `resolveEndpoint()`:
+property default, and implements `resolveEndpoint()`. It also names the data class of the record
+the response holds in `$dto`, and where the record sits in the response in `$dtoPath` (omit it
+when the whole body is the record); `Cin7Request::createDtoFromResponse()` builds `dto()` from
+them. Leave `$dto` out when the response is only `{Success}` or `{Errors}`, which `json()` reads,
+and override `createDtoFromResponse()` when it is a list:
 
 ```php
 use Hypervel\Saloon\Enums\Method;
+use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 final class PutProduct extends WriteRequest
 {
     protected Method $method = Method::PUT;
+
+    protected ?string $dto = ProductData::class;
+
+    protected ?string $dtoPath = 'Products.0';
 
     public function resolveEndpoint(): string
     {
@@ -751,11 +761,14 @@ by wire key through `queryValues()`:
 
 ```php
 use Hypervel\Saloon\Enums\Method;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
 final class GetSaleOrder extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = SaleOrderData::class;
 
     public function __construct(
         protected readonly string $saleId,
@@ -795,6 +808,10 @@ final class GetStockTakeList extends ListRequest
     protected string $item = StockTakeListData::class;
 }
 ```
+
+Any request names the data class of the record its response holds in `$dto`, and where the record
+sits in `$dtoPath` when it is not the whole body; `Cin7Request::createDtoFromResponse()` builds
+`dto()` from them, and a request that sets neither has no `dto()`.
 
 A request that returns a list from a keyed read or a write (`GetWebhooks`, `PostCarrier`) extends
 `Cin7Request` or `WriteRequest` and calls

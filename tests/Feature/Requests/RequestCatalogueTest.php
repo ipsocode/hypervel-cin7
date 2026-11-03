@@ -14,6 +14,7 @@ use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Product\ProductPutData;
 use Ipsocode\Cin7\Data\Sale\SalePutData;
 use Ipsocode\Cin7\Requests\Cin7Request;
+use Ipsocode\Cin7\Requests\CustomPrices\PostCustomPrices;
 use Ipsocode\Cin7\Requests\ListRequest;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
@@ -80,6 +81,11 @@ class RequestCatalogueTest extends TestCase
 
         $this->connector()->send(new PutSale(SalePutData::from(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1, 'SaleType' => 'Advanced'])));
         $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0], $this->mock->lastPendingRequest()?->body());
+    }
+
+    public function testAWriteRequestWithNoDataClassHasNoDto(): void
+    {
+        $this->assertNull($this->connector()->send(new PostCustomPrices([]))->dto());
     }
 
     public function testPostSaleKeepsTheSaleType(): void

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Purchase;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Purchase\PurchaseData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -19,6 +18,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class GetPurchase extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = PurchaseData::class;
 
     public function __construct(
         protected readonly string $id,
@@ -41,13 +42,5 @@ final class GetPurchase extends Cin7Request
             'ID' => $this->id,
             'CombineAdditionalCharges' => $this->combineAdditionalCharges,
         ]);
-    }
-
-    /**
-     * @param Response<PurchaseData> $response
-     */
-    public function createDtoFromResponse(Response $response): PurchaseData
-    {
-        return PurchaseData::from($response->json())->setResponse($response);
     }
 }

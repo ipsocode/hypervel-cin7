@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\CreditNote;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\CreditNote\SaleCreditNotesData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -17,6 +16,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class GetSaleCreditNote extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = SaleCreditNotesData::class;
 
     public function __construct(
         protected readonly string $saleId,
@@ -43,13 +44,5 @@ final class GetSaleCreditNote extends Cin7Request
             'IncludeProductInfo' => $this->includeProductInfo,
             'IncludePaymentInfo' => $this->includePaymentInfo,
         ]);
-    }
-
-    /**
-     * @param Response<SaleCreditNotesData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleCreditNotesData
-    {
-        return SaleCreditNotesData::from($response->json())->setResponse($response);
     }
 }

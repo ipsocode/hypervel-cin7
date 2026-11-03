@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\MoneyTask;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,6 +17,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class GetMoneyTask extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = MoneyTaskData::class;
 
     public function __construct(
         protected readonly string $taskId,
@@ -38,13 +39,5 @@ final class GetMoneyTask extends Cin7Request
         return $this->queryValues([
             'TaskID' => $this->taskId,
         ]);
-    }
-
-    /**
-     * @param Response<MoneyTaskData> $response
-     */
-    public function createDtoFromResponse(Response $response): MoneyTaskData
-    {
-        return MoneyTaskData::from($response->json())->setResponse($response);
     }
 }

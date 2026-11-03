@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Journal;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Journal\JournalData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,12 @@ final class PostJournal extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = JournalData::class;
+
+    protected ?string $dtoPath = 'Journals.0';
+
     public function resolveEndpoint(): string
     {
         return 'journal';
-    }
-
-    /**
-     * @param Response<JournalData> $response
-     */
-    public function createDtoFromResponse(Response $response): JournalData
-    {
-        return JournalData::from($response->json('Journals.0'))->setResponse($response);
     }
 }

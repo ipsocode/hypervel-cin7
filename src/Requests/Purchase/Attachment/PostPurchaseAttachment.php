@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Purchase\Attachment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentsData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PostPurchaseAttachment extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = PurchaseAttachmentsData::class;
+
     public function resolveEndpoint(): string
     {
         return 'purchase/attachment';
-    }
-
-    /**
-     * @param Response<PurchaseAttachmentsData> $response
-     */
-    public function createDtoFromResponse(Response $response): PurchaseAttachmentsData
-    {
-        return PurchaseAttachmentsData::from($response->json())->setResponse($response);
     }
 }

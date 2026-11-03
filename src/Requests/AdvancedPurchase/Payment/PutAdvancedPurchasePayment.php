@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\AdvancedPurchase\Payment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Payment\AdvancedPurchasePaymentData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -20,6 +19,8 @@ final class PutAdvancedPurchasePayment extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = AdvancedPurchasePaymentData::class;
+
     /**
      * @var list<string>
      */
@@ -28,13 +29,5 @@ final class PutAdvancedPurchasePayment extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'advanced-purchase/payment';
-    }
-
-    /**
-     * @param Response<AdvancedPurchasePaymentData> $response
-     */
-    public function createDtoFromResponse(Response $response): AdvancedPurchasePaymentData
-    {
-        return AdvancedPurchasePaymentData::from($response->json())->setResponse($response);
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\Order\Run\Void;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\Order\Run\ProductionRunUndoData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PutProductionOrderRunVoid extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = ProductionRunUndoData::class;
+
     public function resolveEndpoint(): string
     {
         return 'production/order/run/void';
-    }
-
-    /**
-     * @param Response<ProductionRunUndoData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductionRunUndoData
-    {
-        return ProductionRunUndoData::from($response->json())->setResponse($response);
     }
 }

@@ -29,6 +29,20 @@ abstract class Cin7Request extends Request
 {
     use AlwaysThrowOnErrors;
 
+    /**
+     * The data class of the record the response holds, which `createDtoFromResponse()` builds
+     * `dto()` from. Null for a response `json()` reads (`{Success}`, `{Errors}`), and for a class
+     * that overrides the method.
+     *
+     * @var null|class-string<Data&WithResponse>
+     */
+    protected ?string $dto = null;
+
+    /**
+     * Where the record sits in the response, e.g. `CustomerList.0`; null for the whole body.
+     */
+    protected ?string $dtoPath = null;
+
     public function __construct()
     {
         // Set here, not in a boot hook: PendingRequest snapshots the retry policy in its
@@ -57,6 +71,22 @@ abstract class Cin7Request extends Request
                 && in_array($exception->status(), [429, 503], true),
             throw: true,
         );
+    }
+
+    /**
+     * @param Response<mixed> $response
+     * @return null|TDto
+     */
+    public function createDtoFromResponse(Response $response): mixed
+    {
+        if ($this->dto === null) {
+            return null;
+        }
+
+        /** @var TDto $dto The class a subclass names in `$dto` is the one its `@extends` names. */
+        $dto = $this->dto::from($response->json($this->dtoPath))->setResponse($response);
+
+        return $dto;
     }
 
     /**

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Product;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,6 +18,10 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 final class PostProduct extends WriteRequest
 {
     protected Method $method = Method::POST;
+
+    protected ?string $dto = ProductData::class;
+
+    protected ?string $dtoPath = 'Products.0';
 
     /**
      * @var list<string>
@@ -36,13 +39,5 @@ final class PostProduct extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'product';
-    }
-
-    /**
-     * @param Response<ProductData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductData
-    {
-        return ProductData::from($response->json('Products.0'))->setResponse($response);
     }
 }

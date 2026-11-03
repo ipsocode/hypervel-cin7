@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\BankTransfer;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\BankTransfer\BankTransferData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -17,6 +16,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class DeleteBankTransfer extends Cin7Request
 {
     protected Method $method = Method::DELETE;
+
+    protected ?string $dto = BankTransferData::class;
 
     public function __construct(
         protected readonly string $id,
@@ -39,13 +40,5 @@ final class DeleteBankTransfer extends Cin7Request
             'ID' => $this->id,
             'Void' => $this->void,
         ]);
-    }
-
-    /**
-     * @param Response<BankTransferData> $response
-     */
-    public function createDtoFromResponse(Response $response): BankTransferData
-    {
-        return BankTransferData::from($response->json())->setResponse($response);
     }
 }

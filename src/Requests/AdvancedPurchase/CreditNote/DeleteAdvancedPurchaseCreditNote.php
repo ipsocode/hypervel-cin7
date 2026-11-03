@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchaseCreditNotesData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -19,6 +18,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class DeleteAdvancedPurchaseCreditNote extends Cin7Request
 {
     protected Method $method = Method::DELETE;
+
+    protected ?string $dto = AdvancedPurchaseCreditNotesData::class;
 
     public function __construct(
         protected readonly string $taskId,
@@ -39,13 +40,5 @@ final class DeleteAdvancedPurchaseCreditNote extends Cin7Request
         return $this->queryValues([
             'TaskID' => $this->taskId,
         ]);
-    }
-
-    /**
-     * @param Response<AdvancedPurchaseCreditNotesData> $response
-     */
-    public function createDtoFromResponse(Response $response): AdvancedPurchaseCreditNotesData
-    {
-        return AdvancedPurchaseCreditNotesData::from($response->json())->setResponse($response);
     }
 }

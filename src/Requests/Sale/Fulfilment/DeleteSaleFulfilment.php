@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Fulfilment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentsData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,6 +17,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class DeleteSaleFulfilment extends Cin7Request
 {
     protected Method $method = Method::DELETE;
+
+    protected ?string $dto = SaleFulfilmentsData::class;
 
     public function __construct(
         protected readonly string $taskId,
@@ -40,13 +41,5 @@ final class DeleteSaleFulfilment extends Cin7Request
             'TaskID' => $this->taskId,
             'Void' => $this->void,
         ]);
-    }
-
-    /**
-     * @param Response<SaleFulfilmentsData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleFulfilmentsData
-    {
-        return SaleFulfilmentsData::from($response->json())->setResponse($response);
     }
 }

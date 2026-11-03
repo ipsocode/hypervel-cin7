@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\ProductSuppliers;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\ProductSuppliers\ProductSuppliersData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -17,6 +16,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class GetProductSuppliers extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = ProductSuppliersData::class;
 
     public function __construct(
         protected readonly string $productId,
@@ -37,13 +38,5 @@ final class GetProductSuppliers extends Cin7Request
         return $this->queryValues([
             'ProductID' => $this->productId,
         ]);
-    }
-
-    /**
-     * @param Response<ProductSuppliersData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductSuppliersData
-    {
-        return ProductSuppliersData::from($response->json())->setResponse($response);
     }
 }

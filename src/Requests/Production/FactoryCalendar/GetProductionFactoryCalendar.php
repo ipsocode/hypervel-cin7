@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\FactoryCalendar;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\FactoryCalendar\FactoryCalendarData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -17,6 +16,8 @@ use Ipsocode\Cin7\Requests\Cin7Request;
 final class GetProductionFactoryCalendar extends Cin7Request
 {
     protected Method $method = Method::GET;
+
+    protected ?string $dto = FactoryCalendarData::class;
 
     public function __construct(
         protected readonly int $year,
@@ -37,13 +38,5 @@ final class GetProductionFactoryCalendar extends Cin7Request
         return $this->queryValues([
             'Year' => $this->year,
         ]);
-    }
-
-    /**
-     * @param Response<FactoryCalendarData> $response
-     */
-    public function createDtoFromResponse(Response $response): FactoryCalendarData
-    {
-        return FactoryCalendarData::from($response->json())->setResponse($response);
     }
 }

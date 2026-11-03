@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\MoneyTask;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\MoneyTask\MoneyTaskData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PutMoneyTask extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = MoneyTaskData::class;
+
     public function resolveEndpoint(): string
     {
         return 'moneyOperation';
-    }
-
-    /**
-     * @param Response<MoneyTaskData> $response
-     */
-    public function createDtoFromResponse(Response $response): MoneyTaskData
-    {
-        return MoneyTaskData::from($response->json())->setResponse($response);
     }
 }
