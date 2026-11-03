@@ -9,6 +9,7 @@ use Hypervel\Console\Scheduling\Schedule;
 use Hypervel\Support\Facades\Artisan;
 use Hypervel\Support\Facades\Schema;
 use Hypervel\Support\ServiceProvider;
+use InvalidArgumentException;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Cin7Manager;
 use Ipsocode\Cin7\Cin7ServiceProvider;
@@ -66,16 +67,15 @@ class ServiceProviderTest extends TestCase
         $this->assertSame([], $connector->options());
     }
 
-    public function testMissingCredentialsDoNotBreakContainerResolution(): void
+    public function testMissingCredentialsFailContainerResolution(): void
     {
         $this->app->get('config')->set('cin7.account_id', null);
-        $this->app->get('config')->set('cin7.application_key', null);
         $this->app->forgetInstance(Cin7Manager::class);
 
-        $connector = $this->connector();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no account_id; set CIN7_ACCOUNT_ID.');
 
-        $this->assertSame('', $connector->headers()['api-auth-accountid']);
-        $this->assertSame('', $connector->headers()['api-auth-applicationkey']);
+        $this->connector();
     }
 
     public function testTheRateLimitConfigIsCastRatherThanTrusted(): void

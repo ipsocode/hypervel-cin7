@@ -92,6 +92,18 @@ class CheckCommandTest extends TestCase
         $mock->assertNothingSent();
     }
 
+    public function testAMissingCredentialIsNamed(): void
+    {
+        $this->app->get('config')->set('cin7.application_key', null);
+        $mock = Saloon::fake([]);
+
+        $this->artisan('cin7:check')
+            ->expectsOutputToContain('Cin7 connection [default] has no application_key; set CIN7_APPLICATION_KEY.')
+            ->assertExitCode(1);
+
+        $mock->assertNothingSent();
+    }
+
     public function testRejectedCredentialsFail(): void
     {
         Saloon::fake([GetMe::class => Cin7Fake::credentialsRejected()]);

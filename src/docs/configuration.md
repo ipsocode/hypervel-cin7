@@ -116,7 +116,7 @@ than trusting its type, so a missing or loosely typed value does not throw a
 
 | Value | Cast | Result |
 |---|---|---|
-| `account_id`, `application_key` | `(string)` | Unset (`null`) becomes `''`. The connector resolves, and Cin7 rejects the call instead |
+| `account_id`, `application_key` | `(string)` | Required. A missing, `null` or blank value throws an `InvalidArgumentException` naming the connection and the key when the connection is resolved, such as `Cin7 connection [default] has no account_id; set CIN7_ACCOUNT_ID.`; `cin7:check` prints the same message. Resolve a connector without credentials only behind [`Cin7Fake`](testing.md) or fake values |
 | `base_url` | `(string)`, falling back to the V2 URL when absent, `null` or `''` | A connection's own `base_url` wins over the top-level one; a blank `CIN7_BASE_URL=` counts as unset |
 | `timeout`, `connect_timeout` | `null` and `''` become `null`; anything else `(int)` | `null` sends no option, so the `saloon` connection's value applies; a blank `CIN7_TIMEOUT=` counts as unset rather than `0`, which would wait forever. A connection's own key wins over the top-level one |
 | `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. At the top level, a key present but `null` becomes `0`, which disables the window |

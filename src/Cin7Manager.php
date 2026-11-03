@@ -74,8 +74,8 @@ final class Cin7Manager
         $connectTimeout = $this->transportSetting($connection, 'connect_timeout');
 
         return new Cin7Connector(
-            (string) ($connection['account_id'] ?? ''),
-            (string) ($connection['application_key'] ?? ''),
+            $this->credential($name, $connection, 'account_id', 'CIN7_ACCOUNT_ID'),
+            $this->credential($name, $connection, 'application_key', 'CIN7_APPLICATION_KEY'),
             (int) ($rateLimit['max'] ?? config('cin7.rate_limit.max', 60)),
             (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', 60)),
             $store === null ? null : (string) $store,
@@ -84,6 +84,29 @@ final class Cin7Manager
             $timeout === null ? null : (int) $timeout,
             $connectTimeout === null ? null : (int) $connectTimeout,
         );
+    }
+
+    /**
+     * A connection's required credential, which fails at resolve time rather than as a 403 on
+     * the first request when it is missing or blank.
+     *
+     * @param array<mixed> $connection
+     *
+     * @throws InvalidArgumentException when the credential is null or blank
+     */
+    private function credential(string $name, array $connection, string $key, string $env): string
+    {
+        $value = $connection[$key] ?? null;
+
+        if ($value === null || trim((string) $value) === '') {
+            $hint = $name === 'default'
+                ? "set {$env}"
+                : "set cin7.connections.{$name}.{$key}";
+
+            throw new InvalidArgumentException("Cin7 connection [{$name}] has no {$key}; {$hint}.");
+        }
+
+        return (string) $value;
     }
 
     /**

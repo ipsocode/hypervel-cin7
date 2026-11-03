@@ -13,6 +13,7 @@ use Ipsocode\Cin7\Cin7ServiceProvider;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class Cin7ManagerTest extends TestCase
 {
@@ -239,14 +240,55 @@ class Cin7ManagerTest extends TestCase
         $this->assertNull($this->manager()->connection('local')->resolveRateLimitStoreName());
     }
 
-    public function testUnsetCredentialsAreCastRatherThanTrusted(): void
+    /**
+     * @param array<string, mixed> $connection
+     */
+    #[DataProvider('missingCredentials')]
+    public function testAMissingOrBlankCredentialFailsAtResolveTime(array $connection, string $message): void
     {
-        $this->app->get('config')->set('cin7.connections.blank', ['account_id' => null]);
+        $this->app->get('config')->set('cin7.connections.broken', $connection);
 
-        $headers = $this->manager()->connection('blank')->headers();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($message);
 
-        $this->assertSame('', $headers['api-auth-accountid']);
-        $this->assertSame('', $headers['api-auth-applicationkey']);
+        $this->manager()->connection('broken');
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, string}>
+     */
+    public static function missingCredentials(): array
+    {
+        return [
+            'no account_id' => [['application_key' => 'key'], 'Cin7 connection [broken] has no account_id; set cin7.connections.broken.account_id.'],
+            'null account_id' => [['account_id' => null, 'application_key' => 'key'], 'Cin7 connection [broken] has no account_id; set cin7.connections.broken.account_id.'],
+            'blank account_id' => [['account_id' => '  ', 'application_key' => 'key'], 'Cin7 connection [broken] has no account_id; set cin7.connections.broken.account_id.'],
+            'no application_key' => [['account_id' => 'acct'], 'Cin7 connection [broken] has no application_key; set cin7.connections.broken.application_key.'],
+            'null application_key' => [['account_id' => 'acct', 'application_key' => null], 'Cin7 connection [broken] has no application_key; set cin7.connections.broken.application_key.'],
+            'blank application_key' => [['account_id' => 'acct', 'application_key' => ''], 'Cin7 connection [broken] has no application_key; set cin7.connections.broken.application_key.'],
+        ];
+    }
+
+    public function testTheDefaultConnectionNamesTheEnvironmentVariable(): void
+    {
+        $this->app->get('config')->set('cin7.account_id', null);
+        $this->app->get('config')->set('cin7.application_key', 'key');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no account_id; set CIN7_ACCOUNT_ID.');
+
+        $this->manager()->connection();
+    }
+
+    public function testTheDefaultConnectionNamesTheApplicationKeyVariable(): void
+    {
+        $this->app->get('config')->set('cin7.account_id', 'acct');
+        $this->app->get('config')->set('cin7.application_key', '');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no application_key; set CIN7_APPLICATION_KEY.');
+
+        $this->manager()->connection();
     }
 
     public function testAZeroMaxOnOneConnectionLeavesTheOthersWindowAlone(): void
