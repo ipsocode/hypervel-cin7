@@ -23,6 +23,16 @@ return [
             [],
             ['productionOrderID' => $id],
         ],
+        PostProductionOrderAuthorise::class . ' with data' => [
+            PostProductionOrderAuthorise::class,
+            [fn (): ProductionOrderAuthorisePostData => ProductionOrderAuthorisePostData::from(Cin7Payloads::load('production/order/authorise', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/production/order/authorise',
+            [],
+            [
+                'productionOrderID' => 'fd5197cc-cf19-45cf-aafc-98e86647f941',
+            ],
+        ],
     ],
     'resources' => [
         'production order authorise' => [

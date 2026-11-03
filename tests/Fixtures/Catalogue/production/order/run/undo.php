@@ -22,6 +22,18 @@ return [
             [],
             ['ProductionOrderID' => $id, 'ProductionRunID' => $id],
         ],
+        PutProductionOrderRunUndo::class . ' with data' => [
+            PutProductionOrderRunUndo::class,
+            [fn (): ProductionRunUndoData => ProductionRunUndoData::from(Cin7Payloads::load('production/order/run/undo', 'put.request'))],
+            Method::PUT,
+            '/ExternalApi/v2/production/order/run/undo',
+            [],
+            [
+                'ProductionOrderID' => '1c634596-eb51-4ff1-828b-ee1b42a9a5f1',
+                'ProductionRunID' => '1c634596-eb51-4ff1-828b-ee1b42a9a5f1',
+                'ApplyToRelatedTasks' => true,
+            ],
+        ],
     ],
     'resources' => [
         'production order run undo' => [

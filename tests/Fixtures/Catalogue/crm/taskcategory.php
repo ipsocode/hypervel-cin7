@@ -22,7 +22,32 @@ return [
     'requests' => [
         GetCrmTaskCategory::class => [GetCrmTaskCategory::class, ['id' => $id, 'name' => 'task'], Method::GET, $uri, ['ID' => $id, 'Name' => 'task', 'page' => 1, 'limit' => 100], null],
         PostCrmTaskCategory::class => [PostCrmTaskCategory::class, [['Name' => 'A']], Method::POST, $uri, [], ['Name' => 'A']],
+        PostCrmTaskCategory::class . ' with data' => [
+            PostCrmTaskCategory::class,
+            [fn (): TaskCategoryPostData => TaskCategoryPostData::from(Cin7Payloads::load('crm/taskcategory', 'post.request'))],
+            Method::POST,
+            $uri,
+            [],
+            [
+                'Color' => '396E76',
+                'BackgroundColor' => 'D6F0F3',
+                'Name' => 'tsk cat 5',
+            ],
+        ],
         PutCrmTaskCategory::class => [PutCrmTaskCategory::class, [['ID' => $id, 'Name' => 'B']], Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'B']],
+        PutCrmTaskCategory::class . ' with data' => [
+            PutCrmTaskCategory::class,
+            [fn (): TaskCategoryPutData => TaskCategoryPutData::from(Cin7Payloads::load('crm/taskcategory', 'put.request'))],
+            Method::PUT,
+            $uri,
+            [],
+            [
+                'ID' => 'bc410d90-260e-4841-b1f0-ad90f6a78135',
+                'Color' => 'F7CAFE',
+                'BackgroundColor' => 'F7CAFE',
+                'Name' => 'tsk cat 6',
+            ],
+        ],
     ],
     'resources' => [
         'crm taskCategory get' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->taskCategory()->get(), GetCrmTaskCategory::class, Method::GET, $uri, ['page' => 1, 'limit' => 100], null],

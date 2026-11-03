@@ -55,6 +55,23 @@ return [
             [],
             ['ProductionOrderID' => $id, 'IncreaseOrderQuantity' => true],
         ],
+        PostProductionOrderRun::class . ' with data' => [
+            PostProductionOrderRun::class,
+            [fn (): ProductionRunPostData => ProductionRunPostData::from(Cin7Payloads::load('production/order/run', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/production/order/run',
+            [],
+            [
+                'ProductionOrderID' => '1c634596-eb51-4ff1-828b-ee1b42a9a5f1',
+                'Runs' => [
+                    [
+                        'Quantity' => 5.0,
+                        'WIPAccount' => '12345',
+                    ],
+                ],
+                'IncreaseOrderQuantity' => true,
+            ],
+        ],
         GetProductionOrderRun::class => [
             GetProductionOrderRun::class,
             [$id, 'includeAttachmentContent' => true],
@@ -70,6 +87,17 @@ return [
             '/ExternalApi/v2/production/order/run',
             ['ProductionOrderID' => $id, 'IncreaseOrderQuantity' => 'true'],
             ['RunID' => $id, 'Quantity' => 15],
+        ],
+        PutProductionOrderRun::class . ' with data' => [
+            PutProductionOrderRun::class,
+            [fn (): ProductionRunData => ProductionRunData::from(Cin7Payloads::load('production/order/run', 'put.request')), 'productionOrderId' => $id, 'increaseOrderQuantity' => true],
+            Method::PUT,
+            '/ExternalApi/v2/production/order/run',
+            ['ProductionOrderID' => $id, 'IncreaseOrderQuantity' => 'true'],
+            [
+                'RunID' => 'a093ae70-c620-2318-c470-db45feb1ebf9',
+                'Quantity' => 15.0,
+            ],
         ],
     ],
     'resources' => [

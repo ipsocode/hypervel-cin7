@@ -23,6 +23,17 @@ return [
             [],
             ['productionOrderID' => $id, 'ApplyToTasks' => false],
         ],
+        PostProductionOrderVoid::class . ' with data' => [
+            PostProductionOrderVoid::class,
+            [fn (): ProductionOrderVoidPostData => ProductionOrderVoidPostData::from(Cin7Payloads::load('production/order/void', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/production/order/void',
+            [],
+            [
+                'productionOrderID' => 'fd5197cc-cf19-45cf-aafc-98e86647f941',
+                'ApplyToTasks' => true,
+            ],
+        ],
     ],
     'resources' => [
         'production order void' => [

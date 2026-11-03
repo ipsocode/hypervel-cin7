@@ -13,7 +13,7 @@ use SplFileInfo;
  * The catalog rows, one file per API path under `tests/Fixtures/Catalogue/`
  * (`sale/invoice.php` holds the rows for `sale/invoice`). Each file returns its rows by kind:
  *
- * - `requests`: one per request class, plus `… with data` rows for data object bodies
+ * - `requests`: one per request class, plus a `… with data` row for each write request, which sends a data object body
  * - `resources`: one per resource method, keyed `<resource path> <method>`. A row is the call, then the
  *   request class, verb, path, query and body it sends, or only the call and the key of the
  *   `requests` row that expects the same, which the loader fills in

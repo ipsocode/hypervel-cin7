@@ -179,7 +179,7 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
 - **Catalog rows:** `tests/Fixtures/Catalogue/<path>.php` returns rows by kind. A key two files
   share throws. The kinds are:
   - `requests`: class, arguments, method, path, query and body; for a data-object body, add a
-    `with data` row;
+    `with data` row (every write request needs one);
   - `resources`: every public resource method;
   - `dtos`: a fixture round-trips through `createDtoFromResponse`;
   - `bodies`: a write fixture round-trips through its body class, and its write request validates it;

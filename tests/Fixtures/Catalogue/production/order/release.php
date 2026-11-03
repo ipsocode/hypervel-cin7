@@ -23,6 +23,17 @@ return [
             [],
             ['productionOrderID' => $id, 'releaseDate' => '2024-05-01T00:00:00'],
         ],
+        PostProductionOrderRelease::class . ' with data' => [
+            PostProductionOrderRelease::class,
+            [fn (): ProductionOrderReleasePostData => ProductionOrderReleasePostData::from(Cin7Payloads::load('production/order/release', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/production/order/release',
+            [],
+            [
+                'productionOrderID' => 'fd5197cc-cf19-45cf-aafc-98e86647f941',
+                'releaseDate' => '2021-02-12T00:00:00',
+            ],
+        ],
     ],
     'resources' => [
         'production order release' => [

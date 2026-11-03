@@ -33,6 +33,31 @@ return [
             [],
             ['TaskID' => $taskId, 'Status' => 'DRAFT'],
         ],
+        PostFinishedGoodsOrder::class . ' with data' => [
+            PostFinishedGoodsOrder::class,
+            [fn (): FinishedGoodsOrderData => FinishedGoodsOrderData::from(Cin7Payloads::load('finishedGoods/order', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/finishedGoods/order',
+            [],
+            [
+                'TaskID' => 'dcede9f5-58ba-4236-81fe-b3d43890b2dc',
+                'Status' => 'AUTHORISED',
+                'OrderLines' => [
+                    [
+                        'Quantity' => 1.0,
+                        'ProductID' => 'b05c1c28-a125-4178-bb1b-ba200955e9f5',
+                        'ProductCode' => 'BOOK',
+                        'Name' => 'Fish out of Water: Finding Your Brand',
+                        'ExpenseAccount' => '',
+                        'Unit' => '',
+                        'WastagePercent' => 0.0,
+                        'WastageQuantity' => 0.0,
+                        'TotalQuantity' => 1.0,
+                        'TotalCost' => 0.5,
+                    ],
+                ],
+            ],
+        ],
     ],
     'resources' => [
         'finishedGoods order get' => [

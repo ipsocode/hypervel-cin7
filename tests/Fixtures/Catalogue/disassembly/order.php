@@ -34,6 +34,38 @@ return [
             [],
             ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
+        PostDisassemblyOrder::class . ' with data' => [
+            PostDisassemblyOrder::class,
+            [fn (): DisassemblyOrderData => DisassemblyOrderData::from(Cin7Payloads::load('disassembly/order', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/disassembly/order',
+            [],
+            [
+                'TaskID' => '122df91c-1ce5-46e2-86f7-52cc14e7964b',
+                'Status' => 'COMPLETED',
+                'CompletionDate' => '2017-12-21T00:00:00',
+                'OrderLines' => [
+                    [
+                        'Cost' => 5.0,
+                        'Unit' => 'Item',
+                        'Account' => '715',
+                        'ProductID' => '8879b7f5-3aa7-4c7c-ba2c-d0bcc48ba7c3',
+                        'ProductCode' => 'GB3-White',
+                        'Name' => 'Golf balls white 3-pack',
+                        'Quantity' => 1.0,
+                    ],
+                ],
+                'OrderServiceLines' => [
+                    [
+                        'Account' => '416',
+                        'Amount' => 600.0,
+                        'ProductID' => '5c6a9204-275f-4a8b-8a90-317d674a4504',
+                        'Name' => 'Half day training - Microsoft Office',
+                        'Comments' => 'Test',
+                    ],
+                ],
+            ],
+        ],
     ],
     'resources' => [
         'disassembly order get' => [
