@@ -37,14 +37,23 @@ final class Synchroniser
     }
 
     /**
-     * Pull each module in order. A module that fails does not stop the others.
+     * Pull each module in order. A module that fails does not stop the others, and its
+     * exception goes to the exception handler, so the console and the queue both leave a trace.
      *
      * @param list<Module> $modules
      * @return list<PullResult>
      */
     public function pullMany(array $modules, bool $full = false): array
     {
-        return array_map(fn (Module $module): PullResult => $this->pull($module, $full), $modules);
+        return array_map(function (Module $module) use ($full): PullResult {
+            $result = $this->pull($module, $full);
+
+            if ($result->error !== null) {
+                report($result->error);
+            }
+
+            return $result;
+        }, $modules);
     }
 
     /**

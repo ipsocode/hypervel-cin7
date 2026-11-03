@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Tests\Feature\Sync;
 
 use Hypervel\Cache\Contracts\Lock;
+use Hypervel\Contracts\Debug\ExceptionHandler;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Support\Facades\Cache;
 use Hypervel\Support\Facades\DB;
@@ -15,6 +16,7 @@ use Ipsocode\Cin7\Testing\Cin7Fake;
 use Mockery as m;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
+use Throwable;
 
 /**
  * A list module's pull: the window it asks for, what it writes, and what a failure leaves.
@@ -441,6 +443,21 @@ class ListPullTest extends SyncTestCase
 
         $this->assertTrue($result->failed());
         $this->assertNotSame($rollbackError, $result->error);
+    }
+
+    public function testEveryFailedModulesExceptionIsReported(): void
+    {
+        $handler = m::mock(ExceptionHandler::class);
+        $reported = [];
+        $handler->shouldReceive('report')->twice()->andReturnUsing(function (Throwable $exception) use (&$reported): void {
+            $reported[] = $exception;
+        });
+        $this->app->instance(ExceptionHandler::class, $handler);
+        Saloon::fake([Cin7Fake::error('First'), Cin7Fake::error('Second')]);
+
+        $results = $this->synchroniser()->pullMany([Module::Customer, Module::Supplier]);
+
+        $this->assertSame([$results[0]->error, $results[1]->error], $reported);
     }
 
     public function testEachModuleIsPulledInOrderAndAFailureDoesNotStopTheNext(): void
