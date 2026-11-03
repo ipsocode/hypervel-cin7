@@ -190,13 +190,12 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
 - **Body key order:** an expected body follows `toArray()`. That is the child's own promoted
   properties, then the parent's declared properties, then the parent's promoted constructor
   properties, then trait properties.
-- **Hard-coded lists to extend:**
-  - in `DataCatalogueTest`, the abstract parents (in the asserted order) and the `WithResponse`
-    classes;
-  - the accessors in `ConnectorResourcesTest`;
-  - in `BodyValidationTest`, a case for every new `#[In]` (`postOnlyStatusProvider`),
-    `#[RequiredWithout]` (`eitherFieldProvider`), `#[RequiredIf]` and `#[Required]`
-    (`productionRequiredFieldProvider`) rule.
+- **Checks derived from the catalogue:** `DataCatalogueTest` needs no edit for a new abstract
+  parent (it only has to be extended) or a new response class (a `dtos` row's data class has to
+  keep its response), and `ConnectorResourcesTest` walks the accessors by reflection.
+- **Hard-coded lists to extend:** in `BodyValidationTest`, a case for every new `#[In]`
+  (`postOnlyStatusProvider`), `#[RequiredWithout]` (`eitherFieldProvider`), `#[RequiredIf]` and
+  `#[Required]` (`productionRequiredFieldProvider`) rule.
 
 ### Docs
 
