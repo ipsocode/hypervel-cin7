@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Tests\Feature\Connector;
 use Hypervel\Saloon\Exceptions\Request\ClientException;
 use Hypervel\Saloon\Exceptions\Request\ServerException;
 use Hypervel\Saloon\Facades\Saloon;
+use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Support\Jitter;
@@ -52,6 +53,32 @@ class RetryTest extends TestCase
             Sleep::usleep(5_000_000),
             Sleep::usleep(5_000_000),
         ]);
+    }
+
+    public function testAnHtmlGatewayPageSurfacesAsARequestExceptionNotAJsonException(): void
+    {
+        Saloon::fake([MockResponse::make('<html><body>Bad Gateway</body></html>', 502, ['Content-Type' => 'text/html'])]);
+
+        try {
+            $this->connector()->send(new GetCustomer);
+            $this->fail('A 502 should have surfaced a ServerException.');
+        } catch (ServerException $exception) {
+            $this->assertSame(502, $exception->status());
+        }
+    }
+
+    public function testA429WithAnEmptyBodyIsStillATooManyRequestsError(): void
+    {
+        $mock = Saloon::fake(array_fill(0, 4, MockResponse::make('', 429)));
+
+        try {
+            $this->connector()->send(new GetCustomer);
+            $this->fail('A 429 should have surfaced a ClientException.');
+        } catch (ClientException $exception) {
+            $this->assertSame(429, $exception->status());
+        }
+
+        $mock->assertSentCount(4);
     }
 
     public function testA503ThatClearsReturnsTheEventualSuccess(): void
