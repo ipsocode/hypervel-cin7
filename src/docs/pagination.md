@@ -136,4 +136,4 @@ request declares `HasRequestPagination`, so `Cin7Paginator` is the only
 paginator the connector needs.
 
 The behavior above is pinned by
-[`Cin7PaginatorTest`](../../tests/Feature/Pagination/Cin7PaginatorTest.php).
+[`Cin7PaginatorTest`](https://github.com/ipsocode/hypervel-cin7/blob/main/tests/Feature/Pagination/Cin7PaginatorTest.php).

@@ -1,7 +1,8 @@
 # Configuration
 
-The package reads its settings from `config/cin7.php`: the Cin7 credentials,
-the connector's rate limit, and the throttling retry policy. The service provider
+The package reads its settings from `config/cin7.php`: the Cin7 credentials and the
+named `connections`, the API root and the transport timeouts, the connector's rate limit, the
+throttling retry policy and the optional `sync`. The service provider
 merges the packaged file into `config('cin7')`, so every key below has a value
 whether or not you publish your own copy, and it builds the connector from
 those values through `config()`, never by reading the environment directly.
@@ -69,7 +70,17 @@ php artisan vendor:publish --tag=cin7-config
 This copies the packaged file to your application's `config/cin7.php`.
 Publishing is optional: the packaged defaults are merged in either way.
 
-The provider registers the `cin7-config` publish group only when the
+The sync's migrations have a group of their own, `cin7-migrations`, which copies them to
+your application's `database/migrations`:
+
+```sh
+php artisan vendor:publish --tag=cin7-migrations
+```
+
+They load from the package without publishing, but only while `sync.enabled` is on (see
+[Sync](sync.md)); publishing is for an application that wants them in its own migration folder.
+
+The provider registers the `cin7-config` and `cin7-migrations` publish groups only when the
 application is running in the console. `publishes()` keeps its paths in a
 static array for the life of the process, and only `vendor:publish` reads that
 group, so a worker booting to serve requests does not register it.
@@ -91,6 +102,13 @@ which is evaluated when the configuration loads. Everything else goes through
 
 So set any runtime override of `retry.*` before the `new`, not just before
 `send()`.
+
+## The `about` section
+
+`php artisan about` has a Cin7 section, read when the command runs. It shows the installed
+package version, the default connection's rate limit (`off` when the window is disabled) and
+limiter store, and whether the sync is on, with its pull and full-pull times (`not scheduled`
+for a blank time, `-` while the sync is off). It names neither credential.
 
 ## Adding your own keys
 

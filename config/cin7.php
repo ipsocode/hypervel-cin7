@@ -9,9 +9,13 @@ use Ipsocode\Cin7\Cin7Connector;
 | Cin7 Core API client
 |--------------------------------------------------------------------------
 |
-| Credentials and tuning for the Cin7 connector. The credentials and rate
-| limit are read when the connector is first resolved, and the retry values
-| each time a request is constructed. Publish it with:
+| Credentials and tuning for the Cin7 connector: the credentials, named
+| `connections` and the `default` one, the API root and timeouts, the rate
+| limit, the retry policy and the optional `sync`. The credentials, the
+| connections and the rate limit are read when a connection is first
+| resolved, `default` each time the connector is resolved, the retry values
+| each time a request is constructed, and `sync` each time it is used.
+| Publish it with:
 |
 |     php artisan vendor:publish --tag=cin7-config
 |

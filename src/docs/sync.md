@@ -246,4 +246,4 @@ $table->index(['module', 'order_number']);
 $table->index('payload', null, 'gin');
 ```
 
-The behavior above is pinned by the tests in [`tests/Feature/Sync/`](../../tests/Feature/Sync).
+The behavior above is pinned by the tests in [`tests/Feature/Sync/`](https://github.com/ipsocode/hypervel-cin7/tree/main/tests/Feature/Sync).

@@ -1245,7 +1245,7 @@ request:
 3. Add its `requests` and `resources` rows to the path's file under `tests/Fixtures/Catalogue/`
    (see [the catalog](testing.md#the-catalog)).
 4. Add the accessor, and its test in
-   [`ConnectorResourcesTest`](../../tests/Feature/Resources/ConnectorResourcesTest.php),
+   [`ConnectorResourcesTest`](https://github.com/ipsocode/hypervel-cin7/blob/main/tests/Feature/Resources/ConnectorResourcesTest.php),
    only when it is new.
 5. Document the resource here and the request in [requests](requests.md).
 
