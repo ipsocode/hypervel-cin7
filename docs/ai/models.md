@@ -151,8 +151,11 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
   - `ListRequest(?int $page, ?int $limit)`, with `$listKey` and `filters()`, for a paged list. The
     list key comes from the example, which can differ from the path (see `NOTES`).
   - `Cin7Request`, with typed constructor arguments and `defaultQuery()` through `queryValues()`,
-    for a keyed GET or DELETE. A keyed request keeps its own constructor, because the identifier's
-    argument name (`$id`, `$taskId`, `$saleId`) is part of the public API.
+    for a keyed GET or DELETE. Keyed requests have no base of their own: what they repeat is the
+    constructor and `defaultQuery()`, which is where each query parameter gets its name and type.
+    An argument is its wire key in camelCase (`$id`, `$taskId`, `$saleId`), as the resource method
+    that sends the request names it too, so no shared constructor fits them, and a base holding
+    only `defaultQuery()` would save a few lines a class for a mapping PHPStan cannot check.
   - `WriteRequest(array|Data $body)`, with `$omit`, for POST and PUT.
   - Both name the record the response holds in `$dto`, and its place in the response in `$dtoPath`;
     `Cin7Request::createDtoFromResponse()` builds `dto()` from them. A `{Success}` or `{Errors}`
