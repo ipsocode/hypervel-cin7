@@ -59,6 +59,8 @@ final class SaleData extends AbstractSaleData implements WithResponse
         public ?float $COGSAmount = null,
         public ?SaleStatus $Status = null,
         public ?FulfilmentStatus $FulFilmentStatus = null,
+        // A string, not `InvoicingStatus`: the Sale tables list other values than their examples send
+        // (see "Where the reference's tables and examples disagree" in src/docs/data.md).
         #[Max(20)]
         public ?string $CombinedInvoiceStatus = null,
         public ?SalePaymentStatus $CombinedPaymentStatus = null,

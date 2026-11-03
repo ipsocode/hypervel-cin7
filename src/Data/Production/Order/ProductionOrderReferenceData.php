@@ -21,6 +21,17 @@ final class ProductionOrderReferenceData extends Data implements WithResponse
     use HasResponse;
 
     /**
+     * Each list stays `list<mixed>`, checked against
+     * `workbench/fixtures/production/order/referenceData/get.response.json`:
+     *
+     * - `$ProductionOrderTags` holds strings, and `$ChartOfAccounts`, `$ShopFloorLocations` and
+     *   `$LogisticsPaths` hold objects; the reference documents no model for any of them.
+     * - `$WorkCenters` items carry `Locations` and no `IsCoManPurchase`, so the example contradicts
+     *   `WorkCenterData`, which names its list `WorkCenterLocations` and requires `IsCoManPurchase`.
+     * - `$SuspendReasons` items are `{ID, Reason, WorkCenterIDs}`, where `SuspendReasonData` has
+     *   `SuspendReasonID` and `Workcenters`.
+     * - `$PriceTiers` is empty in the example, so there is no item to model.
+     *
      * @param null|list<mixed> $ProductionOrderTags
      * @param null|list<mixed> $ChartOfAccounts
      * @param null|list<mixed> $ShopFloorLocations

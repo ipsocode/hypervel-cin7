@@ -22,6 +22,9 @@ final class ProductionOrderAttachmentsData extends Data implements WithResponse
     use HasResponse;
 
     /**
+     * `$OrderOperationResourceAttachments` stays `list<mixed>`: the reference documents no model for
+     * it, and the `production/order/attachment` example sends it as an empty list.
+     *
      * @param null|list<ProductionOrderAttachmentData> $OrderAttachments
      * @param null|list<ProductionOrderOperationAttachmentData> $OrderOperationAttachments
      * @param null|list<mixed> $OrderOperationResourceAttachments
