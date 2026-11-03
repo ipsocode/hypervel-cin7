@@ -703,9 +703,11 @@ calls a minute, or a 503. Those are the only responses retried:
   Saloon's `RetryPolicy` throws an `InvalidArgumentException` for zero attempts
   or a negative delay, so without the clamp a bad environment value would fail
   every request at construction. At `0` ms the attempts run back to back.
-- **Fallbacks.** A `null` or absent `retry.times` or `retry.delay_ms` falls back
-  to `4` or `5000`, not to `0`; `retry.backoff`, `retry.max_delay_ms` and
-  `retry.jitter_ms` fall back to `1`, `0` and `0`.
+- **Defaults.** Every `retry.*` default lives in the packaged config, and a
+  published `retry` array that sets only some keys keeps the packaged values of
+  the rest. A `null` value, or one of the wrong type, throws an
+  `InvalidArgumentException` naming the key. `backoff` is a float, so write
+  `2.0`, not `2`.
 - **Read at construction.** `Cin7Request`'s constructor reads the config and
   sets the policy on the request, because Saloon's `PendingRequest` copies the
   request's retry policy when it is built, before any boot hook runs. The

@@ -9,6 +9,7 @@ use Hypervel\Saloon\Exceptions\Request\ServerException;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Sleep;
+use InvalidArgumentException;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Support\Jitter;
 use Ipsocode\Cin7\Testing\Cin7Fake;
@@ -235,28 +236,19 @@ class RetryTest extends TestCase
         }
     }
 
-    public function testAnAbsentRetryConfigFallsBackToThePackagedDefaults(): void
+    public function testANullRetryValueFailsNamingTheKey(): void
     {
-        $this->app->get('config')->set('cin7.retry.times', null);
         $this->app->get('config')->set('cin7.retry.delay_ms', null);
 
-        $mock = Saloon::fake(array_fill(0, 4, Cin7Fake::throttled()));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cin7.retry.delay_ms');
 
-        $request = new GetCustomer;
-
-        $this->expectException(ServerException::class);
-
-        try {
-            $this->connector()->send($request);
-        } finally {
-            $mock->assertSentCount(4);
-            Sleep::assertSleptTimes(3);
-        }
+        new GetCustomer;
     }
 
     public function testABackoffMultipliesEachWait(): void
     {
-        $this->app->get('config')->set('cin7.retry.backoff', 2);
+        $this->app->get('config')->set('cin7.retry.backoff', 2.0);
 
         $mock = Saloon::fake(array_fill(0, 4, Cin7Fake::throttled()));
 
@@ -278,7 +270,7 @@ class RetryTest extends TestCase
 
     public function testAMaximumDelayCapsTheBackoff(): void
     {
-        $this->app->get('config')->set('cin7.retry.backoff', 2);
+        $this->app->get('config')->set('cin7.retry.backoff', 2.0);
         $this->app->get('config')->set('cin7.retry.max_delay_ms', 8000);
 
         $mock = Saloon::fake(array_fill(0, 4, Cin7Fake::throttled()));
@@ -302,7 +294,7 @@ class RetryTest extends TestCase
     public function testJitterIsAddedToEachWait(): void
     {
         $this->app->get('config')->set('cin7.retry.times', 3);
-        $this->app->get('config')->set('cin7.retry.backoff', 2);
+        $this->app->get('config')->set('cin7.retry.backoff', 2.0);
         $this->app->get('config')->set('cin7.retry.jitter_ms', 300);
         $this->app->instance(Jitter::class, new class extends Jitter {
             /** @var list<int> */
@@ -374,27 +366,6 @@ class RetryTest extends TestCase
         $this->app->get('config')->set('cin7.retry.backoff', 0.5);
         $this->app->get('config')->set('cin7.retry.max_delay_ms', -1);
         $this->app->get('config')->set('cin7.retry.jitter_ms', -1);
-
-        $mock = Saloon::fake(array_fill(0, 3, Cin7Fake::throttled()));
-
-        $request = new GetCustomer;
-
-        $this->expectException(ServerException::class);
-
-        try {
-            $this->connector()->send($request);
-        } finally {
-            $mock->assertSentCount(3);
-            Sleep::assertSequence([Sleep::usleep(5_000_000), Sleep::usleep(5_000_000)]);
-        }
-    }
-
-    public function testAbsentBackoffKeysFallBackToAConstantDelay(): void
-    {
-        $this->app->get('config')->set('cin7.retry.times', 3);
-        $this->app->get('config')->set('cin7.retry.backoff', null);
-        $this->app->get('config')->set('cin7.retry.max_delay_ms', null);
-        $this->app->get('config')->set('cin7.retry.jitter_ms', null);
 
         $mock = Saloon::fake(array_fill(0, 3, Cin7Fake::throttled()));
 

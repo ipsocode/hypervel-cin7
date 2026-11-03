@@ -8,8 +8,8 @@ use InvalidArgumentException;
 use Ipsocode\Cin7\PageDefaults;
 
 /**
- * Reads `cin7.sync.*` each time it is asked, casting and clamping rather than trusting the type.
- * `Cin7Manager` casts the connector's settings in the same way.
+ * Reads `cin7.sync.*` each time it is asked, through the config repository's typed getters, and
+ * clamps what is out of range. The shipped config holds every default.
  *
  * @see src/docs/sync.md
  */
@@ -25,7 +25,7 @@ class SyncConfig
      */
     public static function enabled(): bool
     {
-        return (bool) config('cin7.sync.enabled', false);
+        return config()->boolean('cin7.sync.enabled');
     }
 
     /**
@@ -44,7 +44,9 @@ class SyncConfig
      */
     public static function modules(): array
     {
-        return self::resolve((array) (config('cin7.sync.modules') ?? self::ALL));
+        return self::resolve((array) (config('cin7.sync.modules') ?? throw new InvalidArgumentException(
+            'Configuration value for key [cin7.sync.modules] must be a string or an array, NULL given.',
+        )));
     }
 
     /**
@@ -81,7 +83,7 @@ class SyncConfig
     {
         $exceptions = [];
 
-        foreach ((array) config('cin7.sync.exceptions', []) as $name => $cron) {
+        foreach (config()->array('cin7.sync.exceptions') as $name => $cron) {
             $module = self::module($name);
             $expression = self::expression($cron);
 
@@ -113,7 +115,7 @@ class SyncConfig
      */
     public static function lookback(): int
     {
-        return max(0, (int) (config('cin7.sync.lookback') ?? 1440));
+        return max(0, config()->integer('cin7.sync.lookback'));
     }
 
     /**
@@ -121,7 +123,7 @@ class SyncConfig
      */
     public static function limit(): int
     {
-        return min(PageDefaults::LIMIT_MAX, max(1, (int) (config('cin7.sync.limit') ?? 500)));
+        return min(PageDefaults::LIMIT_MAX, max(1, config()->integer('cin7.sync.limit')));
     }
 
     /**
@@ -129,7 +131,7 @@ class SyncConfig
      */
     public static function pauseMs(): int
     {
-        return max(0, (int) (config('cin7.sync.pause_ms') ?? 1000));
+        return max(0, config()->integer('cin7.sync.pause_ms'));
     }
 
     /**
@@ -137,7 +139,7 @@ class SyncConfig
      */
     public static function documents(): int
     {
-        return max(0, (int) (config('cin7.sync.documents') ?? 250));
+        return max(0, config()->integer('cin7.sync.documents'));
     }
 
     /**
@@ -146,7 +148,7 @@ class SyncConfig
      */
     public static function maxFailures(): int
     {
-        return min(32767, max(1, (int) (config('cin7.sync.max_failures') ?? 3)));
+        return min(32767, max(1, config()->integer('cin7.sync.max_failures')));
     }
 
     /**
@@ -162,7 +164,7 @@ class SyncConfig
      */
     public static function timeout(): int
     {
-        return max(1, (int) (config('cin7.sync.timeout') ?? 3600));
+        return max(1, config()->integer('cin7.sync.timeout'));
     }
 
     /**

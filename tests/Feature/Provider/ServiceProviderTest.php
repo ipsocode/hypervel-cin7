@@ -83,10 +83,10 @@ class ServiceProviderTest extends TestCase
         $this->connector();
     }
 
-    public function testTheRateLimitConfigIsCastRatherThanTrusted(): void
+    public function testTheRateLimitConfigIsReadFromTheRepository(): void
     {
-        $this->app->get('config')->set('cin7.rate_limit.max', '30');
-        $this->app->get('config')->set('cin7.rate_limit.period', '15');
+        $this->app->get('config')->set('cin7.rate_limit.max', 30);
+        $this->app->get('config')->set('cin7.rate_limit.period', 15);
         $this->app->forgetInstance(Cin7Manager::class);
 
         $policies = $this->connector()->resolveRateLimitPolicies(

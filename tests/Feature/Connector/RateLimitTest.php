@@ -264,17 +264,13 @@ class RateLimitTest extends TestCase
         $this->assertSame(60, $policies[0]->decaySeconds);
     }
 
-    public function testTheCooldownConfigIsCastAndFallsBackWhenAbsent(): void
+    public function testTheCooldownConfigIsRead(): void
     {
         $response = $this->responseTo(Cin7Fake::throttled());
 
-        $this->app->get('config')->set('cin7.rate_limit.cooldown', '9');
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', 9);
         $this->app->forgetInstance(Cin7Manager::class);
         $this->assertSame(9, $this->connector()->resolveRateLimitCooldownFor($response));
-
-        $this->app->get('config')->set('cin7.rate_limit.cooldown', null);
-        $this->app->forgetInstance(Cin7Manager::class);
-        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $this->connector()->resolveRateLimitCooldownFor($response));
 
         $this->app->get('config')->set('cin7.rate_limit.cooldown', 0);
         $this->app->forgetInstance(Cin7Manager::class);

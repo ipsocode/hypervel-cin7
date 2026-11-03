@@ -40,7 +40,7 @@ class Cin7Manager
      */
     public function defaultConnectionName(): string
     {
-        return (string) config('cin7.default', 'default');
+        return config()->string('cin7.default');
     }
 
     private function build(string $name): Cin7Connector
@@ -77,11 +77,11 @@ class Cin7Manager
         return new Cin7Connector(
             $this->credential($name, $connection, 'account_id', 'CIN7_ACCOUNT_ID'),
             $this->credential($name, $connection, 'application_key', 'CIN7_APPLICATION_KEY'),
-            (int) ($rateLimit['max'] ?? config('cin7.rate_limit.max', Cin7Connector::RATE_LIMIT_MAX)),
-            (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', Cin7Connector::RATE_LIMIT_PERIOD)),
+            (int) ($rateLimit['max'] ?? config()->integer('cin7.rate_limit.max')),
+            (int) ($rateLimit['period'] ?? config()->integer('cin7.rate_limit.period')),
             $store === null ? null : (string) $store,
-            (int) ($rateLimit['cooldown'] ?? config('cin7.rate_limit.cooldown') ?? Cin7Connector::THROTTLE_COOLDOWN),
-            (string) ($this->transportSetting($connection, 'base_url') ?? Cin7Connector::BASE_URL),
+            (int) ($rateLimit['cooldown'] ?? config()->integer('cin7.rate_limit.cooldown')),
+            (string) $this->transportSetting($connection, 'base_url'),
             $timeout === null ? null : (int) $timeout,
             $connectTimeout === null ? null : (int) $connectTimeout,
         );

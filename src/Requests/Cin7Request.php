@@ -47,13 +47,13 @@ abstract class Cin7Request extends Request
     {
         // Set here, not in a boot hook: PendingRequest snapshots the retry policy in its
         // constructor.
-        $delay = max(0, (int) (config('cin7.retry.delay_ms') ?? 5000));
-        $backoff = max(1.0, (float) (config('cin7.retry.backoff') ?? 1));
-        $maxDelay = max(0, (int) (config('cin7.retry.max_delay_ms') ?? 0));
-        $jitter = max(0, (int) (config('cin7.retry.jitter_ms') ?? 0));
+        $delay = max(0, config()->integer('cin7.retry.delay_ms'));
+        $backoff = max(1.0, config()->float('cin7.retry.backoff'));
+        $maxDelay = max(0, config()->integer('cin7.retry.max_delay_ms'));
+        $jitter = max(0, config()->integer('cin7.retry.jitter_ms'));
 
         $this->retry(
-            times: max(1, (int) (config('cin7.retry.times') ?? 4)),
+            times: max(1, config()->integer('cin7.retry.times')),
             // The wait after failed attempt n: delay * backoff^(n-1), capped at max_delay_ms
             // unless that is 0, plus a random 0..jitter_ms. The defaults are a constant delay.
             sleepMilliseconds: static function (int $attempt) use ($delay, $backoff, $maxDelay, $jitter): int {

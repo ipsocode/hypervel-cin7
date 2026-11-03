@@ -55,9 +55,16 @@ class SyncConfigTest extends TestCase
     {
         $this->config(['modules' => ['customer', '*']]);
         $this->assertSame(Module::cases(), SyncConfig::modules());
+    }
 
+    public function testANullModuleListFailsNamingTheKey(): void
+    {
         $this->config(['modules' => null]);
-        $this->assertSame(Module::cases(), SyncConfig::modules());
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cin7.sync.modules');
+
+        SyncConfig::modules();
     }
 
     public function testAnUnknownModuleFailsLoudly(): void
@@ -85,9 +92,9 @@ class SyncConfigTest extends TestCase
         $this->assertNull(SyncConfig::full());
     }
 
-    public function testTheNumbersAreCastAndClamped(): void
+    public function testTheNumbersAreClamped(): void
     {
-        $this->config(['lookback' => '-5', 'limit' => '5000', 'pause_ms' => -1, 'documents' => -3, 'timeout' => 0, 'max_failures' => 0]);
+        $this->config(['lookback' => -5, 'limit' => 5000, 'pause_ms' => -1, 'documents' => -3, 'timeout' => 0, 'max_failures' => 0]);
 
         $this->assertSame([0, 1000, 0, 0, 1, 1], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout(), SyncConfig::maxFailures()]);
 
@@ -98,11 +105,14 @@ class SyncConfigTest extends TestCase
         $this->assertSame(1, SyncConfig::limit());
     }
 
-    public function testAnAbsentNumberFallsBackToItsDefault(): void
+    public function testANullNumberFailsNamingTheKey(): void
     {
-        $this->app->get('config')->set('cin7.sync', ['enabled' => true]);
+        $this->config(['lookback' => null]);
 
-        $this->assertSame([1440, 500, 1000, 250, 3600, 3], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout(), SyncConfig::maxFailures()]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cin7.sync.lookback');
+
+        SyncConfig::lookback();
     }
 
     public function testAnEmptyQueueOrConnectionIsTheDefaultOne(): void

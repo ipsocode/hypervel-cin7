@@ -44,7 +44,7 @@ return [
     ],
 
     // The API root, for a stub server or a staging proxy. Unset is Cin7's V2 URL.
-    'base_url' => env('CIN7_BASE_URL', Cin7Connector::BASE_URL),
+    'base_url' => env('CIN7_BASE_URL') ?: Cin7Connector::BASE_URL,
 
     // Seconds to wait for a response and to connect. Unset (null) inherits the `saloon` HTTP
     // connection's timeouts, which every Saloon connector in the application shares.
