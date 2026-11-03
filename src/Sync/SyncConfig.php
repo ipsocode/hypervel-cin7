@@ -13,7 +13,7 @@ use Ipsocode\Cin7\PageDefaults;
  *
  * @see src/docs/sync.md
  */
-final class SyncConfig
+class SyncConfig
 {
     /**
      * Every module, in `sync.modules`.

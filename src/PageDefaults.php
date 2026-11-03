@@ -12,7 +12,7 @@ use InvalidArgumentException;
  *
  * @see src/docs/requests.md
  */
-final class PageDefaults
+class PageDefaults
 {
     public const int PAGE = 1;
 

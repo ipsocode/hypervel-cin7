@@ -11,7 +11,7 @@ use Throwable;
  *
  * @see src/docs/sync.md
  */
-final readonly class PullResult
+readonly class PullResult
 {
     public function __construct(
         public Module $module,

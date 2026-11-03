@@ -65,6 +65,9 @@ use Ipsocode\Cin7\Resources\WebhooksResource;
  * options come from methods, its only property (`$response`) has no setter, and a mock client
  * travels with `send()` or the request.
  *
+ * It stays `final` to protect that: the instance is shared and readonly for the worker's
+ * lifetime, so a subclass adding mutable state would leak it across requests.
+ *
  * @see src/docs/connector.md
  *
  * @extends Connector<mixed>

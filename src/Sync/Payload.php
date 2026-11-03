@@ -25,7 +25,7 @@ use Ipsocode\Cin7\Cin7Connector;
  *
  * @see src/docs/sync.md
  */
-final class Payload extends Model
+class Payload extends Model
 {
     public const string TABLE = 'cin7_sync_payloads';
 
@@ -41,7 +41,7 @@ final class Payload extends Model
     /**
      * One module's records for one account: by default the account the connector calls.
      *
-     * @return Builder<self>
+     * @return Builder<static>
      */
     public static function forModule(Module|string $module, ?string $accountId = null): Builder
     {

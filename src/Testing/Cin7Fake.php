@@ -14,7 +14,7 @@ use Hypervel\Saloon\Http\Faking\MockResponse;
  *
  * @see src/docs/testing.md
  */
-final class Cin7Fake
+class Cin7Fake
 {
     /**
      * One page of a list in Cin7's `{Total, Page, <list key>}` envelope. `$total` defaults to this

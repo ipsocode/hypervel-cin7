@@ -16,7 +16,7 @@ use InvalidArgumentException;
  * @see src/docs/connector.md
  * @see src/docs/configuration.md
  */
-final class Cin7Manager
+class Cin7Manager
 {
     /**
      * @var array<string, Cin7Connector>

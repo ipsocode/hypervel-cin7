@@ -25,7 +25,7 @@ use UnexpectedValueException;
  *
  * @see src/docs/sync.md
  */
-final class Synchroniser
+class Synchroniser
 {
     /**
      * Rows per upsert or delete, so one statement stays small whatever the page size.

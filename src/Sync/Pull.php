@@ -17,7 +17,7 @@ use Ipsocode\Cin7\Cin7Connector;
  *
  * @see src/docs/sync.md
  */
-final class Pull implements ShouldQueue, ShouldBeUnique
+class Pull implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
