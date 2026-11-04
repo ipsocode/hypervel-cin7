@@ -18,9 +18,11 @@ use Ipsocode\Cin7\Tests\TestCase;
 
 /**
  * The sync switched on, so the provider loads its migration, with the clock fixed at
- * 2026-10-03 12:00:00 and every wait recorded rather than slept.
+ * 2026-10-03 12:00:00 and every wait recorded rather than slept. The account id is a GUID, as
+ * Cin7's are: the table's `account_id` is a `uuid` column, which PostgreSQL enforces.
  */
 #[WithConfig('cin7.sync.enabled', true)]
+#[WithConfig('cin7.account_id', '00016e91-48ff-4da6-8ca9-89ad86b5201e')]
 abstract class SyncTestCase extends TestCase
 {
     use RefreshDatabase;

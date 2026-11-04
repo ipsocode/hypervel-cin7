@@ -44,7 +44,7 @@ class ListPullTest extends SyncTestCase
 
         $rows = $this->stored(Module::Customer);
         $this->assertSame(['c-1', 'c-2'], $rows->keys()->all());
-        $this->assertSame('acct-test', $rows['c-1']->account_id);
+        $this->assertSame('00016e91-48ff-4da6-8ca9-89ad86b5201e', $rows['c-1']->account_id);
         $this->assertSame($this->customer('c-2', name: 'Globex'), $rows['c-2']->payload);
         $this->assertSame('2026-10-01 10:00:00.123', $rows['c-1']->cin7_modified_at?->format('Y-m-d H:i:s.v'));
         $this->assertSame('2026-10-03 12:00:00', $rows['c-1']->synced_at->toDateTimeString());
@@ -427,7 +427,7 @@ class ListPullTest extends SyncTestCase
     public function testAHeldLockSkipsTheModule(): void
     {
         $mock = Saloon::fake([]);
-        Cache::lock('cin7:sync:acct-test:customer', 60)->get();
+        Cache::lock('cin7:sync:00016e91-48ff-4da6-8ca9-89ad86b5201e:customer', 60)->get();
 
         $result = $this->synchroniser()->pull(Module::Customer);
 
@@ -442,7 +442,7 @@ class ListPullTest extends SyncTestCase
 
         $this->synchroniser()->pull(Module::Customer);
 
-        $this->assertTrue(Cache::lock('cin7:sync:acct-test:customer', 60)->get());
+        $this->assertTrue(Cache::lock('cin7:sync:00016e91-48ff-4da6-8ca9-89ad86b5201e:customer', 60)->get());
     }
 
     public function testALockThatThrowsFailsOnlyItsModule(): void
@@ -477,7 +477,7 @@ class ListPullTest extends SyncTestCase
 
         $this->assertSame($queryError, $results[0]->error);
         $this->assertFalse($results[1]->failed());
-        $this->assertTrue(Cache::lock('cin7:sync:acct-test:customer', 60)->get());
+        $this->assertTrue(Cache::lock('cin7:sync:00016e91-48ff-4da6-8ca9-89ad86b5201e:customer', 60)->get());
     }
 
     public function testAFailingRollbackKeepsThePullsOwnError(): void
@@ -532,8 +532,8 @@ class ListPullTest extends SyncTestCase
 
         $this->synchroniser()->pull(Module::Customer);
 
-        $this->assertCount(1, Payload::forModule(Module::Customer, 'acct-test')->get());
-        $this->assertCount(0, Payload::forModule('customer', 'another-account')->get());
+        $this->assertCount(1, Payload::forModule(Module::Customer, '00016e91-48ff-4da6-8ca9-89ad86b5201e')->get());
+        $this->assertCount(0, Payload::forModule('customer', '7f3c2d1a-5b8e-4c60-9a17-3e2b4d6f8a90')->get());
     }
 
     public function testAReferenceBookIsReadWholeEveryTime(): void

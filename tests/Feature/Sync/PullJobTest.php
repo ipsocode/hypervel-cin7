@@ -66,7 +66,7 @@ class PullJobTest extends SyncTestCase
 
     public function testItIsUniquePerAccountModulesAndKind(): void
     {
-        $this->assertSame('acct-test:customer,saleList:incremental', new Pull([Module::Customer, Module::SaleList])->uniqueId());
-        $this->assertSame('acct-test:customer:full', new Pull([Module::Customer], full: true)->uniqueId());
+        $this->assertSame('00016e91-48ff-4da6-8ca9-89ad86b5201e:customer,saleList:incremental', new Pull([Module::Customer, Module::SaleList])->uniqueId());
+        $this->assertSame('00016e91-48ff-4da6-8ca9-89ad86b5201e:customer:full', new Pull([Module::Customer], full: true)->uniqueId());
     }
 }
