@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\StockTakeList\StockTakeListData;
 use Ipsocode\Cin7\Enums\StockTakeStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -12,11 +14,13 @@ use Ipsocode\Cin7\Requests\StockTakeList\GetStockTakeList;
 
 /**
  * `stockTakeList`, the stock take list.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class StockTakeListResource extends ListResource
+final class StockTakeListResource extends BaseResource
 {
     /**
-     * One page of stock takes; without a page or limit, page 1 of 100.
+     * Fetch one page of stock takes; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -28,7 +32,7 @@ final class StockTakeListResource extends ListResource
         ?int $limit = null,
         ?StockTakeStatus $status = null,
     ): Response {
-        return $this->sendList(new GetStockTakeList(
+        return $this->connector->send(new GetStockTakeList(
             $page,
             $limit,
             $status,
@@ -36,7 +40,7 @@ final class StockTakeListResource extends ListResource
     }
 
     /**
-     * Every page of stock takes, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of stock takes, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000
@@ -46,7 +50,7 @@ final class StockTakeListResource extends ListResource
         ?int $limit = null,
         ?StockTakeStatus $status = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetStockTakeList(
+        return $this->connector->paginate(new GetStockTakeList(
             null,
             $limit,
             $status,

@@ -16,7 +16,7 @@ use Hypervel\Data\Support\Validation\ValidationPath;
  * @see src/docs/data.md
  */
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
-final class DateTime extends CustomValidationAttribute
+class DateTime extends CustomValidationAttribute
 {
     /**
      * The shape Cin7 reads; the `date` rule then rejects an impossible date.

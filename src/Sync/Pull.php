@@ -17,13 +17,22 @@ use Ipsocode\Cin7\Cin7Connector;
  *
  * @see src/docs/sync.md
  */
-final class Pull implements ShouldQueue, ShouldBeUnique
+class Pull implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
 
-    public int $tries = 3;
+    public const int TRIES = 3;
+
+    /**
+     * Seconds to wait before each retry.
+     *
+     * @var list<int>
+     */
+    public const array BACKOFF = [300, 900];
+
+    public int $tries = self::TRIES;
 
     public int $timeout;
 
@@ -45,7 +54,7 @@ final class Pull implements ShouldQueue, ShouldBeUnique
      */
     public function backoff(): array
     {
-        return [300, 900];
+        return self::BACKOFF;
     }
 
     /**

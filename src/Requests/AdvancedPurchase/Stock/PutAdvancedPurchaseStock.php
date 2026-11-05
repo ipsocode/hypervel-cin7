@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\AdvancedPurchase\Stock;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\AdvancedPurchase\Stock\AdvancedPurchaseStocksData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -21,6 +20,8 @@ final class PutAdvancedPurchaseStock extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = AdvancedPurchaseStocksData::class;
+
     /**
      * @var list<string>
      */
@@ -29,13 +30,5 @@ final class PutAdvancedPurchaseStock extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'advanced-purchase/stock';
-    }
-
-    /**
-     * @param Response<AdvancedPurchaseStocksData> $response
-     */
-    public function createDtoFromResponse(Response $response): AdvancedPurchaseStocksData
-    {
-        return AdvancedPurchaseStocksData::from($response->json())->setResponse($response);
     }
 }

@@ -27,7 +27,7 @@ use Ipsocode\Cin7\Resources\Product\MarkupPricesResource;
 final class ProductResource extends BaseResource
 {
     /**
-     * One page of products; without a page or limit, page 1 of 100.
+     * Fetch one page of products; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -77,7 +77,7 @@ final class ProductResource extends BaseResource
     }
 
     /**
-     * Every page of products, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of products, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000
@@ -143,7 +143,7 @@ final class ProductResource extends BaseResource
     }
 
     /**
-     * The `product/markupprices` resource, a product's markup prices.
+     * Return the `product/markupprices` resource, a product's markup prices.
      */
     public function markupPrices(): MarkupPricesResource
     {
@@ -151,7 +151,7 @@ final class ProductResource extends BaseResource
     }
 
     /**
-     * The `product/attachments` resource, a product's attachments.
+     * Return the `product/attachments` resource, a product's attachments.
      */
     public function attachments(): AttachmentsResource
     {

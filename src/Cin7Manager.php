@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7;
 
 use InvalidArgumentException;
+use Ipsocode\Cin7\Support\RetrySettings;
 
 /**
  * Resolves the named Cin7 connections of `config('cin7')`, one connector each.
@@ -16,7 +17,7 @@ use InvalidArgumentException;
  * @see src/docs/connector.md
  * @see src/docs/configuration.md
  */
-final class Cin7Manager
+class Cin7Manager
 {
     /**
      * @var array<string, Cin7Connector>
@@ -24,7 +25,7 @@ final class Cin7Manager
     private array $connectors = [];
 
     /**
-     * The connector for a connection, the configured default one when no name is given.
+     * Return the connector for a connection, the configured default one when no name is given.
      *
      * @throws InvalidArgumentException when no such connection is configured
      */
@@ -36,11 +37,11 @@ final class Cin7Manager
     }
 
     /**
-     * The name `connection()` resolves without one: `cin7.default`.
+     * Return the name `connection()` resolves without one: `cin7.default`.
      */
     public function defaultConnectionName(): string
     {
-        return (string) config('cin7.default', 'default');
+        return config()->string('cin7.default');
     }
 
     private function build(string $name): Cin7Connector
@@ -75,26 +76,69 @@ final class Cin7Manager
         $connectTimeout = $this->transportSetting($connection, 'connect_timeout');
 
         return new Cin7Connector(
-            (string) ($connection['account_id'] ?? ''),
-            (string) ($connection['application_key'] ?? ''),
-            (int) ($rateLimit['max'] ?? config('cin7.rate_limit.max', 60)),
-            (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', 60)),
+            $this->credential($name, $connection, 'account_id', 'CIN7_ACCOUNT_ID'),
+            $this->credential($name, $connection, 'application_key', 'CIN7_APPLICATION_KEY'),
+            (int) ($rateLimit['max'] ?? config()->integer('cin7.rate_limit.max')),
+            (int) ($rateLimit['period'] ?? config()->integer('cin7.rate_limit.period')),
             $store === null ? null : (string) $store,
-            (int) ($rateLimit['cooldown'] ?? config('cin7.rate_limit.cooldown') ?? Cin7Connector::THROTTLE_COOLDOWN),
-            (string) ($this->transportSetting($connection, 'base_url') ?? Cin7Connector::BASE_URL),
+            (int) ($rateLimit['cooldown'] ?? config()->integer('cin7.rate_limit.cooldown')),
+            $this->baseUrl($name, $connection),
             $timeout === null ? null : (int) $timeout,
             $connectTimeout === null ? null : (int) $connectTimeout,
+            RetrySettings::fromConfig(),
         );
     }
 
     /**
-     * A transport key, the connection's own before the top-level one. A blank value, such as
+     * Resolve a connection's required credential, which fails at resolve time rather than as a 403 on
+     * the first request when it is missing or blank.
+     *
+     * @param array<mixed> $connection
+     *
+     * @throws InvalidArgumentException when the credential is null or blank
+     */
+    private function credential(string $name, array $connection, string $key, string $env): string
+    {
+        $value = $connection[$key] ?? null;
+
+        if ($value === null || trim((string) $value) === '') {
+            $hint = $name === 'default'
+                ? "set {$env}"
+                : "set cin7.connections.{$name}.{$key}";
+
+            throw new InvalidArgumentException("Cin7 connection [{$name}] has no {$key}; {$hint}.");
+        }
+
+        return (string) $value;
+    }
+
+    /**
+     * Resolve a connection's base URL, which fails at resolve time rather than building a connector
+     * with an empty one when neither the connection nor `cin7.base_url` sets it.
+     *
+     * @param array<mixed> $connection
+     *
+     * @throws InvalidArgumentException when the base URL is null or blank
+     */
+    private function baseUrl(string $name, array $connection): string
+    {
+        $baseUrl = $this->transportSetting($connection, 'base_url');
+
+        if ($baseUrl === null || trim((string) $baseUrl) === '') {
+            throw new InvalidArgumentException("Cin7 connection [{$name}] has no base_url; set cin7.base_url or cin7.connections.{$name}.base_url.");
+        }
+
+        return (string) $baseUrl;
+    }
+
+    /**
+     * Resolve a transport key, the connection's own before the top-level one. A blank value, such as
      * `CIN7_TIMEOUT=` in `.env`, counts as unset: cast, it would be a timeout of 0, which waits
      * forever, or an empty base URL.
      *
      * @param array<mixed> $connection
      */
-    private function transportSetting(array $connection, string $key): mixed
+    private function transportSetting(array $connection, string $key): int|string|null
     {
         $value = $connection[$key] ?? null;
 

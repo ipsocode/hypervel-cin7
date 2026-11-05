@@ -27,10 +27,6 @@ return [
         'production resourceList get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->resourceList()->get(name: 'x', onlyActive: true),
             GetProductionResourceList::class,
-            Method::GET,
-            '/ExternalApi/v2/production/resourceList',
-            ['Name' => 'x', 'OnlyActive' => 'true', 'page' => 1, 'limit' => 100],
-            null,
         ],
         'production resourceList paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->resourceList()->paginate()->current(),

@@ -6,8 +6,11 @@ namespace Ipsocode\Cin7\Pagination;
 
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Http\Response;
+use Hypervel\Saloon\Pagination\Contracts\MapPaginatedResponseItems;
 use Hypervel\Saloon\Pagination\PagedPaginator;
 use Ipsocode\Cin7\PageDefaults;
+use Ipsocode\Cin7\Requests\ListRequest;
+use LogicException;
 
 /**
  * Page pagination over Cin7's `{Total, Page, <list key>}` envelope.
@@ -48,20 +51,21 @@ class Cin7Paginator extends PagedPaginator
     }
 
     /**
-     * The fallback for a request that does not map its own items: the envelope's `<Thing>List`,
-     * found by suffix as `Errors`/`Warnings` are arrays too.
+     * Fail, as Saloon calls this only for a request that does not map its own items: the list key
+     * differs per endpoint, so a guess would end the walk after page one with no error.
      *
      * @return array<array-key, mixed>
+     *
+     * @throws LogicException
      */
     protected function getPageItems(Response $response, Request $request): array
     {
-        foreach ((array) $response->json() as $key => $value) {
-            if (is_array($value) && is_string($key) && str_ends_with($key, 'List')) {
-                return $value;
-            }
-        }
-
-        return [];
+        throw new LogicException(sprintf(
+            'The request [%s] cannot be paginated: it must extend [%s] or implement [%s] to map its own items.',
+            $request::class,
+            ListRequest::class,
+            MapPaginatedResponseItems::class,
+        ));
     }
 
     protected function getTotalPages(Response $response): int

@@ -13,10 +13,12 @@ use SplFileInfo;
  * The catalog rows, one file per API path under `tests/Fixtures/Catalogue/`
  * (`sale/invoice.php` holds the rows for `sale/invoice`). Each file returns its rows by kind:
  *
- * - `requests`: one per request class, plus `… with data` rows for data object bodies
- * - `resources`: one per resource method, keyed `<resource path> <method>`
+ * - `requests`: one per request class, plus a `… with data` row for each write request, which sends a data object body
+ * - `resources`: one per resource method, keyed `<resource path> <method>`. A row is the call, then the
+ *   request class, verb, path, query and body it sends, or only the call and the key of the
+ *   `requests` row that expects the same, which the loader fills in
  * - `dtos`: the request, its fixture and the data class `dto()` returns
- * - `bodies`: a body class and the reference's request example it round-trips
+ * - `bodies`: a body class, the write request that sends it and the reference's request example it round-trips
  * - `missing`: a class and a payload without one of its required fields
  * - `required`: the fields of a class the reference requires
  * - `omitted`: a request, the body given and the body sent without its `$omit` fields
@@ -97,7 +99,30 @@ final class Catalogue
             }
         }
 
+        foreach ($rows['resources'] ?? [] as $key => $row) {
+            if (count($row) === 2) {
+                $rows['resources'][$key] = self::expand($key, $row, $rows['requests'] ?? []);
+            }
+        }
+
         return $rows;
+    }
+
+    /**
+     * A `resources` row that names a `requests` row: the resource's call with that row's request
+     * class, verb, path, query and body.
+     *
+     * @param array{callable, string} $row
+     * @param array<array-key, mixed> $requests
+     * @return array<array-key, mixed>
+     */
+    private static function expand(string $key, array $row, array $requests): array
+    {
+        [$call, $request] = $row;
+
+        $source = $requests[$request] ?? throw new LogicException("The resources row '{$key}' names the requests row '{$request}', which does not exist.");
+
+        return [$call, $source[0], $source[2], $source[3], $source[4], $source[5]];
     }
 
     /**

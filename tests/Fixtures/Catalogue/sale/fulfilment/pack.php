@@ -72,10 +72,6 @@ return [
         'sale fulfilment pack post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->pack()->post(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'DRAFT']),
             PostSaleFulfilmentPack::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/fulfilment/pack',
-            [],
-            ['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'DRAFT'],
         ],
         'sale fulfilment pack post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->pack()->post(SaleFulfilmentPackPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'AUTHORISED'])),
@@ -108,8 +104,8 @@ return [
         PutSaleFulfilmentPack::class => [PutSaleFulfilmentPack::class, [[]], Cin7Payloads::load('sale/fulfilment/pack', 'get.response'), SaleFulfilmentPackData::class, ''],
     ],
     'bodies' => [
-        SaleFulfilmentPackPostData::class => [SaleFulfilmentPackPostData::class, Cin7Payloads::load('sale/fulfilment/pack', 'post.request')],
-        'pack PUT' => [SaleFulfilmentPackData::class, Cin7Payloads::load('sale/fulfilment/pack', 'put.request')],
+        SaleFulfilmentPackPostData::class => [SaleFulfilmentPackPostData::class, PostSaleFulfilmentPack::class, Cin7Payloads::load('sale/fulfilment/pack', 'post.request')],
+        'pack PUT' => [SaleFulfilmentPackData::class, PutSaleFulfilmentPack::class, Cin7Payloads::load('sale/fulfilment/pack', 'put.request')],
     ],
     'missing' => [
         'pack without Status' => [SaleFulfilmentPackData::class, Arr::except(Cin7Payloads::load('sale/fulfilment/pack', 'get.response'), 'Status')],

@@ -88,26 +88,14 @@ return [
         'me contacts post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->contacts()->post(['Name' => 'DEFAULT Business contact']),
             PostMeContacts::class,
-            Method::POST,
-            '/ExternalApi/v2/me/contacts',
-            [],
-            ['Name' => 'DEFAULT Business contact'],
         ],
         'me contacts post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->contacts()->post(MeContactPostData::from(['Name' => 'DEFAULT Business contact'])),
             PostMeContacts::class,
-            Method::POST,
-            '/ExternalApi/v2/me/contacts',
-            [],
-            ['Name' => 'DEFAULT Business contact'],
         ],
         'me contacts put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->contacts()->put(['ContactID' => '62ba5a66-9c7e-44d1-b2b7-2eb72d946e18', 'Name' => 'DEFAULT PUT TEST Business contact']),
             PutMeContacts::class,
-            Method::PUT,
-            '/ExternalApi/v2/me/contacts',
-            [],
-            ['ContactID' => '62ba5a66-9c7e-44d1-b2b7-2eb72d946e18', 'Name' => 'DEFAULT PUT TEST Business contact'],
         ],
         'me contacts put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->contacts()->put(MeContactPutData::from(['ContactID' => '62ba5a66-9c7e-44d1-b2b7-2eb72d946e18', 'Name' => 'DEFAULT PUT TEST Business contact', 'Type' => 'Employee'])),
@@ -120,10 +108,6 @@ return [
         'me contacts delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->contacts()->delete('62ba5a66-9c7e-44d1-b2b7-2eb72d946e18'),
             DeleteMeContacts::class,
-            Method::DELETE,
-            '/ExternalApi/v2/me/contacts',
-            ['ID' => '62ba5a66-9c7e-44d1-b2b7-2eb72d946e18'],
-            null,
         ],
     ],
     'dtos' => [
@@ -132,8 +116,8 @@ return [
         PutMeContacts::class => [PutMeContacts::class, [[]], Cin7Payloads::load('me/contacts', 'put.response'), MeContactData::class, 'MeContactsList.0'],
     ],
     'bodies' => [
-        MeContactPostData::class => [MeContactPostData::class, Cin7Payloads::load('me/contacts', 'post.request')],
-        MeContactPutData::class => [MeContactPutData::class, Cin7Payloads::load('me/contacts', 'put.request')],
+        MeContactPostData::class => [MeContactPostData::class, PostMeContacts::class, Cin7Payloads::load('me/contacts', 'post.request')],
+        MeContactPutData::class => [MeContactPutData::class, PutMeContacts::class, Cin7Payloads::load('me/contacts', 'put.request')],
     ],
     'missing' => [
         'me contact POST without Name' => [MeContactPostData::class, Arr::except(Cin7Payloads::load('me/contacts', 'post.request'), 'Name')],

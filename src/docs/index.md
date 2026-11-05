@@ -9,7 +9,8 @@ getting started and configuration, then the pages on calling Cin7 as you need th
   branch, what registers itself, the credentials, checking them with `cin7:check`, the first
   calls, and what the package deliberately does not do.
 - [Configuration](configuration.md) — every configuration key with its environment variable
-  and default, publishing the config, and when the values are read.
+  and default, publishing the config and the sync's migrations, the `about` section, and when
+  the values are read.
 
 ## Calling Cin7
 
@@ -38,4 +39,4 @@ getting started and configuration, then the pages on calling Cin7 as you need th
   package's own suite is built.
 
 Working on the package itself? The development setup and the checks CI runs are in
-[CONTRIBUTING.md](../../CONTRIBUTING.md).
+[CONTRIBUTING.md](https://github.com/ipsocode/hypervel-cin7/blob/main/CONTRIBUTING.md).

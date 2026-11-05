@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Sync;
 
+use Carbon\CarbonInterface;
 use Hypervel\Database\ConnectionInterface;
 use Hypervel\Database\Eloquent\Builder;
 use Hypervel\Database\Query\Builder as QueryBuilder;
 use Hypervel\Database\Query\JoinClause;
 use Hypervel\Saloon\Exceptions\Request\RequestException;
-use Hypervel\Support\Carbon;
 use Hypervel\Support\Facades\Cache;
+use Hypervel\Support\Facades\Date;
 use Hypervel\Support\Facades\Log;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\Other\ErrorData;
 use stdClass;
 use Throwable;
+use UnexpectedValueException;
 
 /**
  * Copies Cin7 records into the payload table, one module at a time.
@@ -26,7 +28,7 @@ use Throwable;
  *
  * @see src/docs/sync.md
  */
-final class Synchroniser
+class Synchroniser
 {
     /**
      * Rows per upsert or delete, so one statement stays small whatever the page size.
@@ -40,42 +42,56 @@ final class Synchroniser
     }
 
     /**
-     * Pull each module in order. A module that fails does not stop the others.
+     * Pull each module in order. A module that fails does not stop the others, and its
+     * exception goes to the exception handler, so the console and the queue both leave a trace.
      *
      * @param list<Module> $modules
      * @return list<PullResult>
      */
     public function pullMany(array $modules, bool $full = false): array
     {
-        return array_map(fn (Module $module): PullResult => $this->pull($module, $full), $modules);
+        return array_map(function (Module $module) use ($full): PullResult {
+            $result = $this->pull($module, $full);
+
+            if ($result->error !== null) {
+                report($result->error);
+            }
+
+            return $result;
+        }, $modules);
     }
 
     /**
-     * Pull one module, unless another pull of it holds its lock.
+     * Pull one module, unless another pull of it holds its lock. A failure anywhere in the pull,
+     * the lock and the bookkeeping included, is the module's result, not an exception.
      */
     public function pull(Module $module, bool $full = false): PullResult
     {
-        $lock = Cache::lock('cin7:sync:' . $this->cin7->accountId() . ':' . $module->value, SyncConfig::timeout());
-
-        if (! $lock->get()) {
-            return new PullResult($module, $full, skipped: true);
-        }
-
         try {
-            // Every row a pull writes carries its start, so a full pull can tell what it saw.
-            $start = Carbon::now()->startOfSecond();
+            $lock = Cache::lock('cin7:sync:' . $this->cin7->accountId() . ':' . $module->value, SyncConfig::timeout());
 
-            $list = $module->source();
+            if (! $lock->get()) {
+                return new PullResult($module, $full, skipped: true);
+            }
 
-            return $list === null
-                ? $this->pullList($module, $full, $start)
-                : $this->pullDocuments($module, $list, $full, $start);
-        } finally {
-            $lock->release();
+            try {
+                // Every row a pull writes carries its start, so a full pull can tell what it saw.
+                $start = Date::now()->startOfSecond();
+
+                $list = $module->source();
+
+                return $list === null
+                    ? $this->pullList($module, $full, $start)
+                    : $this->pullDocuments($module, $list, $full, $start);
+            } finally {
+                $lock->release();
+            }
+        } catch (Throwable $exception) {
+            return new PullResult($module, $full, error: $exception);
         }
     }
 
-    private function pullList(Module $module, bool $full, Carbon $start): PullResult
+    private function pullList(Module $module, bool $full, CarbonInterface $start): PullResult
     {
         // The module's last sync, which a pull that fails must leave where it was.
         $previous = $this->rows($module)->max('synced_at');
@@ -160,12 +176,17 @@ final class Synchroniser
             // A first fill that failed is undone, so the next pull is a full one again. Otherwise
             // the rows it reached keep what it wrote but get their last sync back, so the module's
             // newest synced_at does not move and the next pull reaches back as far as this one.
-            if ($empty) {
-                $this->rows($module)->delete();
-            } else {
-                $this->rows($module)->toBase()
-                    ->where('synced_at', $start->format(self::DATE))
-                    ->update(['synced_at' => $previous]);
+            try {
+                if ($empty) {
+                    $this->rows($module)->delete();
+                } else {
+                    $this->rows($module)->toBase()
+                        ->where('synced_at', $start->format(self::DATE))
+                        ->update(['synced_at' => $previous]);
+                }
+            } catch (Throwable $rollback) {
+                // The pull's own error is the one the result reports; this one is only logged.
+                report($rollback);
             }
 
             return new PullResult($module, $full, $read, $written, $unchanged, error: $exception);
@@ -178,10 +199,10 @@ final class Synchroniser
         if ($full && $walked > 0) {
             if ($module->bounded() || $module->confirms()) {
                 foreach (array_chunk($gone, self::CHUNK) as $ids) {
-                    $deleted += (int) $this->rows($module)->where('synced_at', '<', $start)->whereIn('cin7_id', $ids)->delete();
+                    $deleted += (int) $this->rows($module)->where('synced_at', '<', $start->format(self::DATE))->whereIn('cin7_id', $ids)->delete();
                 }
             } else {
-                $deleted = (int) $this->rows($module)->where('synced_at', '<', $start)->delete();
+                $deleted = (int) $this->rows($module)->where('synced_at', '<', $start->format(self::DATE))->delete();
             }
         }
 
@@ -194,10 +215,10 @@ final class Synchroniser
      *
      * @return list<string>
      */
-    private function unseen(Module $module, Carbon $start): array
+    private function unseen(Module $module, CarbonInterface $start): array
     {
         /** @var list<int|string> $identifiers */
-        $identifiers = $this->rows($module)->toBase()->where('synced_at', '<', $start)->orderBy('cin7_id')->pluck('cin7_id')->all();
+        $identifiers = $this->rows($module)->toBase()->where('synced_at', '<', $start->format(self::DATE))->orderBy('cin7_id')->pluck('cin7_id')->all();
 
         return array_map(strval(...), $identifiers);
     }
@@ -209,7 +230,7 @@ final class Synchroniser
      * failed `sync.max_failures` times. Any other failure says Cin7, the network or the
      * credentials are failing, not the row: the run stops, the module fails, and no row is blamed.
      */
-    private function pullDocuments(Module $module, Module $list, bool $full, Carbon $start): PullResult
+    private function pullDocuments(Module $module, Module $list, bool $full, CarbonInterface $start): PullResult
     {
         $deleted = $full ? $this->deleteOrphans($module) : 0;
         $read = $written = 0;
@@ -295,7 +316,7 @@ final class Synchroniser
      * @param array<string, Throwable> $failures by Cin7 identifier
      * @param array<string, null|string> $versions the list row's modified time as it was read, by Cin7 identifier
      */
-    private function recordFailures(Module $list, array $failures, array $versions, Carbon $start): void
+    private function recordFailures(Module $list, array $failures, array $versions, CarbonInterface $start): void
     {
         foreach ($failures as $id => $exception) {
             // On the query builder, which leaves updated_at alone.
@@ -334,10 +355,10 @@ final class Synchroniser
      * Since when an incremental pull asks: `sync.lookback` minutes back, or the module's last
      * sync if that is older, so a gap in the schedule is read again.
      */
-    private function since(string $lastSync, Carbon $start): Carbon
+    private function since(string $lastSync, CarbonInterface $start): CarbonInterface
     {
-        $lookback = $start->copy()->subMinutes(SyncConfig::lookback());
-        $newest = Carbon::parse($lastSync);
+        $lookback = $start->subMinutes(SyncConfig::lookback());
+        $newest = Date::parse($lastSync);
 
         return $newest->lt($lookback) ? $newest : $lookback;
     }
@@ -351,16 +372,25 @@ final class Synchroniser
      * @param array<array-key, mixed> $items
      * @return array{int, int} the records written and the records unchanged
      */
-    private function store(Module $module, array $items, Carbon $start, bool $full): array
+    private function store(Module $module, array $items, CarbonInterface $start, bool $full): array
     {
         $records = [];
 
-        foreach ($items as $item) {
+        foreach ($items as $position => $item) {
             $id = is_array($item) ? ($item[$module->idKey()] ?? null) : null;
 
-            if (is_string($id) && $id !== '') {
-                $records[$id] = $item;
+            // Dropping the item would leave its stored row unseen, and a full pull deletes
+            // what it did not see, so a record is never skipped quietly: the module fails.
+            if (! is_string($id) || $id === '') {
+                throw new UnexpectedValueException(sprintf(
+                    'Cin7 sent [%s] item %s without a usable string [%s].',
+                    $module->value,
+                    $position,
+                    $module->idKey(),
+                ));
             }
+
+            $records[$id] = $item;
         }
 
         $ids = array_map(strval(...), array_keys($records));
@@ -525,7 +555,7 @@ final class Synchroniser
      * @param array<array-key, mixed> $payload
      * @return array<string, mixed>
      */
-    private function row(Module $module, string $id, array $payload, ?string $modified, Carbon $start): array
+    private function row(Module $module, string $id, array $payload, ?string $modified, CarbonInterface $start): array
     {
         $at = $start->format(self::DATE);
 

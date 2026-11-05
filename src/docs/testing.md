@@ -6,7 +6,7 @@ own suite is put together: what is a Unit test and what is a Feature test,
 where the test environment comes from, why the rate-limit tests call the
 connector's hooks directly, and what the Workbench application is for. The
 commands that run the suite and the CI checks are in
-[CONTRIBUTING.md](../../CONTRIBUTING.md).
+[CONTRIBUTING.md](https://github.com/ipsocode/hypervel-cin7/blob/main/CONTRIBUTING.md).
 
 ## Testing an application that uses the package
 
@@ -117,7 +117,7 @@ or the container fails outright. The line follows what the code touches, not
 how simple it looks: the request classes read `config('cin7.retry.*')` in their
 constructor, so their tests are Feature tests.
 
-Feature tests extend [`tests/TestCase.php`](../../tests/TestCase.php), which
+Feature tests extend [`tests/TestCase.php`](https://github.com/ipsocode/hypervel-cin7/blob/main/tests/TestCase.php), which
 provides `connector()` (the connector as the container resolves it, built from
 config) and `pendingRequestFor()` (a `PendingRequest` assembled the way Saloon
 assembles one, for the rate-limit hooks, defaulting to a `GetCustomer`
@@ -140,14 +140,14 @@ the whole catalog (the "nothing is left out" checks and the conventions). The ro
 file per API path under `tests/Fixtures/Catalogue/`: `sale/invoice.php` holds the rows for
 `sale/invoice`, and `moneyTask.php` those of `moneyOperation`, which the package names after
 the Money Task. Each file returns its rows by kind, and
-[`Catalogue::rows()`](../../tests/Catalogue.php) merges every file's rows of a kind:
+[`Catalogue::rows()`](https://github.com/ipsocode/hypervel-cin7/blob/main/tests/Catalogue.php) merges every file's rows of a kind:
 
 | Kind | A row is |
 |---|---|
-| `requests` | a request class, its arguments, and the method, path, query and body it sends; `… with data` rows send a data object body |
-| `resources` | a resource call, keyed `<resource path> <method>` (`sale payment put`), and the request it sends |
+| `requests` | a request class, its arguments, and the method, path, query and body it sends; `… with data` rows send a data object body, and every write request has one |
+| `resources` | a resource call, keyed `<resource path> <method>` (`sale payment put`), and the request it sends, or the key of the `requests` row that expects the same, which the loader fills in |
 | `dtos` | a request, its fixture and the data class `dto()` returns, with where the record sits in the fixture |
-| `bodies` | a body class and the reference's request example it round-trips and validates (`BodyValidationTest` lists the examples that fail, and on which fields) |
+| `bodies` | a body class, the write request that sends it and the reference's request example it round-trips and validates (`ExampleBodyValidationTest` lists the examples that fail, and on which fields) |
 | `missing` | a class and a payload without one of its required fields, which cannot be built |
 | `required` | the fields of a class the reference requires |
 | `omitted` | a request, the body given, and the body sent without its `$omit` fields |
@@ -169,8 +169,8 @@ with the one exception below:
 
 | File | Applied to |
 |---|---|
-| [`testbench.yaml`](../../testbench.yaml), `env` | the Testbench CLI: `composer test`, `vendor/bin/testbench` |
-| [`phpunit.xml`](../../phpunit.xml), `<php><env>` | PHPUnit test methods, which Testbench's `env` block does not reach |
+| [`testbench.yaml`](https://github.com/ipsocode/hypervel-cin7/blob/main/testbench.yaml), `env` | the Testbench CLI: `composer test`, `vendor/bin/testbench` |
+| [`phpunit.xml`](https://github.com/ipsocode/hypervel-cin7/blob/main/phpunit.xml), `<php><env>` | PHPUnit test methods, which Testbench's `env` block does not reach |
 
 Both spell out every `CIN7_*` variable except `CIN7_RATE_STORE`, so
 `config/cin7.php`'s `env()` calls are under test, not only its defaults.
@@ -265,51 +265,24 @@ no server is needed: `touch /tmp/testing.sqlite`, then run `DB_DATABASE=/tmp/tes
 bin/run-database-tests.sh sqlite`. Testbench rewrites the path per ParaTest worker, so it runs in
 parallel; this is a different code path from the in-memory database the coverage gate uses.
 
-### The locks and the rate limiter on real Redis
+### The locks and the rate limiter on Redis
 
 The sync's module locks and the connector's rate-limit window and cooldown only do their job
 when every worker shares one store, which the in-memory stores of the coverage gate cannot show.
-`.github/workflows/redis.yml` runs `tests/Feature/Redis` on the servers `hypervel/components` tests
-the framework on, each on PHP 8.4 and 8.5, on every pull request:
-
-| Job | Server |
-|---|---|
-| Redis 8 | the `redis:8` service, with the tests spread over ParaTest workers, one Redis database each |
-| Redis Cluster | three masters on ports 7000-7002, Redis 8.0 or later, run serially |
-
-The tests skip unless `REDIS_HOST` or `REDIS_CLUSTER_HOSTS_AND_PORTS` is set, so the default run and
-its coverage gate are unchanged. They configure Redis through the framework's `InteractsWithRedis`
-and `RedisTestConfiguration`, as upstream's integration tests do, and point `cache.default`,
-`cin7.rate_limit.store` and `rate-limiter.default` at Redis themselves. Each one stands in for a second
-worker by dropping the cache or limiter store it used, so the second side has its own connection and
-nothing of the first one's memory; a per-process store fails them. The rest of `tests/Feature/Sync` is
-not run on Redis: it assumes a fresh in-memory cache per test.
-
-The jobs mirror `redis_8` and `redis_cluster` in `hypervel/components`' `redis.yml` (branch `0.4`,
-e44bad61bfd91a0f68eacbfdbc9d871f56cbb100, named in the workflow's header), with this package's CI
-image, `composer update` and test directory. When upstream changes a version, change it here too.
-
-To run them locally, start Redis and run the suite in the CI image on the same network:
-
-```bash
-docker network create cin7-redis
-docker run -d --rm --name cin7-redis --network cin7-redis redis:8
-
-docker run --rm -it --network cin7-redis -v "$PWD":/data -w /data \
-    -e OTEL_SDK_DISABLED=true \
-    -e REDIS_HOST=cin7-redis -e REDIS_PORT=6379 -e REDIS_DB=0 -e REDIS_TEST_SECONDARY_DB=1 \
-    ghcr.io/ipsocode/hypervel/ci-alpine:8.4-latest vendor/bin/paratest --max-processes=15 tests/Feature/Redis
-```
-
-For a cluster, start three nodes with `--cluster-enabled yes`, join them with `redis-cli --cluster
-create`, set `REDIS_CLUSTER_HOSTS_AND_PORTS` to their `host:port` list instead of `REDIS_HOST`, and run
-`vendor/bin/phpunit tests/Feature/Redis`: a cluster has one database, so ParaTest is refused.
+The tests in `tests/Feature/Redis` check what each worker sends to that store, with no server:
+the cache's lock and the limiter both resolve their connection through the `Redis` facade, so each
+test mocks the facade, as the framework's mocking documentation describes, and asserts the
+keys, commands and arguments that reach the connection. They point `cache.default`,
+`cin7.rate_limit.store` and `rate-limiter.default` at Redis themselves, run in the main suite and
+count toward its coverage gate. Two workers that send the same key share one lock or one window, so
+a key built from the wrong account, or a lock released with the wrong owner, fails them. The rest of
+`tests/Feature/Sync` runs on the in-memory cache.
 
 ### Rate-limit tests
 
 Saloon enforces rate limits only when no fake matched, and records cooldowns
 only for responses that came off the wire, so a faked send exercises neither.
-[`RateLimitTest`](../../tests/Feature/Connector/RateLimitTest.php) therefore calls
+[`RateLimitTest`](https://github.com/ipsocode/hypervel-cin7/blob/main/tests/Feature/Connector/RateLimitTest.php) therefore calls
 the `HasRateLimits` accessors directly, with a `PendingRequest` from
 `pendingRequestFor()`:
 
@@ -334,7 +307,7 @@ limiter reads and the loop ends:
 
 ### Retry tests
 
-[`RetryTest`](../../tests/Feature/Connector/RetryTest.php) calls `Sleep::fake()` in
+[`RetryTest`](https://github.com/ipsocode/hypervel-cin7/blob/main/tests/Feature/Connector/RetryTest.php) calls `Sleep::fake()` in
 `setUp()` and `Sleep::fake(false)` in `tearDown()`. The real policy waits five
 seconds between attempts; faked, the waits take no time and become assertable:
 
@@ -359,9 +332,9 @@ the seam a consuming application has:
 
 | Piece | Purpose |
 |---|---|
-| [`CustomerDirectory`](../../workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, bound as a singleton by `WorkbenchServiceProvider`. It proves the package's default connector resolves as a dependency of an application's own service, not only through `$app->make()`. |
-| [`Cin7Payloads`](../../workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies. `load($path, $name)` reads the V2 reference's examples from `workbench/fixtures/<api path>/<verb>.<request\|response>.json`, and named helpers wrap them: `sale()` (the Sale example, keyed by `ID`), `saleList()`, `saleInvoices()`, `saleInvoicePost()`, `salePayments()` and the rest, plus `customer()`, one record for a list's items. The list envelopes and the Error Model are not here: they are `Cin7Fake`'s, which ships (above), so the suite fakes with what an application does and the coverage gate covers it. |
-| [`cin7:customers`](../../workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for listing live customers by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
+| [`CustomerDirectory`](https://github.com/ipsocode/hypervel-cin7/blob/main/workbench/app/Services/CustomerDirectory.php) | A service that takes the connector by constructor injection, resolved from the container with no binding of its own. It proves the package's default connector resolves as a dependency of an application's own service, not only through `$app->make()`. |
+| [`Cin7Payloads`](https://github.com/ipsocode/hypervel-cin7/blob/main/workbench/app/Support/Cin7Payloads.php) | Fixtures keyed like real Cin7 bodies. `load($path, $name)` reads the V2 reference's examples from `workbench/fixtures/<api path>/<verb>.<request\|response>.json`, and named helpers wrap them: `sale()` (the Sale example, keyed by `ID`), `saleList()`, `saleInvoices()`, `saleInvoicePost()`, `salePayments()` and the rest, plus `customer()`, one record for a list's items. The list envelopes and the Error Model are not here: they are `Cin7Fake`'s, which ships (above), so the suite fakes with what an application does and the coverage gate covers it. |
+| [`cin7:customers`](https://github.com/ipsocode/hypervel-cin7/blob/main/workbench/app/Console/Commands/ListCustomersCommand.php) | A console command for listing live customers by hand. Its tests prove testbench.yaml's `workbench.discovers.commands` is wired, since it is the only place the console kernel resolves a Workbench service. |
 
 To prove credentials, use the package's own `cin7:check`
 (`vendor/bin/testbench cin7:check`), which ships, sends only `GET me` and

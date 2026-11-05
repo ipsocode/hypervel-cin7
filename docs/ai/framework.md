@@ -13,7 +13,7 @@ available, else in `vendor/hypervel/components/src/docs/`.
 | `Resources/` | saloon.md › Organizing SDKs |
 | `Pagination/` | saloon.md › Page Pagination; saloon.md › Pooled Pagination |
 | `Data/`, `Attributes/`, `Concerns/`, `Enums/` | data-objects.md › Defaults, Null, and Optional Values; data-objects.md › Abstract Data Objects; data-objects.md › Nested Data Objects; data-objects.md › Date and Time Values; data-objects.md › Backed Enums; data-objects.md › Validation Attributes; data-objects.md › Saloon; saloon.md › Data Objects |
-| `Sync/Payload.php`, `Sync/Synchroniser.php`, `Sync/SyncConfig.php` | database.md › Using Multiple Database Connections; queries.md › Joins; queries.md › Upserts; eloquent.md › Eloquent Model Conventions; cache.md › Atomic Locks; helpers.md › Sleep |
+| `Sync/Module.php`, `Sync/Payload.php`, `Sync/PullResult.php`, `Sync/SyncFailed.php`, `Sync/Synchroniser.php`, `Sync/SyncConfig.php`, `database/migrations/` | database.md › Using Multiple Database Connections; queries.md › Joins; queries.md › Upserts; eloquent.md › Eloquent Model Conventions; cache.md › Atomic Locks; helpers.md › Sleep; migrations.md › Migration Structure |
 | `Sync/Pull.php` | queues.md › Class Structure; queues.md › Unique Jobs; queues.md › Specifying Max Job Attempts / Timeout Values |
 | `Cin7ServiceProvider.php` | packages.md › Configuration; packages.md › Migrations; packages.md › Commands; packages.md › "About" Artisan Command; scheduling.md › Scheduling Queued Jobs; scheduling.md › Running Tasks on One Server; migrations.md › Migration Structure |
 | `Console/` | artisan.md › Writing Commands; artisan.md › Defining Input Expectations |

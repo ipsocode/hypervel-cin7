@@ -28,6 +28,8 @@ final class GetPurchaseCreditNoteList extends ListRequest
         protected readonly DateTimeInterface|string|null $updatedSince = null,
         protected readonly DateTimeInterface|string|null $updatedUntil = null,
         protected readonly ?TaskStatus $creditNoteStatus = null,
+        // A string: this list's example returns a purchase status the reference's list does not
+        // have (see src/docs/requests.md).
         protected readonly ?string $status = null,
     ) {
         parent::__construct($page, $limit);

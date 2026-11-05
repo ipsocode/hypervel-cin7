@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Purchase\Stock;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Purchase\Stock\PurchaseStockData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -21,6 +20,8 @@ final class PostPurchaseStock extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = PurchaseStockData::class;
+
     /**
      * @var list<string>
      */
@@ -29,13 +30,5 @@ final class PostPurchaseStock extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'purchase/stock';
-    }
-
-    /**
-     * @param Response<PurchaseStockData> $response
-     */
-    public function createDtoFromResponse(Response $response): PurchaseStockData
-    {
-        return PurchaseStockData::from($response->json())->setResponse($response);
     }
 }

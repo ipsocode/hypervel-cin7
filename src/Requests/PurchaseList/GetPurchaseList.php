@@ -33,6 +33,8 @@ final class GetPurchaseList extends ListRequest
         protected readonly ?InvoiceStatus $invoiceStatus = null,
         protected readonly ?TaskStatus $creditNoteStatus = null,
         protected readonly ?TaskStatus $unstockStatus = null,
+        // A string: the credit note list's example returns a purchase status the reference's list
+        // does not have (see src/docs/requests.md).
         protected readonly ?string $status = null,
         protected readonly ?string $dropShipTaskId = null,
     ) {

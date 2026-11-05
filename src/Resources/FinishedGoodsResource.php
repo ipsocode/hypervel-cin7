@@ -25,7 +25,7 @@ use Ipsocode\Cin7\Resources\FinishedGoods\PickResource;
 final class FinishedGoodsResource extends BaseResource
 {
     /**
-     * One finished goods task, with its lines.
+     * Fetch one finished goods task, with its lines.
      *
      * @return Response<FinishedGoodsData>
      */
@@ -64,7 +64,7 @@ final class FinishedGoodsResource extends BaseResource
     }
 
     /**
-     * The `finishedGoods/order` resource, a task's order.
+     * Return the `finishedGoods/order` resource, a task's order.
      */
     public function order(): OrderResource
     {
@@ -72,7 +72,7 @@ final class FinishedGoodsResource extends BaseResource
     }
 
     /**
-     * The `finishedGoods/pick` resource, a task's pick.
+     * Return the `finishedGoods/pick` resource, a task's pick.
      */
     public function pick(): PickResource
     {

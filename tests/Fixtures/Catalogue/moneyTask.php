@@ -77,26 +77,14 @@ return [
         'moneyTask get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->get('b039f19e-66f8-4309-a4b1-abf928303c88'),
             GetMoneyTask::class,
-            Method::GET,
-            '/ExternalApi/v2/moneyOperation',
-            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
-            null,
         ],
         'moneyTask post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->post(['TaskType' => 'Receive Money']),
             PostMoneyTask::class,
-            Method::POST,
-            '/ExternalApi/v2/moneyOperation',
-            [],
-            ['TaskType' => 'Receive Money'],
         ],
         'moneyTask put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->put(['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED']),
             PutMoneyTask::class,
-            Method::PUT,
-            '/ExternalApi/v2/moneyOperation',
-            [],
-            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'COMPLETED'],
         ],
         'moneyTask delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->delete('b039f19e-66f8-4309-a4b1-abf928303c88'),
@@ -109,10 +97,6 @@ return [
         'moneyTask delete with void' => [
             fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->delete('b039f19e-66f8-4309-a4b1-abf928303c88', void: true),
             DeleteMoneyTask::class,
-            Method::DELETE,
-            '/ExternalApi/v2/moneyOperation',
-            ['ID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'true'],
-            null,
         ],
         'moneyTask post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->moneyTask()->post(MoneyTaskPostData::from([...$fields, 'TaskType' => 'Spend Money', 'Note' => null])),
@@ -132,8 +116,8 @@ return [
         ],
     ],
     'bodies' => [
-        MoneyTaskPostData::class => [MoneyTaskPostData::class, Cin7Payloads::load('moneyTask', 'post.request')],
-        MoneyTaskPutData::class => [MoneyTaskPutData::class, Cin7Payloads::load('moneyTask', 'put.request')],
+        MoneyTaskPostData::class => [MoneyTaskPostData::class, PostMoneyTask::class, Cin7Payloads::load('moneyTask', 'post.request')],
+        MoneyTaskPutData::class => [MoneyTaskPutData::class, PutMoneyTask::class, Cin7Payloads::load('moneyTask', 'put.request')],
     ],
     'missing' => [
         'money task PUT without TaskID' => [MoneyTaskPutData::class, Arr::except(Cin7Payloads::load('moneyTask', 'put.request'), 'TaskID')],

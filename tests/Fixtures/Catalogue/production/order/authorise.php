@@ -23,21 +23,27 @@ return [
             [],
             ['productionOrderID' => $id],
         ],
+        PostProductionOrderAuthorise::class . ' with data' => [
+            PostProductionOrderAuthorise::class,
+            [fn (): ProductionOrderAuthorisePostData => ProductionOrderAuthorisePostData::from(Cin7Payloads::load('production/order/authorise', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/production/order/authorise',
+            [],
+            [
+                'productionOrderID' => 'fd5197cc-cf19-45cf-aafc-98e86647f941',
+            ],
+        ],
     ],
     'resources' => [
         'production order authorise' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->authorise(['productionOrderID' => $id]),
             PostProductionOrderAuthorise::class,
-            Method::POST,
-            '/ExternalApi/v2/production/order/authorise',
-            [],
-            ['productionOrderID' => $id],
         ],
     ],
     'dtos' => [
         PostProductionOrderAuthorise::class => [PostProductionOrderAuthorise::class, [[]], Cin7Payloads::load('production/order/authorise', 'post.response'), ProductionOrdersData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderAuthorisePostData production/order/authorise' => [ProductionOrderAuthorisePostData::class, Cin7Payloads::load('production/order/authorise', 'post.request')],
+        'ProductionOrderAuthorisePostData production/order/authorise' => [ProductionOrderAuthorisePostData::class, PostProductionOrderAuthorise::class, Cin7Payloads::load('production/order/authorise', 'post.request')],
     ],
 ];

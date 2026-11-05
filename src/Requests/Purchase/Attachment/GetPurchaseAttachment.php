@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Purchase\Attachment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Purchase\Attachment\PurchaseAttachmentsData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -19,10 +18,11 @@ final class GetPurchaseAttachment extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = PurchaseAttachmentsData::class;
+
     public function __construct(
         protected readonly string $taskId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -38,13 +38,5 @@ final class GetPurchaseAttachment extends Cin7Request
         return $this->queryValues([
             'TaskID' => $this->taskId,
         ]);
-    }
-
-    /**
-     * @param Response<PurchaseAttachmentsData> $response
-     */
-    public function createDtoFromResponse(Response $response): PurchaseAttachmentsData
-    {
-        return PurchaseAttachmentsData::from($response->json())->setResponse($response);
     }
 }

@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Requests\Production\Order\Attachment;
 
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,6 +18,8 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 final class PostProductionOrderAttachment extends WriteRequest
 {
     protected Method $method = Method::POST;
+
+    protected ?string $dto = ProductionOrderAttachmentData::class;
 
     /**
      * @param array<string, mixed>|Data $body
@@ -43,13 +44,5 @@ final class PostProductionOrderAttachment extends WriteRequest
         return $this->queryValues([
             'ProductionOrderID' => $this->productionOrderId,
         ]);
-    }
-
-    /**
-     * @param Response<ProductionOrderAttachmentData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductionOrderAttachmentData
-    {
-        return ProductionOrderAttachmentData::from($response->json())->setResponse($response);
     }
 }

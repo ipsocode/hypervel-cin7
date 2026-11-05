@@ -74,7 +74,7 @@ return [
         PostSaleQuote::class => [PostSaleQuote::class, [[]], Cin7Payloads::load('sale/quote', 'get.response'), SaleQuoteData::class, ''],
     ],
     'bodies' => [
-        SaleQuotePostData::class => [SaleQuotePostData::class, Cin7Payloads::load('sale/quote', 'post.request')],
+        SaleQuotePostData::class => [SaleQuotePostData::class, PostSaleQuote::class, Cin7Payloads::load('sale/quote', 'post.request')],
     ],
     'missing' => [
         'quote POST without SaleID' => [SaleQuotePostData::class, Arr::except(Cin7Payloads::load('sale/quote', 'post.request'), 'SaleID')],

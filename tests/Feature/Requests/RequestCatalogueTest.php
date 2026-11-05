@@ -14,11 +14,13 @@ use Ipsocode\Cin7\Data\Product\ProductPostData;
 use Ipsocode\Cin7\Data\Product\ProductPutData;
 use Ipsocode\Cin7\Data\Sale\SalePutData;
 use Ipsocode\Cin7\Requests\Cin7Request;
+use Ipsocode\Cin7\Requests\CustomPrices\PostCustomPrices;
 use Ipsocode\Cin7\Requests\ListRequest;
 use Ipsocode\Cin7\Requests\Product\PostProduct;
 use Ipsocode\Cin7\Requests\Product\PutProduct;
 use Ipsocode\Cin7\Requests\Sale\PostSale;
 use Ipsocode\Cin7\Requests\Sale\PutSale;
+use Ipsocode\Cin7\Requests\WriteRequest;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\Catalogue;
 use Ipsocode\Cin7\Tests\TestCase;
@@ -82,6 +84,11 @@ class RequestCatalogueTest extends TestCase
         $this->assertSame(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'CustomerID' => '6c18f8e9-90e1-418f-aebc-1219e67e4b9c', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1.0], $this->mock->lastPendingRequest()?->body());
     }
 
+    public function testAWriteRequestWithNoDataClassHasNoDto(): void
+    {
+        $this->assertNull($this->connector()->send(new PostCustomPrices([]))->dto());
+    }
+
     public function testPostSaleKeepsTheSaleType(): void
     {
         $this->connector()->send(new PostSale(['Customer' => 'ACME', 'SaleType' => 'Simple']));
@@ -128,6 +135,21 @@ class RequestCatalogueTest extends TestCase
         sort($classes);
 
         $this->assertSame(self::concreteRequestClasses(), $classes);
+    }
+
+    /**
+     * A write request sends a typed body through `WriteRequest::defaultBody()`, which strips the
+     * nulls, applies `$omit` and validates, so each one needs a row that sends a data object.
+     */
+    public function testEveryWriteRequestHasATypedBodyRow(): void
+    {
+        $writes = array_filter(self::concreteRequestClasses(), static fn (string $class): bool => is_subclass_of($class, WriteRequest::class));
+
+        $this->assertNotEmpty($writes);
+
+        foreach ($writes as $class) {
+            $this->assertArrayHasKey($class . ' with data', Catalogue::rows('requests'));
+        }
     }
 
     public function testEachClassFolderMatchesItsResolvedEndpointPath(): void

@@ -38,6 +38,7 @@ final class GetSaleList extends ListRequest
         protected readonly ?PickingStatus $combinedPickStatus = null,
         protected readonly ?PackingStatus $combinedPackStatus = null,
         protected readonly ?ShippingStatus $combinedShippingStatus = null,
+        // A string, like the sale's `CombinedInvoiceStatus` it filters on (see src/docs/requests.md).
         protected readonly ?string $combinedInvoiceStatus = null,
         protected readonly ?TaskStatus $creditNoteStatus = null,
         protected readonly ?string $externalId = null,

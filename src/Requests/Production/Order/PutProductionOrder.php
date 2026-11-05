@@ -6,7 +6,6 @@ namespace Ipsocode\Cin7\Requests\Production\Order;
 
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrdersData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -20,6 +19,8 @@ use Ipsocode\Cin7\Requests\WriteRequest;
 final class PutProductionOrder extends WriteRequest
 {
     protected Method $method = Method::PUT;
+
+    protected ?string $dto = ProductionOrdersData::class;
 
     /**
      * @param array<string, mixed>|Data $body
@@ -46,13 +47,5 @@ final class PutProductionOrder extends WriteRequest
             'AllowRecalculateDates' => $this->allowRecalculateDates,
             'AllowRecalculateCyclesAndQuantities' => $this->allowRecalculateCyclesAndQuantities,
         ]);
-    }
-
-    /**
-     * @param Response<ProductionOrdersData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductionOrdersData
-    {
-        return ProductionOrdersData::from($response->json())->setResponse($response);
     }
 }

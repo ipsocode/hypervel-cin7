@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Purchase;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Purchase\PurchaseData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PostPurchase extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = PurchaseData::class;
+
     public function resolveEndpoint(): string
     {
         return 'purchase';
-    }
-
-    /**
-     * @param Response<PurchaseData> $response
-     */
-    public function createDtoFromResponse(Response $response): PurchaseData
-    {
-        return PurchaseData::from($response->json())->setResponse($response);
     }
 }

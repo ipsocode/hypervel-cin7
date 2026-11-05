@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Me\Addresses;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Me\Addresses\MeAddressData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,12 @@ final class PostMeAddresses extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = MeAddressData::class;
+
+    protected ?string $dtoPath = 'MeAddressesList.0';
+
     public function resolveEndpoint(): string
     {
         return 'me/addresses';
-    }
-
-    /**
-     * @param Response<MeAddressData> $response
-     */
-    public function createDtoFromResponse(Response $response): MeAddressData
-    {
-        return MeAddressData::from($response->json('MeAddressesList.0'))->setResponse($response);
     }
 }

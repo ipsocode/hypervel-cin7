@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Fulfilment\Pack;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pack\SaleFulfilmentPackData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -19,11 +18,12 @@ final class GetSaleFulfilmentPack extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = SaleFulfilmentPackData::class;
+
     public function __construct(
         protected readonly string $taskId,
         protected readonly ?bool $includeProductInfo = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -40,13 +40,5 @@ final class GetSaleFulfilmentPack extends Cin7Request
             'TaskID' => $this->taskId,
             'IncludeProductInfo' => $this->includeProductInfo,
         ]);
-    }
-
-    /**
-     * @param Response<SaleFulfilmentPackData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleFulfilmentPackData
-    {
-        return SaleFulfilmentPackData::from($response->json())->setResponse($response);
     }
 }

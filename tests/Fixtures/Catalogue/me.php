@@ -25,10 +25,6 @@ return [
         'me get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->get(),
             GetMe::class,
-            Method::GET,
-            '/ExternalApi/v2/me',
-            [],
-            null,
         ],
     ],
     'dtos' => [

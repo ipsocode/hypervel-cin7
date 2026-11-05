@@ -36,6 +36,38 @@ return [
             [],
             ['Workcenters' => []],
         ],
+        PostProductionWorkCenters::class . ' with data' => [
+            PostProductionWorkCenters::class,
+            [fn (): WorkCentersData => WorkCentersData::from(Cin7Payloads::load('production/workcenters', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/production/workcenters',
+            [],
+            [
+                'Workcenters' => [
+                    [
+                        'WorkCenterID' => '',
+                        'Code' => 'API Test',
+                        'Name' => 'Workcenter test for API',
+                        'IsActive' => true,
+                        'IsCoMan' => true,
+                        'IsCoManPurchase' => false,
+                        'SupplierID' => 'f9d6abe7-39b5-4fc1-a7aa-b61d2dc933e9',
+                        'SupplierName' => 'Tom the Supplier',
+                        'CoManProcurementType' => 'Transfer',
+                        'WorkCenterLocations' => [
+                            [
+                                'ID' => '',
+                                'LocationID' => 'd1a2cfd2-93b8-4c2f-aeec-a392f905466f',
+                                'Type' => 'Consumption',
+                                'LocationName' => 'Bubba',
+                                'WorkCenterID' => 'a24d2609-563d-4053-913b-29bc94019556',
+                            ],
+                        ],
+                        'WorkCenterSuppliers' => [],
+                    ],
+                ],
+            ],
+        ],
         PutProductionWorkCenters::class => [
             PutProductionWorkCenters::class,
             [['Workcenters' => []]],
@@ -43,6 +75,29 @@ return [
             '/ExternalApi/v2/production/workcenters',
             [],
             ['Workcenters' => []],
+        ],
+        PutProductionWorkCenters::class . ' with data' => [
+            PutProductionWorkCenters::class,
+            [fn (): WorkCentersData => WorkCentersData::from(Cin7Payloads::load('production/workcenters', 'put.request'))],
+            Method::PUT,
+            '/ExternalApi/v2/production/workcenters',
+            [],
+            [
+                'Workcenters' => [
+                    [
+                        'WorkCenterID' => 'e180613b-1a63-41c3-a1f3-1316319e60a7',
+                        'Code' => 'API Test',
+                        'Name' => 'Workcenter test for API',
+                        'IsActive' => true,
+                        'IsCoMan' => false,
+                        'IsCoManPurchase' => false,
+                        'SupplierID' => 'f9d6abe7-39b5-4fc1-a7aa-b61d2dc933e9',
+                        'SupplierName' => 'Tom the Supplier',
+                        'CoManProcurementType' => 'Transfer',
+                        'WorkCenterLocations' => [],
+                    ],
+                ],
+            ],
         ],
         DeleteProductionWorkCenters::class => [
             DeleteProductionWorkCenters::class,
@@ -57,10 +112,6 @@ return [
         'production workCenters get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->get(name: 'x'),
             GetProductionWorkCenters::class,
-            Method::GET,
-            '/ExternalApi/v2/production/workcenters',
-            ['Name' => 'x', 'page' => 1, 'limit' => 100],
-            null,
         ],
         'production workCenters paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->paginate()->current(),
@@ -73,26 +124,14 @@ return [
         'production workCenters post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->post(['Workcenters' => []]),
             PostProductionWorkCenters::class,
-            Method::POST,
-            '/ExternalApi/v2/production/workcenters',
-            [],
-            ['Workcenters' => []],
         ],
         'production workCenters put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->put(['Workcenters' => []]),
             PutProductionWorkCenters::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/workcenters',
-            [],
-            ['Workcenters' => []],
         ],
         'production workCenters delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->workCenters()->delete($id),
             DeleteProductionWorkCenters::class,
-            Method::DELETE,
-            '/ExternalApi/v2/production/workcenters',
-            ['WorkCenterId' => $id],
-            null,
         ],
     ],
     'dtos' => [
@@ -101,8 +140,8 @@ return [
         PutProductionWorkCenters::class => [PutProductionWorkCenters::class, [[]], Cin7Payloads::load('production/workcenters', 'put.response'), WorkCentersData::class, ''],
     ],
     'bodies' => [
-        'WorkCentersData production/workcenters' => [WorkCentersData::class, Cin7Payloads::load('production/workcenters', 'post.request')],
-        'WorkCentersData production/workcenters' => [WorkCentersData::class, Cin7Payloads::load('production/workcenters', 'put.request')],
+        WorkCentersData::class . ' POST' => [WorkCentersData::class, PostProductionWorkCenters::class, Cin7Payloads::load('production/workcenters', 'post.request')],
+        WorkCentersData::class . ' PUT' => [WorkCentersData::class, PutProductionWorkCenters::class, Cin7Payloads::load('production/workcenters', 'put.request')],
     ],
     'missing' => [
         'WorkCenterLocationData without ID' => [WorkCenterLocationData::class, Arr::except(Cin7Payloads::load('production/workcenters', 'post.request')['Workcenters'][0]['WorkCenterLocations'][0], 'ID')],

@@ -83,34 +83,18 @@ return [
         'reference deals post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->deals()->post(['Name' => 'Product Deal 1']),
             PostDeals::class,
-            Method::POST,
-            $uri,
-            [],
-            ['Name' => 'Product Deal 1'],
         ],
         'reference deals post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->deals()->post(ProductDealPostData::from(['Name' => 'Product Deal 1'])),
             PostDeals::class,
-            Method::POST,
-            $uri,
-            [],
-            ['Name' => 'Product Deal 1'],
         ],
         'reference deals put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->deals()->put(['ID' => $dealId, 'Name' => 'Product Deal 1a']),
             PutDeals::class,
-            Method::PUT,
-            $uri,
-            [],
-            ['ID' => $dealId, 'Name' => 'Product Deal 1a'],
         ],
         'reference deals put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->deals()->put(ProductDealPutData::from(['ID' => $dealId, 'Name' => 'Product Deal 1a'])),
             PutDeals::class,
-            Method::PUT,
-            $uri,
-            [],
-            ['ID' => $dealId, 'Name' => 'Product Deal 1a'],
         ],
     ],
     'dtos' => [
@@ -119,9 +103,9 @@ return [
         PutDeals::class => [PutDeals::class, [[]], Cin7Payloads::load('reference/deals', 'put.response'), ProductDealData::class, 'Deals.0'],
     ],
     'bodies' => [
-        ProductDealPostData::class => [ProductDealPostData::class, Cin7Payloads::load('reference/deals', 'post.request')],
-        ProductDealPutData::class => [ProductDealPutData::class, Cin7Payloads::load('reference/deals', 'put.request')],
-        'deal with customers and tags' => [ProductDealPostData::class, [
+        ProductDealPostData::class => [ProductDealPostData::class, PostDeals::class, Cin7Payloads::load('reference/deals', 'post.request')],
+        ProductDealPutData::class => [ProductDealPutData::class, PutDeals::class, Cin7Payloads::load('reference/deals', 'put.request')],
+        'deal with customers and tags' => [ProductDealPostData::class, PostDeals::class, [
             'Name' => 'Product Deal 1',
             'DealCustomers' => [['ID' => $dealId, 'CustomerID' => $dealId, 'CustomerName' => 'Customer 1']],
             'DealCustomerTags' => [['ID' => $dealId, 'TagName' => 'VIP']],

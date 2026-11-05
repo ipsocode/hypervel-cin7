@@ -42,26 +42,14 @@ return [
         'reference shipZonesEnabled get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->shipZonesEnabled()->get(),
             GetShipZonesEnabled::class,
-            Method::GET,
-            '/ExternalApi/v2/reference/shipZonesEnabled',
-            [],
-            null,
         ],
         'reference shipZonesEnabled put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->shipZonesEnabled()->put(['IsEnabled' => true]),
             PutShipZonesEnabled::class,
-            Method::PUT,
-            '/ExternalApi/v2/reference/shipZonesEnabled',
-            [],
-            ['IsEnabled' => true],
         ],
         'reference shipZonesEnabled put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->shipZonesEnabled()->put(ShipZonesEnabledData::from(['IsEnabled' => false])),
-            PutShipZonesEnabled::class,
-            Method::PUT,
-            '/ExternalApi/v2/reference/shipZonesEnabled',
-            [],
-            ['IsEnabled' => false],
+            PutShipZonesEnabled::class . ' with data',
         ],
     ],
     'dtos' => [
@@ -69,7 +57,7 @@ return [
         PutShipZonesEnabled::class => [PutShipZonesEnabled::class, [[]], Cin7Payloads::load('reference/shipZonesEnabled', 'put.response'), ShipZonesEnabledData::class, ''],
     ],
     'bodies' => [
-        ShipZonesEnabledData::class => [ShipZonesEnabledData::class, Cin7Payloads::load('reference/shipZonesEnabled', 'put.request')],
+        ShipZonesEnabledData::class => [ShipZonesEnabledData::class, PutShipZonesEnabled::class, Cin7Payloads::load('reference/shipZonesEnabled', 'put.request')],
     ],
     'missing' => [
         'ship zones enabled without IsEnabled' => [ShipZonesEnabledData::class, []],

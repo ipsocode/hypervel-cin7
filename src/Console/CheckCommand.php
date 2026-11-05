@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Console;
 
 use Hypervel\Console\Command;
+use Hypervel\Console\View\Components\Factory;
 use Hypervel\RateLimiter\Cooldown;
 use Hypervel\RateLimiter\RateLimiter;
 use Hypervel\Saloon\Exceptions\Request\FatalRequestException;
@@ -53,7 +54,7 @@ class CheckCommand extends Command
         }
 
         $window = $cin7->rateLimitWindow();
-        $store = (string) ($cin7->rateLimitStore() ?? config('saloon.rate_limiter.store') ?? $limiter->getDefaultInstance());
+        $store = $cin7->limiterStore();
         $details['rate_limit'] = $window === null ? 'off' : "{$window[0]} calls per {$window[1]}s";
         $details['limiter_store'] = $store;
 
@@ -101,13 +102,16 @@ class CheckCommand extends Command
                 JSON_UNESCAPED_SLASHES,
             ));
         } else {
+            /** @var Factory $components */
+            $components = $this->components;
+
             foreach ($details as $key => $value) {
-                $this->components->twoColumnDetail(self::LABELS[$key], $value);
+                $components->twoColumnDetail(self::LABELS[$key], $value);
             }
 
             $error === null
-                ? $this->components->info('Cin7 accepted the credentials.')
-                : $this->components->error($error);
+                ? $components->info('Cin7 accepted the credentials.')
+                : $components->error($error);
         }
 
         return $error === null ? self::SUCCESS : self::FAILURE;

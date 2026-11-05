@@ -23,21 +23,38 @@ return [
             [],
             ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id, 'WithAutoConsume' => true],
         ],
+        PutProductionOrderRunOperationStart::class . ' with data' => [
+            PutProductionOrderRunOperationStart::class,
+            [fn (): ProductionRunOperationStartPutData => ProductionRunOperationStartPutData::from(Cin7Payloads::load('production/order/run/operation/start', 'put.request'))],
+            Method::PUT,
+            '/ExternalApi/v2/production/order/run/operation/start',
+            [],
+            [
+                'ProductionOrderID' => '0230bf59-59b3-4a3e-9fc8-aedcbb6b2815',
+                'ProductionRunID' => 'a093ae70-c620-2318-c470-db45feb1ebf9',
+                'RunOperationID' => 'e7659fbb-f5e4-0fd8-3b55-9a53bbf842ea',
+                'WithAutoConsume' => false,
+                'ManualStartDate' => '2022-07-07',
+                'InputProducts' => [
+                    [
+                        'Quantity' => 2.0,
+                        'ProductCode' => 'T-2',
+                        'BatchSN' => '1234',
+                    ],
+                ],
+            ],
+        ],
     ],
     'resources' => [
         'production order run operation start' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->operation()->start(['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id, 'WithAutoConsume' => true]),
             PutProductionOrderRunOperationStart::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/operation/start',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id, 'WithAutoConsume' => true],
         ],
     ],
     'dtos' => [
         PutProductionOrderRunOperationStart::class => [PutProductionOrderRunOperationStart::class, [[]], Cin7Payloads::load('production/order/run/operation/start', 'put.response'), ProductionRunsData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunOperationStartPutData production/order/run/operation/start' => [ProductionRunOperationStartPutData::class, Cin7Payloads::load('production/order/run/operation/start', 'put.request')],
+        'ProductionRunOperationStartPutData production/order/run/operation/start' => [ProductionRunOperationStartPutData::class, PutProductionOrderRunOperationStart::class, Cin7Payloads::load('production/order/run/operation/start', 'put.request')],
     ],
 ];

@@ -22,13 +22,38 @@ return [
     'requests' => [
         GetCrmTaskCategory::class => [GetCrmTaskCategory::class, ['id' => $id, 'name' => 'task'], Method::GET, $uri, ['ID' => $id, 'Name' => 'task', 'page' => 1, 'limit' => 100], null],
         PostCrmTaskCategory::class => [PostCrmTaskCategory::class, [['Name' => 'A']], Method::POST, $uri, [], ['Name' => 'A']],
+        PostCrmTaskCategory::class . ' with data' => [
+            PostCrmTaskCategory::class,
+            [fn (): TaskCategoryPostData => TaskCategoryPostData::from(Cin7Payloads::load('crm/taskcategory', 'post.request'))],
+            Method::POST,
+            $uri,
+            [],
+            [
+                'Color' => '396E76',
+                'BackgroundColor' => 'D6F0F3',
+                'Name' => 'tsk cat 5',
+            ],
+        ],
         PutCrmTaskCategory::class => [PutCrmTaskCategory::class, [['ID' => $id, 'Name' => 'B']], Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'B']],
+        PutCrmTaskCategory::class . ' with data' => [
+            PutCrmTaskCategory::class,
+            [fn (): TaskCategoryPutData => TaskCategoryPutData::from(Cin7Payloads::load('crm/taskcategory', 'put.request'))],
+            Method::PUT,
+            $uri,
+            [],
+            [
+                'ID' => 'bc410d90-260e-4841-b1f0-ad90f6a78135',
+                'Color' => 'F7CAFE',
+                'BackgroundColor' => 'F7CAFE',
+                'Name' => 'tsk cat 6',
+            ],
+        ],
     ],
     'resources' => [
         'crm taskCategory get' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->taskCategory()->get(), GetCrmTaskCategory::class, Method::GET, $uri, ['page' => 1, 'limit' => 100], null],
         'crm taskCategory paginate' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->taskCategory()->paginate(name: 'task')->current(), GetCrmTaskCategory::class, Method::GET, $uri, ['Name' => 'task', 'page' => 1, 'limit' => 100], null],
-        'crm taskCategory post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->taskCategory()->post(['Name' => 'A']), PostCrmTaskCategory::class, Method::POST, $uri, [], ['Name' => 'A']],
-        'crm taskCategory put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->taskCategory()->put(['ID' => $id, 'Name' => 'B']), PutCrmTaskCategory::class, Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'B']],
+        'crm taskCategory post' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->taskCategory()->post(['Name' => 'A']), PostCrmTaskCategory::class],
+        'crm taskCategory put' => [fn (Cin7Connector $cin7): mixed => $cin7->crm()->taskCategory()->put(['ID' => $id, 'Name' => 'B']), PutCrmTaskCategory::class],
     ],
     'dtos' => [
         GetCrmTaskCategory::class => [GetCrmTaskCategory::class, [], Cin7Payloads::load('crm/taskcategory', 'get.response'), TaskCategoryData::class, 'Categories'],
@@ -36,8 +61,8 @@ return [
         PutCrmTaskCategory::class => [PutCrmTaskCategory::class, [[]], Cin7Payloads::load('crm/taskcategory', 'put.response'), TaskCategoryData::class, 'Categories'],
     ],
     'bodies' => [
-        TaskCategoryPostData::class => [TaskCategoryPostData::class, Cin7Payloads::load('crm/taskcategory', 'post.request')],
-        TaskCategoryPutData::class => [TaskCategoryPutData::class, Cin7Payloads::load('crm/taskcategory', 'put.request')],
+        TaskCategoryPostData::class => [TaskCategoryPostData::class, PostCrmTaskCategory::class, Cin7Payloads::load('crm/taskcategory', 'post.request')],
+        TaskCategoryPutData::class => [TaskCategoryPutData::class, PutCrmTaskCategory::class, Cin7Payloads::load('crm/taskcategory', 'put.request')],
     ],
     'missing' => [
         'Task category without ID' => [TaskCategoryData::class, Arr::except(Cin7Payloads::load('crm/taskcategory', 'get.response')['Categories'][0], 'ID')],

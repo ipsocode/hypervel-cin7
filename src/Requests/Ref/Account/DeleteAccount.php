@@ -19,7 +19,6 @@ final class DeleteAccount extends Cin7Request
     public function __construct(
         protected readonly string $code,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

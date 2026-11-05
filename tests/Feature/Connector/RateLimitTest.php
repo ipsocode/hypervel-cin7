@@ -14,6 +14,7 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Support\Carbon;
+use Hypervel\Support\Facades\Date;
 use Hypervel\Support\Facades\Http;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Cin7Connector;
@@ -208,13 +209,14 @@ class RateLimitTest extends TestCase
     public function testAnHttpDateRetryAfterIsReadAndAPastOneRecordsNone(): void
     {
         $connector = new Cin7Connector('acct', 'key');
-        $future = gmdate('D, d M Y H:i:s \G\M\T', time() + 45);
-        $past = gmdate('D, d M Y H:i:s \G\M\T', time() - 45);
+        $this->freezeTime();
+        $now = Date::now()->getTimestamp();
+        $future = gmdate('D, d M Y H:i:s \G\M\T', $now + 45);
+        $past = gmdate('D, d M Y H:i:s \G\M\T', $now - 45);
 
         $seconds = $connector->resolveRateLimitCooldownFor($this->responseTo(MockResponse::make([], 429, ['Retry-After' => $future])));
 
-        $this->assertGreaterThanOrEqual(43, $seconds);
-        $this->assertLessThanOrEqual(45, $seconds);
+        $this->assertSame(45, $seconds);
         $this->assertNull($connector->resolveRateLimitCooldownFor($this->responseTo(MockResponse::make([], 429, ['Retry-After' => $past]))));
     }
 
@@ -262,17 +264,13 @@ class RateLimitTest extends TestCase
         $this->assertSame(60, $policies[0]->decaySeconds);
     }
 
-    public function testTheCooldownConfigIsCastAndFallsBackWhenAbsent(): void
+    public function testTheCooldownConfigIsRead(): void
     {
         $response = $this->responseTo(Cin7Fake::throttled());
 
-        $this->app->get('config')->set('cin7.rate_limit.cooldown', '9');
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', 9);
         $this->app->forgetInstance(Cin7Manager::class);
         $this->assertSame(9, $this->connector()->resolveRateLimitCooldownFor($response));
-
-        $this->app->get('config')->set('cin7.rate_limit.cooldown', null);
-        $this->app->forgetInstance(Cin7Manager::class);
-        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $this->connector()->resolveRateLimitCooldownFor($response));
 
         $this->app->get('config')->set('cin7.rate_limit.cooldown', 0);
         $this->app->forgetInstance(Cin7Manager::class);

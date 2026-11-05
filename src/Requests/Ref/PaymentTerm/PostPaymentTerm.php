@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Ref\PaymentTerm;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\PaymentTerm\PaymentTermData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,12 @@ final class PostPaymentTerm extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = PaymentTermData::class;
+
+    protected ?string $dtoPath = 'PaymentTermList.0';
+
     public function resolveEndpoint(): string
     {
         return 'ref/paymentterm';
-    }
-
-    /**
-     * @param Response<PaymentTermData> $response
-     */
-    public function createDtoFromResponse(Response $response): PaymentTermData
-    {
-        return PaymentTermData::from($response->json('PaymentTermList.0'))->setResponse($response);
     }
 }

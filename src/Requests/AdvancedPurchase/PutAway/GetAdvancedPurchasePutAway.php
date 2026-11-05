@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\AdvancedPurchase\PutAway;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\AdvancedPurchase\PutAway\AdvancedPurchasePutAwaysData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,10 +17,11 @@ final class GetAdvancedPurchasePutAway extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = AdvancedPurchasePutAwaysData::class;
+
     public function __construct(
         protected readonly string $purchaseId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -37,13 +37,5 @@ final class GetAdvancedPurchasePutAway extends Cin7Request
         return $this->queryValues([
             'PurchaseID' => $this->purchaseId,
         ]);
-    }
-
-    /**
-     * @param Response<AdvancedPurchasePutAwaysData> $response
-     */
-    public function createDtoFromResponse(Response $response): AdvancedPurchasePutAwaysData
-    {
-        return AdvancedPurchasePutAwaysData::from($response->json())->setResponse($response);
     }
 }

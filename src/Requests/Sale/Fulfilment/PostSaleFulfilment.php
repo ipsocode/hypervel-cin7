@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Fulfilment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\SaleFulfilmentsData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PostSaleFulfilment extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = SaleFulfilmentsData::class;
+
     public function resolveEndpoint(): string
     {
         return 'sale/fulfilment';
-    }
-
-    /**
-     * @param Response<SaleFulfilmentsData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleFulfilmentsData
-    {
-        return SaleFulfilmentsData::from($response->json())->setResponse($response);
     }
 }

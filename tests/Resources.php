@@ -16,7 +16,7 @@ use SplFileInfo;
 final class Resources
 {
     /**
-     * Every concrete class under `src/Resources/`, abstract bases such as `ListResource` left out.
+     * Every concrete class under `src/Resources/`, an abstract base left out.
      *
      * @return list<class-string<BaseResource>>
      */

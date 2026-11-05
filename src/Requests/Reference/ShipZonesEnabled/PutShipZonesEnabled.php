@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Reference\ShipZonesEnabled;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Reference\ShipZonesEnabled\ShipZonesEnabledData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PutShipZonesEnabled extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = ShipZonesEnabledData::class;
+
     public function resolveEndpoint(): string
     {
         return 'reference/shipZonesEnabled';
-    }
-
-    /**
-     * @param Response<ShipZonesEnabledData> $response
-     */
-    public function createDtoFromResponse(Response $response): ShipZonesEnabledData
-    {
-        return ShipZonesEnabledData::from($response->json())->setResponse($response);
     }
 }

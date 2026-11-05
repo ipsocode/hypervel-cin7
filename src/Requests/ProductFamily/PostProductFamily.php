@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\ProductFamily;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\ProductFamily\ProductFamilyData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,6 +18,10 @@ final class PostProductFamily extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = ProductFamilyData::class;
+
+    protected ?string $dtoPath = 'ProductFamilies.0';
+
     /**
      * @var list<string>
      */
@@ -27,13 +30,5 @@ final class PostProductFamily extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'productFamily';
-    }
-
-    /**
-     * @param Response<ProductFamilyData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductFamilyData
-    {
-        return ProductFamilyData::from($response->json('ProductFamilies.0'))->setResponse($response);
     }
 }

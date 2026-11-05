@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\FactoryCalendar;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\FactoryCalendar\FactoryCalendarData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PostProductionFactoryCalendar extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = FactoryCalendarData::class;
+
     public function resolveEndpoint(): string
     {
         return 'production/factoryCalendar';
-    }
-
-    /**
-     * @param Response<FactoryCalendarData> $response
-     */
-    public function createDtoFromResponse(Response $response): FactoryCalendarData
-    {
-        return FactoryCalendarData::from($response->json())->setResponse($response);
     }
 }

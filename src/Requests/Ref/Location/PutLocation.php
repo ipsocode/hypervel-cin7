@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Ref\Location;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Location\LocationData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PutLocation extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = LocationData::class;
+
     public function resolveEndpoint(): string
     {
         return 'ref/location';
-    }
-
-    /**
-     * @param Response<LocationData> $response
-     */
-    public function createDtoFromResponse(Response $response): LocationData
-    {
-        return LocationData::from($response->json())->setResponse($response);
     }
 }

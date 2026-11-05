@@ -53,10 +53,6 @@ return [
         'sale attachment get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->attachment()->get('916ab4c0-6ccb-4c93-873d-0603859050e4'),
             GetSaleAttachment::class,
-            Method::GET,
-            '/ExternalApi/v2/sale/attachment',
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
-            null,
         ],
         'sale attachment post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->attachment()->post(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'FileName' => 'Test', 'Content' => 'AAAA']),
@@ -69,18 +65,10 @@ return [
         'sale attachment post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->attachment()->post(SaleAttachmentPostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'])),
             PostSaleAttachment::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/attachment',
-            [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'FileName' => 'Test', 'FileDownloadUrl' => 'https://files.example/test.jpg'],
         ],
         'sale attachment delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->attachment()->delete('1a103e3e-9837-4294-8cc3-640ebb4fc387'),
             DeleteSaleAttachment::class,
-            Method::DELETE,
-            '/ExternalApi/v2/sale/attachment',
-            ['ID' => '1a103e3e-9837-4294-8cc3-640ebb4fc387'],
-            null,
         ],
     ],
     'dtos' => [
@@ -89,7 +77,7 @@ return [
         DeleteSaleAttachment::class => [DeleteSaleAttachment::class, ['attachment-1'], Cin7Payloads::load('sale/attachment', 'get.response'), SaleAttachmentsData::class, ''],
     ],
     'bodies' => [
-        SaleAttachmentPostData::class => [SaleAttachmentPostData::class, Cin7Payloads::load('sale/attachment', 'post.request')],
+        SaleAttachmentPostData::class => [SaleAttachmentPostData::class, PostSaleAttachment::class, Cin7Payloads::load('sale/attachment', 'post.request')],
     ],
     'missing' => [
         'attachments without SaleID' => [SaleAttachmentsData::class, Arr::except(Cin7Payloads::load('sale/attachment', 'get.response'), 'SaleID')],

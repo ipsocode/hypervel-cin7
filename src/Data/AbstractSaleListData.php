@@ -84,6 +84,8 @@ abstract class AbstractSaleListData extends Data
         public PackingStatus $CombinedPackingStatus,
         public ShippingStatus $CombinedShippingStatus,
         public FulfilmentStatus $FulFilmentStatus,
+        // A string, not `InvoicingStatus`: the Sale List table lists other values than its examples
+        // send (see "Where the reference's tables and examples disagree" in src/docs/data.md).
         #[Max(20)]
         public string $CombinedInvoiceStatus,
         public TaskStatus $CreditNoteStatus,

@@ -60,18 +60,10 @@ return [
         'sale fulfilment post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->post(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4']),
             PostSaleFulfilment::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/fulfilment',
-            [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
         ],
         'sale fulfilment post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->post(SaleFulfilmentsData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'])),
             PostSaleFulfilment::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/fulfilment',
-            [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
         ],
         'sale fulfilment delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->delete('cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57'),
@@ -84,10 +76,6 @@ return [
         'sale fulfilment delete with void' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->delete('cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', void: true),
             DeleteSaleFulfilment::class,
-            Method::DELETE,
-            '/ExternalApi/v2/sale/fulfilment',
-            ['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Void' => 'true'],
-            null,
         ],
     ],
     'dtos' => [
@@ -96,7 +84,7 @@ return [
         DeleteSaleFulfilment::class => [DeleteSaleFulfilment::class, ['task-1'], Cin7Payloads::load('sale/fulfilment', 'get.response'), SaleFulfilmentsData::class, ''],
     ],
     'bodies' => [
-        'fulfilment POST' => [SaleFulfilmentsData::class, Cin7Payloads::load('sale/fulfilment', 'post.request')],
+        'fulfilment POST' => [SaleFulfilmentsData::class, PostSaleFulfilment::class, Cin7Payloads::load('sale/fulfilment', 'post.request')],
     ],
     'missing' => [
         'fulfilments without SaleID' => [SaleFulfilmentsData::class, Arr::except(Cin7Payloads::load('sale/fulfilment', 'get.response'), 'SaleID')],

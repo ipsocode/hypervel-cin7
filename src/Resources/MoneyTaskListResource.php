@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\MoneyTaskList\MoneyTaskListData;
 use Ipsocode\Cin7\Enums\CompletionStatus;
 use Ipsocode\Cin7\Enums\MoneyTaskType;
@@ -13,11 +15,13 @@ use Ipsocode\Cin7\Requests\MoneyTaskList\GetMoneyTaskList;
 
 /**
  * `moneyTaskList`, the money tasks.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class MoneyTaskListResource extends ListResource
+final class MoneyTaskListResource extends BaseResource
 {
     /**
-     * One page of money tasks; without a page or limit, page 1 of 100.
+     * Fetch one page of money tasks; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -34,7 +38,7 @@ final class MoneyTaskListResource extends ListResource
         ?string $search = null,
         ?MoneyTaskType $taskType = null,
     ): Response {
-        return $this->sendList(new GetMoneyTaskList(
+        return $this->connector->send(new GetMoneyTaskList(
             $page,
             $limit,
             $status,
@@ -44,7 +48,7 @@ final class MoneyTaskListResource extends ListResource
     }
 
     /**
-     * Every page of money tasks, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of money tasks, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000
@@ -59,7 +63,7 @@ final class MoneyTaskListResource extends ListResource
         ?string $search = null,
         ?MoneyTaskType $taskType = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetMoneyTaskList(
+        return $this->connector->paginate(new GetMoneyTaskList(
             null,
             $limit,
             $status,

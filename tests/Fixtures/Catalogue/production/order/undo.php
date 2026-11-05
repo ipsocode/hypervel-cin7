@@ -23,21 +23,28 @@ return [
             [],
             ['productionOrderID' => $id, 'ApplyToTasks' => true],
         ],
+        PostProductionOrderUndo::class . ' with data' => [
+            PostProductionOrderUndo::class,
+            [fn (): ProductionOrderUndoPostData => ProductionOrderUndoPostData::from(Cin7Payloads::load('production/order/undo', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/production/order/undo',
+            [],
+            [
+                'productionOrderID' => 'fd5197cc-cf19-45cf-aafc-98e86647f941',
+                'ApplyToTasks' => true,
+            ],
+        ],
     ],
     'resources' => [
         'production order undo' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->undo(['productionOrderID' => $id, 'ApplyToTasks' => true]),
             PostProductionOrderUndo::class,
-            Method::POST,
-            '/ExternalApi/v2/production/order/undo',
-            [],
-            ['productionOrderID' => $id, 'ApplyToTasks' => true],
         ],
     ],
     'dtos' => [
         PostProductionOrderUndo::class => [PostProductionOrderUndo::class, [[]], Cin7Payloads::load('production/order/undo', 'post.response'), ProductionOrderMessageData::class, ''],
     ],
     'bodies' => [
-        'ProductionOrderUndoPostData production/order/undo' => [ProductionOrderUndoPostData::class, Cin7Payloads::load('production/order/undo', 'post.request')],
+        'ProductionOrderUndoPostData production/order/undo' => [ProductionOrderUndoPostData::class, PostProductionOrderUndo::class, Cin7Payloads::load('production/order/undo', 'post.request')],
     ],
 ];

@@ -24,7 +24,7 @@ use Ipsocode\Cin7\Resources\StockTransfer\OrderResource;
 final class StockTransferResource extends BaseResource
 {
     /**
-     * One stock transfer, with its lines and its order.
+     * Fetch one stock transfer, with its lines and its order.
      *
      * @return Response<StockTransferData>
      */
@@ -63,7 +63,7 @@ final class StockTransferResource extends BaseResource
     }
 
     /**
-     * The `stockTransfer/order` resource, a stock transfer's order.
+     * Return the `stockTransfer/order` resource, a stock transfer's order.
      */
     public function order(): OrderResource
     {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\SaleData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,11 +17,12 @@ final class DeleteSale extends Cin7Request
 {
     protected Method $method = Method::DELETE;
 
+    protected ?string $dto = SaleData::class;
+
     public function __construct(
         protected readonly string $id,
         protected readonly ?bool $void = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -39,13 +39,5 @@ final class DeleteSale extends Cin7Request
             'ID' => $this->id,
             'Void' => $this->void,
         ]);
-    }
-
-    /**
-     * @param Response<SaleData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleData
-    {
-        return SaleData::from($response->json())->setResponse($response);
     }
 }

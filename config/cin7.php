@@ -2,14 +2,20 @@
 
 declare(strict_types=1);
 
+use Ipsocode\Cin7\Cin7Connector;
+
 /*
 |--------------------------------------------------------------------------
 | Cin7 Core API client
 |--------------------------------------------------------------------------
 |
-| Credentials and tuning for the Cin7 connector. The credentials and rate
-| limit are read when the connector is first resolved, and the retry values
-| each time a request is constructed. Publish it with:
+| Credentials and tuning for the Cin7 connector: the credentials, named
+| `connections` and the `default` one, the API root and timeouts, the rate
+| limit, the retry policy and the optional `sync`. The credentials, the
+| connections, the rate limit and the retry policy are read when a connection
+| is first resolved, `default` each time the connector is resolved, and `sync`
+| each time it is used.
+| Publish it with:
 |
 |     php artisan vendor:publish --tag=cin7-config
 |
@@ -38,18 +44,18 @@ return [
     ],
 
     // The API root, for a stub server or a staging proxy. Unset is Cin7's V2 URL.
-    'base_url' => env('CIN7_BASE_URL', 'https://inventory.dearsystems.com/ExternalApi/v2/'),
+    'base_url' => env('CIN7_BASE_URL') ?: Cin7Connector::BASE_URL,
 
     // Seconds to wait for a response and to connect. Unset (null) inherits the `saloon` HTTP
     // connection's timeouts, which every Saloon connector in the application shares.
-    'timeout' => env('CIN7_TIMEOUT'),
-    'connect_timeout' => env('CIN7_CONNECT_TIMEOUT'),
+    'timeout' => in_array(env('CIN7_TIMEOUT'), [null, ''], true) ? null : (int) env('CIN7_TIMEOUT'),
+    'connect_timeout' => in_array(env('CIN7_CONNECT_TIMEOUT'), [null, ''], true) ? null : (int) env('CIN7_CONNECT_TIMEOUT'),
 
     // Local throttle for Cin7's limit of 60 calls per minute per API application.
     // Set `max` or `period` to 0 to remove the window; the throttling cooldown still applies.
     'rate_limit' => [
-        'max' => (int) env('CIN7_RATE_MAX', 60),
-        'period' => (int) env('CIN7_RATE_PERIOD', 60),
+        'max' => (int) env('CIN7_RATE_MAX', Cin7Connector::RATE_LIMIT_MAX),
+        'period' => (int) env('CIN7_RATE_PERIOD', Cin7Connector::RATE_LIMIT_PERIOD),
 
         // Unset falls back to `saloon.rate_limiter.store`, then `rate-limiter.default`.
         // Pick a store every worker and server shares, or the effective limit multiplies.
@@ -57,16 +63,19 @@ return [
 
         // Seconds every worker waits after a 503, or a 429 without `Retry-After`; a 429's own
         // `Retry-After` still wins. 0 records no cooldown for those.
-        'cooldown' => (int) env('CIN7_RATE_COOLDOWN', 5),
+        'cooldown' => (int) env('CIN7_RATE_COOLDOWN', Cin7Connector::THROTTLE_COOLDOWN),
     ],
 
-    // Bounded retries on HTTP 429 and 503; `times` is the total number of attempts.
+    // Bounded retries on HTTP 429 and 503; `times` is the total number of attempts, at least 1.
+    // A value outside a range noted here throws an InvalidArgumentException.
     'retry' => [
         'times' => (int) env('CIN7_RETRY_TIMES', 4),
+        // `delay_ms` is at least 0.
         'delay_ms' => (int) env('CIN7_RETRY_DELAY_MS', 5000),
 
         // The wait after failed attempt n is min(delay_ms * backoff^(n-1), max_delay_ms) + jitter.
-        // The defaults keep `delay_ms` constant: a backoff of 1, no cap (0), no jitter (0).
+        // The defaults keep `delay_ms` constant: a backoff of 1 (at least 1), no cap (0, at least 0),
+        // no jitter (0, at least 0).
         'backoff' => (float) env('CIN7_RETRY_BACKOFF', 1),
         'max_delay_ms' => (int) env('CIN7_RETRY_MAX_DELAY_MS', 0),
 
@@ -102,27 +111,27 @@ return [
         // no longer returns. Null: never.
         'full' => env('CIN7_SYNC_FULL', '0 2 * * 0'),
 
-        // Minutes an incremental pull reaches back.
+        // Minutes an incremental pull reaches back, at least 0.
         'lookback' => (int) env('CIN7_SYNC_LOOKBACK', 1440),
 
         // Records a page, 1 to 1000.
         'limit' => (int) env('CIN7_SYNC_LIMIT', 500),
 
-        // Milliseconds between the sync's own calls, which share the rate-limit window.
+        // Milliseconds between the sync's own calls, which share the rate-limit window. At least 0.
         'pause_ms' => (int) env('CIN7_SYNC_PAUSE_MS', 1000),
 
         // Documents read per module per run, one call each, and the unseen rows a full pull of a list
-        // asks Cin7 for before deleting.
+        // asks Cin7 for before deleting. At least 0.
         'documents' => (int) env('CIN7_SYNC_DOCUMENTS', 250),
 
         // Times a document may fail to read before the sync stops trying it, until its list row
-        // changes or `cin7:sync <module> --retry-failed` releases it. At least 1.
+        // changes or `cin7:sync <module> --retry-failed` releases it. 1 to 32767.
         'max_failures' => (int) env('CIN7_SYNC_MAX_FAILURES', 3),
 
         // The queue the scheduled pulls go on; null is the connection's default queue.
         'queue' => env('CIN7_SYNC_QUEUE'),
 
-        // Seconds a queued pull may run.
+        // Seconds a queued pull may run, at least 1.
         'timeout' => (int) env('CIN7_SYNC_TIMEOUT', 3600),
 
         // The database connection the table lives on; null is the default one.

@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Resources\Production\WorkCentersResource;
 final class ProductionResource extends BaseResource
 {
     /**
-     * The `production/factoryCalendar` resource.
+     * Return the `production/factoryCalendar` resource.
      */
     public function factoryCalendar(): FactoryCalendarResource
     {
@@ -31,7 +31,7 @@ final class ProductionResource extends BaseResource
     }
 
     /**
-     * The `production/productionBOM` resource, the production BOMs of products and product families.
+     * Return the `production/productionBOM` resource, the production BOMs of products and product families.
      */
     public function productionBom(): ProductionBomResource
     {
@@ -39,7 +39,7 @@ final class ProductionResource extends BaseResource
     }
 
     /**
-     * The `production/order` resource.
+     * Return the `production/order` resource.
      */
     public function order(): OrderResource
     {
@@ -47,7 +47,7 @@ final class ProductionResource extends BaseResource
     }
 
     /**
-     * The `production/orderList` resource.
+     * Return the `production/orderList` resource.
      */
     public function orderList(): OrderListResource
     {
@@ -55,7 +55,7 @@ final class ProductionResource extends BaseResource
     }
 
     /**
-     * The `production/resourceList` resource.
+     * Return the `production/resourceList` resource.
      */
     public function resourceList(): ResourceListResource
     {
@@ -63,7 +63,7 @@ final class ProductionResource extends BaseResource
     }
 
     /**
-     * The `production/resource` resource.
+     * Return the `production/resource` resource.
      */
     public function resource(): ResourceResource
     {
@@ -71,7 +71,7 @@ final class ProductionResource extends BaseResource
     }
 
     /**
-     * The `production/suspendReason` resource.
+     * Return the `production/suspendReason` resource.
      */
     public function suspendReason(): SuspendReasonResource
     {
@@ -79,7 +79,7 @@ final class ProductionResource extends BaseResource
     }
 
     /**
-     * The `production/workcenters` resource.
+     * Return the `production/workcenters` resource.
      */
     public function workCenters(): WorkCentersResource
     {

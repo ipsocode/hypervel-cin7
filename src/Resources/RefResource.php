@@ -30,7 +30,7 @@ use Ipsocode\Cin7\Resources\Ref\UnitResource;
 final class RefResource extends BaseResource
 {
     /**
-     * The `ref/tax` resource.
+     * Return the `ref/tax` resource.
      */
     public function tax(): TaxResource
     {
@@ -38,7 +38,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/customer` grouping.
+     * Return the `ref/customer` grouping.
      */
     public function customer(): CustomerResource
     {
@@ -46,7 +46,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/supplier` grouping.
+     * Return the `ref/supplier` grouping.
      */
     public function supplier(): SupplierResource
     {
@@ -54,7 +54,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/account` resource, the chart of accounts.
+     * Return the `ref/account` resource, the chart of accounts.
      */
     public function account(): AccountResource
     {
@@ -62,7 +62,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/fixedassettype` resource.
+     * Return the `ref/fixedassettype` resource.
      */
     public function fixedAssetType(): FixedAssetTypeResource
     {
@@ -70,7 +70,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/paymentterm` resource.
+     * Return the `ref/paymentterm` resource.
      */
     public function paymentTerm(): PaymentTermResource
     {
@@ -78,7 +78,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/brand` resource.
+     * Return the `ref/brand` resource.
      */
     public function brand(): BrandResource
     {
@@ -86,7 +86,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/category` resource.
+     * Return the `ref/category` resource.
      */
     public function category(): CategoryResource
     {
@@ -94,7 +94,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/unit` resource.
+     * Return the `ref/unit` resource.
      */
     public function unit(): UnitResource
     {
@@ -102,7 +102,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/priceTier` resource.
+     * Return the `ref/priceTier` resource.
      */
     public function priceTier(): PriceTierResource
     {
@@ -110,7 +110,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/productavailability` resource.
+     * Return the `ref/productavailability` resource.
      */
     public function productAvailability(): ProductAvailabilityResource
     {
@@ -118,7 +118,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/attributeset` resource.
+     * Return the `ref/attributeset` resource.
      */
     public function attributeSet(): AttributeSetResource
     {
@@ -126,7 +126,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/location` resource.
+     * Return the `ref/location` resource.
      */
     public function location(): LocationResource
     {
@@ -134,7 +134,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/carrier` resource.
+     * Return the `ref/carrier` resource.
      */
     public function carrier(): CarrierResource
     {
@@ -142,7 +142,7 @@ final class RefResource extends BaseResource
     }
 
     /**
-     * The `ref/templates` resource.
+     * Return the `ref/templates` resource.
      */
     public function templates(): TemplatesResource
     {

@@ -34,23 +34,47 @@ return [
             [],
             ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
+        PostDisassemblyOrder::class . ' with data' => [
+            PostDisassemblyOrder::class,
+            [fn (): DisassemblyOrderData => DisassemblyOrderData::from(Cin7Payloads::load('disassembly/order', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/disassembly/order',
+            [],
+            [
+                'TaskID' => '122df91c-1ce5-46e2-86f7-52cc14e7964b',
+                'Status' => 'COMPLETED',
+                'CompletionDate' => '2017-12-21T00:00:00',
+                'OrderLines' => [
+                    [
+                        'Cost' => 5.0,
+                        'Unit' => 'Item',
+                        'Account' => '715',
+                        'ProductID' => '8879b7f5-3aa7-4c7c-ba2c-d0bcc48ba7c3',
+                        'ProductCode' => 'GB3-White',
+                        'Name' => 'Golf balls white 3-pack',
+                        'Quantity' => 1.0,
+                    ],
+                ],
+                'OrderServiceLines' => [
+                    [
+                        'Account' => '416',
+                        'Amount' => 600.0,
+                        'ProductID' => '5c6a9204-275f-4a8b-8a90-317d674a4504',
+                        'Name' => 'Half day training - Microsoft Office',
+                        'Comments' => 'Test',
+                    ],
+                ],
+            ],
+        ],
     ],
     'resources' => [
         'disassembly order get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->order()->get($taskId),
             GetDisassemblyOrder::class,
-            Method::GET,
-            '/ExternalApi/v2/disassembly/order',
-            ['TaskID' => $taskId],
-            null,
         ],
         'disassembly order post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->order()->post(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PostDisassemblyOrder::class,
-            Method::POST,
-            '/ExternalApi/v2/disassembly/order',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
     ],
     'dtos' => [
@@ -58,7 +82,7 @@ return [
         PostDisassemblyOrder::class => [PostDisassemblyOrder::class, [[]], Cin7Payloads::load('disassembly/order', 'post.response'), DisassemblyOrderData::class, ''],
     ],
     'bodies' => [
-        DisassemblyOrderData::class => [DisassemblyOrderData::class, Cin7Payloads::load('disassembly/order', 'post.request')],
+        DisassemblyOrderData::class => [DisassemblyOrderData::class, PostDisassemblyOrder::class, Cin7Payloads::load('disassembly/order', 'post.request')],
     ],
     'missing' => [
         'disassembly order line without Quantity' => [DisassemblyOrderLineData::class, Arr::except(Cin7Payloads::load('disassembly/order', 'post.request')['OrderLines'][0], 'Quantity')],

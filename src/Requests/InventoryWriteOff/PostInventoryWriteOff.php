@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\InventoryWriteOff;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\InventoryWriteOff\InventoryWriteOffData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PostInventoryWriteOff extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = InventoryWriteOffData::class;
+
     public function resolveEndpoint(): string
     {
         return 'inventoryWriteOff';
-    }
-
-    /**
-     * @param Response<InventoryWriteOffData> $response
-     */
-    public function createDtoFromResponse(Response $response): InventoryWriteOffData
-    {
-        return InventoryWriteOffData::from($response->json())->setResponse($response);
     }
 }

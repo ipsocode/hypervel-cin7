@@ -87,42 +87,22 @@ return [
         'ref unit post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->unit()->post(['Name' => 'Test']),
             PostUnit::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/unit',
-            [],
-            ['Name' => 'Test'],
         ],
         'ref unit post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->unit()->post(UnitOfMeasurePostData::from(['Name' => 'Test'])),
             PostUnit::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/unit',
-            [],
-            ['Name' => 'Test'],
         ],
         'ref unit put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->unit()->put(['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1']),
             PutUnit::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/unit',
-            [],
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1'],
         ],
         'ref unit put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->unit()->put(UnitOfMeasurePutData::from(['Name' => 'Test1', 'ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc'])),
             PutUnit::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/unit',
-            [],
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1'],
         ],
         'ref unit delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->unit()->delete('ca585936-d523-4c40-980b-fbd0199d61fc'),
             DeleteUnit::class,
-            Method::DELETE,
-            '/ExternalApi/v2/ref/unit',
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc'],
-            null,
         ],
     ],
     'dtos' => [
@@ -131,8 +111,8 @@ return [
         PutUnit::class => [PutUnit::class, [[]], Cin7Payloads::load('ref/unit', 'put.response'), UnitOfMeasureData::class, ''],
     ],
     'bodies' => [
-        UnitOfMeasurePostData::class => [UnitOfMeasurePostData::class, Cin7Payloads::load('ref/unit', 'post.request')],
-        UnitOfMeasurePutData::class => [UnitOfMeasurePutData::class, Cin7Payloads::load('ref/unit', 'put.request')],
+        UnitOfMeasurePostData::class => [UnitOfMeasurePostData::class, PostUnit::class, Cin7Payloads::load('ref/unit', 'post.request')],
+        UnitOfMeasurePutData::class => [UnitOfMeasurePutData::class, PutUnit::class, Cin7Payloads::load('ref/unit', 'put.request')],
     ],
     'missing' => [
         'unit of measure POST without Name' => [UnitOfMeasurePostData::class, []],

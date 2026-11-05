@@ -23,21 +23,29 @@ return [
             [],
             ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id],
         ],
+        PutProductionOrderRunOperationResume::class . ' with data' => [
+            PutProductionOrderRunOperationResume::class,
+            [fn (): ProductionRunOperationResumePutData => ProductionRunOperationResumePutData::from(Cin7Payloads::load('production/order/run/operation/resume', 'put.request'))],
+            Method::PUT,
+            '/ExternalApi/v2/production/order/run/operation/resume',
+            [],
+            [
+                'ProductionOrderID' => '0230bf59-59b3-4a3e-9fc8-aedcbb6b2815',
+                'ProductionRunID' => 'a093ae70-c620-2318-c470-db45feb1ebf9',
+                'RunOperationID' => 'e7659fbb-f5e4-0fd8-3b55-9a53bbf842ea',
+            ],
+        ],
     ],
     'resources' => [
         'production order run operation resume' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->operation()->resume(['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id]),
             PutProductionOrderRunOperationResume::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/operation/resume',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'RunOperationID' => $id],
         ],
     ],
     'dtos' => [
         PutProductionOrderRunOperationResume::class => [PutProductionOrderRunOperationResume::class, [[]], Cin7Payloads::load('production/order/run/operation/resume', 'put.response'), ProductionRunsData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunOperationResumePutData production/order/run/operation/resume' => [ProductionRunOperationResumePutData::class, Cin7Payloads::load('production/order/run/operation/resume', 'put.request')],
+        'ProductionRunOperationResumePutData production/order/run/operation/resume' => [ProductionRunOperationResumePutData::class, PutProductionOrderRunOperationResume::class, Cin7Payloads::load('production/order/run/operation/resume', 'put.request')],
     ],
 ];

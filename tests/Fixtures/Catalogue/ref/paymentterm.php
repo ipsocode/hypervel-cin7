@@ -91,10 +91,6 @@ return [
         'ref paymentTerm post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->paymentTerm()->post(['Name' => '5 days since end of month', 'Duration' => 5]),
             PostPaymentTerm::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/paymentterm',
-            [],
-            ['Name' => '5 days since end of month', 'Duration' => 5],
         ],
         'ref paymentTerm post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->paymentTerm()->post(PaymentTermPostData::from($fields)),
@@ -107,26 +103,14 @@ return [
         'ref paymentTerm put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->paymentTerm()->put(['ID' => '927a7013-e1d9-4194-a547-28b1b4c6b413', 'Name' => '30 days']),
             PutPaymentTerm::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/paymentterm',
-            [],
-            ['ID' => '927a7013-e1d9-4194-a547-28b1b4c6b413', 'Name' => '30 days'],
         ],
         'ref paymentTerm put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->paymentTerm()->put(PaymentTermPutData::from([...$fields, 'ID' => '927a7013-e1d9-4194-a547-28b1b4c6b413', 'IsDefault' => true])),
-            PutPaymentTerm::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/paymentterm',
-            [],
-            ['ID' => '927a7013-e1d9-4194-a547-28b1b4c6b413', 'IsDefault' => true, ...$fields],
+            PutPaymentTerm::class . ' with data',
         ],
         'ref paymentTerm delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->paymentTerm()->delete('927a7013-e1d9-4194-a547-28b1b4c6b413'),
             DeletePaymentTerm::class,
-            Method::DELETE,
-            '/ExternalApi/v2/ref/paymentterm',
-            ['ID' => '927a7013-e1d9-4194-a547-28b1b4c6b413'],
-            null,
         ],
     ],
     'dtos' => [
@@ -135,8 +119,8 @@ return [
         PutPaymentTerm::class => [PutPaymentTerm::class, [[]], Cin7Payloads::load('ref/paymentterm', 'put.response'), PaymentTermData::class, 'PaymentTermList.0'],
     ],
     'bodies' => [
-        PaymentTermPostData::class => [PaymentTermPostData::class, Cin7Payloads::load('ref/paymentterm', 'post.request')],
-        PaymentTermPutData::class => [PaymentTermPutData::class, Cin7Payloads::load('ref/paymentterm', 'put.request')],
+        PaymentTermPostData::class => [PaymentTermPostData::class, PostPaymentTerm::class, Cin7Payloads::load('ref/paymentterm', 'post.request')],
+        PaymentTermPutData::class => [PaymentTermPutData::class, PutPaymentTerm::class, Cin7Payloads::load('ref/paymentterm', 'put.request')],
     ],
     'missing' => [
         'ref paymentterm POST without Name' => [PaymentTermPostData::class, Arr::except(Cin7Payloads::load('ref/paymentterm', 'post.request'), 'Name')],

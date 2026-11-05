@@ -73,10 +73,6 @@ return [
         'sale fulfilment pick post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->pick()->post(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'AutoPickMode' => 'AUTOPICK']),
             PostSaleFulfilmentPick::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/fulfilment/pick',
-            [],
-            ['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'AutoPickMode' => 'AUTOPICK'],
         ],
         'sale fulfilment pick post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->pick()->post(SaleFulfilmentPickPostData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'AUTHORISED', 'Lines' => [$line]])),
@@ -89,10 +85,6 @@ return [
         'sale fulfilment pick put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->pick()->put(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'DRAFT']),
             PutSaleFulfilmentPick::class,
-            Method::PUT,
-            '/ExternalApi/v2/sale/fulfilment/pick',
-            [],
-            ['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'Status' => 'DRAFT'],
         ],
         'sale fulfilment pick put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->fulfilment()->pick()->put(SaleFulfilmentPickPutData::from(['TaskID' => 'cde5fb4a-1dac-4e9a-bc33-5dfa14eedb57', 'AutoPickMode' => 'AUTOPICK'])),
@@ -109,8 +101,8 @@ return [
         PutSaleFulfilmentPick::class => [PutSaleFulfilmentPick::class, [[]], Cin7Payloads::load('sale/fulfilment/pick', 'get.response'), SaleFulfilmentPickData::class, ''],
     ],
     'bodies' => [
-        SaleFulfilmentPickPostData::class => [SaleFulfilmentPickPostData::class, Cin7Payloads::load('sale/fulfilment/pick', 'post.request')],
-        SaleFulfilmentPickPutData::class => [SaleFulfilmentPickPutData::class, Cin7Payloads::load('sale/fulfilment/pick', 'put.request')],
+        SaleFulfilmentPickPostData::class => [SaleFulfilmentPickPostData::class, PostSaleFulfilmentPick::class, Cin7Payloads::load('sale/fulfilment/pick', 'post.request')],
+        SaleFulfilmentPickPutData::class => [SaleFulfilmentPickPutData::class, PutSaleFulfilmentPick::class, Cin7Payloads::load('sale/fulfilment/pick', 'put.request')],
     ],
     'missing' => [
         'pick without Status' => [SaleFulfilmentPickData::class, Arr::except(Cin7Payloads::load('sale/fulfilment/pick', 'get.response'), 'Status')],

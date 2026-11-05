@@ -10,12 +10,15 @@ use Hypervel\RateLimiter\AdmissionPolicy;
 use Hypervel\RateLimiter\Contracts\Decision;
 use Hypervel\RateLimiter\Cooldown;
 use Hypervel\RateLimiter\Limit;
+use Hypervel\RateLimiter\RateLimiter;
+use Hypervel\Saloon\Data\RetryPolicy;
 use Hypervel\Saloon\Http\Connector;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Pagination\Contracts\HasPagination;
 use Hypervel\Saloon\RateLimit\Traits\HasRateLimits;
+use Hypervel\Support\Facades\Date;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
 use Ipsocode\Cin7\Resources\AdvancedPurchaseResource;
 use Ipsocode\Cin7\Resources\AdvancedSaleResource;
@@ -54,13 +57,18 @@ use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use Ipsocode\Cin7\Resources\WebhooksResource;
-use UnitEnum;
+use Ipsocode\Cin7\Support\RetrySettings;
 
 /**
  * The Cin7 Core connector.
  *
- * It holds only readonly values, all set in the constructor, so one singleton per worker is
- * shared across coroutines.
+ * It holds only readonly values, all set in the constructor, so one instance is shared across
+ * coroutines. Saloon's `Connector` adds none that a caller can change: its headers, query and
+ * options come from methods, its only property (`$response`) has no setter, and a mock client
+ * travels with `send()` or the request.
+ *
+ * It stays `final` to protect that: the instance is shared and readonly for the worker's
+ * lifetime, so a subclass adding mutable state would leak it across requests.
  *
  * @see src/docs/connector.md
  *
@@ -82,6 +90,23 @@ final class Cin7Connector extends Connector implements HasPagination
     public const string BASE_URL = 'https://inventory.dearsystems.com/ExternalApi/v2/';
 
     /**
+     * The calls allowed per `RATE_LIMIT_PERIOD` seconds, which `cin7.rate_limit.max` defaults to.
+     */
+    public const int RATE_LIMIT_MAX = 60;
+
+    /**
+     * The window, in seconds, which `cin7.rate_limit.period` defaults to.
+     */
+    public const int RATE_LIMIT_PERIOD = 60;
+
+    private const int MICROSECONDS_PER_SECOND = 1_000_000;
+
+    /**
+     * The longest whole-seconds `Retry-After` read; a longer digit string is treated as unusable.
+     */
+    private const int RETRY_AFTER_MAX_DIGITS = 15;
+
+    /**
      * @var array<string, string>
      */
     private readonly array $headers;
@@ -97,22 +122,30 @@ final class Cin7Connector extends Connector implements HasPagination
      */
     private readonly array $rateLimitPolicies;
 
+    /**
+     * The throttling retry settings every request through this connector uses.
+     */
+    private readonly RetrySettings $retrySettings;
+
     public function __construct(
         private readonly string $accountId,
         private readonly string $applicationKey,
-        private readonly int $rateLimitMax = 60,
-        private readonly int $rateLimitPeriod = 60,
+        private readonly int $rateLimitMax = self::RATE_LIMIT_MAX,
+        private readonly int $rateLimitPeriod = self::RATE_LIMIT_PERIOD,
         private readonly ?string $rateLimitStore = null,
         private readonly int $rateLimitCooldown = self::THROTTLE_COOLDOWN,
         private readonly string $baseUrl = self::BASE_URL,
         private readonly ?int $timeout = null,
         private readonly ?int $connectTimeout = null,
+        ?RetrySettings $retry = null,
     ) {
+        $this->retrySettings = $retry ?? RetrySettings::fromConfig();
         $this->headers = [
             'Content-Type' => 'application/json',
             'api-auth-accountid' => $this->accountId,
             'api-auth-applicationkey' => $this->applicationKey,
         ];
+        // sha256 rather than xxh128: the digest is derived from a credential.
         $this->rateLimitKey = 'cin7:api:' . $this->accountId . ':' . substr(hash('sha256', $this->applicationKey), 0, 16);
         // A non-positive max or period disables the window.
         $this->rateLimitPolicies = $this->rateLimitMax > 0 && $this->rateLimitPeriod > 0
@@ -139,6 +172,23 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
+     * The limiter store requests use: the connection's, else `saloon.rate_limiter.store`, else the
+     * limiter's default. A blank name counts as unset.
+     */
+    public function limiterStore(): string
+    {
+        $configured = config('saloon.rate_limiter.store');
+
+        foreach ([$this->rateLimitStore, $configured] as $store) {
+            if (is_string($store) && $store !== '') {
+                return $store;
+            }
+        }
+
+        return app(RateLimiter::class)->getDefaultInstance();
+    }
+
+    /**
      * The window as `[calls, seconds]`, or null when a non-positive max or period turns it off.
      *
      * @return null|array{int, int}
@@ -148,13 +198,26 @@ final class Cin7Connector extends Connector implements HasPagination
         return $this->rateLimitPolicies === [] ? null : [$this->rateLimitMax, $this->rateLimitPeriod];
     }
 
+    /**
+     * The throttling retry settings, read from `cin7.retry.*` when the connector was built.
+     */
+    public function retrySettings(): RetrySettings
+    {
+        return $this->retrySettings;
+    }
+
+    protected function defaultRetryPolicy(): RetryPolicy
+    {
+        return $this->retrySettings->policy();
+    }
+
     public function resolveBaseUrl(): string
     {
         return $this->baseUrl;
     }
 
     /**
-     * Only the timeouts the connection sets: a request option overrides the `saloon` HTTP
+     * Return only the timeouts the connection sets: a request option overrides the `saloon` HTTP
      * connection's, and one left null inherits it.
      *
      * @return array<string, int>
@@ -510,7 +573,7 @@ final class Cin7Connector extends Connector implements HasPagination
     /**
      * Null falls back to `saloon.rate_limiter.store`, then to the limiter's default store.
      */
-    protected function resolveRateLimitStore(): UnitEnum|string|null
+    protected function resolveRateLimitStore(): ?string
     {
         return $this->rateLimitStore;
     }
@@ -525,7 +588,7 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * Keyed like the window, so throttling on one Cin7 application never cools down another.
+     * Key the cooldown like the window, so throttling on one Cin7 application never cools down another.
      *
      * @param PendingRequest<mixed> $pendingRequest
      */
@@ -535,7 +598,7 @@ final class Cin7Connector extends Connector implements HasPagination
     }
 
     /**
-     * Cin7 throttles with a 429 (its documented limit response) or a 503. A 429 cools down for its
+     * Read the cooldown a throttling response asks for. Cin7 throttles with a 429 (its documented limit response) or a 503. A 429 cools down for its
      * `Retry-After`, parsed here because the trait's parser is private and answers 60 seconds for a
      * value it cannot read; a 429 without a usable one, and every 503, for the configured
      * cooldown, `THROTTLE_COOLDOWN` seconds by default; a cooldown of 0 or less records none for
@@ -567,16 +630,16 @@ final class Cin7Connector extends Connector implements HasPagination
             return $this->throttleCooldown();
         }
 
-        $limit = intdiv(AdmissionPolicy::MAX_INTEGER, 1_000_000);
+        $limit = intdiv(AdmissionPolicy::MAX_INTEGER, self::MICROSECONDS_PER_SECOND);
 
         if (ctype_digit($value)) {
-            $seconds = strlen($value) > 15 ? null : (int) $value;
+            $seconds = strlen($value) > self::RETRY_AFTER_MAX_DIGITS ? null : (int) $value;
         } else {
             $date = DateTimeImmutable::createFromFormat('!D, d M Y H:i:s \G\M\T', $value, new DateTimeZone('GMT'));
             $errors = DateTimeImmutable::getLastErrors();
             $valid = $date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))
                 && $date->format('D, d M Y H:i:s \G\M\T') === $value;
-            $seconds = $valid ? $date->getTimestamp() - time() : null;
+            $seconds = $valid ? $date->getTimestamp() - Date::now()->getTimestamp() : null;
         }
 
         if ($seconds === null || $seconds > $limit) {

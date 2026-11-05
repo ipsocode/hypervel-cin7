@@ -34,8 +34,12 @@ php artisan vendor:publish --tag=cin7-config
 ```
 
 [Publishing](configuration.md#publishing) covers what that copies and when the provider
-offers the group.
+offers the group, and the `cin7-migrations` group for the sync's table.
 
+The provider also registers two commands, `cin7:check` (below) and
+[`cin7:sync`](sync.md), and adds a Cin7 section to `php artisan about`
+([what it shows](configuration.md#the-about-section)). The sync's migrations load only while
+`sync.enabled` is on.
 ## Credentials
 
 The package needs a Cin7 Core account with API access: its account ID and an application key.

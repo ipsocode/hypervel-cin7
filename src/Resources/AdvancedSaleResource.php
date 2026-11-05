@@ -37,7 +37,7 @@ use Ipsocode\Cin7\Resources\Sale\PaymentResource;
 final class AdvancedSaleResource extends BaseResource
 {
     /**
-     * One sale, with every model it nests.
+     * Fetch one sale, with every model it nests.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
      * @param null|bool $hideInventoryMovements leave out the inventory movements
@@ -97,7 +97,7 @@ final class AdvancedSaleResource extends BaseResource
     }
 
     /**
-     * The `sale/fulfilment` resource: its DELETE works on advanced sales only.
+     * Return the `sale/fulfilment` resource: its DELETE works on advanced sales only.
      */
     public function fulfilment(): FulfilmentResource
     {
@@ -105,7 +105,7 @@ final class AdvancedSaleResource extends BaseResource
     }
 
     /**
-     * The `sale/invoice` resource: its DELETE works on advanced sales only.
+     * Return the `sale/invoice` resource: its DELETE works on advanced sales only.
      */
     public function invoice(): InvoiceResource
     {
@@ -113,7 +113,7 @@ final class AdvancedSaleResource extends BaseResource
     }
 
     /**
-     * The `sale/creditnote` resource: its DELETE works on advanced sales only.
+     * Return the `sale/creditnote` resource: its DELETE works on advanced sales only.
      */
     public function creditNote(): CreditNoteResource
     {
@@ -121,7 +121,7 @@ final class AdvancedSaleResource extends BaseResource
     }
 
     /**
-     * The `sale/payment` resource.
+     * Return the `sale/payment` resource.
      */
     public function payment(): PaymentResource
     {
@@ -129,7 +129,7 @@ final class AdvancedSaleResource extends BaseResource
     }
 
     /**
-     * The `sale/manualJournal` resource.
+     * Return the `sale/manualJournal` resource.
      */
     public function manualJournal(): ManualJournalResource
     {

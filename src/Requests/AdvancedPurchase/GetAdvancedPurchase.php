@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\AdvancedPurchase;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchaseData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -20,11 +19,12 @@ final class GetAdvancedPurchase extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = AdvancedPurchaseData::class;
+
     public function __construct(
         protected readonly string $id,
         protected readonly ?bool $combineAdditionalCharges = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -41,13 +41,5 @@ final class GetAdvancedPurchase extends Cin7Request
             'ID' => $this->id,
             'CombineAdditionalCharges' => $this->combineAdditionalCharges,
         ]);
-    }
-
-    /**
-     * @param Response<AdvancedPurchaseData> $response
-     */
-    public function createDtoFromResponse(Response $response): AdvancedPurchaseData
-    {
-        return AdvancedPurchaseData::from($response->json())->setResponse($response);
     }
 }

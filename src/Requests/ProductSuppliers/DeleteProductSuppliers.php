@@ -20,7 +20,6 @@ final class DeleteProductSuppliers extends Cin7Request
         protected readonly string $productId,
         protected readonly string $supplierId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

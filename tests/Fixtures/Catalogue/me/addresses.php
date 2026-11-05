@@ -91,10 +91,6 @@ return [
         'me addresses post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->addresses()->post(['Line1' => 'DEFAULT business address']),
             PostMeAddresses::class,
-            Method::POST,
-            '/ExternalApi/v2/me/addresses',
-            [],
-            ['Line1' => 'DEFAULT business address'],
         ],
         'me addresses post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->addresses()->post(MeAddressPostData::from($fields)),
@@ -107,10 +103,6 @@ return [
         'me addresses put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->addresses()->put(['AddressID' => 'ded03f44-00fc-4cbd-8b4d-c803c6252788', 'Line1' => 'EDITED business address']),
             PutMeAddresses::class,
-            Method::PUT,
-            '/ExternalApi/v2/me/addresses',
-            [],
-            ['AddressID' => 'ded03f44-00fc-4cbd-8b4d-c803c6252788', 'Line1' => 'EDITED business address'],
         ],
         'me addresses put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->addresses()->put(MeAddressPutData::from([...$fields, 'AddressID' => 'ded03f44-00fc-4cbd-8b4d-c803c6252788', 'DefaultForType' => false])),
@@ -123,10 +115,6 @@ return [
         'me addresses delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->me()->addresses()->delete('ded03f44-00fc-4cbd-8b4d-c803c6252788'),
             DeleteMeAddresses::class,
-            Method::DELETE,
-            '/ExternalApi/v2/me/addresses',
-            ['ID' => 'ded03f44-00fc-4cbd-8b4d-c803c6252788'],
-            null,
         ],
     ],
     'dtos' => [
@@ -135,8 +123,8 @@ return [
         PutMeAddresses::class => [PutMeAddresses::class, [[]], Cin7Payloads::load('me/addresses', 'put.response'), MeAddressData::class, 'MeAddressesList.0'],
     ],
     'bodies' => [
-        MeAddressPostData::class => [MeAddressPostData::class, Cin7Payloads::load('me/addresses', 'post.request')],
-        MeAddressPutData::class => [MeAddressPutData::class, Cin7Payloads::load('me/addresses', 'put.request')],
+        MeAddressPostData::class => [MeAddressPostData::class, PostMeAddresses::class, Cin7Payloads::load('me/addresses', 'post.request')],
+        MeAddressPutData::class => [MeAddressPutData::class, PutMeAddresses::class, Cin7Payloads::load('me/addresses', 'put.request')],
     ],
     'missing' => [
         'me address POST without Type' => [MeAddressPostData::class, Arr::except(Cin7Payloads::load('me/addresses', 'post.request'), 'Type')],

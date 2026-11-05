@@ -22,6 +22,9 @@ final class ProductionRunsData extends Data implements WithResponse
     use HasResponse;
 
     /**
+     * `$Warnings` stays `list<mixed>`: the reference documents no model for it, and it is an empty
+     * list in every `workbench/fixtures/production/order/run/` example that sends it.
+     *
      * @param null|list<ProductionRunData> $Runs
      * @param null|list<mixed> $Warnings
      */

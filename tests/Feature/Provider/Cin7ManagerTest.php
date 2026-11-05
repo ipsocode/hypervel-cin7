@@ -13,6 +13,7 @@ use Ipsocode\Cin7\Cin7ServiceProvider;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class Cin7ManagerTest extends TestCase
 {
@@ -74,7 +75,6 @@ class Cin7ManagerTest extends TestCase
     public function testBlankTransportKeysCountAsUnset(): void
     {
         // A blank `CIN7_TIMEOUT=` in .env reads as '', which cast would be a timeout of 0.
-        $this->app->get('config')->set('cin7.base_url', '');
         $this->app->get('config')->set('cin7.timeout', '');
         $this->app->get('config')->set('cin7.connect_timeout', '');
         $this->app->get('config')->set('cin7.connections', [
@@ -100,6 +100,16 @@ class Cin7ManagerTest extends TestCase
 
         $this->assertSame('http://stub.test/v2/', $inherits->resolveBaseUrl());
         $this->assertSame(['timeout' => 60], $inherits->options());
+    }
+
+    public function testAMissingBaseUrlThrowsNamingTheKey(): void
+    {
+        $this->app->get('config')->set('cin7.base_url', '');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no base_url; set cin7.base_url or cin7.connections.default.base_url.');
+
+        $this->manager()->connection();
     }
 
     public function testTheConnectorTypeResolvesTheDefaultConnection(): void
@@ -140,8 +150,8 @@ class Cin7ManagerTest extends TestCase
 
     public function testAConnectionWithoutRateLimitInheritsTheTopLevelValues(): void
     {
-        $this->app->get('config')->set('cin7.rate_limit.max', '25');
-        $this->app->get('config')->set('cin7.rate_limit.period', '20');
+        $this->app->get('config')->set('cin7.rate_limit.max', 25);
+        $this->app->get('config')->set('cin7.rate_limit.period', 20);
         $this->useSandbox();
 
         $policy = $this->policy($this->manager()->connection('sandbox'));
@@ -160,6 +170,35 @@ class Cin7ManagerTest extends TestCase
         $this->assertSame(60, $policy->decaySeconds);
     }
 
+    public function testAConnectionsNullLimitIsTheTopLevelValue(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.max', 25);
+        $this->app->get('config')->set('cin7.rate_limit.period', 20);
+        $this->useSandbox(['max' => null, 'period' => null]);
+
+        $policy = $this->policy($this->manager()->connection('sandbox'));
+
+        $this->assertSame(25, $policy->maxAttempts);
+        $this->assertSame(20, $policy->decaySeconds);
+    }
+
+    public function testATopLevelNullLimitFailsNamingTheKey(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.max', null);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cin7.rate_limit.max');
+
+        $this->manager()->connection();
+    }
+
+    public function testAZeroLimitDisablesTheWindow(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.max', 0);
+
+        $this->assertNull($this->manager()->connection()->rateLimitWindow());
+    }
+
     public function testAConnectionsOwnRateLimitWinsAndIsCast(): void
     {
         $this->useSandbox(['max' => '30', 'period' => '15', 'store' => 'redis']);
@@ -174,7 +213,7 @@ class Cin7ManagerTest extends TestCase
 
     public function testTheCooldownIsInheritedOrOverriddenPerConnection(): void
     {
-        $this->app->get('config')->set('cin7.rate_limit.cooldown', '9');
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', 9);
         $this->useSandbox(['cooldown' => '2']);
         $this->app->get('config')->set('cin7.connections.plain', [
             'account_id' => 'acct-plain',
@@ -188,7 +227,10 @@ class Cin7ManagerTest extends TestCase
         $this->app->get('config')->set('cin7.rate_limit.cooldown', null);
         $this->app->forgetInstance(Cin7Manager::class);
 
-        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $this->cooldown('plain'));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cin7.rate_limit.cooldown');
+
+        $this->cooldown('plain');
     }
 
     public function testAConnectionInheritsTheTopLevelStoreOrOverridesItWithNull(): void
@@ -231,14 +273,55 @@ class Cin7ManagerTest extends TestCase
         $this->assertSame('redis', $this->manager()->connection('local')->resolveRateLimitStoreName());
     }
 
-    public function testUnsetCredentialsAreCastRatherThanTrusted(): void
+    /**
+     * @param array<string, mixed> $connection
+     */
+    #[DataProvider('missingCredentials')]
+    public function testAMissingOrBlankCredentialFailsAtResolveTime(array $connection, string $message): void
     {
-        $this->app->get('config')->set('cin7.connections.blank', ['account_id' => null]);
+        $this->app->get('config')->set('cin7.connections.broken', $connection);
 
-        $headers = $this->manager()->connection('blank')->headers();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($message);
 
-        $this->assertSame('', $headers['api-auth-accountid']);
-        $this->assertSame('', $headers['api-auth-applicationkey']);
+        $this->manager()->connection('broken');
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, string}>
+     */
+    public static function missingCredentials(): array
+    {
+        return [
+            'no account_id' => [['application_key' => 'key'], 'Cin7 connection [broken] has no account_id; set cin7.connections.broken.account_id.'],
+            'null account_id' => [['account_id' => null, 'application_key' => 'key'], 'Cin7 connection [broken] has no account_id; set cin7.connections.broken.account_id.'],
+            'blank account_id' => [['account_id' => '  ', 'application_key' => 'key'], 'Cin7 connection [broken] has no account_id; set cin7.connections.broken.account_id.'],
+            'no application_key' => [['account_id' => 'acct'], 'Cin7 connection [broken] has no application_key; set cin7.connections.broken.application_key.'],
+            'null application_key' => [['account_id' => 'acct', 'application_key' => null], 'Cin7 connection [broken] has no application_key; set cin7.connections.broken.application_key.'],
+            'blank application_key' => [['account_id' => 'acct', 'application_key' => ''], 'Cin7 connection [broken] has no application_key; set cin7.connections.broken.application_key.'],
+        ];
+    }
+
+    public function testTheDefaultConnectionNamesTheEnvironmentVariable(): void
+    {
+        $this->app->get('config')->set('cin7.account_id', null);
+        $this->app->get('config')->set('cin7.application_key', 'key');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no account_id; set CIN7_ACCOUNT_ID.');
+
+        $this->manager()->connection();
+    }
+
+    public function testTheDefaultConnectionNamesTheApplicationKeyVariable(): void
+    {
+        $this->app->get('config')->set('cin7.account_id', 'acct');
+        $this->app->get('config')->set('cin7.application_key', '');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no application_key; set CIN7_APPLICATION_KEY.');
+
+        $this->manager()->connection();
     }
 
     public function testAZeroMaxOnOneConnectionLeavesTheOthersWindowAlone(): void
@@ -285,10 +368,10 @@ class Cin7ManagerTest extends TestCase
 
     private function cooldown(?string $name): ?int
     {
-        $connector = $this->manager()->connection($name);
-
-        // One attempt only, or the 503 would retry past the single mocked response.
+        // One attempt only, or the 503 would retry past the single mocked response. The connector
+        // reads it when it is built.
         $this->app->get('config')->set('cin7.retry.times', 1);
+        $connector = $this->manager()->connection($name);
         Saloon::fake([Cin7Fake::throttled()]);
 
         try {

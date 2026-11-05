@@ -94,10 +94,6 @@ return [
         'journal post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->journal()->post(['Status' => 'DRAFT', 'Currency' => 'USD']),
             PostJournal::class,
-            Method::POST,
-            '/ExternalApi/v2/journal',
-            [],
-            ['Status' => 'DRAFT', 'Currency' => 'USD'],
         ],
         'journal post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->journal()->post(JournalPostData::from($fields)),
@@ -110,10 +106,6 @@ return [
         'journal put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->journal()->put(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PutJournal::class,
-            Method::PUT,
-            '/ExternalApi/v2/journal',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
         'journal put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->journal()->put(JournalPutData::from([...$fields, 'TaskID' => $taskId])),
@@ -147,8 +139,8 @@ return [
         DeleteJournal::class => [DeleteJournal::class, [$taskId], Cin7Payloads::load('journal', 'delete.response'), JournalData::class, 'Journals.0'],
     ],
     'bodies' => [
-        JournalPostData::class => [JournalPostData::class, Cin7Payloads::load('journal', 'post.request')],
-        JournalPutData::class => [JournalPutData::class, Cin7Payloads::load('journal', 'put.request')],
+        JournalPostData::class => [JournalPostData::class, PostJournal::class, Cin7Payloads::load('journal', 'post.request')],
+        JournalPutData::class => [JournalPutData::class, PutJournal::class, Cin7Payloads::load('journal', 'put.request')],
     ],
     'missing' => [
         'journal POST without Currency' => [JournalPostData::class, Arr::except(Cin7Payloads::load('journal', 'post.request'), 'Currency')],

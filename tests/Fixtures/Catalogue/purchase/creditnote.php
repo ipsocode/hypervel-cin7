@@ -75,10 +75,6 @@ return [
         'purchase creditNote get with combined charges' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->creditNote()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136', combineAdditionalCharges: true),
             GetPurchaseCreditNote::class,
-            Method::GET,
-            '/ExternalApi/v2/purchase/creditnote',
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => 'true'],
-            null,
         ],
         'purchase creditNote post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->creditNote()->post(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136']),
@@ -102,7 +98,7 @@ return [
         PostPurchaseCreditNote::class => [PostPurchaseCreditNote::class, [[]], Cin7Payloads::load('purchase/creditnote', 'post.response'), PurchaseCreditNoteData::class, ''],
     ],
     'bodies' => [
-        PurchaseCreditNotePostData::class => [PurchaseCreditNotePostData::class, Cin7Payloads::load('purchase/creditnote', 'post.request')],
+        PurchaseCreditNotePostData::class => [PurchaseCreditNotePostData::class, PostPurchaseCreditNote::class, Cin7Payloads::load('purchase/creditnote', 'post.request')],
     ],
     'missing' => [
         'purchase credit note POST without TaskID' => [PurchaseCreditNotePostData::class, Arr::except(Cin7Payloads::load('purchase/creditnote', 'post.request'), 'TaskID')],
