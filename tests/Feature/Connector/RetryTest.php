@@ -10,8 +10,10 @@ use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Sleep;
 use InvalidArgumentException;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Support\Jitter;
+use Ipsocode\Cin7\Support\RetrySettings;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -205,7 +207,7 @@ class RetryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(sprintf('Configuration value for key [cin7.retry.%s] must be %s, %s given.', $key, $range, $value));
 
-        new GetCustomer;
+        $this->connector();
     }
 
     /**
@@ -222,6 +224,39 @@ class RetryTest extends TestCase
         ];
     }
 
+    public function testBuildingARequestReadsNoRetryConfigAndTheConnectorKeepsItsSettings(): void
+    {
+        $connector = $this->connector();
+
+        // Changed after the connector is built, so neither a new request nor a send sees it.
+        $this->app->get('config')->set('cin7.retry.times', 1);
+        $this->app->get('config')->set('cin7.retry.delay_ms', null);
+
+        $mock = Saloon::fake(array_fill(0, 4, Cin7Fake::throttled()));
+
+        $request = new GetCustomer;
+
+        $this->assertSame(4, $connector->retrySettings()->times);
+
+        try {
+            $connector->send($request);
+            $this->fail('The throttled request should have thrown.');
+        } catch (ServerException) {
+            $mock->assertSentCount(4);
+        }
+    }
+
+    public function testEachConnectorCarriesItsOwnRetrySettings(): void
+    {
+        $first = new Cin7Connector('acct', 'key', retry: RetrySettings::fromConfig());
+
+        $this->app->get('config')->set('cin7.retry.times', 2);
+        $second = new Cin7Connector('acct', 'key');
+
+        $this->assertSame(4, $first->retrySettings()->times);
+        $this->assertSame(2, $second->retrySettings()->times);
+    }
+
     public function testANullRetryValueFailsNamingTheKey(): void
     {
         $this->app->get('config')->set('cin7.retry.delay_ms', null);
@@ -229,7 +264,7 @@ class RetryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('cin7.retry.delay_ms');
 
-        new GetCustomer;
+        $this->connector();
     }
 
     public function testABackoffMultipliesEachWait(): void

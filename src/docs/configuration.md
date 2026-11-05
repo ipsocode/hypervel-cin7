@@ -94,14 +94,12 @@ which is evaluated when the configuration loads. Everything else goes through
 
 | Values | Read when | Effect of a later config change |
 |---|---|---|
-| `account_id`, `application_key`, `rate_limit.*`, `connections.*` | The first time a connection is resolved, by `Cin7Connector` injection or `Cin7Manager::connection()` | None for that worker: each connector is built once per worker |
+| `account_id`, `application_key`, `rate_limit.*`, `retry.*`, `connections.*` | The first time a connection is resolved, by `Cin7Connector` injection or `Cin7Manager::connection()` | None for that worker: each connector is built once per worker |
 | `default` | Each time `Cin7Connector` is resolved or `connection()` is called without a name | Picks which connection that resolves; the connectors already built stay |
-| `retry.*` | Each time a request is constructed (`new GetCustomer(...)` and the rest) | Applies to requests constructed after the change |
 | `sync.enabled` | When the provider boots, and again each time `cin7:sync` or the `about` section runs | The migration and the schedule are registered at boot, so a later change does not add or remove them for that worker; the command and `about` see the new value |
 | the other `sync.*` | Each time a pull, the schedule or the job reads them | Applies from the next read |
 
-So set any runtime override of `retry.*` before the `new`, not just before
-`send()`.
+So set any runtime override of `retry.*` before the connector is resolved.
 
 ## The `about` section
 
@@ -148,7 +146,7 @@ in code:
 `connections` entry, and not `default`, throws an `InvalidArgumentException`
 naming it, as does an entry that is not an array.
 
-[`Cin7Request`](../Requests/Cin7Request.php) reads the `retry.*` values as
+[`RetrySettings`](../Support/RetrySettings.php) reads the `retry.*` values as
 integers, and `backoff` as a float, and throws an `InvalidArgumentException`
 naming the key, the value and the allowed range for one outside it: `times`
 at least `1`, `backoff` at least `1`, and `delay_ms`, `max_delay_ms` and

@@ -23,7 +23,6 @@ final class GetProductProductionBom extends Cin7Request
         protected readonly string $productId,
         protected readonly ?bool $returnAttachmentsContent = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

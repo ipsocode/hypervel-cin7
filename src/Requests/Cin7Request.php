@@ -10,16 +10,12 @@ use DateTimeInterface;
 use DateTimeZone;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
-use Hypervel\Saloon\Exceptions\Request\FatalRequestException;
-use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Traits\Plugins\AlwaysThrowOnErrors;
-use Ipsocode\Cin7\Support\ConfigRange;
-use Ipsocode\Cin7\Support\Jitter;
 
 /**
- * Base for every Cin7 request: sets the throttling retry policy.
+ * Base for every Cin7 request. The throttling retry policy is the connector's.
  *
  * @see src/docs/requests.md
  *
@@ -43,36 +39,6 @@ abstract class Cin7Request extends Request
      * Where the record sits in the response, e.g. `CustomerList.0`; null for the whole body.
      */
     protected ?string $dtoPath = null;
-
-    public function __construct()
-    {
-        // Set here, not in a boot hook: PendingRequest snapshots the retry policy in its
-        // constructor.
-        $delay = ConfigRange::integer('cin7.retry.delay_ms', 0);
-        $backoff = ConfigRange::float('cin7.retry.backoff', 1.0);
-        $maxDelay = ConfigRange::integer('cin7.retry.max_delay_ms', 0);
-        $jitter = ConfigRange::integer('cin7.retry.jitter_ms', 0);
-
-        $this->retry(
-            times: ConfigRange::integer('cin7.retry.times', 1),
-            // The wait after failed attempt n: delay * backoff^(n-1), capped at max_delay_ms
-            // unless that is 0, plus a random 0..jitter_ms. The defaults are a constant delay.
-            sleepMilliseconds: static function (int $attempt) use ($delay, $backoff, $maxDelay, $jitter): int {
-                $wait = $delay * $backoff ** ($attempt - 1);
-
-                if ($maxDelay > 0) {
-                    $wait = min($wait, $maxDelay);
-                }
-
-                return (int) min($wait, PHP_INT_MAX) + ($jitter > 0 ? app(Jitter::class)->upTo($jitter) : 0);
-            },
-            // Cin7 throttles with a 429 or a 503. FatalRequestException (DNS failure, refused
-            // connection, timeout) is not retried.
-            when: fn (FatalRequestException|RequestException $exception): bool => $exception instanceof RequestException
-                && in_array($exception->status(), [429, 503], true),
-            throw: true,
-        );
-    }
 
     /**
      * @param Response<mixed> $response

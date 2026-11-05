@@ -358,10 +358,10 @@ class Cin7ManagerTest extends TestCase
 
     private function cooldown(?string $name): ?int
     {
-        $connector = $this->manager()->connection($name);
-
-        // One attempt only, or the 503 would retry past the single mocked response.
+        // One attempt only, or the 503 would retry past the single mocked response. The connector
+        // reads it when it is built.
         $this->app->get('config')->set('cin7.retry.times', 1);
+        $connector = $this->manager()->connection($name);
         Saloon::fake([Cin7Fake::throttled()]);
 
         try {

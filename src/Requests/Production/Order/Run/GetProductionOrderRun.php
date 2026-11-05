@@ -23,7 +23,6 @@ final class GetProductionOrderRun extends Cin7Request
         protected readonly string $productionOrderId,
         protected readonly ?bool $includeAttachmentContent = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

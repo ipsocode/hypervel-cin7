@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7;
 
 use InvalidArgumentException;
+use Ipsocode\Cin7\Support\RetrySettings;
 
 /**
  * Resolves the named Cin7 connections of `config('cin7')`, one connector each.
@@ -84,6 +85,7 @@ class Cin7Manager
             (string) $this->transportSetting($connection, 'base_url'),
             $timeout === null ? null : (int) $timeout,
             $connectTimeout === null ? null : (int) $connectTimeout,
+            RetrySettings::fromConfig(),
         );
     }
 

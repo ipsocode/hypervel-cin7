@@ -708,19 +708,20 @@ calls a minute, or a 503. Those are the only responses retried:
   the rest. A `null` value, or one of the wrong type, throws an
   `InvalidArgumentException` naming the key. `backoff` is a float, so write
   `2.0`, not `2`.
-- **Read at construction.** `Cin7Request`'s constructor reads the config and
-  sets the policy on the request, because Saloon's `PendingRequest` copies the
-  request's retry policy when it is built, before any boot hook runs. The
-  retry settings belong in the published `config/cin7.php` or the `CIN7_RETRY_*`
-  environment variables, which are read at boot. Configuration is shared by
-  every coroutine in a worker, so do not call `config([...])` to change them
-  while requests are being served: it changes the policy of every request the
-  worker builds after it. A test may set them before it constructs its request:
+- **Read when the connection is built.** `Cin7Manager` reads `cin7.retry.*` once
+  for each connector, into an immutable
+  [`RetrySettings`](../Support/RetrySettings.php), and the connector's
+  `defaultRetryPolicy()` builds the policy every request sent through it uses.
+  A request carries no retry settings of its own. The retry settings belong in
+  the published `config/cin7.php` or the `CIN7_RETRY_*` environment variables,
+  which are read at boot. Changing them with `config([...])` after a connector
+  is resolved does not affect it, so a test sets them before it resolves the
+  connector:
 
   ```php
   $this->app->get('config')->set('cin7.retry.times', 2);
 
-  $request = new Ipsocode\Cin7\Requests\Customer\GetCustomer(); // reads 2 attempts
+  $connector = app(Ipsocode\Cin7\Cin7Connector::class); // 2 attempts
   ```
 
 The wait goes through `Hypervel\Support\Sleep`, which suspends only the
@@ -777,7 +778,6 @@ final class GetSaleOrder extends Cin7Request
         protected readonly ?bool $combineAdditionalCharges = null,
         protected readonly ?bool $includeProductInfo = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -820,8 +820,7 @@ A request that returns a list from a keyed read or a write (`GetWebhooks`, `Post
 `$this->listOf(WebhookData::class, $response, $response->json('Webhooks'))` from its own
 `createDtoFromResponse()`.
 
-`Cin7Request`'s constructor reads `cin7.retry.*`, so a subclass that adds
-constructor parameters must call `parent::__construct()`. PHP initializes
+A subclass that adds constructor parameters needs no `parent::__construct()` call. PHP initializes
 property defaults before any constructor body runs, so `$this->method()`
 is always the declared verb; a subclass must never assign `$this->method` in
 its own constructor.

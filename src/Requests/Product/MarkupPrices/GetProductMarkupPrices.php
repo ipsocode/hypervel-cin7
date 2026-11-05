@@ -23,7 +23,6 @@ final class GetProductMarkupPrices extends Cin7Request
     public function __construct(
         protected readonly string $productId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

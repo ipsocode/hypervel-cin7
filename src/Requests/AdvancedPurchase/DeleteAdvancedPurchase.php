@@ -23,7 +23,6 @@ final class DeleteAdvancedPurchase extends Cin7Request
         protected readonly string $id,
         protected readonly ?bool $void = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
