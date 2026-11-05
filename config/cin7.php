@@ -66,13 +66,16 @@ return [
         'cooldown' => (int) env('CIN7_RATE_COOLDOWN', Cin7Connector::THROTTLE_COOLDOWN),
     ],
 
-    // Bounded retries on HTTP 429 and 503; `times` is the total number of attempts.
+    // Bounded retries on HTTP 429 and 503; `times` is the total number of attempts, at least 1.
+    // A value outside a range noted here throws an InvalidArgumentException.
     'retry' => [
         'times' => (int) env('CIN7_RETRY_TIMES', 4),
+        // `delay_ms` is at least 0.
         'delay_ms' => (int) env('CIN7_RETRY_DELAY_MS', 5000),
 
         // The wait after failed attempt n is min(delay_ms * backoff^(n-1), max_delay_ms) + jitter.
-        // The defaults keep `delay_ms` constant: a backoff of 1, no cap (0), no jitter (0).
+        // The defaults keep `delay_ms` constant: a backoff of 1 (at least 1), no cap (0, at least 0),
+        // no jitter (0, at least 0).
         'backoff' => (float) env('CIN7_RETRY_BACKOFF', 1),
         'max_delay_ms' => (int) env('CIN7_RETRY_MAX_DELAY_MS', 0),
 
@@ -108,27 +111,27 @@ return [
         // no longer returns. Null: never.
         'full' => env('CIN7_SYNC_FULL', '0 2 * * 0'),
 
-        // Minutes an incremental pull reaches back.
+        // Minutes an incremental pull reaches back, at least 0.
         'lookback' => (int) env('CIN7_SYNC_LOOKBACK', 1440),
 
         // Records a page, 1 to 1000.
         'limit' => (int) env('CIN7_SYNC_LIMIT', 500),
 
-        // Milliseconds between the sync's own calls, which share the rate-limit window.
+        // Milliseconds between the sync's own calls, which share the rate-limit window. At least 0.
         'pause_ms' => (int) env('CIN7_SYNC_PAUSE_MS', 1000),
 
         // Documents read per module per run, one call each, and the unseen rows a full pull of a list
-        // asks Cin7 for before deleting.
+        // asks Cin7 for before deleting. At least 0.
         'documents' => (int) env('CIN7_SYNC_DOCUMENTS', 250),
 
         // Times a document may fail to read before the sync stops trying it, until its list row
-        // changes or `cin7:sync <module> --retry-failed` releases it. At least 1.
+        // changes or `cin7:sync <module> --retry-failed` releases it. 1 to 32767.
         'max_failures' => (int) env('CIN7_SYNC_MAX_FAILURES', 3),
 
         // The queue the scheduled pulls go on; null is the connection's default queue.
         'queue' => env('CIN7_SYNC_QUEUE'),
 
-        // Seconds a queued pull may run.
+        // Seconds a queued pull may run, at least 1.
         'timeout' => (int) env('CIN7_SYNC_TIMEOUT', 3600),
 
         // The database connection the table lives on; null is the default one.

@@ -8,9 +8,10 @@ use InvalidArgumentException;
 use Ipsocode\Cin7\Sync\Module;
 use Ipsocode\Cin7\Sync\SyncConfig;
 use Ipsocode\Cin7\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
- * `cin7.sync.*` is cast and clamped as it is read, never trusted.
+ * `cin7.sync.*` is cast and range-checked as it is read, never trusted.
  *
  * @see src/docs/configuration.md
  */
@@ -92,17 +93,42 @@ class SyncConfigTest extends TestCase
         $this->assertNull(SyncConfig::full());
     }
 
-    public function testTheNumbersAreClamped(): void
+    #[DataProvider('outOfRangeNumbers')]
+    public function testANumberOutsideItsRangeFailsNamingTheKeyTheValueAndTheRange(string $key, int $value, string $method, string $range): void
     {
-        $this->config(['lookback' => -5, 'limit' => 5000, 'pause_ms' => -1, 'documents' => -3, 'timeout' => 0, 'max_failures' => 0]);
+        $this->config([$key => $value]);
 
-        $this->assertSame([0, 1000, 0, 0, 1, 1], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout(), SyncConfig::maxFailures()]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Configuration value for key [cin7.sync.%s] must be %s, %d given.', $key, $range, $value));
 
-        $this->config(['max_failures' => 100000]);
-        $this->assertSame(32767, SyncConfig::maxFailures());
+        SyncConfig::$method();
+    }
 
-        $this->config(['limit' => 0]);
-        $this->assertSame(1, SyncConfig::limit());
+    /**
+     * @return array<string, array{string, int, string, string}>
+     */
+    public static function outOfRangeNumbers(): array
+    {
+        return [
+            'lookback' => ['lookback', -5, 'lookback', 'at least 0'],
+            'limit above' => ['limit', 5000, 'limit', '1 to 1000'],
+            'limit below' => ['limit', 0, 'limit', '1 to 1000'],
+            'pause_ms' => ['pause_ms', -1, 'pauseMs', 'at least 0'],
+            'documents' => ['documents', -3, 'documents', 'at least 0'],
+            'timeout' => ['timeout', 0, 'timeout', 'at least 1'],
+            'max_failures below' => ['max_failures', 0, 'maxFailures', '1 to 32767'],
+            'max_failures above' => ['max_failures', SyncConfig::MAX_FAILURES_MAX + 1, 'maxFailures', '1 to 32767'],
+        ];
+    }
+
+    public function testTheNumbersAtTheEdgesOfTheirRangesAreKept(): void
+    {
+        $this->config(['lookback' => 0, 'limit' => 1000, 'pause_ms' => 0, 'documents' => 0, 'timeout' => 1, 'max_failures' => SyncConfig::MAX_FAILURES_MAX]);
+
+        $this->assertSame([0, 1000, 0, 0, 1, 32767], [SyncConfig::lookback(), SyncConfig::limit(), SyncConfig::pauseMs(), SyncConfig::documents(), SyncConfig::timeout(), SyncConfig::maxFailures()]);
+
+        $this->config(['limit' => 1, 'max_failures' => 1]);
+        $this->assertSame([1, 1], [SyncConfig::limit(), SyncConfig::maxFailures()]);
     }
 
     public function testANullNumberFailsNamingTheKey(): void

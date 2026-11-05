@@ -697,12 +697,12 @@ calls a minute, or a 503. Those are the only responses retried:
   together, which would otherwise all retry at the same moment. It comes from
   `Ipsocode\Cin7\Support\Jitter`, resolved from the container, so a test binds
   a pinned one. The cooldown below is a separate floor under the wait.
-- **Clamped.** `times` is raised to at least `1` and `delay_ms` to at least `0`.
-  `backoff` is raised to at least `1`, and `max_delay_ms` and `jitter_ms` to at
-  least `0`.
-  Saloon's `RetryPolicy` throws an `InvalidArgumentException` for zero attempts
-  or a negative delay, so without the clamp a bad environment value would fail
-  every request at construction. At `0` ms the attempts run back to back.
+- **Ranges.** `times` must be at least `1`, `backoff` at least `1`, and
+  `delay_ms`, `max_delay_ms` and `jitter_ms` at least `0`. A value outside its
+  range throws an `InvalidArgumentException` naming the key, the value and the
+  range when the request is constructed, so a bad environment value fails
+  loudly instead of running with settings nobody chose. At `0` ms the attempts
+  run back to back.
 - **Defaults.** Every `retry.*` default lives in the packaged config, and a
   published `retry` array that sets only some keys keeps the packaged values of
   the rest. A `null` value, or one of the wrong type, throws an

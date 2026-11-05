@@ -6,10 +6,11 @@ namespace Ipsocode\Cin7\Sync;
 
 use InvalidArgumentException;
 use Ipsocode\Cin7\PageDefaults;
+use Ipsocode\Cin7\Support\ConfigRange;
 
 /**
  * Reads `cin7.sync.*` each time it is asked, through the config repository's typed getters, and
- * clamps what is out of range. The shipped config holds every default.
+ * rejects what is out of range. The shipped config holds every default.
  *
  * @see src/docs/sync.md
  */
@@ -19,6 +20,11 @@ class SyncConfig
      * Every module, in `sync.modules`.
      */
     public const string ALL = '*';
+
+    /**
+     * The largest failure count a `smallint` column holds on every database.
+     */
+    public const int MAX_FAILURES_MAX = 32767;
 
     /**
      * Tell whether the scheduled pulls are on.
@@ -112,43 +118,53 @@ class SyncConfig
 
     /**
      * Return the minutes an incremental pull reaches back, at least 0.
+     *
+     * @throws InvalidArgumentException when the configured value is below 0
      */
     public static function lookback(): int
     {
-        return max(0, config()->integer('cin7.sync.lookback'));
+        return ConfigRange::integer('cin7.sync.lookback', 0);
     }
 
     /**
      * Return the records a page holds, from 1 to the largest page Cin7 serves.
+     *
+     * @throws InvalidArgumentException when the configured value is outside that range
      */
     public static function limit(): int
     {
-        return min(PageDefaults::LIMIT_MAX, max(1, config()->integer('cin7.sync.limit')));
+        return ConfigRange::integer('cin7.sync.limit', 1, PageDefaults::LIMIT_MAX);
     }
 
     /**
      * Return the milliseconds between the sync's own calls, at least 0.
+     *
+     * @throws InvalidArgumentException when the configured value is below 0
      */
     public static function pauseMs(): int
     {
-        return max(0, config()->integer('cin7.sync.pause_ms'));
+        return ConfigRange::integer('cin7.sync.pause_ms', 0);
     }
 
     /**
      * Return the documents read per module per run, at least 0.
+     *
+     * @throws InvalidArgumentException when the configured value is below 0
      */
     public static function documents(): int
     {
-        return max(0, config()->integer('cin7.sync.documents'));
+        return ConfigRange::integer('cin7.sync.documents', 0);
     }
 
     /**
      * Return the failed reads after which a document is no longer tried, from 1 to the largest a `smallint`
      * column holds on every database.
+     *
+     * @throws InvalidArgumentException when the configured value is outside that range
      */
     public static function maxFailures(): int
     {
-        return min(32767, max(1, config()->integer('cin7.sync.max_failures')));
+        return ConfigRange::integer('cin7.sync.max_failures', 1, self::MAX_FAILURES_MAX);
     }
 
     /**
@@ -161,10 +177,12 @@ class SyncConfig
 
     /**
      * Return the seconds a queued pull may run, at least 1.
+     *
+     * @throws InvalidArgumentException when the configured value is below 1
      */
     public static function timeout(): int
     {
-        return max(1, config()->integer('cin7.sync.timeout'));
+        return ConfigRange::integer('cin7.sync.timeout', 1);
     }
 
     /**

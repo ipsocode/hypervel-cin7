@@ -15,6 +15,7 @@ use Hypervel\Saloon\Exceptions\Request\RequestException;
 use Hypervel\Saloon\Http\Request;
 use Hypervel\Saloon\Http\Response;
 use Hypervel\Saloon\Traits\Plugins\AlwaysThrowOnErrors;
+use Ipsocode\Cin7\Support\ConfigRange;
 use Ipsocode\Cin7\Support\Jitter;
 
 /**
@@ -47,13 +48,13 @@ abstract class Cin7Request extends Request
     {
         // Set here, not in a boot hook: PendingRequest snapshots the retry policy in its
         // constructor.
-        $delay = max(0, config()->integer('cin7.retry.delay_ms'));
-        $backoff = max(1.0, config()->float('cin7.retry.backoff'));
-        $maxDelay = max(0, config()->integer('cin7.retry.max_delay_ms'));
-        $jitter = max(0, config()->integer('cin7.retry.jitter_ms'));
+        $delay = ConfigRange::integer('cin7.retry.delay_ms', 0);
+        $backoff = ConfigRange::float('cin7.retry.backoff', 1.0);
+        $maxDelay = ConfigRange::integer('cin7.retry.max_delay_ms', 0);
+        $jitter = ConfigRange::integer('cin7.retry.jitter_ms', 0);
 
         $this->retry(
-            times: max(1, config()->integer('cin7.retry.times')),
+            times: ConfigRange::integer('cin7.retry.times', 1),
             // The wait after failed attempt n: delay * backoff^(n-1), capped at max_delay_ms
             // unless that is 0, plus a random 0..jitter_ms. The defaults are a constant delay.
             sleepMilliseconds: static function (int $attempt) use ($delay, $backoff, $maxDelay, $jitter): int {

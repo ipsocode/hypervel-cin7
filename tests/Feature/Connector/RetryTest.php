@@ -14,6 +14,7 @@ use Ipsocode\Cin7\Requests\Customer\GetCustomer;
 use Ipsocode\Cin7\Support\Jitter;
 use Ipsocode\Cin7\Testing\Cin7Fake;
 use Ipsocode\Cin7\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Workbench\App\Support\Cin7Payloads;
 
 /**
@@ -196,44 +197,29 @@ class RetryTest extends TestCase
         }
     }
 
-    public function testANonPositiveAttemptCountStillMakesOneAttempt(): void
+    #[DataProvider('outOfRangeValues')]
+    public function testAValueOutsideItsRangeFailsNamingTheKeyTheValueAndTheRange(string $key, float|int $value, string $range): void
     {
-        $this->app->get('config')->set('cin7.retry.times', 0);
+        $this->app->get('config')->set('cin7.retry.' . $key, $value);
 
-        $mock = Saloon::fake([Cin7Fake::throttled()]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Configuration value for key [cin7.retry.%s] must be %s, %s given.', $key, $range, $value));
 
-        $request = new GetCustomer;
-
-        $this->expectException(ServerException::class);
-
-        try {
-            $this->connector()->send($request);
-        } finally {
-            $mock->assertSentCount(1);
-            Sleep::assertNeverSlept();
-        }
+        new GetCustomer;
     }
 
     /**
-     * The delay clamps to 0 ms, so the retry runs back-to-back without sleeping.
+     * @return array<string, array{string, float|int, string}>
      */
-    public function testANegativeDelayIsClampedRatherThanRejected(): void
+    public static function outOfRangeValues(): array
     {
-        $this->app->get('config')->set('cin7.retry.times', 2);
-        $this->app->get('config')->set('cin7.retry.delay_ms', -1);
-
-        $mock = Saloon::fake(array_fill(0, 2, Cin7Fake::throttled()));
-
-        $request = new GetCustomer;
-
-        $this->expectException(ServerException::class);
-
-        try {
-            $this->connector()->send($request);
-        } finally {
-            $mock->assertSentCount(2);
-            Sleep::assertNeverSlept();
-        }
+        return [
+            'times' => ['times', 0, 'at least 1'],
+            'delay_ms' => ['delay_ms', -1, 'at least 0'],
+            'backoff' => ['backoff', 0.5, 'at least 1'],
+            'max_delay_ms' => ['max_delay_ms', -1, 'at least 0'],
+            'jitter_ms' => ['jitter_ms', -1, 'at least 0'],
+        ];
     }
 
     public function testANullRetryValueFailsNamingTheKey(): void
@@ -357,27 +343,6 @@ class RetryTest extends TestCase
                 fn ($duration): bool => $duration->totalMilliseconds >= 1000 && $duration->totalMilliseconds <= 1050,
                 1,
             );
-        }
-    }
-
-    public function testTheBackoffAndBoundsAreClamped(): void
-    {
-        $this->app->get('config')->set('cin7.retry.times', 3);
-        $this->app->get('config')->set('cin7.retry.backoff', 0.5);
-        $this->app->get('config')->set('cin7.retry.max_delay_ms', -1);
-        $this->app->get('config')->set('cin7.retry.jitter_ms', -1);
-
-        $mock = Saloon::fake(array_fill(0, 3, Cin7Fake::throttled()));
-
-        $request = new GetCustomer;
-
-        $this->expectException(ServerException::class);
-
-        try {
-            $this->connector()->send($request);
-        } finally {
-            $mock->assertSentCount(3);
-            Sleep::assertSequence([Sleep::usleep(5_000_000), Sleep::usleep(5_000_000)]);
         }
     }
 }

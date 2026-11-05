@@ -149,13 +149,16 @@ in code:
 naming it, as does an entry that is not an array.
 
 [`Cin7Request`](../Requests/Cin7Request.php) reads the `retry.*` values as
-integers, and `backoff` as a float, and clamps the results to at least one
-attempt and at least `0` ms; the backoff is clamped to at least `1`. See
-[requests](requests.md#retry-policy).
+integers, and `backoff` as a float, and throws an `InvalidArgumentException`
+naming the key, the value and the allowed range for one outside it: `times`
+at least `1`, `backoff` at least `1`, and `delay_ms`, `max_delay_ms` and
+`jitter_ms` at least `0`. See [requests](requests.md#retry-policy).
 
 [`SyncConfig`](../Sync/SyncConfig.php) reads `sync.*` the same way, each number
-as an integer, and clamps each (`limit` to 1–1000, `timeout` and `max_failures`
-to at least 1, the latter also to at most 32767, the others to at least 0). A
+as an integer, and throws an `InvalidArgumentException` naming the key, the
+value and the allowed range for one outside it (`limit` 1–1000, `max_failures`
+1–32767, `timeout` at least 1, `lookback`, `pause_ms` and `documents` at least
+0), rather than running with a value nobody chose. A
 blank `cron`, `full` or exception time schedules nothing, an empty `queue` or
 `connection` is the default one, and an unknown module name, or a reference
 book among the exceptions, throws an `InvalidArgumentException` rather than being skipped.
