@@ -15,7 +15,7 @@ use InvalidArgumentException;
  *
  * @see src/docs/requests.md
  */
-final readonly class RetrySettings
+readonly class RetrySettings
 {
     public function __construct(
         public int $times,

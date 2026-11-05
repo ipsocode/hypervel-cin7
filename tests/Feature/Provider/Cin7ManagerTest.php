@@ -102,6 +102,16 @@ class Cin7ManagerTest extends TestCase
         $this->assertSame(['timeout' => 60], $inherits->options());
     }
 
+    public function testAMissingBaseUrlThrowsNamingTheKey(): void
+    {
+        $this->app->get('config')->set('cin7.base_url', '');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no base_url; set cin7.base_url or cin7.connections.default.base_url.');
+
+        $this->manager()->connection();
+    }
+
     public function testTheConnectorTypeResolvesTheDefaultConnection(): void
     {
         $this->assertSame($this->manager()->connection(), $this->connector());

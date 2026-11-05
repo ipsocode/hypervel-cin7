@@ -82,7 +82,7 @@ class Cin7Manager
             (int) ($rateLimit['period'] ?? config()->integer('cin7.rate_limit.period')),
             $store === null ? null : (string) $store,
             (int) ($rateLimit['cooldown'] ?? config()->integer('cin7.rate_limit.cooldown')),
-            (string) $this->transportSetting($connection, 'base_url'),
+            $this->baseUrl($name, $connection),
             $timeout === null ? null : (int) $timeout,
             $connectTimeout === null ? null : (int) $connectTimeout,
             RetrySettings::fromConfig(),
@@ -110,6 +110,25 @@ class Cin7Manager
         }
 
         return (string) $value;
+    }
+
+    /**
+     * Resolve a connection's base URL, which fails at resolve time rather than building a connector
+     * with an empty one when neither the connection nor `cin7.base_url` sets it.
+     *
+     * @param array<mixed> $connection
+     *
+     * @throws InvalidArgumentException when the base URL is null or blank
+     */
+    private function baseUrl(string $name, array $connection): string
+    {
+        $baseUrl = $this->transportSetting($connection, 'base_url');
+
+        if ($baseUrl === null || trim((string) $baseUrl) === '') {
+            throw new InvalidArgumentException("Cin7 connection [{$name}] has no base_url; set cin7.base_url or cin7.connections.{$name}.base_url.");
+        }
+
+        return (string) $baseUrl;
     }
 
     /**

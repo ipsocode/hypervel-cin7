@@ -135,7 +135,7 @@ in code:
 | Value | Read as | Result |
 |---|---|---|
 | `account_id`, `application_key` | `(string)` | Required. A missing, `null` or blank value throws an `InvalidArgumentException` naming the connection and the key when the connection is resolved, such as `Cin7 connection [default] has no account_id; set CIN7_ACCOUNT_ID.`; `cin7:check` prints the same message. Resolve a connector without credentials only behind [`Cin7Fake`](testing.md) or fake values |
-| `base_url` | string | A blank `CIN7_BASE_URL=` is the V2 URL, in the config file. A connection's own `base_url` wins over the top-level one |
+| `base_url` | string | A blank `CIN7_BASE_URL=` is the V2 URL, in the config file. A connection's own `base_url` wins over the top-level one. A `null` or blank value in both throws an `InvalidArgumentException` naming the connection and the key when the connection is resolved |
 | `timeout`, `connect_timeout` | `null` and `''` become `null`; anything else `(int)` | `null` sends no option, so the `saloon` connection's value applies; a blank `CIN7_TIMEOUT=` counts as unset rather than `0`, which would wait forever. A connection's own key wins over the top-level one |
 | `rate_limit.max`, `rate_limit.period` | integer | `0` disables the window. `null` or a string throws |
 | `rate_limit.store` | `null` and `''` become `null`; anything else `(string)` | `null` lets the store fallback chain apply; a blank `CIN7_RATE_STORE=` counts as unset |
