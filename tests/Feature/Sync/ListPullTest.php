@@ -7,6 +7,7 @@ namespace Ipsocode\Cin7\Tests\Feature\Sync;
 use Hypervel\Cache\Contracts\Lock;
 use Hypervel\Contracts\Debug\ExceptionHandler;
 use Hypervel\Saloon\Facades\Saloon;
+use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Facades\Cache;
 use Hypervel\Support\Facades\DB;
 use Hypervel\Support\Facades\Log;
@@ -17,6 +18,7 @@ use Ipsocode\Cin7\Testing\Cin7Fake;
 use Mockery as m;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
+use Swoole\Coroutine\CanceledException;
 use Throwable;
 use UnexpectedValueException;
 
@@ -478,6 +480,46 @@ class ListPullTest extends SyncTestCase
         $this->assertSame($queryError, $results[0]->error);
         $this->assertFalse($results[1]->failed());
         $this->assertTrue(Cache::lock('cin7:sync:00016e91-48ff-4da6-8ca9-89ad86b5201e:customer', 60)->get());
+    }
+
+    public function testCancellationEscapesThePullAndStopsTheLaterModules(): void
+    {
+        $canceled = new CanceledException('canceled');
+        $handler = m::mock(ExceptionHandler::class);
+        $handler->shouldNotReceive('report');
+        $this->app->instance(ExceptionHandler::class, $handler);
+        Saloon::fake([
+            MockResponse::make()->throw($canceled),
+            Cin7Fake::list('SupplierList'),
+        ]);
+
+        try {
+            $this->synchroniser()->pullMany([Module::Customer, Module::Supplier]);
+            $this->fail('The cancellation should have escaped the pull.');
+        } catch (CanceledException $exception) {
+            $this->assertSame($canceled, $exception);
+        }
+
+        $this->assertCount(0, $this->stored(Module::Supplier));
+        $this->assertTrue(Cache::lock('cin7:sync:00016e91-48ff-4da6-8ca9-89ad86b5201e:customer', 60)->get());
+    }
+
+    public function testCancellationDuringTheRollbackEscapesToo(): void
+    {
+        $canceled = new CanceledException('canceled');
+        DB::listen(function ($query) use ($canceled): void {
+            if (str_starts_with($query->sql, 'delete')) {
+                throw $canceled;
+            }
+        });
+        Saloon::fake([Cin7Fake::error('Something went wrong')]);
+
+        try {
+            $this->synchroniser()->pull(Module::Customer);
+            $this->fail('The cancellation should have escaped the rollback.');
+        } catch (CanceledException $exception) {
+            $this->assertSame($canceled, $exception);
+        }
     }
 
     public function testAFailingRollbackKeepsThePullsOwnError(): void

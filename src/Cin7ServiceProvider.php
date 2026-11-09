@@ -9,6 +9,7 @@ use Hypervel\Console\Scheduling\Schedule;
 use Hypervel\Contracts\Foundation\Application;
 use Hypervel\Foundation\Console\AboutCommand;
 use Hypervel\Support\ServiceProvider;
+use InvalidArgumentException;
 use Ipsocode\Cin7\Console\CheckCommand;
 use Ipsocode\Cin7\Console\SyncCommand;
 use Ipsocode\Cin7\Sync\Pull;
@@ -96,14 +97,22 @@ class Cin7ServiceProvider extends ServiceProvider
     protected function registerAbout(): void
     {
         AboutCommand::add('Cin7', function (): array {
-            $cin7 = $this->app->make(Cin7Manager::class)->connection();
-            $window = $cin7->rateLimitWindow();
+            // A diagnostic must still describe an app whose credentials are not set yet.
+            try {
+                $cin7 = $this->app->make(Cin7Manager::class)->connection();
+                $window = $cin7->rateLimitWindow();
+                $rateLimit = $window === null ? 'off' : "{$window[0]} calls per {$window[1]}s";
+                $limiterStore = $cin7->limiterStore();
+            } catch (InvalidArgumentException) {
+                $rateLimit = $limiterStore = 'not configured';
+            }
+
             $sync = SyncConfig::enabled();
 
             return [
                 'Version' => InstalledVersions::getPrettyVersion('ipsocode/hypervel-cin7'),
-                'Rate limit' => $window === null ? 'off' : "{$window[0]} calls per {$window[1]}s",
-                'Limiter store' => $cin7->limiterStore(),
+                'Rate limit' => $rateLimit,
+                'Limiter store' => $limiterStore,
                 'Sync' => $sync ? 'on' : 'off',
                 'Sync pull' => $sync ? (SyncConfig::cron() ?? 'not scheduled') : '-',
                 'Sync full pull' => $sync ? (SyncConfig::full() ?? 'not scheduled') : '-',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Sync;
 
 use Carbon\CarbonInterface;
+use Hypervel\Coroutine\Coroutine;
 use Hypervel\Database\ConnectionInterface;
 use Hypervel\Database\Eloquent\Builder;
 use Hypervel\Database\Query\Builder as QueryBuilder;
@@ -87,6 +88,10 @@ class Synchroniser
                 $lock->release();
             }
         } catch (Throwable $exception) {
+            if (Coroutine::causedByCancellation($exception)) {
+                throw $exception;
+            }
+
             return new PullResult($module, $full, error: $exception);
         }
     }
@@ -185,8 +190,16 @@ class Synchroniser
                         ->update(['synced_at' => $previous]);
                 }
             } catch (Throwable $rollback) {
+                if (Coroutine::causedByCancellation($rollback)) {
+                    throw $rollback;
+                }
+
                 // The pull's own error is the one the result reports; this one is only logged.
                 report($rollback);
+            }
+
+            if (Coroutine::causedByCancellation($exception)) {
+                throw $exception;
             }
 
             return new PullResult($module, $full, $read, $written, $unchanged, error: $exception);
@@ -255,6 +268,10 @@ class Synchroniser
 
                 ++$written;
             } catch (Throwable $exception) {
+                if (Coroutine::causedByCancellation($exception)) {
+                    throw $exception;
+                }
+
                 if (! $this->rejectedAsItsOwn($exception)) {
                     $error = $exception;
 
