@@ -43,9 +43,9 @@ class Synchroniser
     }
 
     /**
-     * Pull each module in order. A module that fails does not stop the others; a coroutine
-     * cancellation stops them, and escapes unreported. Its exception goes to the exception
-     * handler, so the console and the queue both leave a trace.
+     * Pull each module in order. A module that fails does not stop the others, and its
+     * exception goes to the exception handler, so the console and the queue both leave a trace.
+     * A coroutine cancellation stops the run and escapes unreported.
      *
      * @param list<Module> $modules
      * @return list<PullResult>
