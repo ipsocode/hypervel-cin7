@@ -43,8 +43,9 @@ class Synchroniser
     }
 
     /**
-     * Pull each module in order. A module that fails does not stop the others, and its
-     * exception goes to the exception handler, so the console and the queue both leave a trace.
+     * Pull each module in order. A module that fails does not stop the others; a coroutine
+     * cancellation stops them, and escapes unreported. Its exception goes to the exception
+     * handler, so the console and the queue both leave a trace.
      *
      * @param list<Module> $modules
      * @return list<PullResult>
@@ -64,7 +65,8 @@ class Synchroniser
 
     /**
      * Pull one module, unless another pull of it holds its lock. A failure anywhere in the pull,
-     * the lock and the bookkeeping included, is the module's result, not an exception.
+     * the lock and the bookkeeping included, is the module's result, not an exception, except coroutine
+     * cancellation, which escapes once the lock is released and a first fill is rolled back.
      */
     public function pull(Module $module, bool $full = false): PullResult
     {
