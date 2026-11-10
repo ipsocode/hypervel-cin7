@@ -77,18 +77,10 @@ return [
         'inventoryWriteOff get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->inventoryWriteOff()->get($taskId),
             GetInventoryWriteOff::class,
-            Method::GET,
-            '/ExternalApi/v2/inventoryWriteOff',
-            ['TaskID' => $taskId],
-            null,
         ],
         'inventoryWriteOff post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->inventoryWriteOff()->post(['Status' => 'DRAFT', 'Notes' => 'Test']),
             PostInventoryWriteOff::class,
-            Method::POST,
-            '/ExternalApi/v2/inventoryWriteOff',
-            [],
-            ['Status' => 'DRAFT', 'Notes' => 'Test'],
         ],
         'inventoryWriteOff post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->inventoryWriteOff()->post(InventoryWriteOffPostData::from($fields)),
@@ -101,18 +93,10 @@ return [
         'inventoryWriteOff put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->inventoryWriteOff()->put(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PutInventoryWriteOff::class,
-            Method::PUT,
-            '/ExternalApi/v2/inventoryWriteOff',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
         'inventoryWriteOff put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->inventoryWriteOff()->put(InventoryWriteOffPutData::from([...$fields, 'TaskID' => $taskId])),
-            PutInventoryWriteOff::class,
-            Method::PUT,
-            '/ExternalApi/v2/inventoryWriteOff',
-            [],
-            ['TaskID' => $taskId, ...$sent],
+            PutInventoryWriteOff::class . ' with data',
         ],
         'inventoryWriteOff delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->inventoryWriteOff()->delete($taskId),
@@ -138,8 +122,8 @@ return [
         DeleteInventoryWriteOff::class => [DeleteInventoryWriteOff::class, [$taskId], Cin7Payloads::load('inventoryWriteOff', 'delete.response'), InventoryWriteOffData::class, ''],
     ],
     'bodies' => [
-        InventoryWriteOffPostData::class => [InventoryWriteOffPostData::class, Cin7Payloads::load('inventoryWriteOff', 'post.request')],
-        InventoryWriteOffPutData::class => [InventoryWriteOffPutData::class, Cin7Payloads::load('inventoryWriteOff', 'put.request')],
+        InventoryWriteOffPostData::class => [InventoryWriteOffPostData::class, PostInventoryWriteOff::class, Cin7Payloads::load('inventoryWriteOff', 'post.request')],
+        InventoryWriteOffPutData::class => [InventoryWriteOffPutData::class, PutInventoryWriteOff::class, Cin7Payloads::load('inventoryWriteOff', 'put.request')],
     ],
     'missing' => [
         'inventory write-off POST without Status' => [InventoryWriteOffPostData::class, Arr::except(Cin7Payloads::load('inventoryWriteOff', 'post.request'), 'Status')],

@@ -21,7 +21,6 @@ final class GetSalePayment extends Cin7Request
     public function __construct(
         protected readonly string $saleId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

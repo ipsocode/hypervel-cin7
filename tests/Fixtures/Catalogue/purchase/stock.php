@@ -55,10 +55,6 @@ return [
         'purchase stock get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->stock()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136'),
             GetPurchaseStock::class,
-            Method::GET,
-            '/ExternalApi/v2/purchase/stock',
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136'],
-            null,
         ],
         'purchase stock post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->stock()->post(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'DRAFT', 'Lines' => [$line]]),
@@ -82,7 +78,7 @@ return [
         PostPurchaseStock::class => [PostPurchaseStock::class, [[]], Cin7Payloads::load('purchase/stock', 'post.response'), PurchaseStockData::class, ''],
     ],
     'bodies' => [
-        PurchaseStockPostData::class => [PurchaseStockPostData::class, $request],
+        PurchaseStockPostData::class => [PurchaseStockPostData::class, PostPurchaseStock::class, $request],
     ],
     'missing' => [
         'purchase stock POST without TaskID' => [PurchaseStockPostData::class, Arr::except($request, 'TaskID')],

@@ -9,6 +9,7 @@ use Hypervel\Console\Scheduling\Schedule;
 use Hypervel\Support\Facades\Artisan;
 use Hypervel\Support\Facades\Schema;
 use Hypervel\Support\ServiceProvider;
+use InvalidArgumentException;
 use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Cin7Manager;
 use Ipsocode\Cin7\Cin7ServiceProvider;
@@ -16,6 +17,11 @@ use Ipsocode\Cin7\Tests\TestCase;
 
 class ServiceProviderTest extends TestCase
 {
+    public function testTheManagerIsOneInstanceForTheWorker(): void
+    {
+        $this->assertSame($this->app->make(Cin7Manager::class), $this->app->make(Cin7Manager::class));
+    }
+
     public function testItMergesThePackagedConfigDefaults(): void
     {
         $this->assertSame(60, config('cin7.rate_limit.max'));
@@ -66,22 +72,21 @@ class ServiceProviderTest extends TestCase
         $this->assertSame([], $connector->options());
     }
 
-    public function testMissingCredentialsDoNotBreakContainerResolution(): void
+    public function testMissingCredentialsFailContainerResolution(): void
     {
         $this->app->get('config')->set('cin7.account_id', null);
-        $this->app->get('config')->set('cin7.application_key', null);
         $this->app->forgetInstance(Cin7Manager::class);
 
-        $connector = $this->connector();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no account_id; set CIN7_ACCOUNT_ID.');
 
-        $this->assertSame('', $connector->headers()['api-auth-accountid']);
-        $this->assertSame('', $connector->headers()['api-auth-applicationkey']);
+        $this->connector();
     }
 
-    public function testTheRateLimitConfigIsCastRatherThanTrusted(): void
+    public function testTheRateLimitConfigIsReadFromTheRepository(): void
     {
-        $this->app->get('config')->set('cin7.rate_limit.max', '30');
-        $this->app->get('config')->set('cin7.rate_limit.period', '15');
+        $this->app->get('config')->set('cin7.rate_limit.max', 30);
+        $this->app->get('config')->set('cin7.rate_limit.period', 15);
         $this->app->forgetInstance(Cin7Manager::class);
 
         $policies = $this->connector()->resolveRateLimitPolicies(
@@ -148,6 +153,15 @@ class ServiceProviderTest extends TestCase
             ->assertExitCode(1);
     }
 
+    public function testTheSyncCommandSaysItIsOffEvenWhenTheDefaultConnectionIsMissing(): void
+    {
+        $this->app->get('config')->set('cin7.default', 'missing');
+
+        $this->artisan('cin7:sync')
+            ->expectsOutputToContain('The Cin7 sync is off')
+            ->assertExitCode(1);
+    }
+
     public function testTheConnectorNamesItsAccount(): void
     {
         $this->assertSame('acct-test', $this->connector()->accountId());
@@ -172,6 +186,33 @@ class ServiceProviderTest extends TestCase
         $about = json_decode(Artisan::output(), true)['cin7'];
 
         $this->assertSame(['off', 'redis', 'off', '-', '-'], [$about['rate_limit'], $about['limiter_store'], $about['sync'], $about['sync_pull'], $about['sync_full_pull']]);
+    }
+
+    public function testAboutPrintsTheDefaultConnectionsOwnRateLimitAndStore(): void
+    {
+        $config = $this->app->get('config');
+        $config->set('cin7.connections.main', [
+            'account_id' => 'acct-main',
+            'application_key' => 'key-main',
+            'rate_limit' => ['max' => 10, 'period' => 5, 'store' => 'redis'],
+        ]);
+        $config->set('cin7.default', 'main');
+
+        Artisan::call('about', ['--json' => true]);
+        $about = json_decode(Artisan::output(), true)['cin7'];
+
+        $this->assertSame(['10 calls per 5s', 'redis'], [$about['rate_limit'], $about['limiter_store']]);
+        $this->assertSame('redis', $this->app->make(Cin7Manager::class)->connection()->rateLimitStore());
+    }
+
+    public function testAboutNamesTheLimiterDefaultForABlankSalloonStore(): void
+    {
+        $this->app->get('config')->set('saloon.rate_limiter.store', '');
+
+        Artisan::call('about', ['--json' => true]);
+        $about = json_decode(Artisan::output(), true)['cin7'];
+
+        $this->assertSame('worker-array', $about['limiter_store']);
     }
 
     public function testAboutNamesTheSaloonStoreForABlankLimiterStore(): void

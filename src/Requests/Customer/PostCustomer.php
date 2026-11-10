@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Customer;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -20,6 +19,10 @@ final class PostCustomer extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = CustomerData::class;
+
+    protected ?string $dtoPath = 'CustomerList.0';
+
     /**
      * @var list<string>
      */
@@ -28,13 +31,5 @@ final class PostCustomer extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'customer';
-    }
-
-    /**
-     * @param Response<CustomerData> $response
-     */
-    public function createDtoFromResponse(Response $response): CustomerData
-    {
-        return CustomerData::from($response->json('CustomerList.0'))->setResponse($response);
     }
 }

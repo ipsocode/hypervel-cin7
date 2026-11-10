@@ -21,7 +21,6 @@ final class DeleteShipZones extends Cin7Request
     public function __construct(
         protected readonly string $shipZoneId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

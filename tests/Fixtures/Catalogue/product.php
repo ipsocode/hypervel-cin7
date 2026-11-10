@@ -102,34 +102,18 @@ return [
         'product get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->get(),
             GetProduct::class,
-            Method::GET,
-            '/ExternalApi/v2/product',
-            ['page' => 1, 'limit' => 100],
-            null,
         ],
         'product paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->paginate()->current(),
             GetProduct::class,
-            Method::GET,
-            '/ExternalApi/v2/product',
-            ['page' => 1, 'limit' => 100],
-            null,
         ],
         'product post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->post(['Name' => 'Widget']),
             PostProduct::class,
-            Method::POST,
-            '/ExternalApi/v2/product',
-            [],
-            ['Name' => 'Widget'],
         ],
         'product put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->put(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'Widget']),
             PutProduct::class,
-            Method::PUT,
-            '/ExternalApi/v2/product',
-            [],
-            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'Widget'],
         ],
     ],
     'dtos' => [
@@ -138,8 +122,8 @@ return [
         PutProduct::class => [PutProduct::class, [['ID' => 'guid-1']], Cin7Payloads::productSaved(), ProductData::class, 'Products.0'],
     ],
     'bodies' => [
-        ProductPostData::class => [ProductPostData::class, Cin7Payloads::load('product', 'post.request')],
-        ProductPutData::class => [ProductPutData::class, Cin7Payloads::load('product', 'put.request')],
+        ProductPostData::class => [ProductPostData::class, PostProduct::class, Cin7Payloads::load('product', 'post.request')],
+        ProductPutData::class => [ProductPutData::class, PutProduct::class, Cin7Payloads::load('product', 'put.request')],
     ],
     'missing' => [
         'product POST without Type' => [ProductPostData::class, Arr::except(Cin7Payloads::load('product', 'post.request'), 'Type')],

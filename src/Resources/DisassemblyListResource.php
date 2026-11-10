@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Resources;
 
+use Hypervel\Saloon\Http\BaseResource;
 use Hypervel\Saloon\Http\Response;
+use Ipsocode\Cin7\Cin7Connector;
 use Ipsocode\Cin7\Data\DisassemblyList\DisassemblyListData;
 use Ipsocode\Cin7\Enums\DisassemblyStatus;
 use Ipsocode\Cin7\Pagination\Cin7Paginator;
@@ -12,11 +14,13 @@ use Ipsocode\Cin7\Requests\DisassemblyList\GetDisassemblyList;
 
 /**
  * `disassemblyList`, the disassembly list.
+ *
+ * @extends BaseResource<Cin7Connector>
  */
-final class DisassemblyListResource extends ListResource
+final class DisassemblyListResource extends BaseResource
 {
     /**
-     * One page of disassemblies; without a page or limit, page 1 of 100.
+     * Fetch one page of disassemblies; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -30,7 +34,7 @@ final class DisassemblyListResource extends ListResource
         ?DisassemblyStatus $status = null,
         ?string $search = null,
     ): Response {
-        return $this->sendList(new GetDisassemblyList(
+        return $this->connector->send(new GetDisassemblyList(
             $page,
             $limit,
             $status,
@@ -39,7 +43,7 @@ final class DisassemblyListResource extends ListResource
     }
 
     /**
-     * Every page of disassemblies, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of disassemblies, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000
@@ -51,7 +55,7 @@ final class DisassemblyListResource extends ListResource
         ?DisassemblyStatus $status = null,
         ?string $search = null,
     ): Cin7Paginator {
-        return $this->paginateList(new GetDisassemblyList(
+        return $this->connector->paginate(new GetDisassemblyList(
             null,
             $limit,
             $status,

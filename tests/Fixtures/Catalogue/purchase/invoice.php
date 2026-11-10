@@ -70,10 +70,6 @@ return [
         'purchase invoice get with combined charges' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->invoice()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136', combineAdditionalCharges: true),
             GetPurchaseInvoice::class,
-            Method::GET,
-            '/ExternalApi/v2/purchase/invoice',
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'CombineAdditionalCharges' => 'true'],
-            null,
         ],
         'purchase invoice post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->invoice()->post(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136']),
@@ -97,7 +93,7 @@ return [
         PostPurchaseInvoice::class => [PostPurchaseInvoice::class, [[]], Cin7Payloads::load('purchase/invoice', 'post.response'), PurchaseInvoiceData::class, ''],
     ],
     'bodies' => [
-        PurchaseInvoicePostData::class => [PurchaseInvoicePostData::class, Cin7Payloads::load('purchase/invoice', 'post.request')],
+        PurchaseInvoicePostData::class => [PurchaseInvoicePostData::class, PostPurchaseInvoice::class, Cin7Payloads::load('purchase/invoice', 'post.request')],
     ],
     'missing' => [
         'purchase invoice POST without TaskID' => [PurchaseInvoicePostData::class, Arr::except(Cin7Payloads::load('purchase/invoice', 'post.request'), 'TaskID')],

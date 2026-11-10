@@ -22,21 +22,29 @@ return [
             [],
             ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'ApplyToRelatedTasks' => true],
         ],
+        PutProductionOrderRunVoid::class . ' with data' => [
+            PutProductionOrderRunVoid::class,
+            [fn (): ProductionRunUndoData => ProductionRunUndoData::from(Cin7Payloads::load('production/order/run/void', 'put.request'))],
+            Method::PUT,
+            '/ExternalApi/v2/production/order/run/void',
+            [],
+            [
+                'ProductionOrderID' => '1c634596-eb51-4ff1-828b-ee1b42a9a5f1',
+                'ProductionRunID' => '1c634596-eb51-4ff1-828b-ee1b42a9a5f1',
+                'ApplyToRelatedTasks' => true,
+            ],
+        ],
     ],
     'resources' => [
         'production order run void' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->order()->run()->void(['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'ApplyToRelatedTasks' => true]),
             PutProductionOrderRunVoid::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/order/run/void',
-            [],
-            ['ProductionOrderID' => $id, 'ProductionRunID' => $id, 'ApplyToRelatedTasks' => true],
         ],
     ],
     'dtos' => [
         PutProductionOrderRunVoid::class => [PutProductionOrderRunVoid::class, [[]], Cin7Payloads::load('production/order/run/void', 'put.response'), ProductionRunUndoData::class, ''],
     ],
     'bodies' => [
-        'ProductionRunUndoData production/order/run/void' => [ProductionRunUndoData::class, Cin7Payloads::load('production/order/run/void', 'put.request')],
+        'ProductionRunUndoData production/order/run/void' => [ProductionRunUndoData::class, PutProductionOrderRunVoid::class, Cin7Payloads::load('production/order/run/void', 'put.request')],
     ],
 ];

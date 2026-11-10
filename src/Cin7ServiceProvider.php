@@ -6,6 +6,7 @@ namespace Ipsocode\Cin7;
 
 use Composer\InstalledVersions;
 use Hypervel\Console\Scheduling\Schedule;
+use Hypervel\Contracts\Foundation\Application;
 use Hypervel\Foundation\Console\AboutCommand;
 use Hypervel\Support\ServiceProvider;
 use Ipsocode\Cin7\Console\CheckCommand;
@@ -25,13 +26,10 @@ class Cin7ServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/cin7.php', 'cin7');
 
-        // One connector per connection per worker, shared across coroutines: each holds only
-        // readonly scalars, and the manager keeps them in a map.
-        $this->app->singleton(Cin7Manager::class);
-
         // Injecting the connector by type resolves the default connection. Not a singleton of
-        // its own, so the manager's map is the one place an instance lives.
-        $this->app->bind(Cin7Connector::class, fn ($app) => $app->make(Cin7Manager::class)->connection());
+        // its own: Cin7Manager is auto-singletoned, holds one readonly connector per connection
+        // and shares it across coroutines, so its map is the one place an instance lives.
+        $this->app->bind(Cin7Connector::class, fn (Application $app) => $app->make(Cin7Manager::class)->connection());
     }
 
     public function boot(): void
@@ -64,7 +62,7 @@ class Cin7ServiceProvider extends ServiceProvider
     }
 
     /**
-     * The modules that read only what changed at `sync.cron`, each exception at its own time as
+     * Schedule the modules that read only what changed at `sync.cron`, each exception at its own time as
      * well, and every module, the reference books included, in the full pull at `sync.full`; a
      * null time schedules nothing. Each runs on one server.
      */
@@ -92,20 +90,20 @@ class Cin7ServiceProvider extends ServiceProvider
     }
 
     /**
-     * The package's section of `php artisan about`, read when the command runs. It names
+     * Add the package's section of `php artisan about`, read when the command runs. It names
      * neither credential.
      */
     protected function registerAbout(): void
     {
-        AboutCommand::add('Cin7', static function (): array {
-            $max = (int) config('cin7.rate_limit.max', 60);
-            $period = (int) config('cin7.rate_limit.period', 60);
+        AboutCommand::add('Cin7', function (): array {
+            $cin7 = $this->app->make(Cin7Manager::class)->connection();
+            $window = $cin7->rateLimitWindow();
             $sync = SyncConfig::enabled();
 
             return [
                 'Version' => InstalledVersions::getPrettyVersion('ipsocode/hypervel-cin7'),
-                'Rate limit' => $max > 0 && $period > 0 ? "{$max} calls per {$period}s" : 'off',
-                'Limiter store' => (string) (config('cin7.rate_limit.store') ?: config('saloon.rate_limiter.store') ?: 'default'),
+                'Rate limit' => $window === null ? 'off' : "{$window[0]} calls per {$window[1]}s",
+                'Limiter store' => $cin7->limiterStore(),
                 'Sync' => $sync ? 'on' : 'off',
                 'Sync pull' => $sync ? (SyncConfig::cron() ?? 'not scheduled') : '-',
                 'Sync full pull' => $sync ? (SyncConfig::full() ?? 'not scheduled') : '-',
@@ -114,15 +112,15 @@ class Cin7ServiceProvider extends ServiceProvider
     }
 
     /**
-     * `sync` is merged one level deep, so a published file that sets one of its keys keeps the
-     * package's others.
+     * `rate_limit`, `retry` and `sync` are merged one level deep, so a published file that sets
+     * one of their keys keeps the package's others.
      *
      * @return array<int, string>
      */
     protected function mergeableOptions(string $name): array
     {
         return match ($name) {
-            'cin7' => ['sync'],
+            'cin7' => ['rate_limit', 'retry', 'sync'],
             default => [],
         };
     }

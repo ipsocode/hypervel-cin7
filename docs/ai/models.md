@@ -11,12 +11,12 @@ All 102 resources are built. `feature/saloon` modeled them and merged into `main
 `names.py list` marks every one done against the blueprint with sha256 `0f497ee8c694`. The work now
 is a resource the reference changes or adds, or a fix to one already built.
 
-`scripts/todo.py` writes `TODO.md` at the root: every resource by its anchor, grouped by reference
-group and ranked High, Medium or Low (its `HIGH` and `LOW` lists, the rest Medium, a group with
-nothing left Done), with the models each resource documents, the class each becomes, and a tick
-where it exists, taken from the code. It is a working list, not part of the repository:
-`feature/saloon` carried one and deleted it before merging, and `main` has none. Leave it out of
-every commit.
+The scripts in `scripts/` are manual tools, with no tests, lint or CI of their own: nothing checks
+that `requests.py`'s templates still match the hand-edited classes, so compare a generated class
+with a neighbor before relying on it. `required.py` (section 5, step 3) needs the blueprint
+downloaded, which `blueprint.py` says how to get, so it runs only where that was done. There was a
+`todo.py` that wrote a `TODO.md` of what was left; it went when every resource was built, and
+`names.py list` shows what exists.
 
 ## 1. What to build
 
@@ -83,7 +83,7 @@ Classes stay open by default, with `final` only where it protects a real invaria
 leaves are the exception: every request, resource and data class written from the reference is
 `final`, and a new one is too. Each is the reference's shape for one path and verb, so a change goes
 into the leaf itself. The abstract parents are the extension points: `Cin7Request`, `ListRequest`,
-`WriteRequest`, `ListResource` and the `Abstract*Data` classes under `src/Data/`.
+`WriteRequest` and the `Abstract*Data` classes under `src/Data/`.
 
 ### Names and folders
 
@@ -101,7 +101,7 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
   unanchored table takes its heading (`Available Fields for Purchase Order` is `PurchaseOrderData`),
   singular for one record (`SupplierDepositData`). A keyed envelope such as `{PurchaseID, Invoices}`
   is plural (`AdvancedPurchaseInvoicesData`). A list's row is named after the list
-  (`PurchaseListData`). `TABLES` in `names.py` holds the exceptions, and `TODO.md` prints every
+  (`PurchaseListData`). `TABLES` in `names.py` holds the exceptions, and `names.py show` prints every
   class.
 - A model lives in the folder of the path whose name it carries (`PurchaseOrderLineData` in
   `Purchase/Order/`), else in the deepest folder common to the paths that use it. Once two families
@@ -151,8 +151,15 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
   - `ListRequest(?int $page, ?int $limit)`, with `$listKey` and `filters()`, for a paged list. The
     list key comes from the example, which can differ from the path (see `NOTES`).
   - `Cin7Request`, with typed constructor arguments and `defaultQuery()` through `queryValues()`,
-    for a keyed GET or DELETE.
+    for a keyed GET or DELETE. Keyed requests have no base of their own: what they repeat is the
+    constructor and `defaultQuery()`, which is where each query parameter gets its name and type.
+    An argument is its wire key in camelCase (`$id`, `$taskId`, `$saleId`), as the resource method
+    that sends the request names it too, so no shared constructor fits them, and a base holding
+    only `defaultQuery()` would save a few lines a class for a mapping PHPStan cannot check.
   - `WriteRequest(array|Data $body)`, with `$omit`, for POST and PUT.
+  - Both name the record the response holds in `$dto`, and its place in the response in `$dtoPath`;
+    `Cin7Request::createDtoFromResponse()` builds `dto()` from them. A `{Success}` or `{Errors}`
+    response leaves `$dto` null, and a list response overrides `createDtoFromResponse()`.
 - Query parameters are typed named arguments, required ones first:
   - a GUID or string is `string`;
   - a flag is `bool`;
@@ -161,8 +168,7 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
 - `python3 $S/requests.py spec.json` writes request classes in these shapes from a JSON list. Copy
   the closest existing class for anything else.
 - A resource per path: its methods are the operations (`get`, `post`, `put`, `delete`, and
-  `paginate` for a list; a `*List` path's resource extends `ListResource` and sends through its
-  `sendList()` and `paginateList()`), and its parent's accessor is the last segment in camelCase
+  `paginate` for a list), and its parent's accessor is the last segment in camelCase
   (`$cin7->purchase()->order()`). A top-level accessor is on `Cin7Connector`. A grouping segment such
   as `ref`, `reference` or `crm` works like `RefResource`. A single-operation action sub-path
   (`production/order/release`) is a method on its parent's resource.
@@ -175,10 +181,10 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
 - **Catalog rows:** `tests/Fixtures/Catalogue/<path>.php` returns rows by kind. A key two files
   share throws. The kinds are:
   - `requests`: class, arguments, method, path, query and body; for a data-object body, add a
-    `with data` row;
+    `with data` row (every write request needs one);
   - `resources`: every public resource method;
   - `dtos`: a fixture round-trips through `createDtoFromResponse`;
-  - `bodies`: a write fixture round-trips through its body class;
+  - `bodies`: a write fixture round-trips through its body class, and its write request validates it;
   - `missing`: each required field, left out, fails;
   - `required`: a class's required fields, in its constructor's order, the parent's forwarded ones
     first;
@@ -186,13 +192,12 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
 - **Body key order:** an expected body follows `toArray()`. That is the child's own promoted
   properties, then the parent's declared properties, then the parent's promoted constructor
   properties, then trait properties.
-- **Hard-coded lists to extend:**
-  - in `DataCatalogueTest`, the abstract parents (in the asserted order) and the `WithResponse`
-    classes;
-  - the accessors in `ConnectorResourcesTest`;
-  - in `BodyValidationTest`, a case for every new `#[In]` (`postOnlyStatusProvider`),
-    `#[RequiredWithout]` (`eitherFieldProvider`), `#[RequiredIf]` and `#[Required]`
-    (`productionRequiredFieldProvider`) rule.
+- **Checks derived from the catalogue:** `DataCatalogueTest` needs no edit for a new abstract
+  parent (it only has to be extended) or a new response class (a `dtos` row's data class has to
+  keep its response), and `ConnectorResourcesTest` walks the accessors by reflection.
+- **Hard-coded lists to extend:** in `BodyValidationTest`, a case for every new `#[In]`
+  (`postOnlyStatusProvider`), `#[RequiredWithout]` (`eitherFieldProvider`), `#[RequiredIf]` and
+  `#[Required]` (`productionRequiredFieldProvider`) rule.
 
 ### Docs
 
@@ -213,8 +218,7 @@ into the leaf itself. The abstract parents are the extension points: `Cin7Reques
    One may stay on that list only as a verb's own body class whose example leaves it out, a value
    Cin7 computes, or the ID of a nested item being added, with the class's docblock and
    `src/docs/data.md` saying so; the script exits 1 for any other.
-4. To see what is left, run `python3 $S/todo.py`: it writes `TODO.md`, ticked from the code. Leave
-   it out of the commit.
+4. To see what exists against the blueprint, run `python3 $S/names.py list`.
 5. Commit one resource, or one small group, per commit. The message says what it adds, and names the
    issue as `#<n>` when there is one.
 6. Push your branch only after the checks pass.

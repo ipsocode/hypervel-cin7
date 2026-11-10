@@ -19,7 +19,7 @@ use Ipsocode\Cin7\PageDefaults;
  *
  * @template TItem of Data&WithResponse
  * @extends Cin7Request<list<TItem>>
- * @implements MapPaginatedResponseItems<TItem>
+ * @implements MapPaginatedResponseItems<mixed>
  */
 abstract class ListRequest extends Cin7Request implements MapPaginatedResponseItems, Paginatable
 {
@@ -45,7 +45,6 @@ abstract class ListRequest extends Cin7Request implements MapPaginatedResponseIt
         protected readonly ?int $page = null,
         protected readonly ?int $limit = null,
     ) {
-        parent::__construct();
     }
 
     /**

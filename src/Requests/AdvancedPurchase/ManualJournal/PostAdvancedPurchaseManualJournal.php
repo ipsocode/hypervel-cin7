@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\AdvancedPurchase\ManualJournal;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\AdvancedPurchase\ManualJournal\AdvancedPurchaseManualJournalsData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -20,6 +19,8 @@ final class PostAdvancedPurchaseManualJournal extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = AdvancedPurchaseManualJournalsData::class;
+
     /**
      * @var list<string>
      */
@@ -28,13 +29,5 @@ final class PostAdvancedPurchaseManualJournal extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'advanced-purchase/manualJournal';
-    }
-
-    /**
-     * @param Response<AdvancedPurchaseManualJournalsData> $response
-     */
-    public function createDtoFromResponse(Response $response): AdvancedPurchaseManualJournalsData
-    {
-        return AdvancedPurchaseManualJournalsData::from($response->json())->setResponse($response);
     }
 }

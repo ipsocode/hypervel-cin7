@@ -58,18 +58,10 @@ return [
         'advancedPurchase putAway get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->putAway()->get('5a7fb526-527a-4229-b331-90b6f5535aab'),
             GetAdvancedPurchasePutAway::class,
-            Method::GET,
-            '/ExternalApi/v2/advanced-purchase/put-away',
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab'],
-            null,
         ],
         'advancedPurchase putAway post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->putAway()->post(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Status' => 'AUTHORISED', 'Lines' => []]),
             PostAdvancedPurchasePutAway::class,
-            Method::POST,
-            '/ExternalApi/v2/advanced-purchase/put-away',
-            [],
-            ['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'Status' => 'AUTHORISED', 'Lines' => []],
         ],
         'advancedPurchase putAway post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->advancedPurchase()->putAway()->post(AdvancedPurchasePutAwayPostData::from(['PurchaseID' => '5a7fb526-527a-4229-b331-90b6f5535aab', 'TaskID' => '807c3266-157b-4c0d-8131-a3b8e06c0d97', 'Status' => 'AUTHORISED', 'Lines' => [$line]])),
@@ -85,7 +77,7 @@ return [
         PostAdvancedPurchasePutAway::class => [PostAdvancedPurchasePutAway::class, [[]], Cin7Payloads::load('advanced-purchase/put-away', 'post.response'), AdvancedPurchasePutAwaysData::class, ''],
     ],
     'bodies' => [
-        AdvancedPurchasePutAwayPostData::class => [AdvancedPurchasePutAwayPostData::class, Cin7Payloads::load('advanced-purchase/put-away', 'post.request')],
+        AdvancedPurchasePutAwayPostData::class => [AdvancedPurchasePutAwayPostData::class, PostAdvancedPurchasePutAway::class, Cin7Payloads::load('advanced-purchase/put-away', 'post.request')],
     ],
     'missing' => [
         'advanced purchase put away envelope without PurchaseID' => [AdvancedPurchasePutAwaysData::class, Arr::except(Cin7Payloads::load('advanced-purchase/put-away', 'get.response'), 'PurchaseID')],

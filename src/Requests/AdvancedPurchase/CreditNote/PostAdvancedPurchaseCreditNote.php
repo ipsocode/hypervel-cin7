@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\AdvancedPurchase\CreditNote;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\AdvancedPurchase\CreditNote\AdvancedPurchaseCreditNotesData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -22,6 +21,8 @@ final class PostAdvancedPurchaseCreditNote extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = AdvancedPurchaseCreditNotesData::class;
+
     /**
      * @var list<string>
      */
@@ -37,13 +38,5 @@ final class PostAdvancedPurchaseCreditNote extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'advanced-purchase/creditnote';
-    }
-
-    /**
-     * @param Response<AdvancedPurchaseCreditNotesData> $response
-     */
-    public function createDtoFromResponse(Response $response): AdvancedPurchaseCreditNotesData
-    {
-        return AdvancedPurchaseCreditNotesData::from($response->json())->setResponse($response);
     }
 }

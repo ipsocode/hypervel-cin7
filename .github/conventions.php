@@ -30,5 +30,9 @@ return [
     'coverage_excludes' => [],
 
     // Per-rule exceptions, '<path>' => [<exact hit count>, '<why>']; any count mismatch fails.
-    'allowed' => [],
+    'allowed' => [
+        'raw-sql' => [
+            'src/Console/SyncCommand.php' => [2, 'cin7:sync --status selects count() and max() per module beside groupBy(), which the query builder has no method for; neither select holds a value'],
+        ],
+    ],
 ];

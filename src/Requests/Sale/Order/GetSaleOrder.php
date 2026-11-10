@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Order;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,12 +17,13 @@ final class GetSaleOrder extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = SaleOrderData::class;
+
     public function __construct(
         protected readonly string $saleId,
         protected readonly ?bool $combineAdditionalCharges = null,
         protected readonly ?bool $includeProductInfo = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -41,13 +41,5 @@ final class GetSaleOrder extends Cin7Request
             'CombineAdditionalCharges' => $this->combineAdditionalCharges,
             'IncludeProductInfo' => $this->includeProductInfo,
         ]);
-    }
-
-    /**
-     * @param Response<SaleOrderData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleOrderData
-    {
-        return SaleOrderData::from($response->json())->setResponse($response);
     }
 }

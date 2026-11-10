@@ -22,7 +22,7 @@ use Ipsocode\Cin7\Requests\ProductSuppliers\PutProductSuppliers;
 final class ProductSuppliersResource extends BaseResource
 {
     /**
-     * A product's suppliers.
+     * Fetch a product's suppliers.
      *
      * @return Response<ProductSuppliersData>
      */

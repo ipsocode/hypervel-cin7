@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Sync;
 
+use Hypervel\Cache\Contracts\Lock;
+use Hypervel\Contracts\Debug\ExceptionHandler;
 use Hypervel\Saloon\Facades\Saloon;
 use Hypervel\Support\Facades\Cache;
+use Hypervel\Support\Facades\DB;
+use Hypervel\Support\Facades\Log;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Sync\Module;
 use Ipsocode\Cin7\Sync\Payload;
 use Ipsocode\Cin7\Testing\Cin7Fake;
+use Mockery as m;
 use PHPUnit\Framework\Attributes\DataProvider;
+use RuntimeException;
+use Throwable;
+use UnexpectedValueException;
 
 /**
  * A list module's pull: the window it asks for, what it writes, and what a failure leaves.
@@ -326,19 +334,44 @@ class ListPullTest extends SyncTestCase
         $this->assertCount(0, $this->stored(Module::Customer));
     }
 
-    public function testRecordsWithoutAnIdentifierAreSkipped(): void
+    #[DataProvider('unusableItems')]
+    public function testAnItemWithoutAUsableIdFailsTheModuleAndDeletesNothing(mixed $item, string $position): void
     {
-        Saloon::fake([Cin7Fake::list('CustomerList', [
-            $this->customer('c-1'),
-            ['Name' => 'No identifier'],
-            ['ID' => '', 'Name' => 'Empty identifier'],
-            'not a record',
-        ])]);
+        Saloon::fake([
+            Cin7Fake::list('CustomerList', [$this->customer('c-1'), $this->customer('c-2')]),
+            Cin7Fake::list('CustomerList', [$this->customer('c-1'), $item]),
+        ]);
+
+        $this->synchroniser()->pull(Module::Customer);
+        $result = $this->synchroniser()->pull(Module::Customer, full: true);
+
+        $this->assertInstanceOf(UnexpectedValueException::class, $result->error);
+        $this->assertStringContainsString("[customer] {$position} without a usable string [ID]", $result->error->getMessage());
+        $this->assertSame(0, $result->deleted);
+        $this->assertSame(['c-1', 'c-2'], $this->stored(Module::Customer)->keys()->all());
+    }
+
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function unusableItems(): array
+    {
+        return [
+            'a missing id' => [['Name' => 'No identifier'], 'item 1'],
+            'an empty id' => [['ID' => '', 'Name' => 'Empty identifier'], 'item 1'],
+            'a non-string id' => [['ID' => 42, 'Name' => 'Numeric identifier'], 'item 1'],
+            'an item that is no record' => ['not a record', 'item 1'],
+        ];
+    }
+
+    public function testAFirstFillWithAnItemWithoutAnIdStoresNothing(): void
+    {
+        Saloon::fake([Cin7Fake::list('CustomerList', [$this->customer('c-1'), ['Name' => 'No identifier']])]);
 
         $result = $this->synchroniser()->pull(Module::Customer);
 
-        $this->assertSame([4, 1], [$result->read, $result->written]);
-        $this->assertSame(['c-1'], $this->stored(Module::Customer)->keys()->all());
+        $this->assertInstanceOf(UnexpectedValueException::class, $result->error);
+        $this->assertCount(0, $this->stored(Module::Customer));
     }
 
     public function testARecordWithoutAReadableModifiedTimeIsWrittenEveryTime(): void
@@ -348,11 +381,16 @@ class ListPullTest extends SyncTestCase
             Cin7Fake::list('CustomerList', [$this->customer('c-1', null), $this->customer('c-2', 'not a date')]),
         ]);
 
+        Log::spy();
+
         $this->synchroniser()->pull(Module::Customer);
         $result = $this->synchroniser()->pull(Module::Customer);
 
         $this->assertSame([2, 0], [$result->written, $result->unchanged]);
         $this->assertNull($this->stored(Module::Customer)['c-2']->cin7_modified_at);
+        Log::shouldHaveReceived('warning')
+            ->with('Cin7 sync: [customer] record [c-2] has the unreadable modified time [not a date]; it is treated as changed.')
+            ->twice();
     }
 
     public function testItPausesBetweenItsCallsOnly(): void
@@ -405,6 +443,72 @@ class ListPullTest extends SyncTestCase
         $this->synchroniser()->pull(Module::Customer);
 
         $this->assertTrue(Cache::lock('cin7:sync:acct-test:customer', 60)->get());
+    }
+
+    public function testALockThatThrowsFailsOnlyItsModule(): void
+    {
+        $lockError = new RuntimeException('cache down');
+        $other = m::mock(Lock::class);
+        $other->shouldReceive('get')->once()->andReturnTrue();
+        $other->shouldReceive('release')->once();
+        Cache::shouldReceive('lock')->twice()->andReturnUsing(
+            fn (string $key) => str_ends_with($key, 'customer') ? throw $lockError : $other,
+        );
+        Saloon::fake([Cin7Fake::list('SupplierList', [['ID' => 's-1', 'LastModifiedOn' => '2026-10-01T10:00:00Z']])]);
+
+        $results = $this->synchroniser()->pullMany([Module::Customer, Module::Supplier]);
+
+        $this->assertSame($lockError, $results[0]->error);
+        $this->assertFalse($results[1]->failed());
+        $this->assertSame(['s-1'], $this->stored(Module::Supplier)->keys()->all());
+    }
+
+    public function testAFailingLastSyncQueryFailsOnlyItsModuleAndReleasesTheLock(): void
+    {
+        $queryError = new RuntimeException('query failed');
+        DB::listen(function ($query) use ($queryError): void {
+            if (str_contains($query->sql, 'max(') && in_array('customer', $query->bindings, true)) {
+                throw $queryError;
+            }
+        });
+        Saloon::fake([Cin7Fake::list('SupplierList', [['ID' => 's-1', 'LastModifiedOn' => '2026-10-01T10:00:00Z']])]);
+
+        $results = $this->synchroniser()->pullMany([Module::Customer, Module::Supplier]);
+
+        $this->assertSame($queryError, $results[0]->error);
+        $this->assertFalse($results[1]->failed());
+        $this->assertTrue(Cache::lock('cin7:sync:acct-test:customer', 60)->get());
+    }
+
+    public function testAFailingRollbackKeepsThePullsOwnError(): void
+    {
+        $rollbackError = new RuntimeException('delete failed');
+        DB::listen(function ($query) use ($rollbackError): void {
+            if (str_starts_with($query->sql, 'delete')) {
+                throw $rollbackError;
+            }
+        });
+        Saloon::fake([Cin7Fake::error('Something went wrong')]);
+
+        $result = $this->synchroniser()->pull(Module::Customer);
+
+        $this->assertTrue($result->failed());
+        $this->assertNotSame($rollbackError, $result->error);
+    }
+
+    public function testEveryFailedModulesExceptionIsReported(): void
+    {
+        $handler = m::mock(ExceptionHandler::class);
+        $reported = [];
+        $handler->shouldReceive('report')->twice()->andReturnUsing(function (Throwable $exception) use (&$reported): void {
+            $reported[] = $exception;
+        });
+        $this->app->instance(ExceptionHandler::class, $handler);
+        Saloon::fake([Cin7Fake::error('First'), Cin7Fake::error('Second')]);
+
+        $results = $this->synchroniser()->pullMany([Module::Customer, Module::Supplier]);
+
+        $this->assertSame([$results[0]->error, $results[1]->error], $reported);
     }
 
     public function testEachModuleIsPulledInOrderAndAFailureDoesNotStopTheNext(): void

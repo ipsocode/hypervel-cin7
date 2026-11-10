@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,6 +18,8 @@ final class PutSaleFulfilmentShip extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = SaleFulfilmentShipData::class;
+
     /**
      * @var list<string>
      */
@@ -27,13 +28,5 @@ final class PutSaleFulfilmentShip extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'sale/fulfilment/ship';
-    }
-
-    /**
-     * @param Response<SaleFulfilmentShipData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleFulfilmentShipData
-    {
-        return SaleFulfilmentShipData::from($response->json())->setResponse($response);
     }
 }

@@ -50,26 +50,14 @@ return [
         'product markupPrices get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->markupPrices()->get($productId),
             GetProductMarkupPrices::class,
-            Method::GET,
-            '/ExternalApi/v2/product/markupprices',
-            ['ProductID' => $productId],
-            null,
         ],
         'product markupPrices put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->markupPrices()->put(['ProductID' => $productId]),
             PutProductMarkupPrices::class,
-            Method::PUT,
-            '/ExternalApi/v2/product/markupprices',
-            [],
-            ['ProductID' => $productId],
         ],
         'product markupPrices put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->product()->markupPrices()->put(MarkupPricesData::from($body)),
-            PutProductMarkupPrices::class,
-            Method::PUT,
-            '/ExternalApi/v2/product/markupprices',
-            [],
-            $body,
+            PutProductMarkupPrices::class . ' with data',
         ],
     ],
     'dtos' => [
@@ -77,7 +65,7 @@ return [
         PutProductMarkupPrices::class => [PutProductMarkupPrices::class, [[]], Cin7Payloads::load('product/markupprices', 'put.response'), MarkupPricesData::class, ''],
     ],
     'bodies' => [
-        MarkupPricesData::class => [MarkupPricesData::class, Cin7Payloads::load('product/markupprices', 'put.request')],
+        MarkupPricesData::class => [MarkupPricesData::class, PutProductMarkupPrices::class, Cin7Payloads::load('product/markupprices', 'put.request')],
     ],
     'missing' => [
         'markup prices without ProductID' => [MarkupPricesData::class, Arr::except(Cin7Payloads::load('product/markupprices', 'put.request'), 'ProductID')],

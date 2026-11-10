@@ -20,8 +20,9 @@ A subclass declares its verb as a property default and its path through `resolve
 the data class of one item (`protected string $item`, which `ListRequest` builds `dto()` from) and
 returns its filters by wire key from `filters()`. A request that lists on a verb or a path that is
 not a `ListRequest` builds its `list<X>` with `Cin7Request::listOf()`. A read or delete of one record returns its
-parameters by wire key from `defaultQuery()`, through `queryValues()`. Only `ListRequest`
-implements `Paginatable`.
+parameters by wire key from `defaultQuery()`, through `queryValues()`. A `Cin7Request` or `WriteRequest` names the data
+class of the record the response holds (`protected ?string $dto`, and `$dtoPath` for where it sits in the
+response), which `Cin7Request` builds `dto()` from. Only `ListRequest` implements `Paginatable`.
 
 ```php
 use Ipsocode\Cin7\Cin7Connector;
@@ -696,24 +697,31 @@ calls a minute, or a 503. Those are the only responses retried:
   together, which would otherwise all retry at the same moment. It comes from
   `Ipsocode\Cin7\Support\Jitter`, resolved from the container, so a test binds
   a pinned one. The cooldown below is a separate floor under the wait.
-- **Clamped.** `times` is raised to at least `1` and `delay_ms` to at least `0`.
-  `backoff` is raised to at least `1`, and `max_delay_ms` and `jitter_ms` to at
-  least `0`.
-  Saloon's `RetryPolicy` throws an `InvalidArgumentException` for zero attempts
-  or a negative delay, so without the clamp a bad environment value would fail
-  every request at construction. At `0` ms the attempts run back to back.
-- **Fallbacks.** A `null` or absent `retry.times` or `retry.delay_ms` falls back
-  to `4` or `5000`, not to `0`; `retry.backoff`, `retry.max_delay_ms` and
-  `retry.jitter_ms` fall back to `1`, `0` and `0`.
-- **Read at construction.** `Cin7Request`'s constructor reads the config and
-  sets the policy on the request, because Saloon's `PendingRequest` copies the
-  request's retry policy when it is built, before any boot hook runs. A config
-  change therefore applies to requests constructed after it:
+- **Ranges.** `times` must be at least `1`, `backoff` at least `1`, and
+  `delay_ms`, `max_delay_ms` and `jitter_ms` at least `0`. A value outside its
+  range throws an `InvalidArgumentException` naming the key, the value and the
+  range when the request is constructed, so a bad environment value fails
+  loudly instead of running with settings nobody chose. At `0` ms the attempts
+  run back to back.
+- **Defaults.** Every `retry.*` default lives in the packaged config, and a
+  published `retry` array that sets only some keys keeps the packaged values of
+  the rest. A `null` value, or one of the wrong type, throws an
+  `InvalidArgumentException` naming the key. `backoff` is a float, so write
+  `2.0`, not `2`.
+- **Read when the connection is built.** `Cin7Manager` reads `cin7.retry.*` once
+  for each connector, into an immutable
+  [`RetrySettings`](../Support/RetrySettings.php), and the connector's
+  `defaultRetryPolicy()` builds the policy every request sent through it uses.
+  A request carries no retry settings of its own. The retry settings belong in
+  the published `config/cin7.php` or the `CIN7_RETRY_*` environment variables,
+  which are read at boot. Changing them with `config([...])` after a connector
+  is resolved does not affect it, so a test sets them before it resolves the
+  connector:
 
   ```php
-  config(['cin7.retry.times' => 2, 'cin7.retry.delay_ms' => 250]);
+  $this->app->get('config')->set('cin7.retry.times', 2);
 
-  $request = new Ipsocode\Cin7\Requests\Customer\GetCustomer(); // reads the values above
+  $connector = app(Ipsocode\Cin7\Cin7Connector::class); // 2 attempts
   ```
 
 The wait goes through `Hypervel\Support\Sleep`, which suspends only the
@@ -724,15 +732,24 @@ attempt waits it out; see [connector](connector.md#the-throttling-cooldown).
 ## Writing a request class
 
 A new request extends the base matching its shape, declares its verb as a
-property default, and implements `resolveEndpoint()`:
+property default, and implements `resolveEndpoint()`. It also names the data class of the record
+the response holds in `$dto`, and where the record sits in the response in `$dtoPath` (omit it
+when the whole body is the record); `Cin7Request::createDtoFromResponse()` builds `dto()` from
+them. Leave `$dto` out when the response is only `{Success}` or `{Errors}`, which `json()` reads,
+and override `createDtoFromResponse()` when it is a list:
 
 ```php
 use Hypervel\Saloon\Enums\Method;
+use Ipsocode\Cin7\Data\Product\ProductData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
 final class PutProduct extends WriteRequest
 {
     protected Method $method = Method::PUT;
+
+    protected ?string $dto = ProductData::class;
+
+    protected ?string $dtoPath = 'Products.0';
 
     public function resolveEndpoint(): string
     {
@@ -747,18 +764,20 @@ by wire key through `queryValues()`:
 
 ```php
 use Hypervel\Saloon\Enums\Method;
+use Ipsocode\Cin7\Data\Sale\Order\SaleOrderData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
 final class GetSaleOrder extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = SaleOrderData::class;
+
     public function __construct(
         protected readonly string $saleId,
         protected readonly ?bool $combineAdditionalCharges = null,
         protected readonly ?bool $includeProductInfo = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -792,13 +811,16 @@ final class GetStockTakeList extends ListRequest
 }
 ```
 
+Any request names the data class of the record its response holds in `$dto`, and where the record
+sits in `$dtoPath` when it is not the whole body; `Cin7Request::createDtoFromResponse()` builds
+`dto()` from them, and a request that sets neither has no `dto()`.
+
 A request that returns a list from a keyed read or a write (`GetWebhooks`, `PostCarrier`) extends
 `Cin7Request` or `WriteRequest` and calls
 `$this->listOf(WebhookData::class, $response, $response->json('Webhooks'))` from its own
 `createDtoFromResponse()`.
 
-`Cin7Request`'s constructor reads `cin7.retry.*`, so a subclass that adds
-constructor parameters must call `parent::__construct()`. PHP initializes
+A subclass that adds constructor parameters needs no `parent::__construct()` call. PHP initializes
 property defaults before any constructor body runs, so `$this->method()`
 is always the declared verb; a subclass must never assign `$this->method` in
 its own constructor.

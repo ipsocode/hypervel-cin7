@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\ProductionBom;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\ProductionBom\ProductFamilyProductionBomsData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,11 +17,12 @@ final class GetProductFamilyProductionBom extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = ProductFamilyProductionBomsData::class;
+
     public function __construct(
         protected readonly string $productFamilyId,
         protected readonly ?bool $returnAttachmentsContent = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -39,13 +39,5 @@ final class GetProductFamilyProductionBom extends Cin7Request
             'ProductFamilyID' => $this->productFamilyId,
             'ReturnAttachmentsContent' => $this->returnAttachmentsContent,
         ]);
-    }
-
-    /**
-     * @param Response<ProductFamilyProductionBomsData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductFamilyProductionBomsData
-    {
-        return ProductFamilyProductionBomsData::from($response->json())->setResponse($response);
     }
 }

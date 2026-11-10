@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Supplier;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Supplier\SupplierData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -20,6 +19,10 @@ final class PutSupplier extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = SupplierData::class;
+
+    protected ?string $dtoPath = 'SupplierList.0';
+
     /**
      * @var list<string>
      */
@@ -28,13 +31,5 @@ final class PutSupplier extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'supplier';
-    }
-
-    /**
-     * @param Response<SupplierData> $response
-     */
-    public function createDtoFromResponse(Response $response): SupplierData
-    {
-        return SupplierData::from($response->json('SupplierList.0'))->setResponse($response);
     }
 }

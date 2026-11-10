@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Payment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Payment\SalePaymentLinePartialData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,6 +18,8 @@ final class PostSalePayment extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = SalePaymentLinePartialData::class;
+
     /**
      * @var list<string>
      */
@@ -27,13 +28,5 @@ final class PostSalePayment extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'sale/payment';
-    }
-
-    /**
-     * @param Response<SalePaymentLinePartialData> $response
-     */
-    public function createDtoFromResponse(Response $response): SalePaymentLinePartialData
-    {
-        return SalePaymentLinePartialData::from($response->json())->setResponse($response);
     }
 }

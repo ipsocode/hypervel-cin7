@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Disassembly;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Disassembly\DisassemblyData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PostDisassembly extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = DisassemblyData::class;
+
     public function resolveEndpoint(): string
     {
         return 'disassembly';
-    }
-
-    /**
-     * @param Response<DisassemblyData> $response
-     */
-    public function createDtoFromResponse(Response $response): DisassemblyData
-    {
-        return DisassemblyData::from($response->json())->setResponse($response);
     }
 }

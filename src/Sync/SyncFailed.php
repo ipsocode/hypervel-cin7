@@ -11,7 +11,7 @@ use RuntimeException;
  *
  * @see src/docs/sync.md
  */
-final class SyncFailed extends RuntimeException
+class SyncFailed extends RuntimeException
 {
     /**
      * @param non-empty-list<PullResult> $failed

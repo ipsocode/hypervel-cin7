@@ -24,6 +24,8 @@ final class GetAccount extends ListRequest
         protected readonly ?string $code = null,
         protected readonly ?string $name = null,
         protected readonly ?string $type = null,
+        // A string: the reference describes the account status only as "Account status", with no
+        // list of values (see src/docs/data.md).
         protected readonly ?string $status = null,
     ) {
         parent::__construct($page, $limit);

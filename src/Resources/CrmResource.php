@@ -21,7 +21,7 @@ use Ipsocode\Cin7\Resources\Crm\WorkflowStartResource;
 final class CrmResource extends BaseResource
 {
     /**
-     * The `crm/lead` resource.
+     * Return the `crm/lead` resource.
      */
     public function lead(): LeadResource
     {
@@ -29,7 +29,7 @@ final class CrmResource extends BaseResource
     }
 
     /**
-     * The `crm/opportunity` resource.
+     * Return the `crm/opportunity` resource.
      */
     public function opportunity(): OpportunityResource
     {
@@ -37,7 +37,7 @@ final class CrmResource extends BaseResource
     }
 
     /**
-     * The `crm/task` resource.
+     * Return the `crm/task` resource.
      */
     public function task(): TaskResource
     {
@@ -45,7 +45,7 @@ final class CrmResource extends BaseResource
     }
 
     /**
-     * The `crm/taskcategory` resource.
+     * Return the `crm/taskcategory` resource.
      */
     public function taskCategory(): TaskCategoryResource
     {
@@ -53,7 +53,7 @@ final class CrmResource extends BaseResource
     }
 
     /**
-     * The `crm/workflow` resource.
+     * Return the `crm/workflow` resource.
      */
     public function workflow(): WorkflowResource
     {
@@ -61,7 +61,7 @@ final class CrmResource extends BaseResource
     }
 
     /**
-     * The `crm/workflowstart` resource.
+     * Return the `crm/workflowstart` resource.
      */
     public function workflowStart(): WorkflowStartResource
     {

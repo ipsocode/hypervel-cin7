@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Me\Contacts;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Me\Contacts\MeContactData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,12 @@ final class PutMeContacts extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = MeContactData::class;
+
+    protected ?string $dtoPath = 'MeContactsList.0';
+
     public function resolveEndpoint(): string
     {
         return 'me/contacts';
-    }
-
-    /**
-     * @param Response<MeContactData> $response
-     */
-    public function createDtoFromResponse(Response $response): MeContactData
-    {
-        return MeContactData::from($response->json('MeContactsList.0'))->setResponse($response);
     }
 }

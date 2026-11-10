@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Ref\FixedAssetType;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\FixedAssetType\FixedAssetTypeData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,12 @@ final class PutFixedAssetType extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = FixedAssetTypeData::class;
+
+    protected ?string $dtoPath = 'FixedAssetTypeList.0';
+
     public function resolveEndpoint(): string
     {
         return 'ref/fixedassettype';
-    }
-
-    /**
-     * @param Response<FixedAssetTypeData> $response
-     */
-    public function createDtoFromResponse(Response $response): FixedAssetTypeData
-    {
-        return FixedAssetTypeData::from($response->json('FixedAssetTypeList.0'))->setResponse($response);
     }
 }

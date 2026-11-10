@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Disassembly\Order;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Disassembly\Order\DisassemblyOrderData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PostDisassemblyOrder extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = DisassemblyOrderData::class;
+
     public function resolveEndpoint(): string
     {
         return 'disassembly/order';
-    }
-
-    /**
-     * @param Response<DisassemblyOrderData> $response
-     */
-    public function createDtoFromResponse(Response $response): DisassemblyOrderData
-    {
-        return DisassemblyOrderData::from($response->json())->setResponse($response);
     }
 }

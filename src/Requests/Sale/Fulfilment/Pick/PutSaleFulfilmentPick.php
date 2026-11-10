@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Fulfilment\Pick;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Pick\SaleFulfilmentPickData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PutSaleFulfilmentPick extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = SaleFulfilmentPickData::class;
+
     public function resolveEndpoint(): string
     {
         return 'sale/fulfilment/pick';
-    }
-
-    /**
-     * @param Response<SaleFulfilmentPickData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleFulfilmentPickData
-    {
-        return SaleFulfilmentPickData::from($response->json())->setResponse($response);
     }
 }

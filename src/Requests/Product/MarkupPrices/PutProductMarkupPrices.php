@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Product\MarkupPrices;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Product\MarkupPrices\MarkupPricesData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PutProductMarkupPrices extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = MarkupPricesData::class;
+
     public function resolveEndpoint(): string
     {
         return 'product/markupprices';
-    }
-
-    /**
-     * @param Response<MarkupPricesData> $response
-     */
-    public function createDtoFromResponse(Response $response): MarkupPricesData
-    {
-        return MarkupPricesData::from($response->json())->setResponse($response);
     }
 }

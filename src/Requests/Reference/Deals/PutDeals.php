@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Reference\Deals;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Reference\Deals\ProductDealData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,12 @@ final class PutDeals extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = ProductDealData::class;
+
+    protected ?string $dtoPath = 'Deals.0';
+
     public function resolveEndpoint(): string
     {
         return 'reference/deals';
-    }
-
-    /**
-     * @param Response<ProductDealData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductDealData
-    {
-        return ProductDealData::from($response->json('Deals.0'))->setResponse($response);
     }
 }

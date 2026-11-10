@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\ManualJournal;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\ManualJournal\SaleManualJournalData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,10 @@ final class PostSaleManualJournal extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = SaleManualJournalData::class;
+
     public function resolveEndpoint(): string
     {
         return 'sale/manualJournal';
-    }
-
-    /**
-     * @param Response<SaleManualJournalData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleManualJournalData
-    {
-        return SaleManualJournalData::from($response->json())->setResponse($response);
     }
 }

@@ -24,6 +24,12 @@ use Ipsocode\Cin7\Attributes\DateTime;
 final class ProductionOrderData extends AbstractProductionOrderData
 {
     /**
+     * `$ProductionRuns`, `$ProductionOrderDeliveryTo` and `$Deliveries` stay `list<mixed>`: the
+     * reference documents no model for them, no example under `workbench/fixtures/production/order/`
+     * sends `ProductionRuns` or `ProductionOrderDeliveryTo`, and `Deliveries` is an empty list in
+     * every one, so a `ProductionRunData` (the shape of the run endpoint) cannot be checked against
+     * an order's runs.
+     *
      * @param null|list<ProductionOrderOperationData> $Operations
      * @param null|list<mixed> $ProductionRuns
      * @param null|list<mixed> $ProductionOrderDeliveryTo

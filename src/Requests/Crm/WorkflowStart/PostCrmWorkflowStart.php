@@ -27,7 +27,6 @@ final class PostCrmWorkflowStart extends Cin7Request
         protected readonly ?string $id = null,
         protected readonly ?string $name = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

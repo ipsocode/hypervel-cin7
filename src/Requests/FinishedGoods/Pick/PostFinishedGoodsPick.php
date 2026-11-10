@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\FinishedGoods\Pick;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\FinishedGoods\Pick\FinishedGoodsPickData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PostFinishedGoodsPick extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = FinishedGoodsPickData::class;
+
     public function resolveEndpoint(): string
     {
         return 'finishedGoods/pick';
-    }
-
-    /**
-     * @param Response<FinishedGoodsPickData> $response
-     */
-    public function createDtoFromResponse(Response $response): FinishedGoodsPickData
-    {
-        return FinishedGoodsPickData::from($response->json())->setResponse($response);
     }
 }

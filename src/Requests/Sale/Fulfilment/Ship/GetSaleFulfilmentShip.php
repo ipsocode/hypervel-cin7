@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Fulfilment\Ship;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Fulfilment\Ship\SaleFulfilmentShipData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,10 +17,11 @@ final class GetSaleFulfilmentShip extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = SaleFulfilmentShipData::class;
+
     public function __construct(
         protected readonly string $taskId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -37,13 +37,5 @@ final class GetSaleFulfilmentShip extends Cin7Request
         return $this->queryValues([
             'TaskID' => $this->taskId,
         ]);
-    }
-
-    /**
-     * @param Response<SaleFulfilmentShipData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleFulfilmentShipData
-    {
-        return SaleFulfilmentShipData::from($response->json())->setResponse($response);
     }
 }

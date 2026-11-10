@@ -21,6 +21,9 @@ final class SuspendReasonData extends Data implements WithResponse
     use HasResponse;
 
     /**
+     * `$Workcenters` stays `list<mixed>`: the reference gives it no type, and its examples send a
+     * list of work center GUID strings, which nothing confirms is the whole contract.
+     *
      * @param null|list<mixed> $Workcenters
      */
     public function __construct(

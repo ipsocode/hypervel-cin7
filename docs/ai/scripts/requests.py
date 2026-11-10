@@ -13,7 +13,8 @@ Ipsocode\\Cin7\\Data) and a one-sentence summary for the docblock:
      "dto": "Purchase\\\\Order\\\\PurchaseOrderData", "doc": "...", "omit": ["TotalBeforeTax"]}
 
 A parameter is [wire key, type, required?]: string, bool, int, float, date (DateTimeInterface|string)
-or enum:<Name>. Required parameters come first. "dto_path" reads a keyed envelope's item.
+or enum:<Name>. Required parameters come first. "dto_path" reads a keyed envelope's item; a write
+request names its data class in `$dto` and the path in `$dtoPath`, and `WriteRequest` builds the response from them.
 """
 import json, pathlib, sys, textwrap
 sys.dont_write_bytecode = True  # no __pycache__ in the checkout
@@ -56,8 +57,8 @@ def keyed(e):
     dto = e['dto'].rsplit('\\', 1)[1]
     ctor = '\n'.join('        protected readonly ' + (php_type(p[1]) if len(p) > 2 and p[2] else optional(php_type(p[1]))) + ' $' + bp.arg_name(p[0]) + ('' if len(p) > 2 and p[2] else ' = null') + ',' for p in params)
     query = '\n'.join(f"            '{p[0]}' => $this->{bp.arg_name(p[0])}," for p in params)
-    json_call = f"$response->json('{e['dto_path']}')" if e.get('dto_path') else '$response->json()'
-    uses = imports(params, 'Cin7Request', e['dto'], [METHOD])
+    path = f"\n    protected ?string $dtoPath = '{e['dto_path']}';\n" if e.get('dto_path') else ''
+    uses = imports(params, 'Cin7Request', e['dto'], [METHOD], response=False)
     return f'''{uses}
 
 /**
@@ -69,6 +70,8 @@ final class {e['class']} extends Cin7Request
 {{
     protected Method $method = Method::{e['verb']};
 
+    protected ?string $dto = {dto}::class;
+{path}
     public function __construct(
 {ctor}
     ) {{
@@ -89,17 +92,13 @@ final class {e['class']} extends Cin7Request
 {query}
         ]);
     }}
-
-    public function createDtoFromResponse(Response $response): {dto}
-    {{
-        return {dto}::from({json_call})->setResponse($response);
-    }}
 }}
 '''
 
 
 def write(e):
     dto = e['dto'].rsplit('\\', 1)[1]
+    path = f"\n    protected ?string $dtoPath = '{e['dto_path']}';\n" if e.get('dto_path') else ''
     omit = ''
     if e.get('omit'):
         listed = ', '.join(f"'{o}'" for o in e['omit'])
@@ -109,8 +108,7 @@ def write(e):
      */
     protected array $omit = [{listed}];
 '''
-    json_call = f"$response->json('{e['dto_path']}')" if e.get('dto_path') else '$response->json()'
-    uses = imports([], 'WriteRequest', e['dto'], [METHOD])
+    uses = imports([], 'WriteRequest', e['dto'], [METHOD], response=False)
     return f'''{uses}
 
 /**
@@ -121,15 +119,12 @@ def write(e):
 final class {e['class']} extends WriteRequest
 {{
     protected Method $method = Method::{e['verb']};
-{omit}
+
+    protected ?string $dto = {dto}::class;
+{path}{omit}
     public function resolveEndpoint(): string
     {{
         return '{e['endpoint']}';
-    }}
-
-    public function createDtoFromResponse(Response $response): {dto}
-    {{
-        return {dto}::from({json_call})->setResponse($response);
     }}
 }}
 '''

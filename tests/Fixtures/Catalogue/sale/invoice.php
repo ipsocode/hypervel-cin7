@@ -87,19 +87,11 @@ return [
         ],
         'sale invoice post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->post(SaleInvoicePostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'Memo' => 'Rush', 'Status' => 'DRAFT', 'InvoiceDate' => '2017-11-22T00:00:00', 'InvoiceDueDate' => '2017-12-22T00:00:00'])),
-            PostSaleInvoice::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/invoice',
-            [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'Status' => 'DRAFT', 'InvoiceDate' => '2017-11-22T00:00:00', 'InvoiceDueDate' => '2017-12-22T00:00:00', 'Memo' => 'Rush', 'TaskID' => '00000000-0000-0000-0000-000000000000'],
+            PostSaleInvoice::class . ' with data',
         ],
         'sale invoice put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->put(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88']),
             PutSaleInvoice::class,
-            Method::PUT,
-            '/ExternalApi/v2/sale/invoice',
-            [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88'],
         ],
         'sale invoice put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->put(SaleInvoicePutData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Status' => 'AUTHORISED'])),
@@ -120,10 +112,6 @@ return [
         'sale invoice delete with void' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->invoice()->delete('b039f19e-66f8-4309-a4b1-abf928303c88', void: true),
             DeleteSaleInvoice::class,
-            Method::DELETE,
-            '/ExternalApi/v2/sale/invoice',
-            ['TaskID' => 'b039f19e-66f8-4309-a4b1-abf928303c88', 'Void' => 'true'],
-            null,
         ],
     ],
     'dtos' => [
@@ -133,8 +121,8 @@ return [
         DeleteSaleInvoice::class => [DeleteSaleInvoice::class, ['task-1'], Cin7Payloads::saleInvoices(), SaleInvoicesData::class, ''],
     ],
     'bodies' => [
-        SaleInvoicePostData::class => [SaleInvoicePostData::class, Cin7Payloads::saleInvoicePost()],
-        SaleInvoicePutData::class => [SaleInvoicePutData::class, Cin7Payloads::saleInvoicePut()],
+        SaleInvoicePostData::class => [SaleInvoicePostData::class, PostSaleInvoice::class, Cin7Payloads::saleInvoicePost()],
+        SaleInvoicePutData::class => [SaleInvoicePutData::class, PutSaleInvoice::class, Cin7Payloads::saleInvoicePut()],
     ],
     'missing' => [
         'invoice POST without Status' => [SaleInvoicePostData::class, Arr::except(Cin7Payloads::saleInvoicePost(), 'Status')],

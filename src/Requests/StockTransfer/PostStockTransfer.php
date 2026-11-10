@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\StockTransfer;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\StockTransfer\StockTransferData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -18,16 +17,10 @@ final class PostStockTransfer extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = StockTransferData::class;
+
     public function resolveEndpoint(): string
     {
         return 'stockTransfer';
-    }
-
-    /**
-     * @param Response<StockTransferData> $response
-     */
-    public function createDtoFromResponse(Response $response): StockTransferData
-    {
-        return StockTransferData::from($response->json())->setResponse($response);
     }
 }

@@ -24,7 +24,7 @@ Every key is in [configuration](configuration.md#keys).
 
 | Column | Holds |
 |---|---|
-| `account_id` | The Cin7 account the record belongs to, from `cin7.account_id` |
+| `account_id` | The Cin7 account the record belongs to: the default connection's `accountId()`, which `CIN7_CONNECTION` can point at a named connection. The sync covers that one connection only |
 | `module` | The endpoint it came from, spelled as the request path: `customer`, `saleList`, `ref/tax` |
 | `cin7_id` | The record's identifier, under the key its module uses (below) |
 | `payload` | The record as Cin7 returned it: `jsonb` on PostgreSQL, `json` on MySQL |
@@ -126,6 +126,12 @@ other records point to comes before the records that point to it.
    nothing and keeps what it wrote, but gives the rows it reached their last sync back, so the
    module's newest `synced_at` does not move and the next pull reaches back as far as the failed
    one did. One that began on an empty module is undone, so the next pull is a full one again.
+
+A list item with no usable `ID` (missing, empty or not a string) is never skipped: the module's
+pull fails with an exception naming the module and the item's position, so a dropped item can
+never make a full pull delete a stored row. Fix the record in Cin7 and the next pull succeeds. A
+record whose modified time cannot be read is logged as a warning with its module and `ID`, and
+is treated as changed, so it is written again on every pull until Cin7 sends a readable time.
 
 No cursor is stored. Reading the look-back window again costs a few pages, and a record whose
 modified time has not moved is not rewritten, so a pull that was missed or failed is covered by
@@ -247,4 +253,4 @@ $table->index(['module', 'order_number']);
 $table->index('payload', null, 'gin');
 ```
 
-The behavior above is pinned by the tests in [`tests/Feature/Sync/`](../../tests/Feature/Sync).
+The behavior above is pinned by the tests in [`tests/Feature/Sync/`](https://github.com/ipsocode/hypervel-cin7/tree/main/tests/Feature/Sync).

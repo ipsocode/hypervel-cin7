@@ -25,7 +25,7 @@ use Ipsocode\Cin7\Resources\ProductFamily\AttachmentsResource;
 final class ProductFamilyResource extends BaseResource
 {
     /**
-     * One page of product families; without a page or limit, page 1 of 100.
+     * Fetch one page of product families; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -47,7 +47,7 @@ final class ProductFamilyResource extends BaseResource
     }
 
     /**
-     * Every page of product families, fetched as they are walked; call `startPage()` on the
+     * Fetch every page of product families, fetched as they are walked; call `startPage()` on the
      * paginator to begin later.
      *
      * @param null|int $limit the page size, 1 to 1000
@@ -87,7 +87,7 @@ final class ProductFamilyResource extends BaseResource
     }
 
     /**
-     * The `productFamily/attachments` resource, a family's attachments.
+     * Return the `productFamily/attachments` resource, a family's attachments.
      */
     public function attachments(): AttachmentsResource
     {

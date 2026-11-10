@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\StockAdjustment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\StockAdjustment\StockAdjustmentData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,11 +17,12 @@ final class DeleteStockAdjustment extends Cin7Request
 {
     protected Method $method = Method::DELETE;
 
+    protected ?string $dto = StockAdjustmentData::class;
+
     public function __construct(
         protected readonly string $id,
         protected readonly ?bool $void = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -39,13 +39,5 @@ final class DeleteStockAdjustment extends Cin7Request
             'ID' => $this->id,
             'Void' => $this->void,
         ]);
-    }
-
-    /**
-     * @param Response<StockAdjustmentData> $response
-     */
-    public function createDtoFromResponse(Response $response): StockAdjustmentData
-    {
-        return StockAdjustmentData::from($response->json())->setResponse($response);
     }
 }

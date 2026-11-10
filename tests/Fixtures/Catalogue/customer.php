@@ -71,26 +71,14 @@ return [
         'customer get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->customer()->get(),
             GetCustomer::class,
-            Method::GET,
-            '/ExternalApi/v2/customer',
-            ['page' => 1, 'limit' => 100],
-            null,
         ],
         'customer paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->customer()->paginate()->current(),
             GetCustomer::class,
-            Method::GET,
-            '/ExternalApi/v2/customer',
-            ['page' => 1, 'limit' => 100],
-            null,
         ],
         'customer post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->customer()->post(['Name' => 'ACME']),
             PostCustomer::class,
-            Method::POST,
-            '/ExternalApi/v2/customer',
-            [],
-            ['Name' => 'ACME'],
         ],
         'customer post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->customer()->post(CustomerPostData::from([...$fields, 'Status' => 'Active'])),
@@ -102,19 +90,11 @@ return [
         ],
         'customer put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->customer()->put(CustomerPutData::from([...$fields, 'ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'])),
-            PutCustomer::class,
-            Method::PUT,
-            '/ExternalApi/v2/customer',
-            [],
-            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', ...$fields],
+            PutCustomer::class . ' with data',
         ],
         'customer put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->customer()->put(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'ACME']),
             PutCustomer::class,
-            Method::PUT,
-            '/ExternalApi/v2/customer',
-            [],
-            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Name' => 'ACME'],
         ],
     ],
     'dtos' => [
@@ -123,8 +103,8 @@ return [
         PutCustomer::class => [PutCustomer::class, [[]], Cin7Payloads::customerSaved(), CustomerData::class, 'CustomerList.0'],
     ],
     'bodies' => [
-        CustomerPostData::class => [CustomerPostData::class, Cin7Payloads::load('customer', 'post.request')],
-        CustomerPutData::class => [CustomerPutData::class, Cin7Payloads::load('customer', 'put.request')],
+        CustomerPostData::class => [CustomerPostData::class, PostCustomer::class, Cin7Payloads::load('customer', 'post.request')],
+        CustomerPutData::class => [CustomerPutData::class, PutCustomer::class, Cin7Payloads::load('customer', 'put.request')],
     ],
     'missing' => [
         'customer POST without Status' => [CustomerPostData::class, Arr::except(Cin7Payloads::load('customer', 'post.request'), 'Status')],

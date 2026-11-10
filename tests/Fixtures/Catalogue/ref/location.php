@@ -31,11 +31,11 @@ return [
     'resources' => [
         'ref location get' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->get(), GetLocation::class, Method::GET, $uri, ['page' => 1, 'limit' => 100], null],
         'ref location paginate' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->paginate(name: 'A', deprecated: false)->current(), GetLocation::class, Method::GET, $uri, ['Deprecated' => 'false', 'Name' => 'A', 'page' => 1, 'limit' => 100], null],
-        'ref location post' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->post(['Name' => 'Test']), PostLocation::class, Method::POST, $uri, [], ['Name' => 'Test']],
-        'ref location post with data' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->post(LocationPostData::from(['Name' => 'Test'])), PostLocation::class, Method::POST, $uri, [], ['Name' => 'Test']],
-        'ref location put' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->put(['ID' => $id, 'Name' => 'Test1']), PutLocation::class, Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'Test1']],
-        'ref location put with data' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->put(LocationPutData::from(['Name' => 'Test1', 'ID' => $id])), PutLocation::class, Method::PUT, $uri, [], ['ID' => $id, 'Name' => 'Test1']],
-        'ref location delete' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->delete($id), DeleteLocation::class, Method::DELETE, $uri, ['ID' => $id], null],
+        'ref location post' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->post(['Name' => 'Test']), PostLocation::class],
+        'ref location post with data' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->post(LocationPostData::from(['Name' => 'Test'])), PostLocation::class],
+        'ref location put' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->put(['ID' => $id, 'Name' => 'Test1']), PutLocation::class],
+        'ref location put with data' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->put(LocationPutData::from(['Name' => 'Test1', 'ID' => $id])), PutLocation::class],
+        'ref location delete' => [fn (Cin7Connector $cin7): mixed => $cin7->ref()->location()->delete($id), DeleteLocation::class],
     ],
     'dtos' => [
         GetLocation::class => [GetLocation::class, [], Cin7Payloads::load('ref/location', 'get.response'), LocationData::class, 'LocationList'],
@@ -43,8 +43,8 @@ return [
         PutLocation::class => [PutLocation::class, [[]], Cin7Payloads::load('ref/location', 'put.response'), LocationData::class, ''],
     ],
     'bodies' => [
-        LocationPostData::class => [LocationPostData::class, Cin7Payloads::load('ref/location', 'post.request')],
-        LocationPutData::class => [LocationPutData::class, Cin7Payloads::load('ref/location', 'put.request')],
+        LocationPostData::class => [LocationPostData::class, PostLocation::class, Cin7Payloads::load('ref/location', 'post.request')],
+        LocationPutData::class => [LocationPutData::class, PutLocation::class, Cin7Payloads::load('ref/location', 'put.request')],
     ],
     'missing' => [
         'location POST without Name' => [LocationPostData::class, Arr::except(Cin7Payloads::load('ref/location', 'post.request'), 'Name')],

@@ -94,18 +94,10 @@ return [
         'sale post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(['Customer' => 'ACME']),
             PostSale::class,
-            Method::POST,
-            '/ExternalApi/v2/sale',
-            [],
-            ['Customer' => 'ACME'],
         ],
         'sale put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->put(['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Note' => 'Rush']),
             PutSale::class,
-            Method::PUT,
-            '/ExternalApi/v2/sale',
-            [],
-            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Note' => 'Rush'],
         ],
         'sale delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->delete('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1'),
@@ -118,10 +110,6 @@ return [
         'sale delete with void' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->delete('0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', void: true),
             DeleteSale::class,
-            Method::DELETE,
-            '/ExternalApi/v2/sale',
-            ['ID' => '0365e5bb-e5ea-4a45-b98b-fdc4466bdaf1', 'Void' => 'true'],
-            null,
         ],
         'sale post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->post(SalePostData::from(['Customer' => 'ACME', 'Location' => 'Main Warehouse', 'CurrencyRate' => 1])),

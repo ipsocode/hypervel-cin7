@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Ref\Tax;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Tax\TaxData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -20,6 +19,10 @@ final class PutTax extends WriteRequest
 {
     protected Method $method = Method::PUT;
 
+    protected ?string $dto = TaxData::class;
+
+    protected ?string $dtoPath = 'TaxRuleList.0';
+
     /**
      * @var list<string>
      */
@@ -28,13 +31,5 @@ final class PutTax extends WriteRequest
     public function resolveEndpoint(): string
     {
         return 'ref/tax';
-    }
-
-    /**
-     * @param Response<TaxData> $response
-     */
-    public function createDtoFromResponse(Response $response): TaxData
-    {
-        return TaxData::from($response->json('TaxRuleList.0'))->setResponse($response);
     }
 }

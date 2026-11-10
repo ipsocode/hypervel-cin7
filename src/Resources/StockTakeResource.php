@@ -23,7 +23,7 @@ use Ipsocode\Cin7\Requests\StockTake\PutStockTake;
 final class StockTakeResource extends BaseResource
 {
     /**
-     * One stock take, with its filters, the products it counts and the transactions it created.
+     * Fetch one stock take, with its filters, the products it counts and the transactions it created.
      *
      * @return Response<StockTakeData>
      */

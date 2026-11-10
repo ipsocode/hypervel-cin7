@@ -54,26 +54,14 @@ return [
         'sale creditNote get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->get('916ab4c0-6ccb-4c93-873d-0603859050e4', includePaymentInfo: true),
             GetSaleCreditNote::class,
-            Method::GET,
-            '/ExternalApi/v2/sale/creditnote',
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'IncludePaymentInfo' => 'true'],
-            null,
         ],
         'sale creditNote post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->post(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4']),
             PostSaleCreditNote::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/creditnote',
-            [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4'],
         ],
         'sale creditNote post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->post(SaleCreditNotePostData::from(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Memo' => 'Damaged', 'Status' => 'AUTHORISED', 'CreditNoteDate' => '2017-11-22T00:00:00'])),
-            PostSaleCreditNote::class,
-            Method::POST,
-            '/ExternalApi/v2/sale/creditnote',
-            [],
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'CombineAdditionalCharges' => false, 'CreditNoteInvoiceNumber' => 'INV-00005', 'Status' => 'AUTHORISED', 'Memo' => 'Damaged', 'TaskID' => '00000000-0000-0000-0000-000000000000', 'CreditNoteDate' => '2017-11-22T00:00:00'],
+            PostSaleCreditNote::class . ' with data',
         ],
         'sale creditNote delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->creditNote()->delete('b039f19e-66f8-4309-a4b1-abf928303c88', void: true),
@@ -90,7 +78,7 @@ return [
         DeleteSaleCreditNote::class => [DeleteSaleCreditNote::class, ['task-1'], Cin7Payloads::saleCreditNotes(), SaleCreditNotesData::class, ''],
     ],
     'bodies' => [
-        SaleCreditNotePostData::class => [SaleCreditNotePostData::class, Cin7Payloads::saleCreditNotePost()],
+        SaleCreditNotePostData::class => [SaleCreditNotePostData::class, PostSaleCreditNote::class, Cin7Payloads::saleCreditNotePost()],
     ],
     'missing' => [
         'credit note POST without CreditNoteInvoiceNumber' => [

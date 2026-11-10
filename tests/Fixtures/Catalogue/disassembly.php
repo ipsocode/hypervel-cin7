@@ -34,6 +34,24 @@ return [
             [],
             ['Status' => 'DRAFT', 'WIPAccount' => '715'],
         ],
+        PostDisassembly::class . ' with data' => [
+            PostDisassembly::class,
+            [fn (): DisassemblyPostData => DisassemblyPostData::from(Cin7Payloads::load('disassembly', 'post.request'))],
+            Method::POST,
+            '/ExternalApi/v2/disassembly',
+            [],
+            [
+                'Status' => 'COMPLETED',
+                'WIPAccount' => '715',
+                'Quantity' => 1.0,
+                'ProductID' => '524c20a3-a8ec-44f2-9685-311f1f7d1498',
+                'ProductCode' => 'Bread',
+                'LocationID' => '19aeca31-bd49-4fbe-8abd-37a6169cc2cb',
+                'Location' => 'Main Warehouse',
+                'ProductName' => 'Baked Bread',
+                'CompletionDate' => '2017-12-21T00:00:00',
+            ],
+        ],
         DeleteDisassembly::class => [
             DeleteDisassembly::class,
             [$taskId, 'void' => true],
@@ -47,18 +65,10 @@ return [
         'disassembly get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->get($taskId),
             GetDisassembly::class,
-            Method::GET,
-            '/ExternalApi/v2/disassembly',
-            ['TaskID' => $taskId],
-            null,
         ],
         'disassembly post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->post(['Status' => 'DRAFT', 'WIPAccount' => '715']),
             PostDisassembly::class,
-            Method::POST,
-            '/ExternalApi/v2/disassembly',
-            [],
-            ['Status' => 'DRAFT', 'WIPAccount' => '715'],
         ],
         'disassembly delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->disassembly()->delete($taskId),
@@ -83,7 +93,7 @@ return [
         DeleteDisassembly::class => [DeleteDisassembly::class, [$taskId], Cin7Payloads::load('disassembly', 'delete.response'), DisassemblyData::class, ''],
     ],
     'bodies' => [
-        DisassemblyPostData::class => [DisassemblyPostData::class, Cin7Payloads::load('disassembly', 'post.request')],
+        DisassemblyPostData::class => [DisassemblyPostData::class, PostDisassembly::class, Cin7Payloads::load('disassembly', 'post.request')],
     ],
     'missing' => [
         'disassembly POST without Status' => [DisassemblyPostData::class, Arr::except(Cin7Payloads::load('disassembly', 'post.request'), 'Status')],

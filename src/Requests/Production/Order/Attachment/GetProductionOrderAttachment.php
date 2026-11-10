@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\Order\Attachment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\Order\ProductionOrderAttachmentsData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -19,11 +18,12 @@ final class GetProductionOrderAttachment extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = ProductionOrderAttachmentsData::class;
+
     public function __construct(
         protected readonly string $productionOrderId,
         protected readonly ?bool $returnAttachmentsContent = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -40,13 +40,5 @@ final class GetProductionOrderAttachment extends Cin7Request
             'ProductionOrderID' => $this->productionOrderId,
             'ReturnAttachmentsContent' => $this->returnAttachmentsContent,
         ]);
-    }
-
-    /**
-     * @param Response<ProductionOrderAttachmentsData> $response
-     */
-    public function createDtoFromResponse(Response $response): ProductionOrderAttachmentsData
-    {
-        return ProductionOrderAttachmentsData::from($response->json())->setResponse($response);
     }
 }

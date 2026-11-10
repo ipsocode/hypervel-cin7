@@ -85,34 +85,18 @@ return [
         'reference discount post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->discount()->post(['DiscountRules' => [['Name' => 'The second one']]]),
             PostDiscount::class,
-            Method::POST,
-            $uri,
-            [],
-            ['DiscountRules' => [['Name' => 'The second one']]],
         ],
         'reference discount post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->discount()->post(ProductDiscountRulesPostData::from(['DiscountRules' => [$rule]])),
-            PostDiscount::class,
-            Method::POST,
-            $uri,
-            [],
-            ['DiscountRules' => [$sentRule]],
+            PostDiscount::class . ' with data',
         ],
         'reference discount put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->discount()->put(['ID' => $ruleId, 'Name' => 'v2']),
             PutDiscount::class,
-            Method::PUT,
-            $uri,
-            [],
-            ['ID' => $ruleId, 'Name' => 'v2'],
         ],
         'reference discount put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->reference()->discount()->put(ProductDiscountRulePutData::from(['ID' => $ruleId, 'Name' => 'v2'])),
             PutDiscount::class,
-            Method::PUT,
-            $uri,
-            [],
-            ['ID' => $ruleId, 'Name' => 'v2'],
         ],
     ],
     'dtos' => [
@@ -121,8 +105,8 @@ return [
         PutDiscount::class => [PutDiscount::class, [[]], Cin7Payloads::load('reference/discount', 'put.response'), ProductDiscountRuleData::class, 'DiscountRules.0'],
     ],
     'bodies' => [
-        ProductDiscountRulesPostData::class => [ProductDiscountRulesPostData::class, Cin7Payloads::load('reference/discount', 'post.request')],
-        ProductDiscountRulePutData::class => [ProductDiscountRulePutData::class, Cin7Payloads::load('reference/discount', 'put.request')],
+        ProductDiscountRulesPostData::class => [ProductDiscountRulesPostData::class, PostDiscount::class, Cin7Payloads::load('reference/discount', 'post.request')],
+        ProductDiscountRulePutData::class => [ProductDiscountRulePutData::class, PutDiscount::class, Cin7Payloads::load('reference/discount', 'put.request')],
     ],
     'missing' => [
         'discount POST without DiscountRules' => [ProductDiscountRulesPostData::class, Arr::except(Cin7Payloads::load('reference/discount', 'post.request'), 'DiscountRules')],

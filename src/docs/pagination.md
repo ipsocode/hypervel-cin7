@@ -88,12 +88,12 @@ Each `ListRequest` names that key in `$listKey`, and the paginator reads a
 page's items from it through the request's `mapPaginatedResponseItems()`, which `dto()` reads too. A
 response without the key yields no items.
 
-No request in this package needs it, but a paginatable request that does not
-map its own items falls back to a lookup by suffix: the first string key
-ending in `List` whose value is an array. It does not take the first array in
-the body, because an envelope can also carry arrays such as `Errors` or
-`Warnings`, and those are ignored wherever they appear. An envelope with no
-`…List` key yields no items.
+A paginatable request has to map its own items. Saloon asks the paginator for
+them only when the request does not, and the list key differs per endpoint (not
+every one ends in `List`), so the paginator throws a `LogicException` on the
+first page instead of guessing a key. Extend `ListRequest`, or implement
+Saloon's `MapPaginatedResponseItems` and return the page's items from
+`mapPaginatedResponseItems()`.
 
 ## Finding the last page
 
@@ -136,4 +136,4 @@ request declares `HasRequestPagination`, so `Cin7Paginator` is the only
 paginator the connector needs.
 
 The behavior above is pinned by
-[`Cin7PaginatorTest`](../../tests/Feature/Pagination/Cin7PaginatorTest.php).
+[`Cin7PaginatorTest`](https://github.com/ipsocode/hypervel-cin7/blob/main/tests/Feature/Pagination/Cin7PaginatorTest.php).

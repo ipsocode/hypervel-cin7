@@ -43,7 +43,6 @@ abstract class WriteRequest extends Cin7Request
      */
     public function __construct(protected readonly array|Data $body = [])
     {
-        parent::__construct();
     }
 
     /**

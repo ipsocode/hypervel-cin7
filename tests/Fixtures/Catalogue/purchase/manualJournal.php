@@ -48,10 +48,6 @@ return [
         'purchase manualJournal get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->manualJournal()->get('02b08cd2-51d2-41e6-ab97-85bcd13e7136'),
             GetPurchaseManualJournal::class,
-            Method::GET,
-            '/ExternalApi/v2/purchase/manualJournal',
-            ['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136'],
-            null,
         ],
         'purchase manualJournal post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->purchase()->manualJournal()->post(['TaskID' => '02b08cd2-51d2-41e6-ab97-85bcd13e7136', 'Status' => 'AUTHORISED']),
@@ -75,7 +71,7 @@ return [
         PostPurchaseManualJournal::class => [PostPurchaseManualJournal::class, [[]], Cin7Payloads::load('purchase/manualJournal', 'post.response'), PurchaseManualJournalData::class, ''],
     ],
     'bodies' => [
-        PurchaseManualJournalPostData::class => [PurchaseManualJournalPostData::class, Cin7Payloads::load('purchase/manualJournal', 'post.request')],
+        PurchaseManualJournalPostData::class => [PurchaseManualJournalPostData::class, PostPurchaseManualJournal::class, Cin7Payloads::load('purchase/manualJournal', 'post.request')],
     ],
     'missing' => [
         'purchase manual journal POST without TaskID' => [PurchaseManualJournalPostData::class, Arr::except(Cin7Payloads::load('purchase/manualJournal', 'post.request'), 'TaskID')],

@@ -20,7 +20,6 @@ final class DeleteCustomPrices extends Cin7Request
         protected readonly string $productId,
         protected readonly string $customerId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

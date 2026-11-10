@@ -25,7 +25,7 @@ use Ipsocode\Cin7\Requests\Journal\PutJournal;
 final class JournalResource extends BaseResource
 {
     /**
-     * One page of journals; without a page or limit, page 1 of 100.
+     * Fetch one page of journals; without a page or limit, page 1 of 100.
      *
      * @param null|int $page the page, from 1
      * @param null|int $limit the page size, 1 to 1000
@@ -45,7 +45,7 @@ final class JournalResource extends BaseResource
     }
 
     /**
-     * Every page of journals, fetched as they are walked; call `startPage()` on the paginator to
+     * Fetch every page of journals, fetched as they are walked; call `startPage()` on the paginator to
      * begin later.
      *
      * @param null|int $limit the page size, 1 to 1000

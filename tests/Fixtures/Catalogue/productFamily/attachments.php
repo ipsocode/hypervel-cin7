@@ -55,18 +55,10 @@ return [
         'productFamily attachments get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->productFamily()->attachments()->get('76755c09-60de-483c-a63b-18fd12c2d932'),
             GetProductFamilyAttachments::class,
-            Method::GET,
-            '/ExternalApi/v2/productFamily/attachments',
-            ['FamilyID' => '76755c09-60de-483c-a63b-18fd12c2d932'],
-            null,
         ],
         'productFamily attachments post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->productFamily()->attachments()->post($url),
             PostProductFamilyAttachments::class,
-            Method::POST,
-            '/ExternalApi/v2/productFamily/attachments',
-            [],
-            $url,
         ],
         'productFamily attachments post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->productFamily()->attachments()->post(ProductFamilyAttachmentPostData::from([...$url, 'IsDefault' => true])),
@@ -79,10 +71,6 @@ return [
         'productFamily attachments delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->productFamily()->attachments()->delete('3ba9b33c-662a-4bed-935a-9e13e7535c88'),
             DeleteProductFamilyAttachments::class,
-            Method::DELETE,
-            '/ExternalApi/v2/productFamily/attachments',
-            ['ID' => '3ba9b33c-662a-4bed-935a-9e13e7535c88'],
-            null,
         ],
     ],
     'dtos' => [
@@ -91,7 +79,7 @@ return [
         DeleteProductFamilyAttachments::class => [DeleteProductFamilyAttachments::class, ['3ba9b33c-662a-4bed-935a-9e13e7535c88'], Cin7Payloads::load('productFamily/attachments', 'delete.response'), AttachmentLineData::class, ''],
     ],
     'bodies' => [
-        ProductFamilyAttachmentPostData::class => [ProductFamilyAttachmentPostData::class, Cin7Payloads::load('productFamily/attachments', 'post.request')],
+        ProductFamilyAttachmentPostData::class => [ProductFamilyAttachmentPostData::class, PostProductFamilyAttachments::class, Cin7Payloads::load('productFamily/attachments', 'post.request')],
     ],
     'missing' => [
         'product family attachment POST without FamilyID' => [ProductFamilyAttachmentPostData::class, Arr::except(Cin7Payloads::load('productFamily/attachments', 'post.request'), 'FamilyID')],

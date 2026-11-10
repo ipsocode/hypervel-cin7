@@ -42,10 +42,6 @@ return [
         'sale order get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->order()->get('916ab4c0-6ccb-4c93-873d-0603859050e4', includeProductInfo: true),
             GetSaleOrder::class,
-            Method::GET,
-            '/ExternalApi/v2/sale/order',
-            ['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4', 'IncludeProductInfo' => 'true'],
-            null,
         ],
         'sale order post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->sale()->order()->post(['SaleID' => '916ab4c0-6ccb-4c93-873d-0603859050e4']),

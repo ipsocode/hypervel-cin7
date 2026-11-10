@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Sale\Attachment;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Sale\Attachment\SaleAttachmentsData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,10 +17,11 @@ final class GetSaleAttachment extends Cin7Request
 {
     protected Method $method = Method::GET;
 
+    protected ?string $dto = SaleAttachmentsData::class;
+
     public function __construct(
         protected readonly string $saleId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -37,13 +37,5 @@ final class GetSaleAttachment extends Cin7Request
         return $this->queryValues([
             'SaleID' => $this->saleId,
         ]);
-    }
-
-    /**
-     * @param Response<SaleAttachmentsData> $response
-     */
-    public function createDtoFromResponse(Response $response): SaleAttachmentsData
-    {
-        return SaleAttachmentsData::from($response->json())->setResponse($response);
     }
 }

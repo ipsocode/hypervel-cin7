@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Sync;
 
 use Closure;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Hypervel\Data\Data;
 use Hypervel\Saloon\Contracts\DataObjects\WithResponse;
+use Hypervel\Support\Facades\Log;
 use Ipsocode\Cin7\Data\AdvancedPurchase\AdvancedPurchaseData;
 use Ipsocode\Cin7\Data\Customer\CustomerData;
 use Ipsocode\Cin7\Data\Product\ProductData;
@@ -49,7 +51,6 @@ use Ipsocode\Cin7\Requests\Sale\GetSale;
 use Ipsocode\Cin7\Requests\SaleList\GetSaleList;
 use Ipsocode\Cin7\Requests\Supplier\GetSupplier;
 use LogicException;
-use Throwable;
 
 /**
  * An endpoint the sync copies, named by its request path. A list module is paged: an incremental
@@ -104,7 +105,7 @@ enum Module: string
     }
 
     /**
-     * Whether a pull reads only what changed: a list with a since filter, or the documents of
+     * Tell whether a pull reads only what changed: a list with a since filter, or the documents of
      * the list rows that changed. A reference book has no since filter and its records no
      * modified time, so every pull reads it whole and compares the payloads; the schedule leaves
      * it to the full pull.
@@ -222,7 +223,7 @@ enum Module: string
     }
 
     /**
-     * Everything the sync knows about a module, in one place. The match has no default, so a case
+     * Describe everything the sync knows about a module, in one place. The match has no default, so a case
      * without a definition throws rather than taking one.
      *
      * - `id`: the key of a record's identifier.
@@ -347,13 +348,26 @@ enum Module: string
     public function modifiedAt(array $record): ?string
     {
         $key = $this->modifiedKey();
+        $value = $key === null ? null : ($record[$key] ?? null);
+        $modified = self::timestamp($value);
 
-        return self::timestamp($key === null ? null : ($record[$key] ?? null));
+        // A record Cin7 sent with an unreadable time is never unchanged, so it is written again
+        // on every pull; say so rather than do it silently.
+        if ($modified === null && is_string($value) && trim($value) !== '') {
+            Log::warning(sprintf(
+                'Cin7 sync: [%s] record [%s] has the unreadable modified time [%s]; it is treated as changed.',
+                $this->value,
+                is_scalar($record[$this->idKey()] ?? null) ? $record[$this->idKey()] : '?',
+                $value,
+            ));
+        }
+
+        return $modified;
     }
 
     /**
      * A time from Cin7 or the database, as stored: UTC to the millisecond. Cin7 sends UTC, with or
-     * without the `Z`; anything unreadable is null.
+     * without the `Z`; anything unreadable is null, and any other failure propagates.
      */
     public static function timestamp(mixed $value): ?string
     {
@@ -365,7 +379,7 @@ enum Module: string
             return new DateTimeImmutable($value, new DateTimeZone('UTC'))
                 ->setTimezone(new DateTimeZone('UTC'))
                 ->format('Y-m-d H:i:s.v');
-        } catch (Throwable) {
+        } catch (DateMalformedStringException) {
             return null;
         }
     }

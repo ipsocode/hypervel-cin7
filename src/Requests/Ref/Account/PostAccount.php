@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Ref\Account;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Ref\Account\AccountData;
 use Ipsocode\Cin7\Requests\WriteRequest;
 
@@ -19,16 +18,12 @@ final class PostAccount extends WriteRequest
 {
     protected Method $method = Method::POST;
 
+    protected ?string $dto = AccountData::class;
+
+    protected ?string $dtoPath = 'AccountsList.0';
+
     public function resolveEndpoint(): string
     {
         return 'ref/account';
-    }
-
-    /**
-     * @param Response<AccountData> $response
-     */
-    public function createDtoFromResponse(Response $response): AccountData
-    {
-        return AccountData::from($response->json('AccountsList.0'))->setResponse($response);
     }
 }

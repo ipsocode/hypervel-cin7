@@ -20,7 +20,6 @@ final class DeleteProductionOrderAttachment extends Cin7Request
     public function __construct(
         protected readonly string $productionOrderAttachmentId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

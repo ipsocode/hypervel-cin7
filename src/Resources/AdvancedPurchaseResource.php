@@ -37,7 +37,7 @@ use Ipsocode\Cin7\Resources\AdvancedPurchase\StockResource;
 final class AdvancedPurchaseResource extends BaseResource
 {
     /**
-     * One purchase, with its order and its stock received, put away, invoices, credit notes and
+     * Fetch one purchase, with its order and its stock received, put away, invoices, credit notes and
      * manual journals.
      *
      * @param null|bool $combineAdditionalCharges list the additional charges in `Lines`
@@ -82,7 +82,7 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * The `advanced-purchase/stock` resource, an advanced purchase's stock received.
+     * Return the `advanced-purchase/stock` resource, an advanced purchase's stock received.
      */
     public function stock(): StockResource
     {
@@ -90,7 +90,7 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * The `advanced-purchase/put-away` resource, an advanced purchase's put away.
+     * Return the `advanced-purchase/put-away` resource, an advanced purchase's put away.
      */
     public function putAway(): PutAwayResource
     {
@@ -98,7 +98,7 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * The `advanced-purchase/invoice` resource, an advanced purchase's invoices.
+     * Return the `advanced-purchase/invoice` resource, an advanced purchase's invoices.
      */
     public function invoice(): InvoiceResource
     {
@@ -106,7 +106,7 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * The `advanced-purchase/creditnote` resource, an advanced purchase's credit notes.
+     * Return the `advanced-purchase/creditnote` resource, an advanced purchase's credit notes.
      */
     public function creditNote(): CreditNoteResource
     {
@@ -114,7 +114,7 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * The `advanced-purchase/payment` resource, an advanced purchase's payments.
+     * Return the `advanced-purchase/payment` resource, an advanced purchase's payments.
      */
     public function payment(): PaymentResource
     {
@@ -122,7 +122,7 @@ final class AdvancedPurchaseResource extends BaseResource
     }
 
     /**
-     * The `advanced-purchase/manualJournal` resource, an advanced purchase's manual journals.
+     * Return the `advanced-purchase/manualJournal` resource, an advanced purchase's manual journals.
      */
     public function manualJournal(): ManualJournalResource
     {

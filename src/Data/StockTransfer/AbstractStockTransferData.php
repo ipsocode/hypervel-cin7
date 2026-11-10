@@ -59,6 +59,9 @@ abstract class AbstractStockTransferData extends Data
     public ?bool $SkipOrder = null;
 
     /**
+     * Stays `list<mixed>`: the reference documents no model for it, and it is an empty list in
+     * every `workbench/fixtures/stockTransfer/` example that sends it, so there is no item to model.
+     *
      * @var null|list<mixed>
      */
     public ?array $ManualJournals = null;

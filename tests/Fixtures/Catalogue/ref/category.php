@@ -87,42 +87,22 @@ return [
         'ref category post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->category()->post(['Name' => 'Test']),
             PostCategory::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/category',
-            [],
-            ['Name' => 'Test'],
         ],
         'ref category post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->category()->post(ProductCategoryPostData::from(['Name' => 'Test'])),
             PostCategory::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/category',
-            [],
-            ['Name' => 'Test'],
         ],
         'ref category put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->category()->put(['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1']),
             PutCategory::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/category',
-            [],
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1'],
         ],
         'ref category put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->category()->put(ProductCategoryPutData::from(['Name' => 'Test1', 'ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc'])),
             PutCategory::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/category',
-            [],
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1'],
         ],
         'ref category delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->category()->delete('ca585936-d523-4c40-980b-fbd0199d61fc'),
             DeleteCategory::class,
-            Method::DELETE,
-            '/ExternalApi/v2/ref/category',
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc'],
-            null,
         ],
     ],
     'dtos' => [
@@ -131,8 +111,8 @@ return [
         PutCategory::class => [PutCategory::class, [[]], Cin7Payloads::load('ref/category', 'put.response'), ProductCategoryData::class, ''],
     ],
     'bodies' => [
-        ProductCategoryPostData::class => [ProductCategoryPostData::class, Cin7Payloads::load('ref/category', 'post.request')],
-        ProductCategoryPutData::class => [ProductCategoryPutData::class, Cin7Payloads::load('ref/category', 'put.request')],
+        ProductCategoryPostData::class => [ProductCategoryPostData::class, PostCategory::class, Cin7Payloads::load('ref/category', 'post.request')],
+        ProductCategoryPutData::class => [ProductCategoryPutData::class, PutCategory::class, Cin7Payloads::load('ref/category', 'put.request')],
     ],
     'missing' => [
         'product category POST without Name' => [ProductCategoryPostData::class, []],

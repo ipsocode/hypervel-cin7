@@ -31,15 +31,22 @@ return [
             [],
             ['Reason' => 'Break'],
         ],
+        PutProductionSuspendReason::class . ' with data' => [
+            PutProductionSuspendReason::class,
+            [fn (): SuspendReasonData => SuspendReasonData::from(Cin7Payloads::load('production/suspendReason', 'put.request'))],
+            Method::PUT,
+            '/ExternalApi/v2/production/suspendReason',
+            [],
+            [
+                'Reason' => 'some new text',
+                'Workcenters' => ['94f2bd01-fb4f-4c44-b679-0c700c1f1df1', '94f2bd01-fb4f-4c44-b679-0c700c1f1df2'],
+            ],
+        ],
     ],
     'resources' => [
         'production suspendReason get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->suspendReason()->get(workCenterId: 'x'),
             GetProductionSuspendReason::class,
-            Method::GET,
-            '/ExternalApi/v2/production/suspendReason',
-            ['WorkcenterID' => 'x', 'page' => 1, 'limit' => 100],
-            null,
         ],
         'production suspendReason paginate' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->suspendReason()->paginate()->current(),
@@ -52,10 +59,6 @@ return [
         'production suspendReason put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->production()->suspendReason()->put(['Reason' => 'Break']),
             PutProductionSuspendReason::class,
-            Method::PUT,
-            '/ExternalApi/v2/production/suspendReason',
-            [],
-            ['Reason' => 'Break'],
         ],
     ],
     'dtos' => [
@@ -63,6 +66,6 @@ return [
         PutProductionSuspendReason::class => [PutProductionSuspendReason::class, [[]], Cin7Payloads::load('production/suspendReason', 'put.response'), SuspendReasonData::class, ''],
     ],
     'bodies' => [
-        'SuspendReasonData production/suspendReason' => [SuspendReasonData::class, Cin7Payloads::load('production/suspendReason', 'put.request')],
+        'SuspendReasonData production/suspendReason' => [SuspendReasonData::class, PutProductionSuspendReason::class, Cin7Payloads::load('production/suspendReason', 'put.request')],
     ],
 ];

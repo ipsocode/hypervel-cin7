@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Requests\Production\Resource;
 
 use Hypervel\Saloon\Enums\Method;
-use Hypervel\Saloon\Http\Response;
 use Ipsocode\Cin7\Data\Production\Resource\ResourceData;
 use Ipsocode\Cin7\Requests\Cin7Request;
 
@@ -18,10 +17,11 @@ final class DeleteProductionResource extends Cin7Request
 {
     protected Method $method = Method::DELETE;
 
+    protected ?string $dto = ResourceData::class;
+
     public function __construct(
         protected readonly string $resourceId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
@@ -37,13 +37,5 @@ final class DeleteProductionResource extends Cin7Request
         return $this->queryValues([
             'ResourceID' => $this->resourceId,
         ]);
-    }
-
-    /**
-     * @param Response<ResourceData> $response
-     */
-    public function createDtoFromResponse(Response $response): ResourceData
-    {
-        return ResourceData::from($response->json())->setResponse($response);
     }
 }

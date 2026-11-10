@@ -21,7 +21,7 @@ use Ipsocode\Cin7\Resources\Me\ContactsResource;
 final class MeResource extends BaseResource
 {
     /**
-     * The company's name, base currency and time zone, and the settings its documents follow.
+     * Return the company's name, base currency and time zone, and the settings its documents follow.
      *
      * @return Response<MeData>
      */
@@ -31,7 +31,7 @@ final class MeResource extends BaseResource
     }
 
     /**
-     * The `me/addresses` resource, the company's addresses.
+     * Return the `me/addresses` resource, the company's addresses.
      */
     public function addresses(): AddressesResource
     {
@@ -39,7 +39,7 @@ final class MeResource extends BaseResource
     }
 
     /**
-     * The `me/contacts` resource, the company's contacts.
+     * Return the `me/contacts` resource, the company's contacts.
      */
     public function contacts(): ContactsResource
     {

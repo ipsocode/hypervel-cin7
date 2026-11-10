@@ -87,42 +87,22 @@ return [
         'ref brand post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->brand()->post(['Name' => 'Test']),
             PostBrand::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/brand',
-            [],
-            ['Name' => 'Test'],
         ],
         'ref brand post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->brand()->post(BrandPostData::from(['Name' => 'Test'])),
             PostBrand::class,
-            Method::POST,
-            '/ExternalApi/v2/ref/brand',
-            [],
-            ['Name' => 'Test'],
         ],
         'ref brand put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->brand()->put(['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1']),
             PutBrand::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/brand',
-            [],
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1'],
         ],
         'ref brand put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->brand()->put(BrandPutData::from(['Name' => 'Test1', 'ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc'])),
             PutBrand::class,
-            Method::PUT,
-            '/ExternalApi/v2/ref/brand',
-            [],
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc', 'Name' => 'Test1'],
         ],
         'ref brand delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->ref()->brand()->delete('ca585936-d523-4c40-980b-fbd0199d61fc'),
             DeleteBrand::class,
-            Method::DELETE,
-            '/ExternalApi/v2/ref/brand',
-            ['ID' => 'ca585936-d523-4c40-980b-fbd0199d61fc'],
-            null,
         ],
     ],
     'dtos' => [
@@ -131,8 +111,8 @@ return [
         PutBrand::class => [PutBrand::class, [[]], Cin7Payloads::load('ref/brand', 'put.response'), BrandData::class, ''],
     ],
     'bodies' => [
-        BrandPostData::class => [BrandPostData::class, Cin7Payloads::load('ref/brand', 'post.request')],
-        BrandPutData::class => [BrandPutData::class, Cin7Payloads::load('ref/brand', 'put.request')],
+        BrandPostData::class => [BrandPostData::class, PostBrand::class, Cin7Payloads::load('ref/brand', 'post.request')],
+        BrandPutData::class => [BrandPutData::class, PutBrand::class, Cin7Payloads::load('ref/brand', 'put.request')],
     ],
     'missing' => [
         'brand POST without Name' => [BrandPostData::class, []],

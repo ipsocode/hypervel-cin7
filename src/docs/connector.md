@@ -14,7 +14,7 @@ configuration keys in [configuration](configuration.md).
 `Cin7ServiceProvider` resolves the default connector through `Cin7Manager`, which
 builds each connection once (see [named connections](#named-connections)). A
 connector holds only readonly values, all set in its constructor: the account ID,
-the application key and the three rate limit settings, and the headers, rate
+the application key, the four rate limit settings (limit, window, store and cooldown), the base URL and the two timeouts, and the headers, rate
 limit key and rate limit policy it builds from them once rather than on every
 send. Nothing is mutated per send, so one instance serves every coroutine in a
 worker for the worker's lifetime. Inject it rather than building one per call:
@@ -25,7 +25,7 @@ use Ipsocode\Cin7\Cin7Connector;
 public function __construct(private readonly Cin7Connector $cin7) {}
 ```
 
-The credentials are constructor-injected. The provider reads them from
+The credentials are constructor-injected. `Cin7Manager` reads them from
 `config('cin7.*')` when a connection is first resolved and passes them in;
 nothing calls `env()` or `getenv()` at request time. A second Cin7 account,
 such as a sandbox next to production, is a named connection (below), and it
@@ -35,7 +35,9 @@ throttles on its own key, as does a second API application of the same account.
 by. It is a credential: log or print neither it nor the application key.
 `rateLimitStore()` returns the limiter store the connection names (`null` falls back as
 [choosing the limiter store](#choosing-the-limiter-store) describes), and `rateLimitWindow()` the
-window as `[calls, seconds]`, or `null` when it is off.
+window as `[calls, seconds]`, or `null` when it is off. `limiterStore()` returns the store requests
+actually use, with that fallback applied and a blank name treated as unset; `php artisan about` and
+`cin7:check` both print it for the default connection.
 
 | Constructor argument | Default | Config key |
 |---|---|---|
@@ -45,8 +47,11 @@ window as `[calls, seconds]`, or `null` when it is off.
 | `rateLimitPeriod` | `60` | `cin7.rate_limit.period` |
 | `rateLimitStore` | `null` | `cin7.rate_limit.store` |
 | `rateLimitCooldown` | `5` | `cin7.rate_limit.cooldown` |
+| `baseUrl` | the V2 URL | `cin7.base_url` |
+| `timeout` | `null` | `cin7.timeout` |
+| `connectTimeout` | `null` | `cin7.connect_timeout` |
 
-The keys are the `default` connection's; a named connection reads the same six
+The keys are the `default` connection's; a named connection reads the same nine
 from its own entry.
 
 ## Named connections
@@ -295,8 +300,5 @@ application key's digest in the key.
 
 ### `resolveRateLimitStore()`
 
-It keeps the trait's `UnitEnum|string|null` return type on purpose, so it has
-the same signature as the `HasRateLimits` method it overrides. The connector
-only ever returns a string or `null`, so PHPStan reports the `UnitEnum` arm as
-unused; [`phpstan.neon`](../../phpstan.neon) ignores `return.unusedType` for
-`src/Cin7Connector.php` for that reason.
+It narrows the trait's `UnitEnum|string|null` return type to `?string`, since
+the connector only ever returns a string or `null`.

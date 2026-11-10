@@ -79,18 +79,10 @@ return [
         'stockAdjustment get' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockAdjustment()->get($taskId),
             GetStockAdjustment::class,
-            Method::GET,
-            '/ExternalApi/v2/stockadjustment',
-            ['TaskID' => $taskId],
-            null,
         ],
         'stockAdjustment post' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockAdjustment()->post(['Status' => 'DRAFT', 'Comment' => 'Test']),
             PostStockAdjustment::class,
-            Method::POST,
-            '/ExternalApi/v2/stockadjustment',
-            [],
-            ['Status' => 'DRAFT', 'Comment' => 'Test'],
         ],
         'stockAdjustment post with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockAdjustment()->post(StockAdjustmentPostData::from([...$fields, 'Lines' => [$line]])),
@@ -103,18 +95,10 @@ return [
         'stockAdjustment put' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockAdjustment()->put(['TaskID' => $taskId, 'Status' => 'COMPLETED']),
             PutStockAdjustment::class,
-            Method::PUT,
-            '/ExternalApi/v2/stockadjustment',
-            [],
-            ['TaskID' => $taskId, 'Status' => 'COMPLETED'],
         ],
         'stockAdjustment put with data' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockAdjustment()->put(StockAdjustmentPutData::from([...$fields, 'Lines' => [$line], 'TaskID' => $taskId])),
-            PutStockAdjustment::class,
-            Method::PUT,
-            '/ExternalApi/v2/stockadjustment',
-            [],
-            ['Lines' => [$sent], 'TaskID' => $taskId, ...$fields],
+            PutStockAdjustment::class . ' with data',
         ],
         'stockAdjustment delete' => [
             fn (Cin7Connector $cin7): mixed => $cin7->stockAdjustment()->delete($taskId),
@@ -140,8 +124,8 @@ return [
         DeleteStockAdjustment::class => [DeleteStockAdjustment::class, [$taskId], Cin7Payloads::load('stockadjustment', 'delete.response'), StockAdjustmentData::class, ''],
     ],
     'bodies' => [
-        StockAdjustmentPostData::class => [StockAdjustmentPostData::class, Cin7Payloads::load('stockadjustment', 'post.request')],
-        StockAdjustmentPutData::class => [StockAdjustmentPutData::class, Cin7Payloads::load('stockadjustment', 'put.request')],
+        StockAdjustmentPostData::class => [StockAdjustmentPostData::class, PostStockAdjustment::class, Cin7Payloads::load('stockadjustment', 'post.request')],
+        StockAdjustmentPutData::class => [StockAdjustmentPutData::class, PutStockAdjustment::class, Cin7Payloads::load('stockadjustment', 'put.request')],
     ],
     'missing' => [
         'stock adjustment POST without Status' => [StockAdjustmentPostData::class, Arr::except(Cin7Payloads::load('stockadjustment', 'post.request'), 'Status')],
