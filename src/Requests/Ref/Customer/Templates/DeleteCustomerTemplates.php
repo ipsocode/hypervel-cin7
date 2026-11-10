@@ -22,7 +22,6 @@ final class DeleteCustomerTemplates extends Cin7Request
         protected readonly string $templateId,
         protected readonly string $customerId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

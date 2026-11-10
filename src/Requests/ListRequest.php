@@ -45,7 +45,6 @@ abstract class ListRequest extends Cin7Request implements MapPaginatedResponseIt
         protected readonly ?int $page = null,
         protected readonly ?int $limit = null,
     ) {
-        parent::__construct();
     }
 
     /**

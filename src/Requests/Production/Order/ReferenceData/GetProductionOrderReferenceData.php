@@ -21,7 +21,6 @@ final class GetProductionOrderReferenceData extends Cin7Request
 
     public function __construct(
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

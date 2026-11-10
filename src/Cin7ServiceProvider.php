@@ -121,15 +121,15 @@ class Cin7ServiceProvider extends ServiceProvider
     }
 
     /**
-     * `sync` is merged one level deep, so a published file that sets one of its keys keeps the
-     * package's others.
+     * `rate_limit`, `retry` and `sync` are merged one level deep, so a published file that sets
+     * one of their keys keeps the package's others.
      *
      * @return array<int, string>
      */
     protected function mergeableOptions(string $name): array
     {
         return match ($name) {
-            'cin7' => ['sync'],
+            'cin7' => ['rate_limit', 'retry', 'sync'],
             default => [],
         };
     }

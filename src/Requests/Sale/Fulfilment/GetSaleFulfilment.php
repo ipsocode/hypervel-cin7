@@ -23,7 +23,6 @@ final class GetSaleFulfilment extends Cin7Request
         protected readonly string $saleId,
         protected readonly ?bool $includeProductInfo = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

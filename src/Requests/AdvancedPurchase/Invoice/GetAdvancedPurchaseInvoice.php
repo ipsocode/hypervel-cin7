@@ -24,7 +24,6 @@ final class GetAdvancedPurchaseInvoice extends Cin7Request
         protected readonly string $purchaseId,
         protected readonly ?bool $combineAdditionalCharges = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

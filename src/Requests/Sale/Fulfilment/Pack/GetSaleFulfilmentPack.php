@@ -24,7 +24,6 @@ final class GetSaleFulfilmentPack extends Cin7Request
         protected readonly string $taskId,
         protected readonly ?bool $includeProductInfo = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

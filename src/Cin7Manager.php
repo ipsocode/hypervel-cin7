@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7;
 
 use InvalidArgumentException;
+use Ipsocode\Cin7\Support\RetrySettings;
 
 /**
  * Resolves the named Cin7 connections of `config('cin7')`, one connector each.
@@ -40,7 +41,7 @@ class Cin7Manager
      */
     public function defaultConnectionName(): string
     {
-        return (string) config('cin7.default', 'default');
+        return config()->string('cin7.default');
     }
 
     private function build(string $name): Cin7Connector
@@ -77,13 +78,14 @@ class Cin7Manager
         return new Cin7Connector(
             $this->credential($name, $connection, 'account_id', 'CIN7_ACCOUNT_ID'),
             $this->credential($name, $connection, 'application_key', 'CIN7_APPLICATION_KEY'),
-            (int) ($rateLimit['max'] ?? config('cin7.rate_limit.max', Cin7Connector::RATE_LIMIT_MAX)),
-            (int) ($rateLimit['period'] ?? config('cin7.rate_limit.period', Cin7Connector::RATE_LIMIT_PERIOD)),
+            (int) ($rateLimit['max'] ?? config()->integer('cin7.rate_limit.max')),
+            (int) ($rateLimit['period'] ?? config()->integer('cin7.rate_limit.period')),
             $store === null ? null : (string) $store,
-            (int) ($rateLimit['cooldown'] ?? config('cin7.rate_limit.cooldown') ?? Cin7Connector::THROTTLE_COOLDOWN),
-            (string) ($this->transportSetting($connection, 'base_url') ?? Cin7Connector::BASE_URL),
+            (int) ($rateLimit['cooldown'] ?? config()->integer('cin7.rate_limit.cooldown')),
+            $this->baseUrl($name, $connection),
             $timeout === null ? null : (int) $timeout,
             $connectTimeout === null ? null : (int) $connectTimeout,
+            RetrySettings::fromConfig(),
         );
     }
 
@@ -108,6 +110,25 @@ class Cin7Manager
         }
 
         return (string) $value;
+    }
+
+    /**
+     * Resolve a connection's base URL, which fails at resolve time rather than building a connector
+     * with an empty one when neither the connection nor `cin7.base_url` sets it.
+     *
+     * @param array<mixed> $connection
+     *
+     * @throws InvalidArgumentException when the base URL is null or blank
+     */
+    private function baseUrl(string $name, array $connection): string
+    {
+        $baseUrl = $this->transportSetting($connection, 'base_url');
+
+        if ($baseUrl === null || trim((string) $baseUrl) === '') {
+            throw new InvalidArgumentException("Cin7 connection [{$name}] has no base_url; set cin7.base_url or cin7.connections.{$name}.base_url.");
+        }
+
+        return (string) $baseUrl;
     }
 
     /**

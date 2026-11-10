@@ -21,7 +21,6 @@ final class DeleteProductProductionBom extends Cin7Request
         protected readonly string $productId,
         protected readonly string $bomId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

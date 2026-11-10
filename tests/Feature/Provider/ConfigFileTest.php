@@ -40,6 +40,19 @@ class ConfigFileTest extends TestCase
         yield 'numeric' => ['45', 45];
     }
 
+    public function testABlankBaseUrlIsTheDefaultOne(): void
+    {
+        $this->setEnv('CIN7_BASE_URL', '');
+
+        try {
+            $config = require dirname(__DIR__, 3) . '/config/cin7.php';
+        } finally {
+            $this->setEnv('CIN7_BASE_URL', false);
+        }
+
+        $this->assertSame(Cin7Connector::BASE_URL, $config['base_url']);
+    }
+
     public function testTheConfigDefaultsComeFromTheConnectorConstants(): void
     {
         $config = require dirname(__DIR__, 3) . '/config/cin7.php';

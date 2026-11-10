@@ -23,7 +23,6 @@ final class DeleteProductAttachments extends Cin7Request
     public function __construct(
         protected readonly string $id,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

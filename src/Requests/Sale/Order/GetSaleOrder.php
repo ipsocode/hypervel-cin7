@@ -24,7 +24,6 @@ final class GetSaleOrder extends Cin7Request
         protected readonly ?bool $combineAdditionalCharges = null,
         protected readonly ?bool $includeProductInfo = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

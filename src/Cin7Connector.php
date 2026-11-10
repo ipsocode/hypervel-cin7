@@ -11,6 +11,7 @@ use Hypervel\RateLimiter\Contracts\Decision;
 use Hypervel\RateLimiter\Cooldown;
 use Hypervel\RateLimiter\Limit;
 use Hypervel\RateLimiter\RateLimiter;
+use Hypervel\Saloon\Data\RetryPolicy;
 use Hypervel\Saloon\Http\Connector;
 use Hypervel\Saloon\Http\PendingRequest;
 use Hypervel\Saloon\Http\Request;
@@ -56,6 +57,7 @@ use Ipsocode\Cin7\Resources\StockTransferResource;
 use Ipsocode\Cin7\Resources\SupplierResource;
 use Ipsocode\Cin7\Resources\TransactionsResource;
 use Ipsocode\Cin7\Resources\WebhooksResource;
+use Ipsocode\Cin7\Support\RetrySettings;
 
 /**
  * The Cin7 Core connector.
@@ -120,6 +122,11 @@ final class Cin7Connector extends Connector implements HasPagination
      */
     private readonly array $rateLimitPolicies;
 
+    /**
+     * The throttling retry settings every request through this connector uses.
+     */
+    private readonly RetrySettings $retrySettings;
+
     public function __construct(
         private readonly string $accountId,
         private readonly string $applicationKey,
@@ -130,7 +137,9 @@ final class Cin7Connector extends Connector implements HasPagination
         private readonly string $baseUrl = self::BASE_URL,
         private readonly ?int $timeout = null,
         private readonly ?int $connectTimeout = null,
+        ?RetrySettings $retry = null,
     ) {
+        $this->retrySettings = $retry ?? RetrySettings::fromConfig();
         $this->headers = [
             'Content-Type' => 'application/json',
             'api-auth-accountid' => $this->accountId,
@@ -187,6 +196,19 @@ final class Cin7Connector extends Connector implements HasPagination
     public function rateLimitWindow(): ?array
     {
         return $this->rateLimitPolicies === [] ? null : [$this->rateLimitMax, $this->rateLimitPeriod];
+    }
+
+    /**
+     * The throttling retry settings, read from `cin7.retry.*` when the connector was built.
+     */
+    public function retrySettings(): RetrySettings
+    {
+        return $this->retrySettings;
+    }
+
+    protected function defaultRetryPolicy(): RetryPolicy
+    {
+        return $this->retrySettings->policy();
     }
 
     public function resolveBaseUrl(): string

@@ -22,7 +22,6 @@ final class GetAdvancedPurchaseManualJournal extends Cin7Request
     public function __construct(
         protected readonly string $purchaseId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
