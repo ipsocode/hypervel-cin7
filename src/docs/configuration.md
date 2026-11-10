@@ -108,6 +108,14 @@ package version, the default connection's rate limit (`off` when the window is d
 limiter store, and whether the sync is on, with its pull and full-pull times (`not scheduled`
 for a blank time, `-` while the sync is off). It names neither credential.
 
+## The `about` section
+
+`php artisan about` has a Cin7 section, read when the command runs. It shows the installed
+package version, the default connection's rate limit (`off` when the window is disabled) and
+limiter store, and whether the sync is on, with its pull and full-pull times (`not scheduled`
+for a blank time, `-` while the sync is off). It names neither credential. An application whose default connection has no credentials yet
+still gets the section, with `not configured` for the rate limit and limiter store.
+
 ## Adding your own keys
 
 You may add your own keys to the published file. `mergeConfigFrom()` keeps the

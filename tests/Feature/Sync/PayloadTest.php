@@ -76,4 +76,30 @@ class PayloadTest extends SyncTestCase
 
         $this->assertTrue(Schema::hasColumn(Payload::TABLE, 'failures'));
     }
+
+    public function testTheColumnsKeepTheirIndexesAndValuesThroughTheSemanticTypesMigrationBothWays(): void
+    {
+        $migration = require __DIR__ . '/../../../database/migrations/2026_11_04_000000_use_semantic_columns_on_cin7_sync_payloads_table.php';
+
+        $id = str_repeat('x', 200);
+        $migration->down();
+        $migration->up();
+
+        Payload::query()->toBase()->insert([
+            'account_id' => '00016e91-48ff-4da6-8ca9-89ad86b5201e',
+            'module' => 'customer',
+            'cin7_id' => $id,
+            'payload' => '{}',
+            'cin7_modified_at' => '2026-10-01 10:00:00.123',
+        ]);
+
+        $row = Payload::query()->sole();
+        $this->assertSame($id, $row->cin7_id);
+        $this->assertSame('2026-10-01 10:00:00.123', $row->cin7_modified_at?->format('Y-m-d H:i:s.v'));
+
+        $indexes = array_map(static fn (array $index): array => $index['columns'], Schema::getIndexes(Payload::TABLE));
+        $this->assertContains(['account_id', 'module', 'cin7_id'], $indexes);
+        $this->assertContains(['account_id', 'module', 'cin7_modified_at'], $indexes);
+        $this->assertContains(['account_id', 'module', 'updated_at'], $indexes);
+    }
 }

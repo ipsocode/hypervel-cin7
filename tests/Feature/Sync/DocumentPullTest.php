@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Ipsocode\Cin7\Tests\Feature\Sync;
 
+use Hypervel\Contracts\Debug\ExceptionHandler;
 use Hypervel\Saloon\Facades\Saloon;
+use Hypervel\Saloon\Http\Faking\MockResponse;
 use Hypervel\Support\Carbon;
+use Hypervel\Support\Facades\Cache;
 use Hypervel\Support\Facades\Log;
 use Hypervel\Support\Sleep;
 use Ipsocode\Cin7\Sync\Module;
 use Ipsocode\Cin7\Sync\Payload;
 use Ipsocode\Cin7\Testing\Cin7Fake;
+use Mockery as m;
+use Swoole\Coroutine\CanceledException;
 
 /**
  * A document module's pull: which list rows it reads a document for, how many, and what a
@@ -20,6 +25,31 @@ use Ipsocode\Cin7\Testing\Cin7Fake;
  */
 class DocumentPullTest extends SyncTestCase
 {
+    public function testCancellationEscapesTheDocumentWalkAndStopsTheLaterModules(): void
+    {
+        $canceled = new CanceledException('canceled');
+        $handler = m::mock(ExceptionHandler::class);
+        $handler->shouldNotReceive('report');
+        $this->app->instance(ExceptionHandler::class, $handler);
+        $mock = Saloon::fake([
+            Cin7Fake::list('SaleList', [$this->sale('s-1', '2026-10-02T09:00:00Z')]),
+            MockResponse::make()->throw($canceled),
+            Cin7Fake::list('SupplierList'),
+        ]);
+        $this->synchroniser()->pull(Module::SaleList);
+
+        try {
+            $this->synchroniser()->pullMany([Module::Sale, Module::Supplier]);
+            $this->fail('The cancellation should have escaped the pull.');
+        } catch (CanceledException $exception) {
+            $this->assertSame($canceled, $exception);
+        }
+
+        $this->assertSame(['saleList'], $this->endpoints($mock));
+        $this->assertCount(0, $this->stored(Module::Supplier));
+        $this->assertTrue(Cache::lock('cin7:sync:00016e91-48ff-4da6-8ca9-89ad86b5201e:sale', 60)->get());
+    }
+
     public function testADocumentIsReadForEachListRowWithoutOneOldestFirst(): void
     {
         $mock = Saloon::fake([

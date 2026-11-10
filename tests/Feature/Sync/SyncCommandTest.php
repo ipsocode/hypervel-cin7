@@ -93,7 +93,7 @@ class SyncCommandTest extends SyncTestCase
     public function testASkippedModuleSaysSo(): void
     {
         Saloon::fake([]);
-        Cache::lock('cin7:sync:acct-test:customer', 60)->get();
+        Cache::lock('cin7:sync:00016e91-48ff-4da6-8ca9-89ad86b5201e:customer', 60)->get();
 
         $this->artisan('cin7:sync customer')
             ->expectsOutputToContain('skipped: another pull holds its lock')
@@ -131,14 +131,14 @@ class SyncCommandTest extends SyncTestCase
         $this->app->get('config')->set('cin7.sync.max_failures', 2);
 
         $this->store([
-            ['acct-test', 'customer', 'c-1', '2026-10-01 10:00:00.123', '2026-10-02 08:00:00', 0],
-            ['acct-test', 'customer', 'c-2', '2026-10-02 09:30:00.500', '2026-10-03 11:00:00', 0],
-            ['acct-test', 'saleList', 's-1', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 2],
-            ['acct-test', 'saleList', 's-2', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 1],
-            ['acct-test', 'sale', 's-2', '2026-10-01 09:00:00.000', '2026-10-03 11:30:00', 0],
-            ['acct-test', 'purchaseList', 'p-1', null, '2026-10-03 11:00:00', 3],
-            ['acct-other', 'customer', 'c-9', '2026-10-03 09:00:00.000', '2026-10-03 11:59:00', 0],
-            ['acct-other', 'saleList', 's-9', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 5],
+            ['00016e91-48ff-4da6-8ca9-89ad86b5201e', 'customer', 'c-1', '2026-10-01 10:00:00.123', '2026-10-02 08:00:00', 0],
+            ['00016e91-48ff-4da6-8ca9-89ad86b5201e', 'customer', 'c-2', '2026-10-02 09:30:00.500', '2026-10-03 11:00:00', 0],
+            ['00016e91-48ff-4da6-8ca9-89ad86b5201e', 'saleList', 's-1', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 2],
+            ['00016e91-48ff-4da6-8ca9-89ad86b5201e', 'saleList', 's-2', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 1],
+            ['00016e91-48ff-4da6-8ca9-89ad86b5201e', 'sale', 's-2', '2026-10-01 09:00:00.000', '2026-10-03 11:30:00', 0],
+            ['00016e91-48ff-4da6-8ca9-89ad86b5201e', 'purchaseList', 'p-1', null, '2026-10-03 11:00:00', 3],
+            ['7f3c2d1a-5b8e-4c60-9a17-3e2b4d6f8a90', 'customer', 'c-9', '2026-10-03 09:00:00.000', '2026-10-03 11:59:00', 0],
+            ['7f3c2d1a-5b8e-4c60-9a17-3e2b4d6f8a90', 'saleList', 's-9', '2026-10-01 09:00:00.000', '2026-10-03 11:00:00', 5],
         ]);
 
         $this->artisan('cin7:sync customer supplier sale advanced-purchase purchaseList --status')
@@ -248,7 +248,7 @@ class SyncCommandTest extends SyncTestCase
             Artisan::call($command);
             $output = Artisan::output();
 
-            $this->assertStringNotContainsString('acct-test', $output, $command);
+            $this->assertStringNotContainsString('00016e91-48ff-4da6-8ca9-89ad86b5201e', $output, $command);
             $this->assertStringNotContainsString('key-test', $output, $command);
         }
 

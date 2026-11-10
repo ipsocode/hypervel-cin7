@@ -177,6 +177,19 @@ class ServiceProviderTest extends TestCase
             ->assertSuccessful();
     }
 
+    public function testAboutReportsAConnectionItCannotBuildInsteadOfFailing(): void
+    {
+        $config = $this->app->get('config');
+        $config->set('cin7.account_id', null);
+        $config->set('cin7.application_key', null);
+        $this->app->forgetInstance(Cin7Manager::class);
+
+        $this->assertSame(0, Artisan::call('about', ['--json' => true]));
+        $about = json_decode(Artisan::output(), true)['cin7'];
+
+        $this->assertSame(['not configured', 'not configured'], [$about['rate_limit'], $about['limiter_store']]);
+    }
+
     public function testAboutSaysWhenTheRateLimitIsOff(): void
     {
         $this->app->get('config')->set('cin7.rate_limit.max', 0);

@@ -36,7 +36,7 @@ Every key is in [configuration](configuration.md#keys).
 | `created_at`, `updated_at` | `updated_at` moves only when the record changed |
 
 The three failure columns come from a second migration, so an application that ran the first
-gets them too, and a third makes `last_error` a `text` column, so a message is kept whole. They are only ever written on a list row (`saleList`, `purchaseList`), by the
+gets them too, and a third makes `last_error` a `text` column, so a message is kept whole. A fourth gives `account_id` a `uuid` column, `module` and `cin7_id` plain `string` columns and `cin7_modified_at` a `datetime`. Cin7 account ids are GUIDs, so the account you configure must be one: on PostgreSQL the migration fails on a row whose `account_id` is not. The failure columns are only ever written on a list row (`saleList`, `purchaseList`), by the
 pull of its document module, because the document row does not exist while its read keeps
 failing. See [a document that keeps failing](#a-document-that-keeps-failing).
 

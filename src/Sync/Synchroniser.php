@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Ipsocode\Cin7\Sync;
 
 use Carbon\CarbonInterface;
+use Hypervel\Coroutine\Coroutine;
 use Hypervel\Database\ConnectionInterface;
 use Hypervel\Database\Eloquent\Builder;
 use Hypervel\Database\Query\Builder as QueryBuilder;
@@ -44,6 +45,7 @@ class Synchroniser
     /**
      * Pull each module in order. A module that fails does not stop the others, and its
      * exception goes to the exception handler, so the console and the queue both leave a trace.
+     * A coroutine cancellation stops the run and escapes unreported.
      *
      * @param list<Module> $modules
      * @return list<PullResult>
@@ -63,7 +65,8 @@ class Synchroniser
 
     /**
      * Pull one module, unless another pull of it holds its lock. A failure anywhere in the pull,
-     * the lock and the bookkeeping included, is the module's result, not an exception.
+     * the lock and the bookkeeping included, is the module's result, not an exception, except coroutine
+     * cancellation, which escapes once the lock is released and a first fill is rolled back.
      */
     public function pull(Module $module, bool $full = false): PullResult
     {
@@ -87,6 +90,10 @@ class Synchroniser
                 $lock->release();
             }
         } catch (Throwable $exception) {
+            if (Coroutine::causedByCancellation($exception)) {
+                throw $exception;
+            }
+
             return new PullResult($module, $full, error: $exception);
         }
     }
@@ -185,8 +192,16 @@ class Synchroniser
                         ->update(['synced_at' => $previous]);
                 }
             } catch (Throwable $rollback) {
+                if (Coroutine::causedByCancellation($rollback)) {
+                    throw $rollback;
+                }
+
                 // The pull's own error is the one the result reports; this one is only logged.
                 report($rollback);
+            }
+
+            if (Coroutine::causedByCancellation($exception)) {
+                throw $exception;
             }
 
             return new PullResult($module, $full, $read, $written, $unchanged, error: $exception);
@@ -255,6 +270,10 @@ class Synchroniser
 
                 ++$written;
             } catch (Throwable $exception) {
+                if (Coroutine::causedByCancellation($exception)) {
+                    throw $exception;
+                }
+
                 if (! $this->rejectedAsItsOwn($exception)) {
                     $error = $exception;
 
