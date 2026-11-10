@@ -22,7 +22,6 @@ final class DeletePurchasePayment extends Cin7Request
         protected readonly string $id,
         protected readonly ?bool $deleteAllocation = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

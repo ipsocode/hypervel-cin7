@@ -27,7 +27,6 @@ final class GetSale extends Cin7Request
         protected readonly ?bool $includeTransactions = null,
         protected readonly ?CountryFormat $countryFormat = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

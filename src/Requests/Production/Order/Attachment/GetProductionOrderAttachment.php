@@ -24,7 +24,6 @@ final class GetProductionOrderAttachment extends Cin7Request
         protected readonly string $productionOrderId,
         protected readonly ?bool $returnAttachmentsContent = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

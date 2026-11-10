@@ -24,7 +24,6 @@ final class GetPurchaseCreditNote extends Cin7Request
         protected readonly string $taskId,
         protected readonly ?bool $combineAdditionalCharges = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

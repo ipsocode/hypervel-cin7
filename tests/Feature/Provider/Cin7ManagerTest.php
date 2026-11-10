@@ -75,7 +75,6 @@ class Cin7ManagerTest extends TestCase
     public function testBlankTransportKeysCountAsUnset(): void
     {
         // A blank `CIN7_TIMEOUT=` in .env reads as '', which cast would be a timeout of 0.
-        $this->app->get('config')->set('cin7.base_url', '');
         $this->app->get('config')->set('cin7.timeout', '');
         $this->app->get('config')->set('cin7.connect_timeout', '');
         $this->app->get('config')->set('cin7.connections', [
@@ -101,6 +100,16 @@ class Cin7ManagerTest extends TestCase
 
         $this->assertSame('http://stub.test/v2/', $inherits->resolveBaseUrl());
         $this->assertSame(['timeout' => 60], $inherits->options());
+    }
+
+    public function testAMissingBaseUrlThrowsNamingTheKey(): void
+    {
+        $this->app->get('config')->set('cin7.base_url', '');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cin7 connection [default] has no base_url; set cin7.base_url or cin7.connections.default.base_url.');
+
+        $this->manager()->connection();
     }
 
     public function testTheConnectorTypeResolvesTheDefaultConnection(): void
@@ -141,8 +150,8 @@ class Cin7ManagerTest extends TestCase
 
     public function testAConnectionWithoutRateLimitInheritsTheTopLevelValues(): void
     {
-        $this->app->get('config')->set('cin7.rate_limit.max', '25');
-        $this->app->get('config')->set('cin7.rate_limit.period', '20');
+        $this->app->get('config')->set('cin7.rate_limit.max', 25);
+        $this->app->get('config')->set('cin7.rate_limit.period', 20);
         $this->useSandbox();
 
         $policy = $this->policy($this->manager()->connection('sandbox'));
@@ -163,8 +172,8 @@ class Cin7ManagerTest extends TestCase
 
     public function testAConnectionsNullLimitIsTheTopLevelValue(): void
     {
-        $this->app->get('config')->set('cin7.rate_limit.max', '25');
-        $this->app->get('config')->set('cin7.rate_limit.period', '20');
+        $this->app->get('config')->set('cin7.rate_limit.max', 25);
+        $this->app->get('config')->set('cin7.rate_limit.period', 20);
         $this->useSandbox(['max' => null, 'period' => null]);
 
         $policy = $this->policy($this->manager()->connection('sandbox'));
@@ -173,10 +182,19 @@ class Cin7ManagerTest extends TestCase
         $this->assertSame(20, $policy->decaySeconds);
     }
 
-    public function testATopLevelNullLimitDisablesTheWindow(): void
+    public function testATopLevelNullLimitFailsNamingTheKey(): void
     {
         $this->app->get('config')->set('cin7.rate_limit.max', null);
-        $this->app->get('config')->set('cin7.rate_limit.period', null);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cin7.rate_limit.max');
+
+        $this->manager()->connection();
+    }
+
+    public function testAZeroLimitDisablesTheWindow(): void
+    {
+        $this->app->get('config')->set('cin7.rate_limit.max', 0);
 
         $this->assertNull($this->manager()->connection()->rateLimitWindow());
     }
@@ -195,7 +213,7 @@ class Cin7ManagerTest extends TestCase
 
     public function testTheCooldownIsInheritedOrOverriddenPerConnection(): void
     {
-        $this->app->get('config')->set('cin7.rate_limit.cooldown', '9');
+        $this->app->get('config')->set('cin7.rate_limit.cooldown', 9);
         $this->useSandbox(['cooldown' => '2']);
         $this->app->get('config')->set('cin7.connections.plain', [
             'account_id' => 'acct-plain',
@@ -209,7 +227,10 @@ class Cin7ManagerTest extends TestCase
         $this->app->get('config')->set('cin7.rate_limit.cooldown', null);
         $this->app->forgetInstance(Cin7Manager::class);
 
-        $this->assertSame(Cin7Connector::THROTTLE_COOLDOWN, $this->cooldown('plain'));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('cin7.rate_limit.cooldown');
+
+        $this->cooldown('plain');
     }
 
     public function testAConnectionInheritsTheTopLevelStoreOrOverridesItWithNull(): void
@@ -347,10 +368,10 @@ class Cin7ManagerTest extends TestCase
 
     private function cooldown(?string $name): ?int
     {
-        $connector = $this->manager()->connection($name);
-
-        // One attempt only, or the 503 would retry past the single mocked response.
+        // One attempt only, or the 503 would retry past the single mocked response. The connector
+        // reads it when it is built.
         $this->app->get('config')->set('cin7.retry.times', 1);
+        $connector = $this->manager()->connection($name);
         Saloon::fake([Cin7Fake::throttled()]);
 
         try {

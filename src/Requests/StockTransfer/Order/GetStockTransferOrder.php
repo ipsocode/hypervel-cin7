@@ -22,7 +22,6 @@ final class GetStockTransferOrder extends Cin7Request
     public function __construct(
         protected readonly string $taskId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

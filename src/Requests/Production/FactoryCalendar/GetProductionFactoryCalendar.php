@@ -22,7 +22,6 @@ final class GetProductionFactoryCalendar extends Cin7Request
     public function __construct(
         protected readonly int $year,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

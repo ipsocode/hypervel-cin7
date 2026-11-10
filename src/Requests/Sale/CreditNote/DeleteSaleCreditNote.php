@@ -23,7 +23,6 @@ final class DeleteSaleCreditNote extends Cin7Request
         protected readonly string $taskId,
         protected readonly ?bool $void = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

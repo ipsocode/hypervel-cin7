@@ -25,7 +25,6 @@ final class GetSaleCreditNote extends Cin7Request
         protected readonly ?bool $includeProductInfo = null,
         protected readonly ?bool $includePaymentInfo = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

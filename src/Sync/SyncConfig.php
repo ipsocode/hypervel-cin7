@@ -6,10 +6,11 @@ namespace Ipsocode\Cin7\Sync;
 
 use InvalidArgumentException;
 use Ipsocode\Cin7\PageDefaults;
+use Ipsocode\Cin7\Support\ConfigRange;
 
 /**
- * Reads `cin7.sync.*` each time it is asked, casting and clamping rather than trusting the type.
- * `Cin7Manager` casts the connector's settings in the same way.
+ * Reads `cin7.sync.*` each time it is asked, through the config repository's typed getters, and
+ * rejects what is out of range. The shipped config holds every default.
  *
  * @see src/docs/sync.md
  */
@@ -21,11 +22,16 @@ class SyncConfig
     public const string ALL = '*';
 
     /**
+     * The largest failure count a `smallint` column holds on every database.
+     */
+    public const int MAX_FAILURES_MAX = 32767;
+
+    /**
      * Tell whether the scheduled pulls are on.
      */
     public static function enabled(): bool
     {
-        return (bool) config('cin7.sync.enabled', false);
+        return config()->boolean('cin7.sync.enabled');
     }
 
     /**
@@ -44,7 +50,9 @@ class SyncConfig
      */
     public static function modules(): array
     {
-        return self::resolve((array) (config('cin7.sync.modules') ?? self::ALL));
+        return self::resolve((array) (config('cin7.sync.modules') ?? throw new InvalidArgumentException(
+            'Configuration value for key [cin7.sync.modules] must be a string or an array, NULL given.',
+        )));
     }
 
     /**
@@ -81,7 +89,7 @@ class SyncConfig
     {
         $exceptions = [];
 
-        foreach ((array) config('cin7.sync.exceptions', []) as $name => $cron) {
+        foreach (config()->array('cin7.sync.exceptions') as $name => $cron) {
             $module = self::module($name);
             $expression = self::expression($cron);
 
@@ -110,43 +118,53 @@ class SyncConfig
 
     /**
      * Return the minutes an incremental pull reaches back, at least 0.
+     *
+     * @throws InvalidArgumentException when the configured value is below 0
      */
     public static function lookback(): int
     {
-        return max(0, (int) (config('cin7.sync.lookback') ?? 1440));
+        return ConfigRange::integer('cin7.sync.lookback', 0);
     }
 
     /**
      * Return the records a page holds, from 1 to the largest page Cin7 serves.
+     *
+     * @throws InvalidArgumentException when the configured value is outside that range
      */
     public static function limit(): int
     {
-        return min(PageDefaults::LIMIT_MAX, max(1, (int) (config('cin7.sync.limit') ?? 500)));
+        return ConfigRange::integer('cin7.sync.limit', 1, PageDefaults::LIMIT_MAX);
     }
 
     /**
      * Return the milliseconds between the sync's own calls, at least 0.
+     *
+     * @throws InvalidArgumentException when the configured value is below 0
      */
     public static function pauseMs(): int
     {
-        return max(0, (int) (config('cin7.sync.pause_ms') ?? 1000));
+        return ConfigRange::integer('cin7.sync.pause_ms', 0);
     }
 
     /**
      * Return the documents read per module per run, at least 0.
+     *
+     * @throws InvalidArgumentException when the configured value is below 0
      */
     public static function documents(): int
     {
-        return max(0, (int) (config('cin7.sync.documents') ?? 250));
+        return ConfigRange::integer('cin7.sync.documents', 0);
     }
 
     /**
      * Return the failed reads after which a document is no longer tried, from 1 to the largest a `smallint`
      * column holds on every database.
+     *
+     * @throws InvalidArgumentException when the configured value is outside that range
      */
     public static function maxFailures(): int
     {
-        return min(32767, max(1, (int) (config('cin7.sync.max_failures') ?? 3)));
+        return ConfigRange::integer('cin7.sync.max_failures', 1, self::MAX_FAILURES_MAX);
     }
 
     /**
@@ -159,10 +177,12 @@ class SyncConfig
 
     /**
      * Return the seconds a queued pull may run, at least 1.
+     *
+     * @throws InvalidArgumentException when the configured value is below 1
      */
     public static function timeout(): int
     {
-        return max(1, (int) (config('cin7.sync.timeout') ?? 3600));
+        return ConfigRange::integer('cin7.sync.timeout', 1);
     }
 
     /**

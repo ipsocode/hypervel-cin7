@@ -20,7 +20,6 @@ final class DeleteProductionWorkCenters extends Cin7Request
     public function __construct(
         protected readonly string $workCenterId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

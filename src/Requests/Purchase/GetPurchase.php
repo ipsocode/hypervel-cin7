@@ -25,7 +25,6 @@ final class GetPurchase extends Cin7Request
         protected readonly string $id,
         protected readonly ?bool $combineAdditionalCharges = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

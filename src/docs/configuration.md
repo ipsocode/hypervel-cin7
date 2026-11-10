@@ -94,14 +94,19 @@ which is evaluated when the configuration loads. Everything else goes through
 
 | Values | Read when | Effect of a later config change |
 |---|---|---|
-| `account_id`, `application_key`, `rate_limit.*`, `connections.*` | The first time a connection is resolved, by `Cin7Connector` injection or `Cin7Manager::connection()` | None for that worker: each connector is built once per worker |
+| `account_id`, `application_key`, `rate_limit.*`, `retry.*`, `connections.*` | The first time a connection is resolved, by `Cin7Connector` injection or `Cin7Manager::connection()` | None for that worker: each connector is built once per worker |
 | `default` | Each time `Cin7Connector` is resolved or `connection()` is called without a name | Picks which connection that resolves; the connectors already built stay |
-| `retry.*` | Each time a request is constructed (`new GetCustomer(...)` and the rest) | Applies to requests constructed after the change |
 | `sync.enabled` | When the provider boots, and again each time `cin7:sync` or the `about` section runs | The migration and the schedule are registered at boot, so a later change does not add or remove them for that worker; the command and `about` see the new value |
 | the other `sync.*` | Each time a pull, the schedule or the job reads them | Applies from the next read |
 
-So set any runtime override of `retry.*` before the `new`, not just before
-`send()`.
+So set any runtime override of `retry.*` before the connector is resolved.
+
+## The `about` section
+
+`php artisan about` has a Cin7 section, read when the command runs. It shows the installed
+package version, the default connection's rate limit (`off` when the window is disabled) and
+limiter store, and whether the sync is on, with its pull and full-pull times (`not scheduled`
+for a blank time, `-` while the sync is off). It names neither credential.
 
 ## The `about` section
 
@@ -117,45 +122,49 @@ You may add your own keys to the published file. `mergeConfigFrom()` keeps the
 published copy authoritative on the keys it shares with the packaged one and
 leaves your extra keys alone.
 
-The merge covers top-level keys only. A `rate_limit`, `retry` or `connections`
-array in the published file wins over the packaged array as a whole, so a key you leave out
-of it is absent rather than taken from the packaged file. Absent keys fall back
-as listed under [Casts and fallbacks](#casts-and-fallbacks).
-
-`sync` is merged one level deeper (the provider's `mergeableOptions()`), so a
-published `sync` array that sets only `enabled` keeps the packaged values of
-the others. An array inside it, `modules` or `exceptions`, still wins as a
-whole.
+`rate_limit`, `retry` and `sync` are merged one level deeper (the provider's
+`mergeableOptions()`), so a published array that sets only some of their keys
+keeps the packaged values of the others. An array inside `sync`, `modules` or
+`exceptions`, still wins as a whole, and so does a `connections` array. Every
+default lives in the packaged config alone: the package reads each value
+through the config repository's typed getters, so an explicit `null` on a key
+the packaged file never leaves `null`, or a value of the wrong type, throws an
+`InvalidArgumentException` naming the key. The keys that may be `null` are
+`timeout`, `connect_timeout`, `rate_limit.store`, `sync.queue`,
+`sync.connection`, `sync.cron` and `sync.full`.
 
 ## Casts and fallbacks
 
-[`Cin7Manager`](../Cin7Manager.php) casts each value rather
-than trusting its type, so a missing or loosely typed value does not throw a
-`TypeError` when the container resolves the connector:
+The packaged config casts its environment values, and
+[`Cin7Manager`](../Cin7Manager.php) reads the rest through typed getters, so
+a missing key comes from the merged packaged config rather than from a default
+in code:
 
-| Value | Cast | Result |
+| Value | Read as | Result |
 |---|---|---|
 | `account_id`, `application_key` | `(string)` | Required. A missing, `null` or blank value throws an `InvalidArgumentException` naming the connection and the key when the connection is resolved, such as `Cin7 connection [default] has no account_id; set CIN7_ACCOUNT_ID.`; `cin7:check` prints the same message. Resolve a connector without credentials only behind [`Cin7Fake`](testing.md) or fake values |
-| `base_url` | `(string)`, falling back to the V2 URL when absent, `null` or `''` | A connection's own `base_url` wins over the top-level one; a blank `CIN7_BASE_URL=` counts as unset |
+| `base_url` | string | A blank `CIN7_BASE_URL=` is the V2 URL, in the config file. A connection's own `base_url` wins over the top-level one. A `null` or blank value in both throws an `InvalidArgumentException` naming the connection and the key when the connection is resolved |
 | `timeout`, `connect_timeout` | `null` and `''` become `null`; anything else `(int)` | `null` sends no option, so the `saloon` connection's value applies; a blank `CIN7_TIMEOUT=` counts as unset rather than `0`, which would wait forever. A connection's own key wins over the top-level one |
-| `rate_limit.max`, `rate_limit.period` | `(int)`, falling back to `60` when the key is absent | A string such as `'30'` becomes `30`. At the top level, a key present but `null` becomes `0`, which disables the window |
+| `rate_limit.max`, `rate_limit.period` | integer | `0` disables the window. `null` or a string throws |
 | `rate_limit.store` | `null` and `''` become `null`; anything else `(string)` | `null` lets the store fallback chain apply; a blank `CIN7_RATE_STORE=` counts as unset |
-| `rate_limit.cooldown` | `(int)`, falling back to `5` when the key is absent or `null` | A string such as `'9'` becomes `9`. `0` or less records no cooldown after a 503 or a 429 without `Retry-After` |
-| `connections.<name>.rate_limit.*` | the same casts | A key the connection leaves out is the top-level one, `store` included, and so is a blank `store`. A `null` `max`, `period` or `cooldown` counts as left out and is the top-level value; a `null` `store` is not left out and stays `null`, so the store fallback chain applies |
+| `rate_limit.cooldown` | integer | `0` or less records no cooldown after a 503 or a 429 without `Retry-After` |
+| `connections.<name>.rate_limit.*` | the same | A key the connection leaves out is the top-level one, `store` included, and so is a blank `store`. A `null` `max`, `period` or `cooldown` counts as left out and is the top-level value; a `null` `store` is not left out and stays `null`, so the store fallback chain applies |
 
 `Cin7Manager` applies these when it builds a connection. A name with no
 `connections` entry, and not `default`, throws an `InvalidArgumentException`
 naming it, as does an entry that is not an array.
 
-[`Cin7Request`](../Requests/Cin7Request.php) applies the retry values with
-its own fallbacks: a `null` or absent `retry.times` or `retry.delay_ms` falls
-back to `4` and `5000`, and the results are clamped to at least one attempt and
-at least `0` ms. A `null` or absent `retry.backoff`, `retry.max_delay_ms` or
-`retry.jitter_ms` falls back to `1`, `0` and `0`; the backoff is clamped to at
-least `1`, the other two to at least `0`. See [requests](requests.md#retry-policy).
+[`RetrySettings`](../Support/RetrySettings.php) reads the `retry.*` values as
+integers, and `backoff` as a float, and throws an `InvalidArgumentException`
+naming the key, the value and the allowed range for one outside it: `times`
+at least `1`, `backoff` at least `1`, and `delay_ms`, `max_delay_ms` and
+`jitter_ms` at least `0`. See [requests](requests.md#retry-policy).
 
-[`SyncConfig`](../Sync/SyncConfig.php) reads `sync.*` the same way: an absent or `null`
-number falls back to its default, and each is clamped (`limit` to 1–1000, `timeout` and
-`max_failures` to at least 1, the latter also to at most 32767, the others to at least 0). A blank `cron`, `full` or exception time schedules nothing,
-an empty `queue` or `connection` is the default one, and an unknown module name, or a reference
+[`SyncConfig`](../Sync/SyncConfig.php) reads `sync.*` the same way, each number
+as an integer, and throws an `InvalidArgumentException` naming the key, the
+value and the allowed range for one outside it (`limit` 1–1000, `max_failures`
+1–32767, `timeout` at least 1, `lookback`, `pause_ms` and `documents` at least
+0), rather than running with a value nobody chose. A
+blank `cron`, `full` or exception time schedules nothing, an empty `queue` or
+`connection` is the default one, and an unknown module name, or a reference
 book among the exceptions, throws an `InvalidArgumentException` rather than being skipped.

@@ -26,7 +26,6 @@ final class GetAdvancedPurchasePayment extends Cin7Request
         protected readonly ?string $invoiceNumber = null,
         protected readonly ?string $creditNoteNumber = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

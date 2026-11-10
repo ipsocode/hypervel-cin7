@@ -22,7 +22,6 @@ final class DeleteProductionResource extends Cin7Request
     public function __construct(
         protected readonly string $resourceId,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string

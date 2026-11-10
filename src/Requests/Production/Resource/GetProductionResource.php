@@ -23,7 +23,6 @@ final class GetProductionResource extends Cin7Request
         protected readonly string $resourceId,
         protected readonly ?bool $includeAttachments = null,
     ) {
-        parent::__construct();
     }
 
     public function resolveEndpoint(): string
